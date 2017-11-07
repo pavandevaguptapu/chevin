@@ -1,0 +1,174 @@
+body{
+  margin: auto;
+  padding:0px;
+	overflow-y:scroll;
+	overflow-x: hidden;
+}
+	
+	.loginboxBackgroundColor{
+	background-color:transparent;
+	border:1px solid #cbcbd0;
+	border-radius:10px;
+	width:400px;
+	margin:auto;
+	margin-top:315px;
+}
+.loginHeader{
+	text-align:center !important;
+	border-width:1px solid black !important;
+	border-bottom:1px solid #76aad8;
+}
+.loginFormHeight{
+	height:250px;
+}
+.loginUserName{
+	padding:46px 0px 30px 93px;
+}
+.loginPwd{
+	padding:11px 0px 51px 93px;
+}
+.loginBtns{
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	margin-bottom: 35px;
+}
+
+.loginSubmit{
+	margin-right:6px;
+	background-color:#75d475;
+}
+.loginCancel{
+	background-color:#fd5858;
+}
+.loginSubmitBtn{
+	margin-right:6px !important;
+	
+}
+.dashboardHeaderBgColor{
+	background-color:#76aad8 !important;	
+}
+.dashboardNavbarHeader{
+	text-align:center;
+
+}
+.modal{
+	height:320px;
+	width:400px;
+	border:1px solid #76aad8;
+	margin:auto;
+	border-radius:10px;
+
+}
+.accountProjectProfileBar{
+	
+	border-right:1px solid #76aad8;
+	padding-right:0px;
+}
+
+.accountProjectProfileheading{
+	margin-top:9px;
+	padding-bottom:14px;
+	border-bottom:1px solid #76aad8;
+	text-align: left;
+}
+
+.accountProjectProfileInfo{
+	text-align:left;
+	display:flex;
+	margin-bottom:15px;
+}
+
+.accountTabs{
+	padding:7px;
+    border-bottom: 1px solid #76aad8 !important;
+    border-right: 1px solid #76aad8 !important;
+	border-bottom-right-radius: 3px;
+}
+
+.selectedItem{
+	background-color:#cbcccc !important;
+}
+
+.marginT3{
+	margin-top:3px;
+}
+.marginT35{
+		margin-top:35px;
+	}
+.paddingL9{
+  padding-left: 9px;
+}
+
+.textAlignLeft{
+  text-align: left;
+}
+
+.modalMargins{
+    width: 400px;
+    text-Align: center;
+    border: 1px solid #76aad8;
+    margin-top: 100px;
+    background: aliceblue;
+    border-radius: 23px;
+}
+
+.row{
+
+	margin: 0px !important;
+}
+.names{
+	font-size: 20px;
+	margin: -1px;
+}
+.DashboardAccountList{
+    height: 321px;
+    border: 1px solid #76aad8;
+    border-radius: 21px;
+    margin-left: 45px;
+    text-align: center;
+    background: #eae8e8;
+    margin-right: 22px;
+    margin-top: 37px;
+}
+
+#projectTitle{
+	vertical-align: middle;
+	 margin-top: 128px; 
+}
+.bold{
+	font-weight: bold;
+}
+.paddingL16{
+	padding-left: 16px !important;
+}
+.overlay {
+	 margin: 220px; 
+    position          : fixed;
+    background-color   : #bed9f1
+  }
+  .pointer{
+	  cursor: pointer;
+  }
+
+.displayInline{
+	display: inline-flex
+}
+.borderRadius{
+	border-radius: 10px;
+}
+.marginR10{
+	margin-right: 10px;
+}
+.accountmodalMargins{
+	margin-top: -500px;
+	width: 400px;
+    text-Align: center;
+    border: 1px solid #76aad8;
+    background: aliceblue;
+    border-radius: 23px;
+}
+.visibility{
+
+	display: none;
+}

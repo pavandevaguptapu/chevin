@@ -1,0 +1,327 @@
+{
+	"maxResults" : 50,
+	"startAt" : 0,
+	"isLast" : true,
+	"values" : [{
+			"id" : 10000,
+			"key" : "FIC-1",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/10000",
+			"name" : "Assessment",
+			"summary" : "Managing assessments.",
+			"color" : {
+				"key" : "color_1"
+			},
+			"done" : true
+		}, {
+			"id" : 10400,
+			"key" : "FIC-6",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/10400",
+			"name" : "Questions and Answers",
+			"summary" : "Managing questions and answers in the product for audits and templates",
+			"color" : {
+				"key" : "color_1"
+			},
+			"done" : true
+		}, {
+			"id" : 10405,
+			"key" : "FIC-7",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/10405",
+			"name" : "Audits",
+			"summary" : "Management of Audits in the product FullyInControl",
+			"color" : {
+				"key" : "color_3"
+			},
+			"done" : true
+		}, {
+			"id" : 10700,
+			"key" : "FIC-8",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/10700",
+			"name" : "Partner, Intermediary, Client, and User ",
+			"summary" : "Managing the user and client type structure in the product",
+			"color" : {
+				"key" : "color_1"
+			},
+			"done" : true
+		}, {
+			"id" : 11309,
+			"key" : "FIC-94",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/11309",
+			"name" : "User and organization management",
+			"summary" : "User and Organization management",
+			"color" : {
+				"key" : "color_3"
+			},
+			"done" : true
+		}, {
+			"id" : 11502,
+			"key" : "FIC-127",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/11502",
+			"name" : "Architecture bleu prints",
+			"summary" : "There should be architectural bleu prints for subjects to help developers to code correctly ",
+			"color" : {
+				"key" : "color_1"
+			},
+			"done" : true
+		}, {
+			"id" : 12504,
+			"key" : "FIC-171",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/12504",
+			"name" : "User Interface",
+			"summary" : "User Interface related Stories",
+			"color" : {
+				"key" : "color_2"
+			},
+			"done" : true
+		}, {
+			"id" : 12505,
+			"key" : "FIC-172",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/12505",
+			"name" : "Architecture",
+			"summary" : "Architecture related Stories",
+			"color" : {
+				"key" : "color_4"
+			},
+			"done" : true
+		}, {
+			"id" : 23377,
+			"key" : "FIC-1192",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/23377",
+			"name" : "Authorizable Functions",
+			"summary" : "Authorizable Functions",
+			"color" : {
+				"key" : "color_1"
+			},
+			"done" : false
+		}, {
+			"id" : 13611,
+			"key" : "FIC-283",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13611",
+			"name" : "State Engine",
+			"summary" : "Status Management and Engine",
+			"color" : {
+				"key" : "color_13"
+			},
+			"done" : false
+		}, {
+			"id" : 13400,
+			"key" : "FIC-247",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13400",
+			"name" : "Manageable Objects",
+			"summary" : "Manageable Objects",
+			"color" : {
+				"key" : "color_1"
+			},
+			"done" : false
+		}, {
+			"id" : 13607,
+			"key" : "FIC-279",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13607",
+			"name" : "Questionnaires",
+			"summary" : "Configuration Questionnaire and Answers",
+			"color" : {
+				"key" : "color_5"
+			},
+			"done" : false
+		}, {
+			"id" : 13605,
+			"key" : "FIC-277",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13605",
+			"name" : "User and Organization Management",
+			"summary" : "Organization Mgmt - Security and Administration",
+			"color" : {
+				"key" : "color_1"
+			},
+			"done" : false
+		}, {
+			"id" : 13606,
+			"key" : "FIC-278",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13606",
+			"name" : "Authentication and Authorization",
+			"summary" : "User roles and responsibilities, functions etc..",
+			"color" : {
+				"key" : "color_3"
+			},
+			"done" : false
+		}, {
+			"id" : 13609,
+			"key" : "FIC-281",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13609",
+			"name" : "Condition Designer",
+			"summary" : "Condition Designer",
+			"color" : {
+				"key" : "color_11"
+			},
+			"done" : false
+		}, {
+			"id" : 13612,
+			"key" : "FIC-284",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13612",
+			"name" : "Templates",
+			"summary" : "Templates",
+			"color" : {
+				"key" : "color_1"
+			},
+			"done" : false
+		}, {
+			"id" : 13613,
+			"key" : "FIC-285",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13613",
+			"name" : "Dashboards",
+			"summary" : "Dashboards for different users",
+			"color" : {
+				"key" : "color_3"
+			},
+			"done" : false
+		}, {
+			"id" : 13614,
+			"key" : "FIC-286",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13614",
+			"name" : "User Interface",
+			"summary" : "Commonly shared UI parts - componentization",
+			"color" : {
+				"key" : "color_5"
+			},
+			"done" : false
+		}, {
+			"id" : 13615,
+			"key" : "FIC-287",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13615",
+			"name" : "System Management",
+			"summary" : "Audit Log, System functions, Error Logs etc...",
+			"color" : {
+				"key" : "color_7"
+			},
+			"done" : false
+		}, {
+			"id" : 13616,
+			"key" : "FIC-288",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13616",
+			"name" : "Document Management",
+			"summary" : "Repository for Documents in the system",
+			"color" : {
+				"key" : "color_9"
+			},
+			"done" : true
+		}, {
+			"id" : 13900,
+			"key" : "FIC-296",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13900",
+			"name" : "Management, education & Meetings",
+			"summary" : "Management, education & Meetings",
+			"color" : {
+				"key" : "color_1"
+			},
+			"done" : false
+		}, {
+			"id" : 13901,
+			"key" : "FIC-297",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/13901",
+			"name" : "Quality Management",
+			"summary" : "Quality Management",
+			"color" : {
+				"key" : "color_3"
+			},
+			"done" : false
+		}, {
+			"id" : 14310,
+			"key" : "FIC-344",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/14310",
+			"name" : "Logging changes",
+			"summary" : "Logging changes",
+			"color" : {
+				"key" : "color_1"
+			},
+			"done" : false
+		}, {
+			"id" : 14311,
+			"key" : "FIC-345",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/14311",
+			"name" : "KPI designer and calculations",
+			"summary" : "KPI designer and calculations",
+			"color" : {
+				"key" : "color_3"
+			},
+			"done" : false
+		}, {
+			"id" : 14313,
+			"key" : "FIC-347",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/14313",
+			"name" : "Pinning items and show pinned items",
+			"summary" : "Pinning items and show pinned items",
+			"color" : {
+				"key" : "color_7"
+			},
+			"done" : false
+		}, {
+			"id" : 16503,
+			"key" : "FIC-512",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/16503",
+			"name" : "Bugs",
+			"summary" : "Bugs version 1.1",
+			"color" : {
+				"key" : "color_11"
+			},
+			"done" : false
+		}, {
+			"id" : 18902,
+			"key" : "FIC-775",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/18902",
+			"name" : "Questionnaire related bugs",
+			"summary" : "Questionnaire related bugs",
+			"color" : {
+				"key" : "color_12"
+			},
+			"done" : false
+		}, {
+			"id" : 19400,
+			"key" : "FIC-854",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/19400",
+			"name" : "Code Quality ",
+			"summary" : "Code Quality Issues - Created by Farhan",
+			"color" : {
+				"key" : "color_12"
+			},
+			"done" : false
+		}, {
+			"id" : 20701,
+			"key" : "FIC-988",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/20701",
+			"name" : "Mobile App",
+			"summary" : "Meteor Mobile App",
+			"color" : {
+				"key" : "color_6"
+			},
+			"done" : false
+		}, {
+			"id" : 20800,
+			"key" : "FIC-994",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/20800",
+			"name" : "Question Condition",
+			"summary" : "Question Conditions for Questionnaire",
+			"color" : {
+				"key" : "color_4"
+			},
+			"done" : false
+		}, {
+			"id" : 21924,
+			"key" : "FIC-1022",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/21924",
+			"name" : "Offline",
+			"summary" : "Offline Functionality",
+			"color" : {
+				"key" : "color_2"
+			},
+			"done" : false
+		}, {
+			"id" : 22201,
+			"key" : "FIC-1043",
+			"self" : "https://fullyincontrol.atlassian.net/rest/agile/1.0/epic/22201",
+			"name" : "Variables",
+			"summary" : "Variables",
+			"color" : {
+				"key" : "color_12"
+			},
+			"done" : false
+		}
+	]
+}
