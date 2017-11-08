@@ -2,8 +2,7 @@ import React from 'react';
 import './App.css';
 import { Navbar, NavbarBrand, Button } from 'react-bootstrap';
 import axios from 'axios';
-
-import { PieChart, Pie, Sector, Cell, RadarChart, Radar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell,LineChart, Line, XAxis, YAxis, CartesianGrid,Legend } from 'recharts';
 import { Draggable, Droppable } from 'react-drag-and-drop'
 import { Modal } from 'react-overlays';
 Modal.prototype.componentWillMount = function componentWillMount() {
@@ -23,11 +22,11 @@ class Account extends React.Component {
 			projectName: '',
 			teamName: '',
 			projectDetails: '',
-			selectedTab: true,
-			selectedTab1: false,
+			selectedTab1: true,
 			selectedTab2: false,
 			selectedTab3: false,
 			selectedTab4: false,
+			selectedTab5: false,
 			listofepics: [],
 			selecteditem: '',
 			issueTracking: '',
@@ -82,26 +81,26 @@ class Account extends React.Component {
 	SelectedTab(e) {
 
 
-		if (e == "Knowledge Management") {
+		if (e === "Knowledge Management") {
 
 
 			this.setState({
-				selectedTab1: false, selectedTab2: false, selectedTab3: false, selectedTab4: false,
+				selectedTab1: true,selectedTab2: false, selectedTab3: false, selectedTab4: false, selectedTab5: false,
 				sourcelist: '', source: '', issueTracking: '', listofepics: '',
-				selectedIssue: '', development: '', source: '', developmentlist: [], issuesList: [], checkbox: '', workHours: '', issuesPieChart: ''
+				selectedIssue: '', development: '',developmentlist: [], issuesList: [], checkbox: '', workHours: '', issuesPieChart: ''
 			})
 
 		}
-		if (e == "Source") {
-			this.setState({ selectedTab: false, selectedTab1: false, selectedTab: false, selectedTab2: false, selectedTab4: true })
+		if (e === "Source") {
+			this.setState({ selectedTab1: false,selectedTab2: true, selectedTab3: false, selectedTab4: false, selectedTab5: false})
 			axios.get(`/JIRAREST/bitbucket/rest/get/repos`)
 				.then(response => {
 					this.setState({ sourcelist: response.data })
 					this.setState({ source: <Source sourcelist={this.state.sourcelist} />, issueTracking: '', development: '', issuesList: [], checkbox: '', workHours: '', issuesPieChart: '' });
 				})
 		}
-		if (e == "IssueTracking") {
-			this.setState({ selectedTab1: true, selectedTab: false, selectedTab2: false, selectedTab3: false, selectedTab4: false })
+		if (e === "IssueTracking") {
+			this.setState({selectedTab1: false,selectedTab2: false, selectedTab3: true, selectedTab4: false, selectedTab5: false})
 			axios.get(`/JIRAREST/jira/rest/get/epics`)
 				.then(response => {
 					this.setState({ listofepics: response.data.values })
@@ -112,11 +111,10 @@ class Account extends React.Component {
 				})
 
 		}
-		if (e == "Development") {
-			this.setState({ selectedTab2: true, selectedTab1: false, selectedTab: false, selectedTab3: false, selectedTab4: false })
+		if (e === "Development") {
+			this.setState({ selectedTab1: false,selectedTab2: false, selectedTab3: false, selectedTab4: true, selectedTab5: false})
 			axios.get(`/JIRAREST/jira/rest/get/sprints`)
 				.then(response => {
-					console.log(response)
 					this.setState({ developmentlist: response.data.values })
 					this.setState({
 						development: <Development developmentlist={this.state.developmentlist} />, issueTracking: '', source: '',
@@ -126,35 +124,36 @@ class Account extends React.Component {
 
 
 		}
-		if (e == "Quality") {
+		if (e === "Quality") {
 			this.setState({
-				selectedTab3: true, selectedTab1: false, selectedTab: false, selectedTab2: false,
-				selectedTab4: false, checkbox: '', workHours: '', issuesPieChart: ''
+				selectedTab1: false,selectedTab2: false, selectedTab3: false, selectedTab4: false, selectedTab5: true,
+				 checkbox: '', workHours: '', issuesPieChart: ''
 			})
-
-
-
-
 
 		}
 
 	}
 
-
 	componentWillMount() {
-		if (window.sessionStorage.getItem("Account") != "undefined" && window.sessionStorage.getItem("Account") != null) {
-			this.state.projectDetails = JSON.parse(window.sessionStorage.getItem("Account"))
-			this.state.projectName = this.state.projectDetails.projectName
-			this.state.teamName = this.state.projectDetails.teamName
+		if (window.sessionStorage.getItem("Account") !== "undefined" && window.sessionStorage.getItem("Account") !== null) {
+			this.setState({projectDetails:JSON.parse(window.sessionStorage.getItem("Account")),projectName:this.state.projectDetails.projectName,
+			teamName:this.state.projectDetails.teamName})
+			// this.state.projectDetails = JSON.parse(window.sessionStorage.getItem("Account"))
+			// this.state.projectName = this.state.projectDetails.projectName
+			// this.state.teamName = this.state.projectDetails.teamName
 		}
 	}
 
 	render() {
-		if (window.sessionStorage.getItem("Account") == "undefined" || window.sessionStorage.getItem("Account") == null) {
-			window.sessionStorage.setItem("Account", JSON.stringify(this.props.location.state));
-			this.state.projectDetails = JSON.parse(window.sessionStorage.getItem("Account"))
-			this.state.projectName = this.state.projectDetails.projectName
-			this.state.teamName = this.state.projectDetails.teamName
+		if (window.sessionStorage.getItem("Account") === "undefined" || window.sessionStorage.getItem("Account") === null) {
+			 window.sessionStorage.setItem("Account", JSON.stringify(this.props.location.state));
+			this.setState({projectDetails:JSON.parse(window.sessionStorage.getItem("Account")),projectName:this.state.projectDetails.projectName,
+			teamName:this.state.projectDetails.teamName})
+
+			
+			// this.state.projectDetails = JSON.parse(window.sessionStorage.getItem("Account"))
+			// this.state.projectName = this.state.projectDetails.projectName
+			// this.state.teamName = this.state.projectDetails.teamName
 		}
 
 
@@ -176,19 +175,19 @@ class Account extends React.Component {
 						</div>
 					</div>
 
-					<div className={[this.state.selectedTab == true ? "selectedItem" : '', "col-md-2 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Knowledge Management")}>
+					<div className={[this.state.selectedTab1 === true ? "selectedItem" : '', "col-md-2 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Knowledge Management")}>
 						<h5> Knowledge Management </h5>
 					</div>
-					<div className={[this.state.selectedTab4 == true ? "selectedItem" : '', "col-md-1 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Source")}>
+					<div className={[this.state.selectedTab2 === true ? "selectedItem" : '', "col-md-1 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Source")}>
 						<h5> Source</h5>
 					</div>
-					<div className={[this.state.selectedTab1 == true ? "selectedItem" : '', "col-md-2 accountTabs"].join(' ')} onClick={() => this.SelectedTab("IssueTracking")}>
+					<div className={[this.state.selectedTab3 === true ? "selectedItem" : '', "col-md-2 accountTabs"].join(' ')} onClick={() => this.SelectedTab("IssueTracking")}>
 						<h5> Issue Tracking</h5>
 					</div>
-					<div className={[this.state.selectedTab2 == true ? "selectedItem" : '', "col-md-2 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Development")}>
+					<div className={[this.state.selectedTab4 === true ? "selectedItem" : '', "col-md-2 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Development")}>
 						<h5> Development</h5>
 					</div>
-					<div className={[this.state.selectedTab3 == true ? "selectedItem" : '', "col-md-1 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Quality")}>
+					<div className={[this.state.selectedTab5 === true ? "selectedItem" : '', "col-md-1 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Quality")}>
 						<h5> Quality</h5>
 					</div>
 					<div className="col-md-2 accountTabs" style={{ borderLeft: "1px solid #76aad8", padding: "0px", height: "94vh" }}>
@@ -370,19 +369,10 @@ class Hourschart extends React.Component {
 			sprintStartTime: '',
 			sprintEndTime: '',
 			sprintCompleteTime: '',
-			timeSpentArray: [],
-			SpentArray: [],
+			eachTimeSpentArray: [],
+			totalTimeSpentArray: [],
 			currentDate: '',
 			currentSpentTime: 0,
-			sprintDuration: [],
-			x: [],
-			workHours: [],
-			hours: '',
-			eachKey: '',
-			doNotMatch: [],
-			w: []
-
-
 		}
 	}
 	componentWillMount() {
@@ -391,123 +381,78 @@ class Hourschart extends React.Component {
 
 		}).then(response => {
 			this.setState({ sprintStartTime: response.data.startTime, sprintEndTime: response.data.endTime, sprintCompleteTime: response.data.CompleteTime })
+			var getDateString=function(epochTime){
+				var date=new Date(epochTime)
+				var month = '' + (date.getMonth() + 1)
+				var day = '' + date.getDate()
+				 var year = date.getFullYear()
+				 var dateString = (month + "/" + day + "/" + year)	
+				   return dateString
+			}
 
-			var getDates = function (startDate, endDate) {
-				var dates = [],
-					currentDate = startDate,
-					addDays = function (days) {
-						var date = new Date(this.valueOf());
-						date.setDate(date.getDate() + days);
-						return date;
-					};
-				while (currentDate <= endDate) {
-					dates.push(currentDate);
-					currentDate = addDays.call(currentDate, 1);
-				}
-				return dates;
-			};
+			var currentDateObj = getDateString(response.data.startTime)
+			this.setState({currentDate:currentDateObj})
+			// this.state.currentDate = currentDateObj;
 
-			// Usage
-			var dates = getDates(new Date(this.state.sprintStartTime), new Date(this.state.sprintEndTime));
-			dates.forEach(function (date) {
-				var d = new Date(date),
-					month = '' + (d.getMonth() + 1),
-					day = '' + d.getDate(),
-					year = d.getFullYear();
-				var dateString = (month + "/" + day + "/" + year)
-				// this.state.sprintDuration=
-				this.setState({
-					sprintDuration: this.state.sprintDuration.concat({ name: dateString })
+			var currentDateEpochTime = response.data.startTime
+			var changesArray = Object.keys(response.data.changes)
 
-				})
+			Object.keys(response.data.changes).forEach(function (key, index) {
 
-			}.bind(this));
-
-
-
-			Object.keys(response.data.changes).forEach(function (key) {
 				var eachDate = Number(key)
 				if (eachDate > response.data.startTime) {
-
 					var changeObjArray = response.data.changes[eachDate]
-
 					changeObjArray.forEach(function (item) {
-
 						if (item.timeC) {
 
 							if (item.timeC.timeSpent) {
-								var d = new Date(eachDate),
-									month = '' + (d.getMonth() + 1),
-									day = '' + d.getDate(),
-									year = d.getFullYear();
-								var dateString = (month + "/" + day + "/" + year)
-								this.setState({ timeSpent: item.timeC.timeSpent + this.state.currentSpentTime })
+								var d = new Date(eachDate)
+								var dateString = getDateString(eachDate)
+
 								if (this.state.currentDate !== dateString) {
-									var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
-									// var firstDate = new Date(2008,01,12);
-									// var secondDate = new Date(2008,01,22);
-									var diffDays =2// Math.round(Math.abs((eachDate.getTime() - this.state.currentDate.getTime())/(oneDay)));
-									if(diffDays>1){
-									
-									 for (var i = 0; i <= diffDays; i++) {
-									  var missedDate =this.state.currentDate;
-									  missedDate.setHours(d.getHours()+(i*24))
-									 var month1 = '' + (missedDate.getMonth() + 1)
-									 var day1 = '' + missedDate.getDate()
-									 var year1 = missedDate.getFullYear()
-									 var dateString1 = (month1 + "/" + day1 + "/" + year1)
-									  this.state.SpentArray = this.state.SpentArray.concat({ name: dateString1, hr: (this.state.timeSpent / 3600) })
-									  this.state.currentDate=missedDate
-									 }
+									this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.currentDate, hr: (this.state.timeSpent / 3600) })
+									this.setState({ currentDate: dateString, totalTimeSpentArray: this.state.eachTimeSpentArray })
+									var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+									var diffDays = Math.round(Math.abs((d.getTime() - new Date(currentDateEpochTime).getTime()) / (oneDay)));
+									if (diffDays > 1) {
+										for (var i = 1; i < diffDays; i++) {
+											var diffStartDate = new Date(currentDateEpochTime)
+											var missedDate = new Date(currentDateEpochTime);
+											missedDate.setHours(diffStartDate.getHours() + (i * 24))
+
+											var missedDateString =getDateString(missedDate)
+											this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: missedDateString, hr: (this.state.timeSpent / 3600) })
+											this.setState({ totalTimeSpentArray: this.state.eachTimeSpentArray })
+										}
 									}
-									this.state.SpentArray = this.state.SpentArray.concat({ name: dateString, hr: (this.state.timeSpent / 3600) })
-									this.setState({ timeSpentArray: this.state.SpentArray })
 								}
-								this.setState({ currentDate: dateString, currentSpentTime: this.state.timeSpent })
+								this.setState({ timeSpent: item.timeC.timeSpent + this.state.currentSpentTime })
+								this.setState({ currentSpentTime: this.state.timeSpent })
+								currentDateEpochTime = eachDate
 							}
 
 						}
 					}.bind(this))
 				}
-			}.bind(this))
-
-			this.state.sprintDuration.forEach(function (key) {
-				this.state.timeSpentArray.forEach(function (item) {
-					if (key.name === item.name) {
-						this.setState({ hours: item.hr })
-						this.state.x = this.state.x.concat({ name: item.name, hr: this.state.hours })
-						this.setState({ workHours: this.state.x })
+				if (index == changesArray.length - 1) {
+					this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.currentDate, hr: (this.state.timeSpent / 3600) })
+					this.setState({ totalTimeSpentArray: this.state.eachTimeSpentArray })
+					var endDateObj = new Date(response.data.endTime)
+					var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+					var diffDays = Math.round(Math.abs((endDateObj.getTime() - new Date(currentDateEpochTime).getTime()) / (oneDay)));
+					if (diffDays > 1) {
+						for (var i = 1; i < diffDays; i++) {
+							var diffStartDate = new Date(currentDateEpochTime)
+							var missedDate = new Date(currentDateEpochTime);
+							missedDate.setHours(diffStartDate.getHours() + (i * 24))
+							var missedDateString = getDateString(missedDate)
+							this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: missedDateString })
+							this.setState({ totalTimeSpentArray: this.state.eachTimeSpentArray })
+						}
 					}
 
-				}.bind(this))
-
-			}.bind(this))
-
-			console.log(this.state.sprintDuration)
-			console.log(this.state.workHours)
-
-			for (var i = 0; i < this.state.sprintDuration.length; i++) {
-				if (this.state.workHours[i].name.indexOf(this.state.sprintDuration[i]) == -1) {
-
 				}
-
-
-
-
-				this.state.w = this.state.workHours.concat(this.state.doNotMatch)
-				this.state.w.sort(function (a, b) {
-
-					return parseFloat(a.name) - parseFloat(b.name);
-				});
-
-				this.setState({ totalHours: this.state.w })
-
-
-
-			}
-
-
-
+			}.bind(this))
 
 		})
 	}
@@ -524,7 +469,7 @@ class Hourschart extends React.Component {
 		// ]
 		return (
 			<div>
-				<LineChart width={600} height={300} data={this.state.totalHours}
+				<LineChart width={600} height={300} data={this.state.totalTimeSpentArray}
 				>
 					<XAxis dataKey="name" />
 					<YAxis />
@@ -564,26 +509,26 @@ class Piechart extends React.Component {
 
 				this.state.doneArrayList = response.data.issues.filter(function (issue) {
 
-					if (issue.fields.status.name == "Done") {
+					if (issue.fields.status.name === "Done") {
 						return issue;
 					}
 				})
 				this.state.inprogressArrayList = response.data.issues.filter(function (issue) {
 
-					if (issue.fields.status.name == "In Progress") {
+					if (issue.fields.status.name === "In Progress") {
 						return issue;
 					}
 				})
 				this.state.todoArrayList = response.data.issues.filter(function (issue) {
 
-					if (issue.fields.status.name == "To Do") {
+					if (issue.fields.status.name === "To Do") {
 						return issue;
 					}
 				})
 
 				this.state.inqaArrayList = response.data.issues.filter(function (issue) {
 
-					if (issue.fields.status.name == "In QA") {
+					if (issue.fields.status.name === "In QA") {
 						return issue;
 					}
 				})
