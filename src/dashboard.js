@@ -1,13 +1,54 @@
 import React from 'react';
 
 import './App.css';
+// import axios from 'axios';
+import { Navbar, NavbarBrand, Button, Popover, OverlayTrigger } from 'react-bootstrap';
+// import { Modal } from 'react-overlays';
+// import { BarChart, Bar } from 'recharts';
+import Modal from 'react-modal';
 import axios from 'axios';
-import { Navbar, NavbarBrand, Button } from 'react-bootstrap';
-import { Modal } from 'react-overlays';
-import { BarChart, Bar } from 'recharts';
+import 'bootstrap/css/bootstrap.min.css';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import Avatar from 'material-ui/Avatar';
+import List from 'material-ui/List/List';
+import ListItem from 'material-ui/List/ListItem';
 
-Modal.prototype.componentWillMount = function componentWillMount() {
-	this.focus = function focus() { };
+// import Popover from 'react-popover-wrapper';
+// Modal.prototype.componentWillMount = function componentWillMount() {
+// 	this.focus = function focus() { };
+// }
+const popoverLeft = (
+	<Popover id="popover-positioned-left" title="Popover left">
+		<strong>Holy guacamole!</strong> Check this info.
+	</Popover>
+);
+
+const customStyles = {
+	content: {
+		top: '50%',
+		left: '50%',
+		right: 'auto',
+		bottom: 'auto',
+		marginRight: '-50%',
+		transform: 'translate(-50%, -50%)'
+	}
+};
+
+const selectStyles = {
+	color: 'white',
+	fontSize: '5px'
+}
+const imageStyle = {
+    marginTop: "-28px",
+    float: "right"
+
+
+}
+
+const menuStyle = {
+color:'yellow'
+
 }
 
 class Dashboard extends React.Component {
@@ -19,80 +60,226 @@ class Dashboard extends React.Component {
 			projectName: '',
 			teamName: '',
 			items: [],
-			issuesArray:[]
-			//  barData : [
-			// 	{x: 'SomethingA', y: 10}, {x: 'SomethingB', y: 4}, {x: 'SomethingC', y: 3}
-			// ],
-			 
+			issuesArray: [],
+			subtitle: '',
+			isDeleteModal: false,
+			selectedAccountId: '',
+			selectedDashboardItem: false,
+			currentSelectedDashboardItem: 'customerTeams',
+			value: 2,
 		}
 		this.openModal = this.openModal.bind(this);
-		this.closeModal = this.closeModal.bind(this);
+		// this.addAccountModal = this.addAccountModal.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.selectedProjectDetails = this.selectedProjectDetails.bind(this);
+		this.afterOpenModal = this.afterOpenModal.bind(this);
+		this.deleteAccountModal = this.deleteAccountModal.bind(this);
+		this.openSideMenu = this.openSideMenu.bind(this);
+		this.closeSideMenu = this.closeSideMenu.bind(this);
+		this.selectedDashboardItem = this.selectedDashboardItem.bind(this);
+	}
 
+
+	selectedDashBoard(event, index, value) {
+		this.setState({ value: value });
+		if (value == 1) {
+			//this.props.history.push('/manageCustomerTeams');
+			this.props.history.push({ pathname: '/manageCustomerTeams', state: { selectedDashboard: this.state.value } })
+		}
+
+	}
+
+	openSideMenu() {
+		document.getElementById("mySidenav").style.width = "250px";
+	}
+
+	closeSideMenu() {
+		document.getElementById("mySidenav").style.width = "0px";
+
+	}
+	selectedDashboardItem(item) {
+		console.log(this.state.currentSelectedDashboardItem)
+		if (this.state.currentSelectedDashboardItem !== undefined) {
+			console.log(this.state.currentSelectedDashboardItem)
+			document.getElementById(this.state.currentSelectedDashboardItem).classList.remove("selectedDashboardItem");
+		}
+		this.state.currentSelectedDashboardItem = item.target.parentNode.id
+		document.getElementById(item.target.parentNode.id).classList.add("selectedDashboardItem");
 	}
 	openModal() {
 		this.setState({ isModalOpen: true })
+	}
+	afterOpenModal() {
+		// references are now sync'd and can be accessed.
+		this.subtitle.style.color = '#f00';
 	}
 	handleChange(e) {
 		this.setState({ [e.target.name]: e.target.value });
 
 	}
-	closeModal() {
+	// addAccountModal(accountName) {
+	// 	console.log(accountName)
+	// 	axios.post(`http://localhost:3030/accounts`,
+	// 		{
+	// 			"name": accountName,
+	// 			"status": "progress",
+	// 			"projects": [],
+	// 			"people": []
+	// 		})
+	// 		.then(response => {
+	// 			console.log(response.data._id)
+	// 			console.log(response.data.name)
+	// 			const newItem = {
+	// 				name: response.data.name,
+	// 				_id: response.data._id,
+	// 				// teamName: this.state.teamName
+	// 			};
 
-		const newItem = {
-			projectName: this.state.projectName,
-			id: Date.now(),
-			teamName: this.state.teamName
-		};
+	// 			this.state.items = this.state.items.concat(newItem)
+	// 			this.setState({
+	// 				isModalOpen: false,
+	// 				projectName: ' ',
+	// 				teamName: ' '
+	// 			});
+	// 			//  window.sessionStorage.setItem("DashboardData", JSON.stringify(this.state.items));
+	// 		})
 
-		this.state.items = this.state.items.concat(newItem)
-		this.setState({
-			isModalOpen: false,
-			projectName: ' ',
-			teamName: ' '
-		});
-		window.sessionStorage.setItem("DashboardData", JSON.stringify(this.state.items));
+	// }
+
+	selectedProjectDetails(event, selectedAccount) {
+
+		if (event.target.id !== 'trashIconID') {
+			this.props.history.push({ pathname: '/account', state: { account: selectedAccount } })
+		}
+
+		else {
+
+			this.setState({ isDeleteModal: true, selectedAccountId: selectedAccount._id })
+
+		}
+
 	}
 
-	selectedProjectDetails(projectname, teamname) {
-		this.props.history.push({ pathname: '/account', state: { projectName: projectname, teamName: teamname } })
-	}
+	deleteAccountModal(item, deleteModal) {
+		axios.delete('http://localhost:3030/accounts/' + item)
+			.then(response => {
+				if (response.statusText == 'OK') {
+					axios.get('http://localhost:3030/accounts')
+						.then(response => {
+							this.setState({ items: response.data })
+						})
+				}
+				this.setState({ isDeleteModal: false })
+			})
 
+	}
 	cancelModal() {
-		this.setState({ isModalOpen: false, projectName: ' ', teamName: ' ' })
+		this.setState({ isModalOpen: false, projectName: ' ', teamName: ' ', isDeleteModal: false })
 	}
 
 	componentWillMount() {
+		axios.get('http://localhost:3030/accounts')
+			.then(response => {
+				this.setState({ items: this.state.items.concat(response.data) })
 
-		window.sessionStorage.getItem("DashboardData")
-
-		var x = JSON.parse(window.sessionStorage.getItem("DashboardData"))
-		if (x != undefined) {
-			this.setState((prev) => ({
-				items: prev.items.concat(x)
-			}))
-		}
-
-	
-		
-
+			})
 
 	}
 
-	render() {
-		
-	
-		return (
-			
-			<div className="dashboardNavbarHeader">
-				<Navbar className="dashboardHeaderBgColor">
-					<NavbarBrand className="col-sm-5 col-md-12">Dashboard</NavbarBrand >
-				</Navbar>
-			
 
-				<Modal show={this.state.isModalOpen}
-					className={["col-sm-offset-2 col-md-offset-4 col-lg-offset-5 modalMargins overlay "].join(' ')}>
+
+	componentDidMount() {
+		document.getElementById('customerTeams').classList.add("selectedDashboardItem");
+
+	}
+
+
+
+	render() {
+
+
+		return (
+
+			<div className="container-fluid">
+				{/* <Navbar className="dashboardHeaderBgColor">
+				<i className="glyphicon glyphicon-menu-hamburger"></i>
+					<NavbarBrand className="col-sm-12 col-md-12"><h3 className="">Dashboard</h3></NavbarBrand >
+				</Navbar> */}
+
+				<nav className="navbar navbar-fixed-top navbarBgColor navbarFontColor">
+					<div className="col-md-12">
+						<div className="col-md-1  marginT17">
+							{/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
+							<h4 className="margin0 pointer paddingL04" onClick={() => this.openSideMenu()} ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
+						</div>
+						<div className="col-md-7 textAlignCenter marginT17">
+							<h4 className="margin0">Customer Teams & Projects</h4>
+						</div>
+						<div className="col-md-2 marginT28">
+							<SelectField floatingLabelText="Frequency" floatingLabelStyle={selectStyles} value={this.state.value} onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
+								<MenuItem value={2} selectedMenuItemStyle={menuStyle} primaryText="Customer Teams & Projects" />	
+								<MenuItem value={1}  primaryText="Manage Customer Teams" />
+							</SelectField>
+						</div>
+						<div className="col-md-2  marginT17 displayInline">
+						<div>
+                                <h4 className="margin0 pointer paddingL04">Administrator: </h4>
+                            </div>
+                            <div>
+                                <List>
+                                    <ListItem
+                                        disabled={true}
+                                        style={imageStyle}
+                                        leftAvatar={
+                                            <Avatar src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
+                                        }
+
+                                    />
+                                </List>
+                            </div>
+							{/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
+							{/* <h4 className="margin0 pointer paddingL04" onClick={() => this.openModal()} title="create account"><i className="glyphicon glyphicon-plus"></i></h4> */}
+						</div>
+
+					</div>
+				</nav>
+
+				<div id="mySidenav" className="sidenav">
+					<div href="javascript:void(0)" className="closebtn pointer" onClick={() => this.closeSideMenu()}>&times;</div>
+
+					<div id="customerTeams" className="navbarFontColor pointer  dashboardMenuHeight marginT22 paddingT1"
+						onClick={(e) => this.selectedDashboardItem(e)}>
+						<h5><i className="glyphicon glyphicon-group "></i>Customer Teams & Projects</h5>
+					</div>
+
+					<div id="humanResource" className="navbarFontColor pointer  dashboardMenuHeight paddingT1"
+						onClick={(e) => this.selectedDashboardItem(e)}>
+						<h5><i className="glyphicon glyphicon-user "></i>Human Resources</h5>
+
+					</div>
+					<div id="knowledgeRep0" className="navbarFontColor pointer  dashboardMenuHeight paddingT1"
+						onClick={(e) => this.selectedDashboardItem(e)}>
+						<h5><i className="glyphicon glyphicon-book-open"></i>Knowledge Repo</h5>
+
+
+					</div>
+
+					<div id="settings" className="navbarFontColor pointer  dashboardMenuHeight paddingT1"
+						onClick={(e) => this.selectedDashboardItem(e)}>
+						<h5><i className="glyphicon glyphicon-cogwheel "></i>Settings</h5>
+
+					</div>
+					<div id="logOut" className="navbarFontColor pointer  dashboardMenuHeight paddingT1"
+						onClick={(e) => this.selectedDashboardItem(e)}>
+						<h5><i className="glyphicon glyphicon-log-off "></i>Log Out</h5>
+
+					</div>
+
+				</div>
+				{/* <Modal show={this.state.isModalOpen} */}
+				<Modal isOpen={this.state.isModalOpen} style={customStyles}
+
+					className={["col-sm-8 col-md-7 col-lg-3  modalMargins overlay "].join(' ')}>
 
 					<div>
 						<div className="loginHeader">
@@ -107,10 +294,10 @@ class Dashboard extends React.Component {
 						<div className="loginBtns">
 
 							<div>
-								<Button bsStyle="success" bsSize="small" className="loginSubmitBtn" onClick={() => this.closeModal()} >Submit</Button>
+								<Button bsStyle="success" bsSize="small" className="loginSubmitBtn" onClick={() => this.addAccountModal(this.state.projectName)} >Submit</Button>
 								<Button bsStyle="danger" bsSize="small" className="loginSubmitBtn" onClick={() => this.cancelModal()} >Cancel</Button>
 							</div>
- 
+
 
 
 						</div>
@@ -119,28 +306,59 @@ class Dashboard extends React.Component {
 
 				</Modal>
 
-				<div>
-					<Button bsStyle="primary" bsSize="small" onClick={() => this.openModal()}>Add Account</Button>
-				</div>
+				<Modal isOpen={this.state.isDeleteModal} style={customStyles}
 
-		
-				<div>
+					className={["col-sm-8 col-md-7 col-lg-3  modalMargins overlay "].join(' ')}>
 
-					{this.state.items.map(item => (
-						<div className="textAlignLeft col-md-2 DashboardAccountList pointer" key={item.id} onClick={() => this.selectedProjectDetails(item.projectName, item.teamName)}>
-							<div id="projectTitle">{item.projectName}</div>
+					<div>
+						<div className="loginHeader">
+							<h4>Are you sure to delete the account permanently</h4>
+						</div>
+
+
+						<div className="loginBtns">
+
+							<div>
+								<Button bsStyle="success" bsSize="small" className="loginSubmitBtn" onClick={() => this.deleteAccountModal(this.state.selectedAccountId, this.state.isDeleteModal)} >Submit</Button>
+								<Button bsStyle="danger" bsSize="small" className="loginSubmitBtn" onClick={() => this.cancelModal()} >Cancel</Button>
 							</div>
-					))}
 
 
-				</div>
-				
-				<div>
-				{/* <BarChart  width={400} height={400} data={barData}>
+
+						</div>
+
+					</div>
+
+				</Modal>
+
+
+
+
+				<div className="row">
+					<div>
+						{this.state.items.map(item => (
+
+							<div id="accountTitle" className="col-sm-3 col-md-2 DashboardAccountList pointer" key={item._id} onClick={(event) => this.selectedProjectDetails(event, item)}>
+
+								{/* <span id="trashIconID" className="glyphicon glyphicon-trash floatRight marginT10"></span> */}
+
+								<div id="projectTitle">{item.customerName}</div>
+
+							</div>
+
+						))}
+
+
+
+
+					</div>
+
+
+					{/* <BarChart  width={400} height={400} data={barData}>
 				<Bar dataKey='uv' fill='#8884d8'/>
 			</BarChart > */}
-</div>
-			
+				</div>
+
 
 			</div>
 

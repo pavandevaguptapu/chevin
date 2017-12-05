@@ -4,22 +4,33 @@ import { Navbar, NavbarBrand, Button } from 'react-bootstrap';
 import axios from 'axios';
 import { PieChart, Pie, Cell,LineChart, Line, XAxis, YAxis, CartesianGrid,Legend } from 'recharts';
 import { Draggable, Droppable } from 'react-drag-and-drop'
-import { Modal } from 'react-overlays';
+import Modal from 'react-modal';
+
+// import { Modal } from 'react-overlays';
 Modal.prototype.componentWillMount = function componentWillMount() {
 	this.focus = function focus() { };
 }
 
-
+const customStyles = {
+	content : {
+	  top                   : '50%',
+	  left                  : '50%',
+	  right                 : 'auto',
+	  bottom                : 'auto',
+	  marginRight           : '-50%',
+	  transform             : 'translate(-50%, -50%)'
+	}
+  };
 
 
 class Account extends React.Component {
 	constructor(props) {
 		super(props)
-
+console.log(props)
 
 		this.state = {
 			isModalOpen: false,
-			projectName: '',
+			projectName:'',
 			teamName: '',
 			projectDetails: '',
 			selectedTab1: true,
@@ -47,8 +58,9 @@ class Account extends React.Component {
 			workHours: [],
 			totalHours: [],
 			issuesPieChart: '',
-			datesArrayList: []
-
+			datesArrayList: [],
+			isAddProjectModal:false,
+			 projectTitle:''
 			//  visibility:''
 
 
@@ -57,6 +69,27 @@ class Account extends React.Component {
 		this.SelectedTab = this.SelectedTab.bind(this);
 		this.getEachIssue = this.getEachIssue.bind(this);
 		this.onDrop = this.onDrop.bind(this);
+		this.addProjectModal = this.addProjectModal.bind(this);
+		this.addProject = this.addProject.bind(this);
+		this.handleChange = this.handleChange.bind(this);
+	}
+	handleChange(e) {
+
+	}
+	addProjectModal(){
+		this.setState({isAddProjectModal:true})
+	}
+	addProject(account,projectTitle){
+		console.log(account)
+		console.log(projectTitle)
+		axios.put('http://localhost:3030/accounts/'+account._id,
+		{
+			"projects" : [{"name":projectTitle, "tools":[]}],
+		})
+		.then(response=>{
+			console.log(response)
+		})
+		this.setState({isAddProjectModal:false})
 	}
 
 	getEachIssue(item) {
@@ -72,10 +105,11 @@ class Account extends React.Component {
 		this.setState({ isModalOpen: true })
 	}
 	cancelModal() {
-		this.setState({ isModalOpen: false });
+		this.setState({ isModalOpen: false, isModalOpen: false });
 	}
 
 	onDrop(data) {
+		
 		this.setState({ isModalOpen: true })
 	}
 	SelectedTab(e) {
@@ -135,84 +169,89 @@ class Account extends React.Component {
 	}
 
 	componentWillMount() {
-		if (window.sessionStorage.getItem("Account") !== "undefined" && window.sessionStorage.getItem("Account") !== null) {
-			this.setState({projectDetails:JSON.parse(window.sessionStorage.getItem("Account")),projectName:this.state.projectDetails.projectName,
-			teamName:this.state.projectDetails.teamName})
-			// this.state.projectDetails = JSON.parse(window.sessionStorage.getItem("Account"))
-			// this.state.projectName = this.state.projectDetails.projectName
-			// this.state.teamName = this.state.projectDetails.teamName
+
+
+		 if (window.sessionStorage.getItem("Account") !== "undefined" && window.sessionStorage.getItem("Account") !== null) {
+		 
+		if(this.props.location.state !== undefined){
+			
+			window.sessionStorage.setItem("Account", JSON.stringify(this.props.location.state));
+			this.setState({projectDetails:JSON.parse(window.sessionStorage.getItem("Account"))})
+		}
+		else{
+	
+		window.sessionStorage.getItem("Account")
+		this.setState({projectDetails:JSON.parse(window.sessionStorage.getItem("Account"))})
+	}
+	
+		 }
+
+		if (window.sessionStorage.getItem("Account") === "undefined" || window.sessionStorage.getItem("Account") === null) {
+		
+			window.sessionStorage.setItem("Account", JSON.stringify(this.props.location.state));
+		
+			this.setState({projectDetails:JSON.parse(window.sessionStorage.getItem("Account"))})
+		
 		}
 	}
-
+	
 	render() {
-		if (window.sessionStorage.getItem("Account") === "undefined" || window.sessionStorage.getItem("Account") === null) {
-			 window.sessionStorage.setItem("Account", JSON.stringify(this.props.location.state));
-			this.setState({projectDetails:JSON.parse(window.sessionStorage.getItem("Account")),projectName:this.state.projectDetails.projectName,
-			teamName:this.state.projectDetails.teamName})
+		
+			return (
+				<div className="container-fluid padding0">
 
-			
-			// this.state.projectDetails = JSON.parse(window.sessionStorage.getItem("Account"))
-			// this.state.projectName = this.state.projectDetails.projectName
-			// this.state.teamName = this.state.projectDetails.teamName
-		}
-
-
-
-		return (
-
-			<div className="dashboardNavbarHeader">
-				<Navbar className="dashboardHeaderBgColor" style={{ marginBottom: "0px" }}>
-					<NavbarBrand className="col-sm-5 col-md-12">Account</NavbarBrand>
+			{/* <div className="dashboardNavbarHeader"> */}
+				<div className="row minheight">
+				<Navbar className="dashboardHeaderBgColor dashboardNavbarHeader" style={{ marginBottom: "0px" }}>
+					{/* <NavbarBrand className="col-sm-5 col-md-12">{this.state.projectDetails.account.name}</NavbarBrand> */}
+					<h2 className="accountNameBgcolor marginT5 marginB0">{this.state.projectDetails.account.name}</h2>
 				</Navbar>
+				</div>
 				<div className="row">
-					<div className="col-md-2" style={{ borderRight: "1px solid #76aad8", marginRight: "0px", padding: "0px", height: "94vh" }}>
-						<h3 className="accountProjectProfileheading">Project Profile</h3>
-						<div className="accountProjectProfileInfo">
-							<h4 className="marginT3">Project Name </h4><span className="names">:{this.state.projectName}</span>
+					<div className="col-sm-3 col-md-2 " style={{ borderRight: "1px solid #76aad8", marginRight: "0px", padding: "0px", height: "100vh" }}>
+						<h5 className="accountProjectProfileheading textAlignCenter">Project Profile
+						{/* <div className="accountProjectProfileInfo">
+							<h4 className="marginT3">Project Name </h4><span className="names">:{this.state.projectDetails.accountName}</span>
 						</div>
 						<div className="accountProjectProfileInfo">
-							<h4 className="marginT3">Team Name </h4><span className="names">:{this.state.teamName}</span>
-						</div>
+							<h4 className="marginT3">Team Name </h4><span className="names">:{this.state.projectDetails.teamName}</span>
+						</div> */}
+						<Button	  
+						style={{backgroundColor:"white",borderRadius:"15px",fontSize:"xx-small",borderColor: "#76aad8",marginBottom:"4px",float:"right"}} 
+						bsSize="small" onClick={() => this.addProjectModal()} title="Add project">
+
+						<span className="glyphicon glyphicon-plus"></span>
+					
+					</Button>
+					</h5>
 					</div>
 
-					<div className={[this.state.selectedTab1 === true ? "selectedItem" : '', "col-md-2 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Knowledge Management")}>
+					<div className={[this.state.selectedTab1 === true ? "selectedItem" : '', "col-sm-3 col-md-2  accountTabs pointer textAlignCenter"].join(' ')} onClick={() => this.SelectedTab("Knowledge Management")}>
 						<h5> Knowledge Management </h5>
 					</div>
-					<div className={[this.state.selectedTab2 === true ? "selectedItem" : '', "col-md-1 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Source")}>
-						<h5> Source</h5>
+					<div className={[this.state.selectedTab2 === true ? "selectedItem" : '', " col-sm-1 col-md-1  accountTabs pointer textAlignCenter"].join(' ')} onClick={() => this.SelectedTab("Source")}>
+						<h5>Source</h5>
 					</div>
-					<div className={[this.state.selectedTab3 === true ? "selectedItem" : '', "col-md-2 accountTabs"].join(' ')} onClick={() => this.SelectedTab("IssueTracking")}>
-						<h5> Issue Tracking</h5>
+					<div className={[this.state.selectedTab3 === true ? "selectedItem" : '', "col-sm-1 col-md-2  accountTabs pointer textAlignCenter"].join(' ')} onClick={() => this.SelectedTab("IssueTracking")}>
+						<h5>IssueTracking</h5>
 					</div>
-					<div className={[this.state.selectedTab4 === true ? "selectedItem" : '', "col-md-2 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Development")}>
-						<h5> Development</h5>
+					<div className={[this.state.selectedTab4 === true ? "selectedItem" : '', "col-sm-1 col-md-2  accountTabs pointer textAlignCenter"].join(' ')} onClick={() => this.SelectedTab("Development")}>
+						<h5>Development</h5>
 					</div>
-					<div className={[this.state.selectedTab5 === true ? "selectedItem" : '', "col-md-1 accountTabs"].join(' ')} onClick={() => this.SelectedTab("Quality")}>
-						<h5> Quality</h5>
+					<div className={[this.state.selectedTab5 === true ? "selectedItem" : '', "col-sm-1 col-md-2  accountTabs pointer textAlignCenter"].join(' ')} onClick={() => this.SelectedTab("Quality")}>
+						<h5>Quality</h5>
 					</div>
-					<div className="col-md-2 accountTabs" style={{ borderLeft: "1px solid #76aad8", padding: "0px", height: "94vh" }}>
-
-						<ul>
-							<Draggable type="metal" data="github"><li>Github</li></Draggable>
-							<Draggable type="metal" data="attlasian"><li>Attlasian</li></Draggable>
-							<Draggable type="metal" data="sonarQube"><li>SonarQube</li></Draggable>
-							<Draggable type="metal" data="jenkins"><li>Jenkins</li></Draggable>
-							<Draggable type="metal" data="tfs"><li>TFS</li></Draggable>
-							<Draggable type="metal" data="sharePoint"><li>SharePoint</li></Draggable>
-						</ul>
-					</div>
-					<Droppable
-						types={['metal']}
-						onDrop={this.onDrop.bind(this)}>
-						<div className="col-lg-2" style={{ marginTop: "-810px", marginLeft: "317px" }} >
+				 <Droppable types={['metal']} onDrop={this.onDrop.bind(this)} className="col-md-9" style={{minHeight:"100vh"}} >
+						
+						<div className="col-md-3">
 
 							{this.state.issueTracking}
 							{this.state.development}
 							{this.state.source}
 							{this.state.accountModal}
 						</div>
-						<div className="col-lg-7 marginT35"
-							style={{ marginTop: "-800px", marginLeft: "617px" }} >
+						<div className="col-md-9">
+							
 							<div>
 
 								{this.state.issuesList.map(item => (
@@ -220,38 +259,63 @@ class Account extends React.Component {
 									<li style={{ textAlign: "left" }} key={item.key} >{item.key}{item.fields.description}{item.fields.status.name}</li>
 								))}
 
-
+								
 
 							</div>
 							<div>
 								{this.state.issuesPieChart}
 								{this.state.checkbox}
-								{this.state.burndownChart}
+								
 							</div>
 
 							<div>
 								{this.state.workHours}
 							</div>
 						</div>
-					</Droppable>
+						</Droppable> 
+				
+						<div className="col-sm-2 col-md-1 accountTabs margin35px" style={{ borderLeft: "1px solid #76aad8", padding: "0px", height: "100vh" }}>
+
+					<div className="pointer col-md-12 marginB20">
+							<Draggable className="draggablediv textAlignCenter backgroundcolor1" type="metal" data="github">Github</Draggable>
+							</div>
+							<div className="pointer col-md-12 marginB20">
+							<Draggable className="draggablediv textAlignCenter backgroundcolor2" type="metal" data="attlasian">Attlasian</Draggable>
+							</div>
+							<div className="pointer col-md-12 marginB20">
+							<Draggable className="draggablediv textAlignCenter backgroundcolor3" type="metal" data="sonarQube">SonarQube</Draggable>
+							</div>
+							<div className="pointer col-md-12 marginB20">
+							<Draggable className="draggablediv textAlignCenter backgroundcolor4" type="metal" data="jenkins">Jenkins</Draggable>
+							</div>
+							<div className="pointer col-md-12 marginB20">
+							<Draggable className="draggablediv textAlignCenter backgroundcolor5" type="metal" data="tfs">TFS</Draggable>
+							</div>
+							<div className="pointer col-md-12 marginB20">
+							<Draggable className="draggablediv textAlignCenter backgroundcolor6" type="metal" data="sharePoint">SharePoint</Draggable>
+							</div>
+						
+					</div>
+				
 				</div>
-				<Modal show={this.state.isModalOpen}
-					className={["col-sm-offset-2 col-md-offset-4 col-lg-offset-5 accountmodalMargins overlay "].join(' ')}>
+				<Modal isOpen={this.state.isModalOpen} style={customStyles}  
+					className={["col-sm-8 col-md-6 modalMargins overlay "].join(' ')}>
 
 					<div>
 						<div className="loginHeader">
-							<h1>Account Details</h1>
+							<h1>Project Details</h1>
 						</div>
 						<div className="loginUserName">
-							<label>UserName:<input value='' name='userName' /></label>
-						</div>
-						<div className="loginPwd">
-							<label >Password:<input value='' name='pswd' /></label>
-						</div>
+						<label>UserName:<input value='' name='userName' /></label>
+					</div>
+					<div className="loginPwd">
+						<label >Password:<input value='' name='pswd' /></label>
+					</div>
+						
 						<div className="loginBtns">
 
 							<div>
-								{/* <Button bsStyle="success" bsSize="small" className="loginSubmitBtn" onClick={() => this.closeModal()} >Submit</Button> */}
+							 {/* <Button bsStyle="success" bsSize="small" className="loginSubmitBtn" onClick={() => this.addProject()} >Submit</Button>  */}
 								<Button bsStyle="danger" bsSize="small" className="loginSubmitBtn" onClick={() => this.cancelModal()} >Cancel</Button>
 							</div>
 
@@ -263,8 +327,35 @@ class Account extends React.Component {
 
 				</Modal>
 
-			</div>
+				<Modal isOpen={this.state.isAddProjectModal} style={customStyles}  
+					className={["col-sm-8 col-md-6  modalMargins overlay "].join(' ')}>
 
+					<div>
+						<div className="loginHeader">
+							<h1>Account Details</h1>
+						</div>
+						<div className="loginUserName">
+							<label>Project Title:<input value={this.state.projectTitle} name='projectTitle' onChange={this.handleChange}/></label>
+						</div>
+						{/* <div className="loginPwd">
+							<label >Password:<input value='' name='pswd' /></label>
+						</div> */}
+						<div className="loginBtns">
+
+							<div>
+								<Button bsStyle="success" bsSize="small" className="loginSubmitBtn" onClick={() => this.addProject(this.state.projectDetails.account,this.state.projectTitle)} >Submit</Button> 
+								<Button bsStyle="danger" bsSize="small" className="loginSubmitBtn" onClick={() => this.cancelModal()} >Cancel</Button>
+							</div>
+
+
+
+						</div>
+
+					</div>
+
+				</Modal>
+			{/* </div> */}
+			</div>
 		)
 
 	}
@@ -338,7 +429,7 @@ class Chekboxes extends React.Component {
 
 	render() {
 		return (
-			<div className="displayInline  col-lg-offset-1 col-lg-4 col-md-4">
+			<div className="displayInline  col-md-10">
 				<div className="borderRadius" style={{ backgroundColor: "#FF8042", width: "20px", height: "20px", border: "5px solid #FF8042" }}>
 
 				</div><span><label className="marginR10">To Do</label></span>

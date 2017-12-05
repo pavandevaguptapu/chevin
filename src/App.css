@@ -1,28 +1,30 @@
+
 body{
-  margin: auto;
-  padding:0px;
-	overflow-y:scroll;
+  /* margin: auto; */
+   padding:0px !important;
 	overflow-x: hidden;
 }
-	
+
 	.loginboxBackgroundColor{
 	background-color:transparent;
 	border:1px solid #cbcbd0;
 	border-radius:10px;
 	width:400px;
-	margin:auto;
+
 	margin-top:315px;
+	padding: 0px !important
 }
 .loginHeader{
 	text-align:center !important;
 	border-width:1px solid black !important;
-	border-bottom:1px solid #76aad8;
+	border-bottom:1px solid #00bcd4;
 }
-.loginFormHeight{
+/* .loginFormHeight{
 	height:250px;
-}
+} */
 .loginUserName{
-	padding:46px 0px 30px 93px;
+
+	margin-bottom: 13%;
 }
 .loginPwd{
 	padding:11px 0px 51px 93px;
@@ -67,10 +69,13 @@ body{
 }
 
 .accountProjectProfileheading{
-	margin-top:9px;
-	padding-bottom:14px;
+	margin-top:5px;
+	 padding-bottom:15px; 
 	border-bottom:1px solid #76aad8;
 	text-align: left;
+	margin-right: 0px;
+	padding-right: 12px;
+	
 }
 
 .accountProjectProfileInfo{
@@ -80,8 +85,7 @@ body{
 }
 
 .accountTabs{
-	padding:7px;
-    border-bottom: 1px solid #76aad8 !important;
+	border-bottom: 1px solid #76aad8 !important;
     border-right: 1px solid #76aad8 !important;
 	border-bottom-right-radius: 3px;
 }
@@ -90,11 +94,23 @@ body{
 	background-color:#cbcccc !important;
 }
 
+.selectedDashboardItem{
+	background-color: #0b3989;
+}
+.margin10{
+	margin-bottom: 10px !important;
+}
 .marginT3{
 	margin-top:3px;
 }
+.marginT11{
+	margin-top:11%;
+}
 .marginT35{
 		margin-top:35px;
+	}
+	.marginT28{
+		margin-top:-28px;
 	}
 .paddingL9{
   padding-left: 9px;
@@ -104,13 +120,18 @@ body{
   text-align: left;
 }
 
+.textAlignCenter{
+	text-align: center;
+  }
+  .textAlignRight{
+	text-align: right;
+  }
 .modalMargins{
     width: 400px;
     text-Align: center;
     border: 1px solid #76aad8;
-    margin-top: 100px;
-    background: aliceblue;
-    border-radius: 23px;
+    /* margin-top: 100px; */
+       border-radius: 23px;
 }
 
 .row{
@@ -122,19 +143,20 @@ body{
 	margin: -1px;
 }
 .DashboardAccountList{
-    height: 321px;
+    height: 235px;
     border: 1px solid #76aad8;
     border-radius: 21px;
-    margin-left: 45px;
+    margin-left: 38px;
     text-align: center;
     background: #eae8e8;
-    margin-right: 22px;
-    margin-top: 37px;
+    margin-right: 8px;
+	margin-top: 68px;
+	/* display: flex; */
 }
 
 #projectTitle{
-	vertical-align: middle;
-	 margin-top: 128px; 
+	
+	 margin-top: 89px; 
 }
 .bold{
 	font-weight: bold;
@@ -143,16 +165,16 @@ body{
 	padding-left: 16px !important;
 }
 .overlay {
-	 margin: 220px; 
-    position          : fixed;
-    background-color   : #bed9f1
+	 /* margin-top: 220px;  */
+    /* position          : fixed; */
+    background-color   : aliceblue
   }
   .pointer{
 	  cursor: pointer;
   }
 
 .displayInline{
-	display: inline-flex
+	display: inline-flex !important
 }
 .borderRadius{
 	border-radius: 10px;
@@ -172,3 +194,191 @@ body{
 
 	display: none;
 }
+/* Droppable div{
+	height: 200px;
+    width: 50%;
+    background-color: powderblue;
+} */
+
+.floatRight{
+	float: right;
+}
+.createAccountButton{
+	border-radius: 14px !important;
+	background-color: #0aa4ec !important;
+}
+.marginT10{
+	margin-top: 10px;
+}
+.marginT0{
+	margin-top: 0px !important;
+}
+.marginB15{
+	margin-bottom: 15px;
+}
+.marginB08{
+	margin-bottom: 8%;
+}
+.Popover-body {
+	display: inline-flex;
+	flex-direction: column;
+	background: white;
+	z-index: 1;
+	margin-top: -1px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+  }
+   
+  .Popover-tipShape {
+	fill: white;
+	stroke-width: 1;
+	stroke: rgba(0, 0, 0, 0.15);
+  }
+   
+  .Popover {
+	z-index: 100;
+	transform: translateY(0px) !important;
+  }
+  .zindex{
+	  z-index: 1
+  }
+  .accountNameBgcolor{
+	  color: #ffffff !important
+	  
+  }
+  .padding0{
+	  padding: 0px !important;
+  }
+
+  .marginT5{
+	  margin-top: 7px !important
+  }
+
+  .marginB0{
+	margin-bottom: 0px !important
+}
+.textAlignCenter{
+	text-align: center
+}
+.draggablediv{
+	border: 1px solid cadetblue;
+	
+	height: 78px;
+	
+	border-radius: 53px;
+	line-height: 64px;
+}
+.marginB20{
+	margin-bottom: 20px;
+}
+.margin35px{
+	margin-top: -35px;
+}
+.backgroundcolor1{
+background-color: #26A69A
+}
+
+.backgroundcolor2{
+	background-color: #FFA726
+	}
+	.backgroundcolor3{
+		background-color: #6495ed 
+		}
+		.backgroundcolor4{
+			background-color: #AA00FF;
+			}
+			.backgroundcolor5{
+				background-color: #29B6F6
+				}
+				.backgroundcolor6{
+					background-color: #78909C
+					}
+
+					
+.minheight{
+	height:calc(100%-86.4px)
+}
+.navbarBgColor{
+	background: #4373d5; /* For browsers that do not support gradients */
+	background: -webkit-linear-gradient(#4373d5, #5586d1); /* For Safari 5.1 to 6.0 */
+	background: -o-linear-gradient(#4373d5, #5586d1); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#4373d5, #5586d1); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#4373d5, #5586d1); /* Standard syntax (must be last) */
+	}
+	.navbarFontColor{
+		color:white;
+		}
+		.margin0{
+			margin:0px;
+			}
+			.marginT17{
+				margin-top:17px;
+				}
+			.flex {
+				display: flex;
+				}
+				.paddingL04{
+					padding-left: 4px;
+					}
+					.floatNone{
+						float:none;
+						}
+						
+						.sidenav {
+							height: 100%;
+							width: 0;
+							position: fixed;
+							z-index: 1;
+							top: 0;
+							left: 0;
+							background-color: #2c5189;
+							overflow-x: hidden;
+							transition: 0.5s;
+							padding-top: 60px;
+						}
+						.sidenav .closebtn {
+							position: absolute;
+							top: 51px;
+							right: 7px;
+							font-size: 26px;
+							margin-left: 50px;
+						}
+						.dashboardMenuHeight{
+							height: 34px
+						}
+						.marginT22{
+							margin-top:22px;
+						}
+						.paddingT1{
+							padding-top:1px; 
+						}
+						.paddingT52{
+							padding-top:52px; 
+						}
+						.actionsFontSize{
+							font-size: 18px !important
+						}
+						#footer {
+							position: fixed;
+							bottom: 25px;
+							width: 100%;
+							color: white;
+							
+							
+						}
+
+						.addButton{
+							background-color:#4373d5;
+							font-size: 30px;
+							padding: 5px;
+							border-radius: 21px;
+						}
+
+						.custId, input[type=text] {
+							background: transparent;
+							border: none;
+						
+						}
+
+						.newTeamMemberDetails{
+							display: none;
+						}
