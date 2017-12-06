@@ -3,6 +3,14 @@ body{
   /* margin: auto; */
    padding:0px !important;
 	overflow-x: hidden;
+	height: 100%;
+}
+html {
+    height: 100%;
+}
+#root{
+
+	height: 100%
 }
 
 	.loginboxBackgroundColor{
@@ -10,8 +18,7 @@ body{
 	border:1px solid #cbcbd0;
 	border-radius:10px;
 	width:400px;
-
-	margin-top:315px;
+	margin: auto;
 	padding: 0px !important
 }
 .loginHeader{
@@ -36,6 +43,11 @@ body{
 	margin-bottom: 35px;
 }
 
+	.justify{
+		display:flex;
+		align-items:center;
+		justify-content:center;
+			}
 .loginSubmit{
 	margin-right:6px;
 	background-color:#75d475;
@@ -102,6 +114,9 @@ body{
 }
 .marginT3{
 	margin-top:3px;
+}
+.marginT10{
+	margin-top:10px;
 }
 .marginT11{
 	margin-top:11%;

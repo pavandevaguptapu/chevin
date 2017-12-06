@@ -82,7 +82,7 @@ console.log(props)
 	addProject(account,projectTitle){
 		console.log(account)
 		console.log(projectTitle)
-		axios.put('http://localhost:3030/accounts/'+account._id,
+		axios.put('http://192.168.29.62:3030/accounts/'+account._id,
 		{
 			"projects" : [{"name":projectTitle, "tools":[]}],
 		})

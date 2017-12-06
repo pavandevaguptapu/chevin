@@ -3,7 +3,7 @@ import './App.css';
 import { Navbar, NavbarBrand, Button, Popover, OverlayTrigger } from 'react-bootstrap';
 import Modal from 'react-modal';
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/css/bootstrap.min.css';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
@@ -27,16 +27,14 @@ const customStyles = {
     }
 };
 
-const selectStyles = {
-    color: 'white',
-    fontSize: '5px'
+const style = {
+	margin: "0px",
+	top:"0px"
 }
-const imageStyle = {
-    marginTop: "-28px",
-    float: "right"
-
-
+const innerDiv = {
+		padding: "0px"
 }
+
 const buttonStyle={
     marginRight:'5px'
 }
@@ -107,7 +105,7 @@ class manageCustomerTeams extends React.Component {
     }
     addNewCustomertoList(newCustomerObject) {
         console.log(newCustomerObject)
-        axios.post(`http://localhost:3030/accounts`,
+        axios.post(`http://192.168.29.62:3030/accounts`,
             {
                 customerName: newCustomerObject.customerName,
                 startDate: '',
@@ -120,8 +118,6 @@ class manageCustomerTeams extends React.Component {
                 people: [],
                 customerLogo: newCustomerObject.customerLogo,
                 status: 'Active'
-
-
             })
             .then(response => {
                 console.log(response)
@@ -162,7 +158,7 @@ class manageCustomerTeams extends React.Component {
     }
 
     componentWillMount() {
-        axios.get('http://localhost:3030/accounts')
+        axios.get('http://192.168.29.62:3030/accounts')
             .then(response => {
                 console.log(response)
                 this.setState({ accountsArray: this.state.accountsArray.concat(response.data) })
@@ -191,26 +187,29 @@ class manageCustomerTeams extends React.Component {
                         <div className="col-md-7 textAlignCenter marginT17">
                             <h4 className="margin0">Manage Customer Teams</h4>
                         </div>
-                        <div className="col-md-2 marginT28">
-                            <SelectField floatingLabelText="Frequency" floatingLabelStyle={selectStyles} value={this.state.value} onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
+                        <div className="col-md-2">
+                            <SelectField  
+                              labelStyle={{ color: 'white' }} value={this.state.value} onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
                                 <MenuItem value={2} primaryText="Customer Teams & Projects" />
                                 <MenuItem value={1} primaryText="Manage Customer Teams" />
 
 
                             </SelectField>
                         </div>
-                        <div className="col-md-2  marginT17  displayInline">
+                        <div className="col-md-2 displayInline">
                             {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
-                            <div>
-                                <h4 className="margin0 pointer paddingL04">Administrator: </h4>
+                            <div className="marginT10">
+                                <h4>Administrator: </h4>
                             </div>
-                            <div>
-                                <List>
+                            <div className="marginT10">
+                                <List style={innerDiv}>
                                     <ListItem
                                         disabled={true}
-                                        style={imageStyle}
+                                        innerDivStyle={innerDiv}
                                         leftAvatar={
-                                            <Avatar src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
+                                            <Avatar 
+                                            style={style}
+                                            src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
                                         }
 
                                     />
@@ -351,7 +350,7 @@ class manageCustomerTeams extends React.Component {
                         <div className="row">
                             <div className="col-md-5 margin10"><label>Status:</label></div>
                             <div className="col-md-6">
-                                <SelectField floatingLabelStyle={selectStyles} value={this.state.value} name='status' onChange={this.handleNewCustomerChange}>
+                                <SelectField  value={this.state.value} name='status' onChange={this.handleNewCustomerChange}>
                                     <MenuItem value={1} primaryText="Active" />
                                     <MenuItem value={2} primaryText="Finished" />
 
@@ -411,7 +410,8 @@ class manageCustomerTeams extends React.Component {
                     <div className="textAlignLeft">
                         <div className="row">
                             <div className="col-md-3 margin10">
-                                <SelectField floatingLabelStyle={selectStyles} value={this.state.value} onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
+                                <SelectField 
+                                 value={this.state.value} onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
                                     <MenuItem value={1} primaryText="Existing" />
                                     <MenuItem value={2} primaryText="New" />
                                 </SelectField>

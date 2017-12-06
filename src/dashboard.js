@@ -7,7 +7,7 @@ import { Navbar, NavbarBrand, Button, Popover, OverlayTrigger } from 'react-boot
 // import { BarChart, Bar } from 'recharts';
 import Modal from 'react-modal';
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/css/bootstrap.min.css';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Avatar from 'material-ui/Avatar';
@@ -35,21 +35,18 @@ const customStyles = {
 	}
 };
 
-const selectStyles = {
-	color: 'white',
-	fontSize: '5px'
+
+const style = {
+	margin: "0px",
+	top:"0px"
 }
-const imageStyle = {
-    marginTop: "-28px",
-    float: "right"
-
-
+const innerDiv = {
+		padding: "0px"
 }
 
-const menuStyle = {
-color:'yellow'
 
-}
+
+
 
 class Dashboard extends React.Component {
 
@@ -119,7 +116,7 @@ class Dashboard extends React.Component {
 	}
 	// addAccountModal(accountName) {
 	// 	console.log(accountName)
-	// 	axios.post(`http://localhost:3030/accounts`,
+	// 	axios.post(`http://192.168.29.62:3030/accounts`,
 	// 		{
 	// 			"name": accountName,
 	// 			"status": "progress",
@@ -161,10 +158,10 @@ class Dashboard extends React.Component {
 	}
 
 	deleteAccountModal(item, deleteModal) {
-		axios.delete('http://localhost:3030/accounts/' + item)
+		axios.delete('http://192.168.29.62:3030/accounts/' + item)
 			.then(response => {
 				if (response.statusText == 'OK') {
-					axios.get('http://localhost:3030/accounts')
+					axios.get('http://192.168.29.62:3030/accounts')
 						.then(response => {
 							this.setState({ items: response.data })
 						})
@@ -178,7 +175,7 @@ class Dashboard extends React.Component {
 	}
 
 	componentWillMount() {
-		axios.get('http://localhost:3030/accounts')
+		axios.get('http://192.168.29.62:3030/accounts')
 			.then(response => {
 				this.setState({ items: this.state.items.concat(response.data) })
 
@@ -215,31 +212,40 @@ class Dashboard extends React.Component {
 						<div className="col-md-7 textAlignCenter marginT17">
 							<h4 className="margin0">Customer Teams & Projects</h4>
 						</div>
-						<div className="col-md-2 marginT28">
-							<SelectField floatingLabelText="Frequency" floatingLabelStyle={selectStyles} value={this.state.value} onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
-								<MenuItem value={2} selectedMenuItemStyle={menuStyle} primaryText="Customer Teams & Projects" />	
+						<div className="col-md-2">
+							<SelectField 
+						
+							labelStyle={{ color: 'white' }}
+							//floatingLabelStyle={selectStyles} 
+							value={this.state.value} 
+							onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
+								<MenuItem value={2}  primaryText="Customer Teams & Projects" />	
 								<MenuItem value={1}  primaryText="Manage Customer Teams" />
 							</SelectField>
 						</div>
-						<div className="col-md-2  marginT17 displayInline">
-						<div>
-                                <h4 className="margin0 pointer paddingL04">Administrator: </h4>
-                            </div>
-                            <div>
-                                <List>
-                                    <ListItem
-                                        disabled={true}
-                                        style={imageStyle}
-                                        leftAvatar={
-                                            <Avatar src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
-                                        }
-
-                                    />
-                                </List>
-                            </div>
-							{/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
-							{/* <h4 className="margin0 pointer paddingL04" onClick={() => this.openModal()} title="create account"><i className="glyphicon glyphicon-plus"></i></h4> */}
+						<div className="col-md-2  displayInline">
+						{/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
+						<div className="marginT10">
+							<h4>Administrator: </h4>
 						</div>
+						<div className="marginT10">
+							<List style={innerDiv}>
+								<ListItem
+								innerDivStyle={innerDiv}
+									disabled={true}
+									leftAvatar={
+										<Avatar 
+									
+										style={style}
+										src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
+									}
+
+								/>
+							</List>
+						</div>
+
+
+					</div>
 
 					</div>
 				</nav>
