@@ -3,7 +3,7 @@ import './App.css';
 import { Navbar, NavbarBrand, Button, Popover, OverlayTrigger } from 'react-bootstrap';
 import Modal from 'react-modal';
 import axios from 'axios';
-import 'bootstrap/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';

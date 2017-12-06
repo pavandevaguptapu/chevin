@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { Navbar, NavbarBrand, Button } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { PieChart, Pie, Cell,LineChart, Line, XAxis, YAxis, CartesianGrid,Legend } from 'recharts';
 import { Draggable, Droppable } from 'react-drag-and-drop'
