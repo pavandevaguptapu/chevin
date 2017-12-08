@@ -3,7 +3,7 @@ import './App.css';
 import { Navbar, NavbarBrand, Button, Popover, OverlayTrigger } from 'react-bootstrap';
 import Modal from 'react-modal';
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
+//import 'bootstrap/dist/css/bootstrap.min.css';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
@@ -27,9 +27,10 @@ const customStyles = {
     }
 };
 
-const style = {
-	margin: "0px",
-	top:"0px"
+const imageStyle = {
+	
+	top:"-2px",
+	marginLeft:"-12px"
 }
 const innerDiv = {
 		padding: "0px"
@@ -158,6 +159,7 @@ class manageCustomerTeams extends React.Component {
     }
 
     componentWillMount() {
+        Modal.setAppElement('body');
         axios.get('http://192.168.29.62:3030/accounts')
             .then(response => {
                 console.log(response)
@@ -177,29 +179,29 @@ class manageCustomerTeams extends React.Component {
 
         return (
 
-            <div className="container-fluid">
-                <nav className="navbar navbar-fixed-top navbarBgColor navbarFontColor">
-                    <div className="col-md-12">
-                        <div className="col-md-1  marginT17">
+            <div className="container-fluid padding0">
+                <nav className="navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
+                    <div className="col-md-12 flex">
+                        <div className="col-md-1 col-lg-1 marginT09">
                             {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
                             <h4 className="margin0 pointer paddingL04" onClick={() => this.openSideMenu()} ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
                         </div>
-                        <div className="col-md-7 textAlignCenter marginT17">
+                        <div className="col-md-6 col-lg-6 textAlignRight marginT16">
                             <h4 className="margin0">Manage Customer Teams</h4>
                         </div>
-                        <div className="col-md-2">
+                        <div className="col-md-2 col-lg-3 textAlignRight marginT07">
                             <SelectField  
-                              labelStyle={{ color: 'white' }} value={this.state.value} onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
-                                <MenuItem value={2} primaryText="Customer Teams & Projects" />
-                                <MenuItem value={1} primaryText="Manage Customer Teams" />
+                              labelStyle={{ color: 'white' }}  underlineStyle={{display: 'none'}} style={{width: '50'}} value={this.state.value} onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
+                                <MenuItem value={2} primaryText="View" />
+                                <MenuItem value={1} primaryText="Manage" />
 
 
                             </SelectField>
                         </div>
-                        <div className="col-md-2 displayInline">
+                        <div className="col-md-3 col-lg-2  displayInline padding0 marginT05">
                             {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
-                            <div className="marginT10">
-                                <h4>Administrator: </h4>
+                            <div className="marginT17">
+                            <h5 className="font fontSize17">Administrator: </h5>
                             </div>
                             <div className="marginT10">
                                 <List style={innerDiv}>
@@ -208,7 +210,7 @@ class manageCustomerTeams extends React.Component {
                                         innerDivStyle={innerDiv}
                                         leftAvatar={
                                             <Avatar 
-                                            style={style}
+                                            style={imageStyle}
                                             src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
                                         }
 
