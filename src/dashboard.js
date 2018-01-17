@@ -1,10 +1,7 @@
 import React from 'react';
 
 import './App.css';
-// import axios from 'axios';
 import { Navbar, NavbarBrand, Button, Popover, OverlayTrigger } from 'react-bootstrap';
-// import { Modal } from 'react-overlays';
-// import { BarChart, Bar } from 'recharts';
 import Modal from 'react-modal';
 import axios from 'axios';
 import 'bootstrap/css/bootstrap.min.css';
@@ -13,7 +10,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
-
+import {myConstClass} from './constants.js';
 // import Popover from 'react-popover-wrapper';
 // Modal.prototype.componentWillMount = function componentWillMount() {
 // 	this.focus = function focus() { };
@@ -34,8 +31,6 @@ const customStyles = {
 		transform: 'translate(-50%, -50%)'
 	}
 };
-
-
 const imageStyle = {
 	
 	top:"-2px",
@@ -44,10 +39,6 @@ const imageStyle = {
 const innerDiv = {
 		padding: "0px"
 }
-
-
-
-
 
 class Dashboard extends React.Component {
 
@@ -118,7 +109,7 @@ class Dashboard extends React.Component {
 	}
 	// addAccountModal(accountName) {
 	// 	console.log(accountName)
-	// 	axios.post(`http://192.168.29.62:3030/accounts`,
+	// 	axios.post(`http://192.168.29.93:3030/accounts`,
 	// 		{
 	// 			"name": accountName,
 	// 			"status": "progress",
@@ -160,10 +151,10 @@ class Dashboard extends React.Component {
 	}
 
 	deleteAccountModal(item, deleteModal) {
-		axios.delete('http://192.168.29.62:3030/accounts/' + item)
+		axios.delete(myConstClass.nodeAppUrl+'/accounts/' + item)
 			.then(response => {
 				if (response.statusText == 'OK') {
-					axios.get('http://192.168.29.62:3030/accounts')
+					axios.get(myConstClass.nodeAppUrl+'/accounts')
 						.then(response => {
 							this.setState({ items: response.data })
 						})
@@ -178,8 +169,9 @@ class Dashboard extends React.Component {
 
 	componentWillMount() {
 		Modal.setAppElement('body');
-		axios.get('http://192.168.29.62:3030/accounts')
+		axios.get(myConstClass.nodeAppUrl+'/accounts')
 			.then(response => {
+				console.log(response)
 				this.setState({ items: this.state.items.concat(response.data) })
 
 			})
@@ -201,56 +193,36 @@ class Dashboard extends React.Component {
 		return (
 
 			<div className="container-fluid padding0">
-				{/* <Navbar className="dashboardHeaderBgColor">
-				<i className="glyphicon glyphicon-menu-hamburger"></i>
-					<NavbarBrand className="col-sm-12 col-md-12"><h3 className="">Dashboard</h3></NavbarBrand >
-				</Navbar> */}
-
 				<nav className="navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
-					<div className="col-md-12 col-lg-12 flex">
-						<div className="col-md-1 col-lg-1 marginT09">
-							{/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
+					<div className="col-md-12 flex">
+						<div className="col-md-2 col-lg-2 marginT16">
 							<h4 className="margin0 pointer paddingL04" onClick={() => this.openSideMenu()} ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
 						</div>
-						<div className="col-md-6 col-lg-6 textAlignRight marginT16">
-							<h5 className="margin0">Customer Teams & Projects</h5>
+						<div className="col-md-8 col-lg-8 textAlignCenter marginT16">
+							<h4 className="margin0">Customer Teams & Projects</h4>
 						</div>
-						<div className="col-md-2 col-lg-3 textAlignRight marginT07">
-							<SelectField 
-						
-							labelStyle={{ color: 'white',fontFamily: 'Arial, Helvetica, sans-serif'}}
-							//floatingLabelStyle={selectStyles} 
-							style={{width: '50'}}
-							underlineStyle={{display: 'none'}}
-							value={this.state.value} 
-							onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
-								<MenuItem value={2}  primaryText="View" />	
-								<MenuItem value={1}  primaryText="Manage" />
-							</SelectField>
-						</div>
-						<div className="col-md-3 col-lg-2  displayInline padding0 marginT05">
-						{/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
-						<div className="marginT17">
-							<h5 className="font fontSize17">Administrator: </h5>
-						</div>
-						<div className="marginT10">
-							<List style={innerDiv}>
-								<ListItem
-								innerDivStyle={innerDiv}
-									disabled={true}
-									leftAvatar={
-										<Avatar 
-									
-										style={imageStyle}
-										src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
-									}
+						<div className="col-md-2 col-lg-2  displayInline padding0">
+							<div className="marginT07">
+								<h5 className="font fontSize17">Administrator: </h5>
+							</div>
+							<div className="marginT07">
+								<List style={innerDiv}>
+									<ListItem
+										disabled={true}
+										innerDivStyle={innerDiv}
+										leftAvatar={
+											<Avatar
+												style={imageStyle}
+												src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
+										}
 
-								/>
-							</List>
+									/>
+								</List>
+							</div>
 						</div>
+						<div>
 
-
-					</div>
+						</div>
 
 					</div>
 				</nav>
@@ -345,8 +317,8 @@ class Dashboard extends React.Component {
 
 
 
-				<div className="row">
-					<div className="col-md-12 col-lg-12 flex">
+				<div className="row marginT50">
+					<div className="col-md-12 col-lg-12">
 						{this.state.items.map(item => (
 
 							<div id="accountTitle" className="col-md-3 col-lg-2 DashboardAccountList pointer" key={item._id} onClick={(event) => this.selectedProjectDetails(event, item)}>

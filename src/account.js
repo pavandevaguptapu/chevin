@@ -13,7 +13,7 @@ import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 
-
+import {myConstClass} from './constants.js';
 // import { Modal } from 'react-overlays';
 // Modal.prototype.componentWillMount = function componentWillMount() {
 // 	this.focus = function focus() { };
@@ -38,16 +38,21 @@ const innerDiv = {
 	padding: "0px"
 }
 
+const placeholderColor={
+	color:"white"
+}
+
 class Account extends React.Component {
 	constructor(props) {
 		super(props)
 
 
 		this.state = {
+			accounts: [],
 			isModalOpen: false,
 			projectName: '',
 			teamName: '',
-			projectDetails: '',
+			projectDetails: { projects: [] },
 			selectedTab1: true,
 			selectedTab2: false,
 			selectedTab3: false,
@@ -57,7 +62,7 @@ class Account extends React.Component {
 			selecteditem: '',
 			issueTracking: '',
 			developmentlist: [],
-			development: '',
+			sprintDetails: '',
 			sourcelist: [],
 			source: '',
 			issuesList: [],
@@ -76,7 +81,12 @@ class Account extends React.Component {
 			datesArrayList: [],
 			isAddProjectModal: false,
 			projectTitle: '',
-			value: 2
+			selectedProjectIndex: 0,
+			selectedProjectDetails:'',
+			selectedProjectBoardDetails:''
+
+
+
 
 
 			//  visibility:''
@@ -84,13 +94,16 @@ class Account extends React.Component {
 
 		}
 
-		this.SelectedTab = this.SelectedTab.bind(this);
+		
 		this.getEachIssue = this.getEachIssue.bind(this);
 		this.onDrop = this.onDrop.bind(this);
 		this.addProjectModal = this.addProjectModal.bind(this);
 		this.addProject = this.addProject.bind(this);
 		this.handleChange = this.handleChange.bind(this);
-		// this.handleSprint = this.handleSprint.bind(this);
+		this.accountsListArray = this.accountsListArray.bind(this);
+		this.selectedAccount = this.selectedAccount.bind(this);
+		this.selectProject= this.selectProject.bind(this);
+		 this.selectedBoard = this.selectedBoard.bind(this);
 
 	}
 	handleChange(e) {
@@ -115,7 +128,7 @@ class Account extends React.Component {
 	}
 	addProject(account, projectTitle) {
 
-		axios.put('http://192.168.29.62:3030/accounts/' + account._id,
+		axios.put(myConstClass.nodeAppUrl+'/accounts/' + account._id,
 			{
 				"projects": [{ "name": projectTitle, "tools": [] }],
 			})
@@ -145,135 +158,146 @@ class Account extends React.Component {
 
 		this.setState({ isModalOpen: true })
 	}
-	SelectedTab(e) {
+	
+
+	accountsListArray(accounts) {
+        return accounts.map((account) => (
+            <MenuItem
+                key={account._id}
+                insetChildren={true}
+
+                value={account.customerName}
+                primaryText={account.customerName}
+            />
+        ));
+	}
+	selectedAccount(event, ind, value, selecteAccount) {
+		this.state.accounts.customerName = value;
+		this.setState({ projectDetails: selecteAccount[ind], value: value })
+	}
+	projectsListArray(projects) {
+        return projects.map((project) => (
+            <MenuItem
+				key={project.projectName}
+				insetChildren={true}
+                value={project.projectName}
+                primaryText={project.projectName}
+            />
+        ));
+	}
+	selectProject(event, ind, value) {
+	
+		
+		this.setState({selectedProjectIndex:value})
+		
+		// axios.post(`/JIRAREST/jira/rest/get/generic`, {
+		// 	"resourceURL": this.state.projectDetails.projects[ind].tools[1].hostedURL + "/rest/agile/1.0/board/1/sprint", "userName": this.state.projectDetails.projects[ind].tools[1].userName, "password": this.state.projectDetails.projects[ind].tools[1].password
+		// })
+		// 	.then(response => {
 
 
-		if (e === "Knowledge Management") {
+		// 		this.setState({
+		// 			sprintDetails: <SprintDetails sprinttList={response.data.values} />,
+
+		// 		});
 
 
-			this.setState({
-				selectedTab1: true, selectedTab2: false, selectedTab3: false, selectedTab4: false, selectedTab5: false,
-				sourcelist: '', source: '', issueTracking: '', listofepics: '',
-				selectedIssue: '', development: '', developmentlist: [], issuesList: [], checkbox: '', workHours: '', issuesPieChart: ''
+		// 	})
+
+		axios.post(`/JIRAREST/jira/rest/get/generic`, {
+			"resourceURL": this.state.projectDetails.projects[ind].tools[1].hostedURL + "/rest/api/2/project", "userName": this.state.projectDetails.projects[ind].tools[1].userName, "password": this.state.projectDetails.projects[ind].tools[1].password
+		})
+			.then(response => {
+
+				
+				this.setState({
+					selectedProjectDetails: <SelectedProjectDetails selectedProjectDetails={response.data} selectedUserName={this.state.projectDetails.projects[ind].tools[1].userName}
+						selectedUserPwd={this.state.projectDetails.projects[ind].tools[1].password} />
+
+				})
+
+
+
 			})
 
-		}
-		if (e === "Source") {
-			this.setState({ selectedTab1: false, selectedTab2: true, selectedTab3: false, selectedTab4: false, selectedTab5: false })
-			axios.get(`/JIRAREST/bitbucket/rest/get/repos`)
-				.then(response => {
-					this.setState({ sourcelist: response.data })
-					this.setState({ source: <Source sourcelist={this.state.sourcelist} />, issueTracking: '', development: '', issuesList: [], checkbox: '', workHours: '', issuesPieChart: '' });
-				})
-		}
-		if (e === "IssueTracking") {
-			this.setState({ selectedTab1: false, selectedTab2: false, selectedTab3: true, selectedTab4: false, selectedTab5: false })
-			axios.get(`/JIRAREST/jira/rest/get/epics`)
-				.then(response => {
-					this.setState({ listofepics: response.data.values })
-					this.setState({
-						issueTracking: <Issueslist listofepics={this.state.listofepics} selectedIssue={this.getEachIssue} />,
-						development: '', source: '', checkbox: '', workHours: '', issuesPieChart: ''
-					});
+		axios.post(`/JIRAREST/jira/rest/get/generic`, {
+			"resourceURL": this.state.projectDetails.projects[ind].tools[1].hostedURL + "/rest/agile/1.0/board", "userName": this.state.projectDetails.projects[ind].tools[1].userName, "password": this.state.projectDetails.projects[ind].tools[1].password
+		})
+			.then(response => {
+
+				
+				this.setState({
+					selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={response.data.values} selectedUserName={this.state.projectDetails.projects[ind].tools[1].userName}
+						selectedUserPwd={this.state.projectDetails.projects[ind].tools[1].password} onSelectBoard={this.selectedBoard} />
 				})
 
-		}
-		if (e === "Development") {
-			this.setState({ selectedTab1: false, selectedTab2: false, selectedTab3: false, selectedTab4: true, selectedTab5: false })
-			axios.get(`/JIRAREST/jira/rest/get/sprints`)
-				.then(response => {
-
-					this.setState({ developmentlist: response.data.values })
-
-					this.setState({
-						development: <Development developmentlist={this.state.developmentlist} />,
-
-					});
-
-
-				})
-
-
-		}
-		if (e === "Quality") {
-			this.setState({
-				selectedTab1: false, selectedTab2: false, selectedTab3: false, selectedTab4: false, selectedTab5: true,
-				checkbox: '', workHours: '', issuesPieChart: ''
 			})
 
-		}
 
 	}
 
+	selectedBoard(sprintList,boardId){
 
+
+		
+		if(sprintList!== undefined){
+			var sprintListArray=sprintList
+			var boardId=boardId
+			this.setState({
+							sprintDetails: <SprintDetails sprinttList={sprintListArray} boardId={boardId} />,
+		
+						 });
+		}
+
+		else{
+			this.setState({
+				sprintDetails: <SprintDetails sprinttList={[]} boardId={boardId}/>,
+
+			 });
+		}
+		
+	}
 	componentWillMount() {
 
 
-		if (window.sessionStorage.getItem("Account") !== "undefined" && window.sessionStorage.getItem("Account") !== null) {
+		axios.get(myConstClass.nodeAppUrl+'/accounts')
+			.then(response => {
+				
+				this.setState({ accounts: this.state.accounts.concat(response.data) })
 
-			if (this.props.location.state !== undefined) {
-
-				window.sessionStorage.setItem("Account", JSON.stringify(this.props.location.state));
-				this.setState({ projectDetails: JSON.parse(window.sessionStorage.getItem("Account")) })
-			}
-			else {
-
-				window.sessionStorage.getItem("Account")
-				this.setState({ projectDetails: JSON.parse(window.sessionStorage.getItem("Account")) })
-			}
-
-		}
-
-		if (window.sessionStorage.getItem("Account") === "undefined" || window.sessionStorage.getItem("Account") === null) {
-
-			window.sessionStorage.setItem("Account", JSON.stringify(this.props.location.state));
-
-			this.setState({ projectDetails: JSON.parse(window.sessionStorage.getItem("Account")) })
-
-		}
+			})
 	}
-
+		
 	render() {
-
+	
 		return (
 			<div className="container-fluid padding0">
 
-
 				<nav className="navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
-					<div className="col-md-12 col-lg-12 flex">
-						<div className="col-md-1 col-lg-1 marginT09">
+					<div className="col-md-12 flex">
+						<div className="col-md-3 col-lg-2 marginT16">
 							{/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
 							<h4 className="margin0 pointer paddingL04" onClick={() => this.openSideMenu()} ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
 						</div>
-						<div className="col-md-6 col-lg-6 textAlignRight marginT16">
-							<h5 className="margin0">{this.state.projectDetails.account.customerName}</h5>
-						</div>
-						<div className="col-md-2 col-lg-3 textAlignRight marginT07">
-							<SelectField
-
-								labelStyle={{ color: 'white', fontFamily: 'Arial, Helvetica, sans-serif' }}
-								//floatingLabelStyle={selectStyles} 
-								style={{ width: '50' }}
-								underlineStyle={{ display: 'none' }}
-								value={this.state.value}
-								onChange={(e, i, v) => this.selectedDashBoard(e, i, v)}>
-								<MenuItem value={2} primaryText="View" />
-								<MenuItem value={1} primaryText="Manage" />
+						<div className="col-md-7 col-lg-8 textAlignCenter">
+							{/* <h4 className="margin0">{this.state.projectDetails.account.customerName}</h4> */}
+							<SelectField hintText="Select Account" value={this.state.accounts.customerName} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }} 
+							hintStyle={placeholderColor} labelStyle={{ color: "#fff" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedAccount(e, i, v, this.state.accounts)} >
+								{this.accountsListArray(this.state.accounts)}
 							</SelectField>
 						</div>
-						<div className="col-md-3 col-lg-2  displayInline padding0 marginT05">
+						<div className="col-md-2 col-lg-2  displayInline padding0">
 							{/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
-							<div className="marginT17">
+							<div className="marginT07">
 								<h5 className="font fontSize17">Administrator: </h5>
 							</div>
-							<div className="marginT10">
+							<div className="marginT07">
 								<List style={innerDiv}>
 									<ListItem
-										innerDivStyle={innerDiv}
 										disabled={true}
+										innerDivStyle={innerDiv}
 										leftAvatar={
 											<Avatar
-
 												style={imageStyle}
 												src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
 										}
@@ -284,88 +308,52 @@ class Account extends React.Component {
 
 
 						</div>
+						<div>
+
+						</div>
 
 					</div>
 				</nav>
 
+
 				<div className="row">
-					<div className="col-md-12 col-lg-12 marginT68 padding0">
-						<div className="col-md-2 col-lg-2" style={{ borderRight: "1px solid #76aad8", marginRight: "0px", padding: "0px", height: "100vh" }}>
-							<h5 className="accountProjectProfileheading textAlignCenter">Project Profile
+					<div className="col-md-12 col-lg-12 marginT50 padding0">
+						<div className="col-md-3 col-lg-2 borderRight marginR0 padding0 verticalHeight">
+							<div className="col-md-12 col-lg-12">
 
-							</h5>
-						</div>
+								<SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+									hintStyle={{ opacity: "1" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
+									{this.projectsListArray(this.state.projectDetails.projects)}
+								</SelectField>
 
-						<div className={[this.state.selectedTab1 === true ? "selectedItem" : '', "col-md-3 col-lg-3  accountTabs pointer textAlignCenter"].join(' ')} onClick={() => this.SelectedTab("Knowledge Management")}>
-							<h5> Knowledge Management </h5>
-						</div>
-						<div className={[this.state.selectedTab2 === true ? "selectedItem" : '', "col-md-1 col-lg-1   accountTabs pointer textAlignCenter"].join(' ')} onClick={() => this.SelectedTab("Source")}>
-							<h5>Source</h5>
-						</div>
-						<div className={[this.state.selectedTab3 === true ? "selectedItem" : '', "col-md-2 col-lg-2   accountTabs pointer textAlignCenter"].join(' ')} onClick={() => this.SelectedTab("IssueTracking")}>
-							<h5>IssueTracking</h5>
-						</div>
-						<div className={[this.state.selectedTab4 === true ? "selectedItem" : '', "col-md-2 col-lg-2   accountTabs pointer textAlignCenter"].join(' ')} onClick={() => this.SelectedTab("Development")}>
-							<h5>Development</h5>
-						</div>
-						<div className={[this.state.selectedTab5 === true ? "selectedItem" : '', "col-md-1 col-lg-1   accountTabs pointer textAlignCenter"].join(' ')} onClick={() => this.SelectedTab("Quality")}>
-							<h5>Quality</h5>
-						</div>
-						<Droppable types={['metal']} onDrop={this.onDrop.bind(this)} style={{ minHeight: "" }} >
 
-							<div className="col-md-2">
 
-								{this.state.issueTracking}
-								{this.state.development}
-								{this.state.source}
-								{this.state.accountModal}
 							</div>
-							<div className="col-md-7">
-
-								<div>
-
-									{this.state.issuesList.map(item => (
-
-										<li style={{ textAlign: "left" }} key={item.key} >{item.key}{item.fields.description}{item.fields.status.name}</li>
-									))}
+							<div className="col-md-12 col-lg-12">
+									{this.state.selectedProjectDetails}
+								{/* <SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+									hintStyle={{ opacity: "1" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
+									{this.projectsListArray(this.state.projectDetails.projects)}
+								</SelectField> */}
 
 
 
-								</div>
-								<div>
-									{this.state.issuesPieChart}
-									{this.state.checkbox}
-
-								</div>
-
-								{/* <div>
-									{this.state.workHours}
-								</div> */}
 							</div>
-						</Droppable>
+							<div className="col-md-12 col-lg-12">
+							{this.state.selectedProjectBoardDetails}
 
-						<div className="col-md-1 accountTabs marginT35" style={{ borderLeft: "1px solid #76aad8", padding: "0px", height: "100vh" }}>
 
-							<div className="pointer col-md-12 marginB20">
-								<Draggable className="draggablediv textAlignCenter backgroundcolor1" type="metal" data="github">Github</Draggable>
+
 							</div>
-							<div className="pointer col-md-12 marginB20">
-								<Draggable className="draggablediv textAlignCenter backgroundcolor2" type="metal" data="attlasian">Attlasian</Draggable>
-							</div>
-							<div className="pointer col-md-12 marginB20">
-								<Draggable className="draggablediv textAlignCenter backgroundcolor3" type="metal" data="sonarQube">SonarQube</Draggable>
-							</div>
-							<div className="pointer col-md-12 marginB20">
-								<Draggable className="draggablediv textAlignCenter backgroundcolor4" type="metal" data="jenkins">Jenkins</Draggable>
-							</div>
-							<div className="pointer col-md-12 marginB20">
-								<Draggable className="draggablediv textAlignCenter backgroundcolor5" type="metal" data="tfs">TFS</Draggable>
-							</div>
-							<div className="pointer col-md-12 marginB20">
-								<Draggable className="draggablediv textAlignCenter backgroundcolor6" type="metal" data="sharePoint">SharePoint</Draggable>
-							</div>
+
 
 						</div>
+						<div className="col-md-9">
+											{this.state.sprintDetails}
+							</div>
+							
+
+
 					</div>
 				</div>
 
@@ -425,7 +413,7 @@ class Account extends React.Component {
 					</div>
 
 				</Modal>
-				{/* </div> */}
+
 			</div>
 		)
 
@@ -460,13 +448,12 @@ class Issueslist extends React.Component {
 
 }
 
-class Development extends React.Component {
+class SprintDetails extends React.Component {
 	constructor(props) {
 		super(props)
 
 		this.state = {
 			values: '',
-			sprintList: this.props.developmentlist,
 			sprintStartTime: '',
 			sprintEndTime: '',
 			sprintCompleteTime: '',
@@ -478,25 +465,52 @@ class Development extends React.Component {
 			workHours: '',
 			date1: '',
 			date2: '',
-			timeSpent:''
+			timeSpent:'',
+			sprintListSorted:'',
+			numbers:[1,2,4,3],
+			numbersSorted:'',
+			sprintPieChart:'',
+			pieChartIssueStatusIdentifier:'',
+			boardId:''
+		
 
 		};
 		this.handleChange = this.handleChange.bind(this);
+	
 	}
 
+	componentWillMount(){
+	
+		this.state.sprintListSorted=this.props.sprinttList.sort(function(a, b) {
+			
+				return parseFloat(b.id)-parseFloat(a.id) ;
+		})
+		
+	this.state.boardId=this.props.boardId
+		  
+	}
+
+	componentWillReceiveProps(nextProps){
+
+		this.state.sprintListSorted=nextProps.sprinttList.sort(function(a, b) {
+			
+				return parseFloat(b.id)-parseFloat(a.id) ;
+		})
+		this.state.boardID=nextProps.boardId
+
+	}
+	
 	handleChange(event, index, value) {
 		
-		// console.log(this.state.totalTimeSpentArray)
-		// this.state.totalTimeSpentArray=[];
-		console.log('**************'+this.state.values)
-		
+console.log(this.state.boardId)
 		this.setState({
 			values:value
 		});
-		// console.log(this.state.totalTimeSpentArray)
+
 		axios.post(`/JIRAREST/jira/rest/get/generic`, {
 			"resourceURL": "https://fullyincontrol.atlassian.net/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId=1&sprintId=" + value , "userName": "jeyaganesh.n@comakeit.com", "password": "Abc@12345"
 			}).then(response => {
+				
 			this.setState({
 				sprintStartTime: '',
 				sprintEndTime: '',
@@ -522,6 +536,7 @@ class Development extends React.Component {
 			}
 			var d1= getDateString(response.data.startTime)
 			var d2= getDateString(response.data.endTime)
+
 			this.setState({ sprintStartTime: response.data.startTime, sprintEndTime: response.data.endTime, sprintCompleteTime: response.data.completeTime,date1:d1,date2:d2 })
 			var currentDateObj = getDateString(response.data.startTime)
 			this.setState({ currentDate: currentDateObj})
@@ -529,22 +544,85 @@ class Development extends React.Component {
 
 			var currentDateEpochTime = response.data.startTime
 			var changesArray = Object.keys(response.data.changes)
-
+		                                                                                                                                               
+			var z=0
+			var c=0
+			var n=0
 			Object.keys(response.data.changes).forEach(function (key, index) {
+				console.log(response.data)
 
 				var eachDate = Number(key)
+				//console.log(getDateString(eachDate))
+
+			//	console.log(response.data.changes[eachDate][0])			
+				//  if(response.data.changes[eachDate][0].timeC){
+				// 	 if(response.data.changes[eachDate][0].timeC.timeSpent){
+				// 						 	console.log(getDateString(eachDate)  + '-'+ response.data.changes[eachDate][0].key +'-'+ response.data.changes[eachDate][0].timeC.oldEstimate/3600 
+				//  	+'-'+ response.data.changes[eachDate][0].timeC.newEstimate/3600+'-'+response.data.changes[eachDate][0].timeC.timeSpent/3600)
+				// 	 }
+					
+
+					
+				//  }
+			
+				
+				
+				//console.log(response.data.changes[eachDate][0].timeC)
+
+				// if(response.data.changes[eachDate][0].timeC){
+				// 					var x =response.data.changes[eachDate][0].timeC.oldEstimate		
+				// 				var a = response.data.changes[eachDate][0].timeC.newEstimate
+				// 				//var l = response.data.changes[eachDate][0].timeC.timeSpent
+				// 	var  y=x
+				// 	 z=z+y
+				// 	var b=a
+				// 	c=c+b
+				// 	// var m=l
+				// 	// n=n+m
+
+				// 	//  console.log(z+"-"+"oldEstimate")
+				// 	//  console.log(c+"-"+"newEstimate")
+				// 	// console.log(n+"-"+"timeSpent")
+
+				// 	if(response.data.changes[eachDate][0].timeC.timeSpent){
+				// 		var l = response.data.changes[eachDate][0].timeC.timeSpent
+				// 			var m=l
+				// 	n=n+m
+				// 	console.log(n+"-"+"timeSpent")
+				// 	}
+
+				// }
 				if (eachDate >= response.data.startTime && eachDate<=response.data.completeTime) {
-					var changeObjArray = response.data.changes[eachDate]
-					changeObjArray.forEach(function (item) {
+					var changeObjArray = response.data.changes[eachDate]	
+								changeObjArray.forEach(function (item) {
+								
 						if (item.timeC) {
 							
-							
+					// 		console.log(item.timeC)
+					// 			var x =item.timeC.oldEstimate		
+					// 			var a = item.timeC.newEstimate
+					// var  y=x
+					//  z=z+y
+					// var b=a
+					// c=c+b
+					
+					//  console.log(z+"-"+"oldEstimate")
+					//  console.log(c+"-"+"newEstimate")
+					
 							if (item.timeC.timeSpent) {
+								// var l = item.timeC.timeSpent
+								// 			var m=l
+								// 	n=n+m
+								// 	console.log(n+"-"+"timeSpent")
+								
+								// console.log(getDateString(eachDate)  + '-'+ response.data.changes[eachDate][0].key +'-'+ response.data.changes[eachDate][0].timeC.oldEstimate/3600 
+								// +'-'+ response.data.changes[eachDate][0].timeC.newEstimate/3600+'-'+response.data.changes[eachDate][0].timeC.timeSpent/3600)
+							//	console.log(response.data.changes[eachDate][0].timeC.timeSpent)
 								var d = new Date(eachDate)
 								var dateString = getDateString(eachDate)
 								if (this.state.currentDate !== dateString) {
 									this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.currentDate, hr: (this.state.timeSpent / 3600) })
-									console.log('date:'+this.state.currentDate+' And hr: '+this.state.timeSpent / 3600 )
+							
 									this.setState({ currentDate: dateString, totalTimeSpentArray: this.state.eachTimeSpentArray })
 									var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
 									var diffDays = Math.round(Math.abs((d.getTime() - new Date(currentDateEpochTime).getTime()) / (oneDay)));
@@ -556,7 +634,7 @@ class Development extends React.Component {
 
 											var missedDateString = getDateString(missedDate)
 											this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: missedDateString, hr: (this.state.timeSpent / 3600) })
-											console.log('date:'+this.state.currentDate+' And hr: '+this.state.timeSpent / 3600 )
+							
 											this.setState({ totalTimeSpentArray: this.state.eachTimeSpentArray })
 										}
 									}
@@ -571,7 +649,7 @@ class Development extends React.Component {
 				}
 				if (index == changesArray.length - 1) {
 					this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.currentDate, hr: (this.state.timeSpent / 3600) })
-					console.log('date:'+this.state.currentDate+' And hr: '+this.state.timeSpent / 3600 )
+					
 					this.setState({ totalTimeSpentArray: this.state.eachTimeSpentArray })
 					var endDateObj = new Date(response.data.endTime)
 					var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
@@ -589,15 +667,39 @@ class Development extends React.Component {
 
 				}
 			}.bind(this))
-			console.log(this.state.totalTimeSpentArray.length)
+	
 			this.setState({workHours: <Hourschart value={this.state.totalTimeSpentArray}/>})
 		})
 
 
+		axios.post(`/JIRAREST/jira/rest/get/generic`, {			
+			"resourceURL": "https://fullyincontrol.atlassian.net/rest/agile/1.0/board/"+ this.state.boardId+"/sprint/"+value+"/issue?maxResults=100", "userName": "jeyaganesh.n@comakeit.com", "password": "Abc@12345"
+			}).then(response=>{
+				//var z=0
+				//var c=0
+				response.data.issues.forEach(function(issue){
+					//console.log(issue)
+					//var x =(issue.fields.aggregatetimeoriginalestimate/3600)-(issue.fields.aggregatetimespent/3600)
+					// var x=issue.fields.aggregatetimeoriginalestimate
+					// var a = issue.fields.aggregatetimespent
+						
+					// var  y=x
+					//  z=z+y
+					// var b=a
+					// c=c+b
+				
+					//  console.log(z+"-"+"aggregatetimeoriginalestimate")
+					//  console.log(c+"-"+"aggregatetimespent")
+				
+				})
+				this.setState({
+					sprintPieChart: <Piechart sprinttList={response.data} />, pieChartIssueStatusIdentifier:<StatusIdentifier/>
 	
+				});
+			})
 
 	}
-	menuItems(sprintList) {
+	sprintItems(sprintList) {
 		return sprintList.map((sprintList) => (
 			<MenuItem
 				key={sprintList.id}
@@ -610,30 +712,45 @@ class Development extends React.Component {
 	}
 
 	render() {
+		
 		return (
-			<div>
-				<h4 className="bold textAlignLeft">Sprints</h4>
+			<div className="row textAlignCenter marginT3">
+				<div className="col-md-11 col-lg-11">
+				<SelectField
+					hintText="Select Sprint"
+					value={this.state.values}
+					onChange={(e, i, v) => this.handleChange(e, i, v)}
 
+				>
+					{this.sprintItems(this.state.sprintListSorted)}
+				</SelectField>
+					{/* <h4 className="font fontSize17 textAlignCenter">Sprints</h4> */}
+
+				</div>
 				{/* <ul className="paddingL16">
 					{this.props.developmentlist.map(item => (
 						<li style={{ textAlign: "left" }} key={item.id}>{item.name}</li>
 					))}
 				</ul> */}
-				<SelectField
+				{/* <SelectField
 					hintText="Select a sprint"
 					value={this.state.values}
 					onChange={(e, i, v) => this.handleChange(e, i, v)}
 
 				>
-					{this.menuItems(this.state.sprintList)}
-				</SelectField>
-				<div>{this.state.date1}
-					</div>
-				<div>{this.state.date2}
-					</div>
+					{this.sprintItems(this.state.sprintListSorted)}
+				</SelectField> */}
+					
 				<div>
 					{this.state.workHours}
 				</div>
+				<div>
+					{this.state.sprintPieChart}
+				</div>
+				<div>
+					{this.state.pieChartIssueStatusIdentifier}
+				</div>
+
 			</div>
 		)
 
@@ -660,7 +777,37 @@ class Source extends React.Component {
 
 }
 
-class Chekboxes extends React.Component {
+
+class Hourschart extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+
+
+	render() {
+		return (
+			<div>
+				<div>
+				</div>
+				<div>
+					<LineChart width={600} height={300} data={ this.props.value}>
+						<XAxis dataKey="name" />
+						<YAxis />
+						<CartesianGrid strokeDasharray="1 1" />
+						<Legend />
+						<Line type="stepAfter" dataKey="hr" stroke="#82ca9d" />
+						<Line type="monotone" dataKey="y" stroke="#82ca9d" />
+					</LineChart>
+				</div>
+			</div>
+		)
+
+	}
+
+
+}
+
+class StatusIdentifier extends React.Component {
 
 	render() {
 		return (
@@ -687,159 +834,7 @@ class Chekboxes extends React.Component {
 
 
 }
-
-class Hourschart extends React.Component {
-	constructor(props) {
-		super(props)
-
-		// this.state = {
-		// 	sprintStartTime: '',
-		// 	sprintEndTime: '',
-		// 	sprintCompleteTime: '',
-		// 	eachTimeSpentArray: [],
-		// 	totalTimeSpentArray: this.props.value,
-		// 	currentDate: '',
-		// 	currentSpentTime: 0,
-		// 	sprintId: this.props.value,
-		// 	workHours: ''
-		// }
-		//this.renderSelectedSprintIDGraph=this.renderSelectedSprintIDGraph.bind(this)
-	}
-
-
-
-
-	// componentWillMount() {
-	// 	axios.post(`/JIRAREST/jira/rest/get/generic`, {
-	// 		"resourceURL": "https://fullyincontrol.atlassian.net/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId=1&sprintId="+this.state.sprintId+"&_=1508830449128", "userName": "jeyaganesh.n@comakeit.com", "password": "Abc@12345"
-
-	// 	}).then(response => {
-	// 		this.setState({ sprintStartTime: response.data.startTime, sprintEndTime: response.data.endTime, sprintCompleteTime: response.data.CompleteTime })
-	// 		var getDateString = function (epochTime) {
-	// 			var date = new Date(epochTime)
-	// 			var month = '' + (date.getMonth() + 1)
-	// 			var day = '' + date.getDate()
-	// 			var year = date.getFullYear()
-	// 			var dateString = (month + "/" + day + "/" + year)
-	// 			return dateString
-	// 		}
-
-	// 		var currentDateObj = getDateString(response.data.startTime)
-	// 		this.setState({ currentDate: currentDateObj })
-	// 		// this.state.currentDate = currentDateObj;
-
-	// 		var currentDateEpochTime = response.data.startTime
-	// 		var changesArray = Object.keys(response.data.changes)
-
-	// 		Object.keys(response.data.changes).forEach(function (key, index) {
-
-	// 			var eachDate = Number(key)
-	// 			if (eachDate > response.data.startTime) {
-	// 				var changeObjArray = response.data.changes[eachDate]
-	// 				changeObjArray.forEach(function (item) {
-	// 					if (item.timeC) {
-
-	// 						if (item.timeC.timeSpent) {
-	// 							var d = new Date(eachDate)
-	// 							var dateString = getDateString(eachDate)
-
-	// 							if (this.state.currentDate !== dateString) {
-	// 								this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.currentDate, hr: (this.state.timeSpent / 3600) })
-	// 								this.setState({ currentDate: dateString, totalTimeSpentArray: this.state.eachTimeSpentArray })
-	// 								var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-	// 								var diffDays = Math.round(Math.abs((d.getTime() - new Date(currentDateEpochTime).getTime()) / (oneDay)));
-	// 								if (diffDays > 1) {
-	// 									for (var i = 1; i < diffDays; i++) {
-	// 										var diffStartDate = new Date(currentDateEpochTime)
-	// 										var missedDate = new Date(currentDateEpochTime);
-	// 										missedDate.setHours(diffStartDate.getHours() + (i * 24))
-
-	// 										var missedDateString = getDateString(missedDate)
-	// 										this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: missedDateString, hr: (this.state.timeSpent / 3600) })
-	// 										this.setState({ totalTimeSpentArray: this.state.eachTimeSpentArray })
-	// 									}
-	// 								}
-	// 							}
-	// 							this.setState({ timeSpent: item.timeC.timeSpent + this.state.currentSpentTime })
-	// 							this.setState({ currentSpentTime: this.state.timeSpent })
-	// 							currentDateEpochTime = eachDate
-	// 						}
-
-	// 					}
-	// 				}.bind(this))
-	// 			}
-	// 			if (index == changesArray.length - 1) {
-	// 				this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.currentDate, hr: (this.state.timeSpent / 3600) })
-	// 				this.setState({ totalTimeSpentArray: this.state.eachTimeSpentArray })
-	// 				var endDateObj = new Date(response.data.endTime)
-	// 				var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-	// 				var diffDays = Math.round(Math.abs((endDateObj.getTime() - new Date(currentDateEpochTime).getTime()) / (oneDay)));
-	// 				if (diffDays > 1) {
-	// 					for (var i = 1; i < diffDays; i++) {
-	// 						var diffStartDate = new Date(currentDateEpochTime)
-	// 						var missedDate = new Date(currentDateEpochTime);
-	// 						missedDate.setHours(diffStartDate.getHours() + (i * 24))
-	// 						var missedDateString = getDateString(missedDate)
-	// 						this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: missedDateString })
-	// 						this.setState({ totalTimeSpentArray: this.state.eachTimeSpentArray })
-	// 					}
-	// 				}
-
-	// 			}
-	// 		}.bind(this))
-
-	// 	})
-	// }
-
-	componentWillReceiveProps(nextProps) {
-		// if(this.props != nextProps) {
-		//   this.setState({
-		// 	totalTimeSpentArray: this.props.value
-		//   });
-		// }
-		//console.log('test'+ this.state.totalTimeSpentArray);
-	  }
-
-	render() {
-		
-		// const workHours = [
-		// 	{ name: '0', hr: 32 },
-		// 	{ name: '1', hr: 24 },
-		// 	{ name: '2', hr: 16 },
-		// 	{ name: '3', hr: 8 },
-		// 	{ name: '4', hr: 0 }
-
-		// ]
-
-		//console.log( this.props.value);
-		
-		return (
-			<div>
-				{/* {this.renderSelectedSprintIDGraph(this.props.value)} */}
-				<div>
-
-
-
-				</div>
-				<div>
-					<LineChart width={600} height={300} data={ this.props.value}
-					>
-						<XAxis dataKey="name" />
-						<YAxis />
-						<CartesianGrid strokeDasharray="1 1" />
-						<Legend />
-						<Line type="stepAfter" dataKey="hr" stroke="#82ca9d" />
-						<Line type="monotone" dataKey="y" stroke="#82ca9d" />
-					</LineChart>
-				</div>
-			</div>
-		)
-
-	}
-
-
-}
-
+	
 class Piechart extends React.Component {
 	_
 	constructor(props) {
@@ -858,29 +853,27 @@ class Piechart extends React.Component {
 	}
 
 	componentWillMount() {
-		axios.get(`/JIRAREST/jira/rest/get/activeSprintIssues`)
-			.then(response => {
-
-				this.state.doneArrayList = response.data.issues.filter(function (issue) {
+	
+				this.state.doneArrayList = this.props.sprinttList.issues.filter(function (issue) {
 
 					if (issue.fields.status.name === "Done") {
 						return issue;
 					}
 				})
-				this.state.inprogressArrayList = response.data.issues.filter(function (issue) {
+				this.state.inprogressArrayList = this.props.sprinttList.issues.filter(function (issue) {
 
 					if (issue.fields.status.name === "In Progress") {
 						return issue;
 					}
 				})
-				this.state.todoArrayList = response.data.issues.filter(function (issue) {
+				this.state.todoArrayList = this.props.sprinttList.issues.filter(function (issue) {
 
 					if (issue.fields.status.name === "To Do") {
 						return issue;
 					}
 				})
 
-				this.state.inqaArrayList = response.data.issues.filter(function (issue) {
+				this.state.inqaArrayList = this.props.sprinttList.issues.filter(function (issue) {
 
 					if (issue.fields.status.name === "In QA") {
 						return issue;
@@ -892,9 +885,41 @@ class Piechart extends React.Component {
 					todoArrayListlength: this.state.todoArrayList.length, inqaArrayListlength: this.state.inqaArrayList.length,
 				})
 
-			})
 
+	}
 
+	componentWillReceiveProps(nextProps) {
+		
+		this.state.doneArrayList = nextProps.sprinttList.issues.filter(function (issue) {
+
+			if (issue.fields.status.name === "Done") {
+				return issue;
+			}
+		})
+		this.state.inprogressArrayList = nextProps.sprinttList.issues.filter(function (issue) {
+
+			if (issue.fields.status.name === "In Progress") {
+				return issue;
+			}
+		})
+		this.state.todoArrayList = nextProps.sprinttList.issues.filter(function (issue) {
+
+			if (issue.fields.status.name === "To Do") {
+				return issue;
+			}
+		})
+
+		this.state.inqaArrayList = nextProps.sprinttList.issues.filter(function (issue) {
+
+			if (issue.fields.status.name === "In QA") {
+				return issue;
+			}
+		})
+
+		this.setState({
+			doneArrayListlength: this.state.doneArrayList.length, inprogressArrayListlength: this.state.inprogressArrayList.length,
+			todoArrayListlength: this.state.todoArrayList.length, inqaArrayListlength: this.state.inqaArrayList.length,
+		})
 	}
 
 	render() {
@@ -941,5 +966,240 @@ class Piechart extends React.Component {
 	}
 }
 
+class SelectedProjectDetails extends React.Component {
+	_
+	constructor(props) {
+		super(props)
+		this.state = {
+			projectDetailsListarray: [],
+			selectedProject: '',
+			selectedProjectVersion: '',
+			userName:'',
+			pwd:''
+		}
 
+		this.projectDetailsListarray = this.projectDetailsListarray.bind(this);
+		this.selectProject = this.selectProject.bind(this);
+	}
+
+	componentWillMount() {
+
+		this.setState({ projectDetailsListarray: this.props.selectedProjectDetails,userName:this.props.selectedUserName,pwd:this.props.selectedUserPwd })
+
+	}
+
+	componentWillReceiveProps(nextProps) {
+		
+		this.setState({ projectDetailsListarray: nextProps.selectedProjectDetails,userName:nextProps.selectedUserName,pwd:nextProps.selectedUserPwd  })
+
+	}
+	selectProject(event, ind, value) {
+		this.setState({ selectedProject: value })
+	
+		axios.post(`/JIRAREST/jira/rest/get/generic`, {
+			"resourceURL": "https://fullyincontrol.atlassian.net/rest/api/2/project/" + this.state.projectDetailsListarray[ind].id + "/versions", "username": this.state.userName, "password":this.state.pwd 
+		})
+			.then(response => {
+				
+
+				this.setState({
+					selectedProjectVersion: <SelectedProjectVersion selectedProjectVersion={response.data} selectedUserName={this.state.userName} 
+					selectedUserPwd={this.state.pwd} />,
+				})
+
+
+
+			})
+
+	}
+
+
+	projectDetailsListarray(projects) {
+		return projects.map((project) => (
+			<MenuItem
+				key={project.id}
+				insetChildren={true}
+				value={project.name}
+				primaryText={project.name}
+			/>
+		));
+	}
+
+	render() {
+
+		return (
+
+			<div>
+				<div>
+					<SelectField hintText="Select Project" value={this.state.selectedProject} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+						hintStyle={{ opacity: "1" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
+						{this.projectDetailsListarray(this.state.projectDetailsListarray)}
+					</SelectField>
+				</div>
+				<div>
+					{this.state.selectedProjectVersion}
+				</div>
+			</div>
+
+
+		)
+	}
+}
+
+class SelectedProjectVersion extends React.Component {
+	_
+	constructor(props) {
+		super(props)
+		this.state = {
+			projectVersionDetailsListarray: [],
+			selectedProjectVersionDetails: '',
+			userName:'',
+			pwd:''
+		}
+		this.selectProjectVersionDetails = this.selectProjectVersionDetails.bind(this)
+		this.projectVersionDetailsListarray = this.projectVersionDetailsListarray.bind(this)
+
+	}
+
+	componentWillMount() {
+
+		this.setState({ projectVersionDetailsListarray: this.props.selectedProjectVersion,userName:this.props.selectedUserName,pwd:this.props.selectedUserPwd  })
+
+	}
+
+	componentWillReceiveProps(nextProps) {
+
+		this.setState({ projectVersionDetailsListarray: nextProps.selectedProjectVersion,userName:nextProps.selectedUserName,pwd:nextProps.selectedUserPwd  })
+
+	}
+
+	selectProjectVersionDetails(event, ind, value) {
+		this.setState({ selectedProjectVersionDetails: value })
+
+
+	}
+
+	projectVersionDetailsListarray(versions) {
+		return versions.map((version) => (
+			<MenuItem
+				key={version.id}
+				insetChildren={true}
+				value={version.name}
+				primaryText={version.name}
+			/>
+		));
+	}
+
+
+	render() {
+
+		return (
+
+			<div>
+				<SelectField hintText="Release" value={this.state.selectedProjectVersionDetails} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+					hintStyle={{ opacity: "1" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProjectVersionDetails(e, i, v)}>
+					{this.projectVersionDetailsListarray(this.state.projectVersionDetailsListarray)}
+				</SelectField>
+
+
+
+
+			</div>
+
+
+
+
+		)
+	}
+}
+class SelectedProjectBoardDetails extends React.Component {
+	_
+	constructor(props) {
+		super(props)
+		this.state = {
+			selectedProjectBoard:'',
+			projectBoardDetailsListarray:[],
+			userName:'',
+			pwd:'',
+			selectedBoardSprintsArray:[]
+		
+		}
+
+
+	}
+
+	componentWillMount() {
+
+		this.setState({ projectBoardDetailsListarray: this.props.selectedProjectBoardDetails,userName:this.props.selectedUserName,pwd:this.props.selectedUserPwd  })
+
+	}
+
+	componentWillReceiveProps(nextProps) {
+
+		this.setState({ projectBoardDetailsListarray: nextProps.selectedProjectBoardDetails,userName:nextProps.selectedUserName,pwd:nextProps.selectedUserPwd  })
+
+	}
+
+	selectedProjectBoard(event, index, value) {
+		
+		this.setState({ selectedProjectBoard: value })
+		axios.post(`/JIRAREST/jira/rest/get/generic`, {
+			"resourceURL": "https://fullyincontrol.atlassian.net/rest/agile/1.0/board/"+this.state.projectBoardDetailsListarray[index].id+"/sprint",
+			 "userName": this.state.userName, "password": this.state.pwd
+		})
+			.then(response => {
+				
+				//	console.log(response)
+					this.props.onSelectBoard(response.data.values,this.state.projectBoardDetailsListarray[index].id);
+				this.setState({
+					selectedBoardSprintsArray:response.data.values
+					// selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={response.data.values} selectedUserName={this.state.projectDetails.projects[ind].tools[1].userName} 
+					// selectedUserPwd={this.state.projectDetails.projects[ind].tools[1].password} />
+				 })
+
+
+			})
+
+
+
+	}
+
+	// onSelectBoard(){
+
+	// 	return this.state.selectedBoardSprintsArray
+	// }
+
+	projectBoardDetailsListarray(board) {
+		return board.map((board) => (
+			<MenuItem
+				key={board.id}
+				insetChildren={true}
+				value={board.name}
+				primaryText={board.name}
+			/>
+		));
+	}
+
+
+	render() {
+
+		return (
+
+			<div>
+				<SelectField hintText="Boards" value={this.state.selectedProjectBoard} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+					hintStyle={{ opacity: "1" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedProjectBoard(e, i, v)}>
+					{this.projectBoardDetailsListarray(this.state.projectBoardDetailsListarray)}
+				</SelectField>
+
+
+
+
+			</div>
+
+
+
+
+		)
+	}
+}
 export default Account;

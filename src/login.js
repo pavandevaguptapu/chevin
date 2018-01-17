@@ -26,8 +26,7 @@ class Login extends React.Component {
   }
   handleClick(username) {
     console.log(username)
-    
-        this.props.history.push({pathname:'/dashboard',state: { userName: username }});
+            this.props.history.push({pathname:'/account',state: { userName: username }});
   }
   render() {
     return (
