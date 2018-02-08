@@ -1,12 +1,10 @@
 import React from 'react';
 
 import './App.css';
-import { Navbar, NavbarBrand, Button, Popover, OverlayTrigger } from 'react-bootstrap';
+import {Button } from 'react-bootstrap';
 import Modal from 'react-modal';
 import axios from 'axios';
 import 'bootstrap/css/bootstrap.min.css';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
@@ -72,7 +70,7 @@ class Dashboard extends React.Component {
 
 	selectedDashBoard(event, index, value) {
 		this.setState({ value: value });
-		if (value == 1) {
+		if (value === 1) {
 			//this.props.history.push('/manageCustomerTeams');
 			this.props.history.push({ pathname: '/manageCustomerTeams', state: { selectedDashboard: this.state.value } })
 		}
@@ -88,12 +86,13 @@ class Dashboard extends React.Component {
 
 	}
 	selectedDashboardItem(item) {
-		console.log(this.state.currentSelectedDashboardItem)
+
 		if (this.state.currentSelectedDashboardItem !== undefined) {
-			console.log(this.state.currentSelectedDashboardItem)
-			document.getElementById(this.state.currentSelectedDashboardItem).classList.remove("selectedDashboardItem");
+					document.getElementById(this.state.currentSelectedDashboardItem).classList.remove("selectedDashboardItem");
 		}
-		this.state.currentSelectedDashboardItem = item.target.parentNode.id
+
+		this.setState({currentSelectedDashboardItem:item.target.parentNode.id})
+		//this.state.currentSelectedDashboardItem = item.target.parentNode.id
 		document.getElementById(item.target.parentNode.id).classList.add("selectedDashboardItem");
 	}
 	openModal() {
@@ -153,7 +152,7 @@ class Dashboard extends React.Component {
 	deleteAccountModal(item, deleteModal) {
 		axios.delete(myConstClass.nodeAppUrl+'/accounts/' + item)
 			.then(response => {
-				if (response.statusText == 'OK') {
+				if (response.statusText === 'OK') {
 					axios.get(myConstClass.nodeAppUrl+'/accounts')
 						.then(response => {
 							this.setState({ items: response.data })
@@ -228,8 +227,8 @@ class Dashboard extends React.Component {
 				</nav>
 
 				<div id="mySidenav" className="sidenav">
-					<div href="javascript:void(0)" className="closebtn pointer" onClick={() => this.closeSideMenu()}>&times;</div>
-
+					{/* <div href="javascript:void(0)" className="closebtn pointer" onClick={() => this.closeSideMenu()}>&times;</div> */}
+					<div className="closebtn pointer" onClick={() => this.closeSideMenu()}>&times;</div>
 					<div id="customerTeams" className="navbarFontColor pointer  dashboardMenuHeight marginT22 paddingT1"
 						onClick={(e) => this.selectedDashboardItem(e)}>
 						<h5><i className="glyphicon glyphicon-group "></i>Customer Teams & Projects</h5>

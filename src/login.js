@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import { Button } from 'react-bootstrap';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
@@ -26,7 +25,7 @@ class Login extends React.Component {
   }
   handleClick(username) {
     console.log(username)
-            this.props.history.push({pathname:'/account',state: { userName: username }});
+            this.props.history.push({pathname:'/manageCustomerTeams',state: { userName: username }});
   }
   render() {
     return (

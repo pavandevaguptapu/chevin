@@ -5,6 +5,8 @@
   "dependencies": {
     "axios": "^0.17.0",
     "bootstrap": "^4.0.0-alpha.6",
+    "deep-copy": "^1.4.2",
+    "material-ui": "^0.19.4",
     "react": "^16.0.0",
     "react-bootstrap": "^0.31.5",
     "react-chartjs": "^0.8.0",
@@ -13,11 +15,10 @@
     "react-drag-and-drop": "^2.4.0",
     "react-modal": "^3.1.2",
     "react-overlays": "^0.8.3",
+    "react-popover-wrapper": "^1.0.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.14",
-    "recharts": "^1.0.0-beta.1",
-    "material-ui": "^0.19.4",
-    "react-popover-wrapper": "^1.0.0"
+    "recharts": "^1.0.0-beta.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -25,5 +26,5 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://192.168.29.93:8087/"
+  "proxy": "http://192.168.29.14:8087/"
 }

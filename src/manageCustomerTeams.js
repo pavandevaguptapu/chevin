@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import { Navbar, NavbarBrand, Button, Popover, OverlayTrigger } from 'react-bootstrap';
+
 import Modal from 'react-modal';
 import axios from 'axios';
 //import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,13 +10,14 @@ import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowCol
 import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
-import IconButton from 'material-ui/IconButton';
+
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import ContentEdit from 'material-ui/svg-icons/editor/mode-edit';
 import {myConstClass} from './constants.js';
+var dcopy = require('deep-copy')
 
 const customStyles = {
     content: {
@@ -74,9 +75,7 @@ const addProjectButtonstyle={
 const addAcountstyle = {
     marginLeft: "61%"
 }
-const addProjectstyle = {
-    marginLeft: "66%"
-}
+
 const tableConfigBUtton = {
     paddingLeft: "0px"
 }
@@ -137,14 +136,17 @@ class manageCustomerTeams extends React.Component {
     currentAccountProfile(currentAccountDetails, index) {
         axios.get(myConstClass.nodeAppUrl+'/accounts/'+currentAccountDetails._id)
         .then(response => {
-           
-            //this.setState({ accountsArray: this.state.accountsArray.concat(response.data) })
+        
+
+    
             this.setState(
                 {
                     selectedAccountIndex: index,
                     accountDetails: <AccountDetails selectedAccount={response.data} onSelectProject={this.handleProject} onUpdateProject={this.handleAccountName} />
                 }
             )
+
+       
 
         })
       
@@ -176,7 +178,7 @@ class manageCustomerTeams extends React.Component {
             })
 
     }
-    handleNewCustomerChange(e) {
+    handleNewCustomerChange(e) {                               
 
         this.state.newCustomerDetails[e.target.name] = e.target.value
 
@@ -415,6 +417,7 @@ class manageCustomerTeams extends React.Component {
 class AccountDetails extends React.Component {
     constructor(props) {
         super(props);
+        
         this.state = {
             newProjectDetails: {},
             projectList: [],
@@ -422,12 +425,18 @@ class AccountDetails extends React.Component {
             configureTools: [
                 { "id": 1, "name": "Wiki" },
                 { "id": 2, "name": "Issue Management" },
+                { "id": 3, "name": "Quality" },
             ],
             selectTool: '',
-            currentAccount: this.props.selectedAccount,
+            currentAccount: [],
             selectedProjectIndex:'',
             selectedItemName:'',
-            selectedItemIndex:''
+            selectedItemIndex:'',
+            selectedJumpStartMenuItem:'',
+            oldselectedItemIndex:'',
+            jumpStartConfigModel:false,
+            configPeopleModel:false,
+            peoplesArray:[]
               }
 
         this.createProject = this.createProject.bind(this);
@@ -440,6 +449,18 @@ class AccountDetails extends React.Component {
         this.closeEditAccountModal = this.closeEditAccountModal.bind(this);
         
         this.closeJumpStartModel = this.closeJumpStartModel.bind(this);
+        this.configPeople = this.configPeople.bind(this);
+        this.handlingPeopleList = this.handlingPeopleList.bind(this);
+ 
+        
+        
+     }
+
+     componentWillMount(){
+        
+        this.setState({
+            currentAccount: this.props.selectedAccount
+        })
      }
     
     componentWillReceiveProps(nextProps) {
@@ -540,59 +561,162 @@ class AccountDetails extends React.Component {
         this.setState({createProjectModel:false,newCustomerDetails:{}})
     }
 
+  
     configJumpStart(projectIndex) {
-        if(this.state.currentAccount.projects[projectIndex].tools==undefined){
-            this.setState({jumpStartConfigModel: true,selectedProjectIndex:projectIndex})
-        }
-              
+
         
-        if(this.state.currentAccount.projects[projectIndex].tools !== undefined){
-            this.setState({ jumpStartConfigModel: true,selectedProjectIndex:projectIndex,selectTool: <ToolConfigurationDetails  selectedAccount={this.state.currentAccount}
-                selectedProjectIndex={projectIndex} selectedJumpStartIndex={0}/>})
-        }
-        
-    }
 
-    currentItem(selectedItemName, selectedItemIndex) {
-        //this.setState({selectedItemName:selectedItemName,selectedItemIndex:selectedItemIndex})
-              var tempArray = this.state.currentAccount
+        if (this.state.currentAccount.projects[projectIndex].tools === undefined) {
+            this.setState({ jumpStartConfigModel: true, selectedProjectIndex: projectIndex,selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
+                selectedProjectIndex={projectIndex}
+                selectedJumpStartMenuName={"wiki"}
+           
 
-        if (tempArray.projects[this.state.selectedProjectIndex].tools == undefined) {
-    
-            tempArray.projects[this.state.selectedProjectIndex].tools = []
-            var emptyToolsobject = { name: '', type: '', userName: '', password: '', hostedURL: '', index: 0 }
-            tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemIndex] = emptyToolsobject
-                   this.setState({ currentAccount: tempArray })
-        }
-
-        if (tempArray.projects[this.state.selectedProjectIndex].tools !== undefined) {
-            
-            if (tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemIndex] == undefined) {
-            
-                var emptyToolsobject = { name: '', type: '', userName: '', password: '', hostedURL: '', index: 0 }
-                tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemIndex] = emptyToolsobject
-                          this.setState({ currentAccount: tempArray })
-            }
-
-            tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemIndex].index = selectedItemIndex
-            tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemIndex].type = selectedItemName
-             this.setState({ currentAccount: tempArray })
+            />})
 
         }
-      
-        this.setState({
-            selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
-                selectedProjectIndex={this.state.selectedProjectIndex} selectedItemName={selectedItemName}
-                selectedJumpStartIndex={selectedItemIndex} onSelectItem={this.handleJumpStartChange} />
-        });
-
-    }
-    closeJumpStartModel(){
-        this.setState({jumpStartConfigModel:false})
-    }
-   
 
   
+        if (this.state.currentAccount.projects[projectIndex].tools !== undefined) {
+             var jumpStartMenuNameArray = []
+            for (var JumpStartMenuName in this.state.currentAccount.projects[projectIndex].tools) {
+                        jumpStartMenuNameArray.push(JumpStartMenuName)
+            }
+
+       
+
+            this.setState({
+                jumpStartConfigModel: true, selectedProjectIndex: projectIndex, selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
+                    selectedProjectIndex={projectIndex}
+                    selectedJumpStartMenuName={jumpStartMenuNameArray[0]}
+           
+
+                />
+            })
+        }
+
+    }
+
+
+    currentItem(selectedItemName, selectedItemIndex) {
+      
+        //this.setState({selectedItemName:selectedItemName,selectedItemIndex:selectedItemIndex})
+        this.selectedItemName=selectedItemName
+       if(this.state.oldselectedItemIndex!=='' && this.state.oldselectedItemIndex!==undefined ){
+        this.state.configureTools[this.state.oldselectedItemIndex].selectedJumpStartMenuItem=false
+       }
+              
+       var i
+        for(i=0;i<this.state.configureTools.length;i++){          
+                 if(selectedItemName===this.state.configureTools[i].name){                 
+           this.state.configureTools[selectedItemIndex].selectedJumpStartMenuItem=true
+                           
+                 }
+        }
+        this.setState({oldselectedItemIndex:selectedItemIndex}) 
+                       
+              var tempArray = this.state.currentAccount
+              if(tempArray.projects[this.state.selectedProjectIndex].tools===undefined){
+                tempArray.projects[this.state.selectedProjectIndex].tools={}
+                
+                          }
+
+
+              if(tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemName]==undefined){
+                tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemName]={ name: '',userName: '', password: '', hostedURL: ''}
+                  this.setState({
+                      selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
+                          selectedProjectIndex={this.state.selectedProjectIndex}
+                          selectedJumpStartMenuName={selectedItemName}
+            
+                        
+                      
+                         
+                      />
+        });
+
+              }
+
+              else{
+                this.setState({
+                    selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
+                        selectedProjectIndex={this.state.selectedProjectIndex}
+                        selectedJumpStartMenuName={selectedItemName}
+                     
+                     
+                       
+                    />
+      });
+              }
+           
+   
+
+              this.setState({currentAccount:tempArray})
+
+     
+
+    }
+
+       closeJumpStartModel(){
+        this.setState({jumpStartConfigModel:false,configPeopleModel:false})
+    }
+   
+    configPeople(currentProject,projectIndex){
+        var tempPeoplesArray = []
+        var tempArray = this.state.currentAccount
+
+
+        if (tempArray.projects[projectIndex].people === undefined) {
+            tempArray.projects[projectIndex].people = []
+            
+            this.setState({
+                configPeopleModel: true,
+                selectedProjectIndex: projectIndex,
+                currentAccount: tempArray,
+               // peoplesArray: tempPeoplesArray,
+                people: <PeopleConfigurationDetails selectedAccount={this.state.currentAccount}
+                    selectedProjectIndex={projectIndex}
+                    onSubmitPeopleData={this.handlingPeopleList}
+                />
+            })
+
+        }
+   
+        if (tempArray.projects[projectIndex].people !== undefined) {
+            for (var i = 0; i < tempArray.projects[projectIndex].people.length; i++) {
+                tempPeoplesArray.push(tempArray.projects[projectIndex].people[i])
+            }
+
+            this.setState({
+                configPeopleModel: true,
+                selectedProjectIndex: projectIndex,
+                currentAccount: tempArray,
+                peoplesArray: tempPeoplesArray,
+                people: <PeopleConfigurationDetails selectedAccount={this.state.currentAccount}
+                    selectedProjectIndex={projectIndex}
+                   onSubmitPeopleData={this.handlingPeopleList}
+                />
+            })
+
+}   
+          
+
+}
+    handlingPeopleList(latestPeopleDate) {
+
+        var tempPeoplesArray = []
+        for (var i = 0; i < latestPeopleDate.projects[this.state.selectedProjectIndex].people.length; i++) {
+            tempPeoplesArray.push(latestPeopleDate.projects[this.state.selectedProjectIndex].people[i])
+        }
+        this.setState({ peoplesArray: tempPeoplesArray })
+    }
+curentSelectedIteminPeople(selectedNameObj,index){
+
+this.setState({people: <PeopleConfigurationDetails selectedMemberObj={selectedNameObj}
+  
+/>})
+}
+
     render() {
        
         return (
@@ -635,14 +759,7 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </div>
-                {/* <div>
-                    <h5 className="accountProjectProfileheading paddingL41 font fontSize17 paddingL40">Projects
-                                <FloatingActionButton mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createProject()} style={addProjectButtonstyle} >
-                            <ContentAdd />
-                        </FloatingActionButton>
-                    </h5>
-                </div> */}
-                <div className="col-md-12 col-lg-12 padding0">
+                          <div className="col-md-12 col-lg-12 padding0">
                    
                 <Table>
                     <TableHeader>
@@ -665,10 +782,12 @@ class AccountDetails extends React.Component {
 
                                 </TableRowColumn>
                                 <TableRowColumn style={tableConfigBUtton}>
-                                    <RaisedButton label="configure" secondary={true} onClick={() => this.configPeople(project)} />
+                                    <RaisedButton label="configure" secondary={true} onClick={() => this.configPeople(project,index)} />
+                                    {/*   */}
                                 </TableRowColumn>
                                 <TableRowColumn style={tableConfigBUtton}>
-                                    <RaisedButton label="configure" default={true} onClick={() => this.configACES5(project)} />
+                                    <RaisedButton label="configure" default={true} />
+                                    {/* onClick={() => this.configACES5(project)} ] */}
                                 </TableRowColumn>
                                 <TableRowColumn>
                                     <FloatingActionButton mini={true} iconStyle={editProjectButton} onClick={() => this.createProject()}>
@@ -810,13 +929,42 @@ class AccountDetails extends React.Component {
                             </div>
                             <div className="textAlignLeft col-md-3 col-lg-5 borderRight verticalHeight30">
                                 {this.state.configureTools.map((item,index) => (
-                                    <div className="pointer" key={item.id} onClick={() => this.currentItem(item.name,index)} >{item.name}</div>
+                                    <li className={["pointer", 
+                                    this.state.configureTools[index].selectedJumpStartMenuItem==true?"dashboardHeaderBgColor":''].join(' ')} key={item.id} onClick={() => this.currentItem(item.name,index)} >{item.name}</li>
                                 ))}
 
                             </div>
 
                             <div className="col-md-7 col-lg-7">
                                 {this.state.selectTool}
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
+                <Modal isOpen={this.state.configPeopleModel} style={customStylesJumpStart} className={["col-md-6 modalMargins overlay "].join(' ')}>
+
+                    <div className="row">
+                        <div className="col-md-12 col-lg-12">
+                            <div className="col-md-12 col-lg-12 borderBottom">
+                                <h5 className="marginT0  paddingL41 font fontSize17">Jump Start
+                                <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton}  style={addProjectButtonstyle} onClick={() => this.closeJumpStartModel()}>
+
+                                        <ContentClear />
+
+
+                                    </FloatingActionButton>
+
+                                </h5>
+                            </div>
+                            <div className="textAlignLeft col-md-3 col-lg-5 borderRight verticalHeight30">
+                                {this.state.peoplesArray.map((people,index) => (
+                                    <li className={["pointer", 
+                                    ].join(' ')} key={people.role} onClick={() => this.curentSelectedIteminPeople(people,index)} >{people.name}</li>
+                                ))}
+
+                            </div>
+                            <div className="col-md-7 col-lg-7">
+                                {this.state.people}
                             </div>
                         </div>
                     </div>
@@ -828,145 +976,254 @@ class AccountDetails extends React.Component {
     }
 }
 
-class ToolConfigurationDetails extends React.Component {
+
+
+class ToolConfigurationDetails extends React.Component { 
     constructor(props) {
         super(props)
-             this.state = {
-           
-            wikiList: [
-                { "id": 1, "name": "Confluence" },
-                { "id": 2, "name": "Github" }
-            ],
+
+
+        var obj = dcopy(this.props.selectedAccount)
+        this.state = {
+            wikiList: [{ "id": 1, "name": "Confluence" },
+            { "id": 2, "name": "Slack" }],
             userConfigDetails: '',
-            currentAccount:this.props.selectedAccount,
-           selectedProjectIndex:this.props.selectedProjectIndex,
-           selectedItemName:this.props.selectedItemName,
-           selectedJumpStartIndex:this.props.selectedJumpStartIndex
-             }
+            currentAccount: obj,
+            selectedProjectIndex: '',
+            selectedItemName: '',
+
+            selectedToolItemName: '',
+            dupeCurrentAccountArray: []
+
+        }
         this.handleChangeInJumpStart = this.handleChangeInJumpStart.bind(this);
         this.subMenuItems = this.subMenuItems.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.submitToolsData = this.submitToolsData.bind(this);
        
     }
+  
     componentWillMount() {
      
-        // this.setState({currentAccount:this.props.selectedAccount,selectedItemName:this.props.selectedItemName, selectedProjectIndex:this.props.selectedProjectIndex,})
-        if (this.props.selectedItem == "Issue Management") {
+ 
+        
+              var dupeAccountArray=dcopy(this.props.selectedAccount);
+                    //var tempArray=this.props.selectedAccount
+              if(dupeAccountArray.projects[this.props.selectedProjectIndex].tools===undefined){
+        
+
+                dupeAccountArray.projects[this.props.selectedProjectIndex].tools={} 
+              }
+              if(dupeAccountArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName]==undefined){
+                dupeAccountArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName]={name: '',userName: '', password: '', hostedURL: ''}
+
+                     this.setState({dupeCurrentAccountArray:dupeAccountArray,selectedProjectIndex: this.props.selectedProjectIndex,
+                        selectedItemName:this.props.selectedJumpStartMenuName})
+              }
+
+        if (this.props.selectedJumpStartMenuName == "Wiki") {
+      
+            this.setState({
+                wikiList: [
+                    {"id": 1, "name": "Confluence" },
+                    {"id": 2, "name": "Slack"}
+                  
+                ], dupeCurrentAccountArray: dupeAccountArray, selectedProjectIndex: this.props.selectedProjectIndex,
+                selectedItemName:this.props.selectedJumpStartMenuName
+              
+              
+           
+            })
+
+        }
+        if (this.props.selectedJumpStartMenuName == "Issue Management") {
+      
             this.setState({
                 wikiList: [
                     { "id": 1, "name": "Jira" },
-                    { "id": 2, "name": "Github" }
-                ], currentAccount: this.props.selectedAccount, selectedProjectIndex: this.props.selectedProjectIndex,
-                selectedItemName:this.props.selectedItemName,selectedJumpStartIndex:this.props.selectedJumpStartIndex
-               
+                     { "id": 2, "name": "Github" },
+                    
+                ], dupeCurrentAccountArray: dupeAccountArray, selectedProjectIndex: this.props.selectedProjectIndex,
+                selectedItemName:this.props.selectedJumpStartMenuName
      
             })
 
         }
+        if (this.props.selectedJumpStartMenuName == "Quality") {
+            this.setState({
+                wikiList: [
+                    { "id": 1, "name": "SonarQube"}
+                ], dupeCurrentAccountArray: dupeAccountArray, selectedProjectIndex: this.props.selectedProjectIndex,
+                selectedItemName:this.props.selectedJumpStartMenuName
+           
+            })
 
-        if (this.props.selectedItemName == "Wiki") {
+        }
+        
+        
+       
+    }
+
+    componentWillReceiveProps(nextProps) {
+     
+        this.setState({dupeCurrentAccountArray:[]})
+           var dupeAccountArray=dcopy(nextProps.selectedAccount);
+        
+    
+        if (nextProps.selectedJumpStartMenuName == "Wiki") {
             this.setState({
                 wikiList: [
                     { "id": 1, "name": "Confluence" },
-                    { "id": 2, "name": "Github" }
-                ], currentAccount: this.props.selectedAccount, selectedProjectIndex: this.props.selectedProjectIndex,
-                selectedItemName:this.props.selectedItemName,selectedJumpStartIndex:this.props.selectedJumpStartIndex
-           
+                    { "id": 2, "name": "Slack" }
+                ],dupeCurrentAccountArray:dupeAccountArray, selectedProjectIndex:nextProps.selectedProjectIndex,
+                selectedItemName:nextProps.selectedJumpStartMenuName
+                
+                
             })
 
         }
-
-    }
-    componentWillReceiveProps(nextProps) {
-     
-    
  
-        if (nextProps.selectedItemName == "Issue Management") {
+        if (nextProps.selectedJumpStartMenuName == "Issue Management") {
            
             this.setState({
                 wikiList: [
                     { "id": 1, "name": "Jira" },
-                    { "id": 2, "name": "Github" }
-                ],currentAccount:nextProps.selectedAccount, selectedProjectIndex:nextProps.selectedProjectIndex,
-                selectedItemName:nextProps.selectedAccount,selectedJumpStartIndex:nextProps.selectedJumpStartIndex
+                    { "id": 2, "name": "Github" },
+                    
+                ],dupeCurrentAccountArray:dupeAccountArray, selectedProjectIndex:nextProps.selectedProjectIndex,
+                selectedItemName:nextProps.selectedJumpStartMenuName
+               
                 
             })
             document.getElementById("create-course-form").reset();
 
         }
 
-        if (nextProps.selectedItemName == "Wiki") {
+
+        if (nextProps.selectedJumpStartMenuName == "Quality") {
             this.setState({
                 wikiList: [
-                    { "id": 1, "name": "Confluence" },
-                    { "id": 2, "name": "Github" }
-                ],currentAccount:nextProps.selectedAccount, selectedProjectIndex:nextProps.selectedProjectIndex,
-                selectedItemName:nextProps.selectedAccount,selectedJumpStartIndex:nextProps.selectedJumpStartIndex
+                  
+                    { "id": 1, "name": "SonarQube"}
+                ],dupeCurrentAccountArray:dupeAccountArray, selectedProjectIndex:nextProps.selectedProjectIndex,
+                selectedItemName:nextProps.selectedJumpStartMenuName
+               
                 
                 
             })
 
         }
-
+  
+     
     }
     handleChangeInJumpStart(e, index, value) {
-        document.getElementById("create-course-form").reset();
-        // this.setState({ values: value,userConfigDetails:<USerConfigurationDetails/> });
-        var tempArray=this.state.currentAccount
-        tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].name= value
-        // tempArray.projects[this.state.selectedProjectIndex].tools[0].type= this.state.selectedItemName
-        // tempArray.projects[this.state.selectedProjectIndex].tools[0].index= this.state.selectedJumpStartIndex
-        this.setState({currentAccount:tempArray});
+
+         var tempArray = this.state.dupeCurrentAccountArray
+         var tempArray2 =dcopy(tempArray);    
+        
+         tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name = value
+
+
+         this.setState({ dupeCurrentAccountArray: tempArray })
+
+         var tempArray=this.state.currentAccount
+
+         if(tempArray.projects[this.props.selectedProjectIndex].tools===undefined){
+            
+    
+            tempArray.projects[this.props.selectedProjectIndex].tools={} 
+                  }
+                  if(tempArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName]==undefined){
+                    tempArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName]={name: '',userName: '', password: '', hostedURL: ''}
+    
+                         this.setState({dupeCurrentAccountArray:tempArray})
+                  }
+
+     if(this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name!==value){
+    
+            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName]={ name: value,userName: '', password: '', hostedURL: ''}
+         
+       
+     }
+
+     if(this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name===value){
+
+                       
+       tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL
+        tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName
+        tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password
+     }
+           
+     this.setState({ dupeCurrentAccountArray: tempArray})
+                
+        //  for(var i=0;i<  this.state.currentAccount.projects[this.state.selectedProjectIndex].tools.length;i++){
+        //                if(value == this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[i].name){
+             
+                
+        //         tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].hostedURL = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[i].hostedURL
+        //         tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].userName = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[i].userName
+        //         tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].password = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[i].password
+        //         this.setState({ dupeCurrentAccountArray: tempArray })
+        //         return ;
+
+
+        //       }
+        //       else{
+        //                    tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].hostedURL = ''
+        //         tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].userName = ''
+        //         tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].password = ''
+        //       }
+
+        //  }
 
     }
     handleChange(e) {
-      
-        var tempArray = this.state.currentAccount
+
+        var tempArray = this.state.dupeCurrentAccountArray
 
         if (e.target.name == 'hostedURL') {
 
-            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].hostedURL = e.target.value
+            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL = e.target.value
 
         }
         if (e.target.name == 'userName') {
 
-            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].userName = e.target.value
+            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName = e.target.value
 
         }
         if (e.target.name == 'password') {
 
-            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].password = e.target.value
+            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password = e.target.value
 
         }
 
 
-        this.setState({ currentAccount: tempArray })
+        this.setState({ dupeCurrentAccountArray: tempArray })
     }
 
- 
-
     submitToolsData(toolsList) {
-         this.setState({ currentAccount: toolsList })
-      
-        axios.put(myConstClass.nodeAppUrl+`/accounts/` + this.state.currentAccount._id,
+
+
+        this.setState({ dupeCurrentAccountArray: toolsList })
+       
+        axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.dupeCurrentAccountArray._id,
             {
-                customerName: this.state.currentAccount.customerName,
+                customerName: this.state.dupeCurrentAccountArray.customerName,
                 startDate: '13/12/2017',
                 endDate: '13/12/2017',
-                engagementModel: this.state.currentAccount.engagementModel,
-                pricingModel: this.state.currentAccount.pricingModel,
+                engagementModel: this.state.dupeCurrentAccountArray.engagementModel,
+                pricingModel: this.state.dupeCurrentAccountArray.pricingModel,
                 seniorSupplier: 'asewr',
                 projectManager: 'jg',
-                projects: this.state.currentAccount.projects,
+                projects: this.state.dupeCurrentAccountArray.projects,
                 people: [],
-                customerLogo: this.state.currentAccount.customerLogo,
+                customerLogo: this.state.dupeCurrentAccountArray.customerLogo,
                 status: 'Active'
             })
             .then(response => {
-               
-                  this.setState({currentAccount:response.data})
-                 
+       
+                  this.setState({ dupeCurrentAccountArray: response.data })
+
             })
     }
  
@@ -982,79 +1239,171 @@ class ToolConfigurationDetails extends React.Component {
         ));
     }
     render() {
-      
-        return (
-
+    
+            return (
             <div>
-                <form id="create-course-form">
-                    <SelectField hintText="Select a Tool" value={this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].name} onChange={(e, i, v) => this.handleChangeInJumpStart(e, i, v)} >
+                 <form id="create-course-form">
+                    <SelectField hintText="Select a Tool" value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name} 
+                    onChange={(e, i, v) => this.handleChangeInJumpStart(e, i, v)} >
                         {this.subMenuItems(this.state.wikiList)}
                     </SelectField>
-                    {/* </div>  */}
-
-                    {/* {this.state.userConfigDetails} */}
+                 
                     <div className="col-md-12 col-lg-12">
                     
                                 
                         <div className="col-md-5"><label>Hosted Url:</label></div>
                         <div className="col-md-6">
-                            <input value={this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].hostedURL} name='hostedURL' onChange={this.handleChange} />
+                            <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL} name='hostedURL' 
+                            onChange={this.handleChange} />
                         </div>
                         <div className="col-md-5"><label>userName:</label></div>
                         <div className="col-md-6">
-                            <input value={this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].userName} name='userName' onChange={this.handleChange} />
+                            <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName} name='userName' 
+                            onChange={this.handleChange} />
                         </div>
                         <div className="col-md-5"><label>password:</label></div>
                         <div className="col-md-6">
-                            <input value={this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].password} name='password' onChange={this.handleChange} />
+                            <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password} name='password' 
+                            onChange={this.handleChange} />
                         </div>
 
                     </div>
                 </form>
                 <div>
-                    {/* <RaisedButton label="Reset" secondary={true} style={modelbuttonsStyle} onClick={() => this.closeJumpStartModel()} /> */}
-                    <RaisedButton label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitToolsData(this.state.currentAccount)} />
+                
+                    <RaisedButton label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitToolsData(this.state.dupeCurrentAccountArray)} />
 
-                </div>
+                </div> 
 
             </div>
 
         )
     }
 }
-class USerConfigurationDetails extends React.Component {
+class PeopleConfigurationDetails extends React.Component {
     constructor(props) {
         super(props)
+        var obj = dcopy(this.props.selectedAccount)
+      
         this.state = {
-
-
+            currentAccount:obj,
+            tempSelectedAccountobj:'',
+            currentProjectIndex:'',
+            currentPeopleArrayIndex:'',
+            tempObj:{name:'',role:'',emailid:''}
         }
-        this.handleChangeInJumpStart = this.handleChangeInJumpStart.bind(this);
-
+        this.handleChangeInPeopleConfigInput = this.handleChangeInPeopleConfigInput.bind(this);
+        this.submitPeopleData = this.submitPeopleData.bind(this);
     }
-    handleChangeInJumpStart(event, index, value) {
 
-        this.setState({ values: value });
+    componentWillMount(){
+        this.setState({
+            tempSelectedAccountobj:this.props.selectedAccount,
+            currentProjectIndex:this.props.selectedProjectIndex,
+            currentPeopleArrayIndex:this.props.peopleArrayIndex,
+            //tempObj:this.props.selectedMemberObj
+        
+        })
+    }
+componentWillReceiveProps(nextProps){
+    console.log(nextProps.selectedMemberObj)
+   
+    this.setState({tempObj:nextProps.selectedMemberObj})
+}
+
+    handleChangeInPeopleConfigInput(e) {
+
+   
+        var tempArray = this.state.tempObj
+        
+                if (e.target.name == 'name') {
+        
+                    tempArray.name = e.target.value
+        
+                }
+                if (e.target.name == 'role') {
+        
+                    tempArray.role = e.target.value
+        
+                }
+                if (e.target.name == 'emailid') {
+        
+                    tempArray.emailid = e.target.value
+        
+                }
+        
+        
+                this.setState({ tempObj: tempArray })
+    }
+    submitPeopleData(currentobj){
+         // this.setState({ currentAccount: currentobj })
+    
+        this.state.tempSelectedAccountobj.projects[this.state.currentProjectIndex].people=this.state.tempSelectedAccountobj.projects[this.state.currentProjectIndex].people.concat(currentobj)
+
+       
+
+        axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.tempSelectedAccountobj._id,
+        {
+            customerName: this.state.tempSelectedAccountobj.customerName,
+            startDate: '13/12/2017',
+            endDate: '13/12/2017',
+            engagementModel: this.state.tempSelectedAccountobj.engagementModel,
+            pricingModel:this.state.tempSelectedAccountobj.pricingModel,
+            seniorSupplier: 'asewr',
+            projectManager: 'jg',
+            projects: this.state.tempSelectedAccountobj.projects,
+            people: [],
+            customerLogo: this.state.tempSelectedAccountobj.customerLogo,
+            status: 'Active'
+        })
+        .then(response => {
+        
+            this.props.onSubmitPeopleData(response.data)
+            //var dummyObj=currentobj
+            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].name=''
+            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].role=''
+            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].emailid=''
+            currentobj={name:'',role:'',emailid:''}
+        this.setState({ 
+            currentAccount: response.data, tempObj:currentobj})
+         })
+
+
+
     }
 
     render() {
         return (
             // <div className="col-md-6">
             <div>
-                <div className="col-md-12 col-lg-12">
-                    <div className="col-md-5"><label>Hosted Url:</label></div>
-                    <div className="col-md-6">
-                        <input value={1} name='customerName' onChange={this.handleChangeInJumpStart} />
+                 <form id="create-course-form">
+                                   
+                    <div className="col-md-12 col-lg-12">
+                                                    
+                        <div className="col-md-5"><label>Name:</label></div>
+                        <div className="col-md-6">
+                             <input value={this.state.tempObj.name} name='name' 
+                            onChange={this.handleChangeInPeopleConfigInput} />
+                        </div>
+                        <div className="col-md-5"><label>Role:</label></div>
+                        <div className="col-md-6">
+                             <input value={this.state.tempObj.role} name='role' 
+                            onChange={this.handleChangeInPeopleConfigInput} /> 
+                        </div>
+                        <div className="col-md-5"><label>emailid:</label></div>
+                        <div className="col-md-6">
+                             <input value={this.state.tempObj.emailid} name='emailid' 
+                            onChange={this.handleChangeInPeopleConfigInput} /> 
+                        </div>
+
                     </div>
-                    <div className="col-md-5"><label>userName:</label></div>
-                    <div className="col-md-6">
-                        <input value={2} name='customerName' onChange={this.handleChangeInJumpStart} />
-                    </div>
-                    <div className="col-md-5"><label>password:</label></div>
-                    <div className="col-md-6">
-                        <input value={3} name='customerName' onChange={this.handleChangeInJumpStart} />
-                    </div>
-                </div>
+                </form>
+                <div>
+                
+                    <RaisedButton label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitPeopleData(this.state.tempObj)} />
+
+                </div> 
+
             </div>
         )
     }
