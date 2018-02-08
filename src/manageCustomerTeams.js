@@ -303,12 +303,12 @@ class manageCustomerTeams extends React.Component {
                 </div>
 
                 <div className="row">
-                    <div className="col-md-12 col-lg-12 marginT50 padding0">
+                    <div className="col-md-12 col-lg-12 marginT50 marginTop0 displayInline padding0">
                         <div className="col-md-3 col-lg-2 borderRight marginR0 padding0 verticalHeight">
-                                 <div className="col-md-10 col-lg-10 textAlignLeft borderBottom">
+                                 <div className="col-md-10 col-lg-10 textAlignLeft borderBottom displayInline">
                                      <h5 className="marginT0 font fontSize17 paddingT2">Account </h5>
                                  </div>
-                                 <div className="col-md-2 col-lg-2 textAlignCenter borderBottom paddingT3 paddingB7 paddingL0">
+                                 <div className="col-md-2 col-lg-2 textAlignCenter borderBottom displayInline paddingT3 paddingB5 paddingL0">
                                  <FloatingActionButton mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createAccount()} style={addAcountstyle} >
                                  <ContentAdd />
                              </FloatingActionButton>
@@ -721,11 +721,11 @@ this.setState({people: <PeopleConfigurationDetails selectedMemberObj={selectedNa
        
         return (
             <div>
-                <div className="col-md-12 col-lg-12 borderBottom">
+                <div className="col-md-12 col-lg-12 borderBottom displayInline">
                     <div className="col-md-10 col-lg-10 textAlignCenter">
-                        <h5 className="marginT0 font fontSize17">Account Details </h5>
+                        <h5 className="marginT0 font fontSize17 displayInline">Account Details </h5>
                     </div>
-                    <div className="col-md-2 col-lg-2 textAlignCenter">
+                    <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
 
                         <FloatingActionButton mini={true} iconStyle={addAccountBUtton} style={editbuttonStyle} onClick={() => this.editAccount()}>
                             <ContentEdit />
@@ -734,23 +734,23 @@ this.setState({people: <PeopleConfigurationDetails selectedMemberObj={selectedNa
                     </div>
 
                 </div>
-                <div className="col-md-6 col-lg-6 marginB04">
+                <div className="col-md-6 col-lg-6 marginB04 displayInline">
                     <label className="flex">Account Name:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.state.currentAccount.customerName}</h5></label>
                 </div>
-                <div className="col-md-6 col-lg-6 marginB04">
+                <div className="col-md-6 col-lg-6 marginB04 displayInline">
                     <label className="flex">Status:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.state.currentAccount.status}</h5></label>
                 </div>
-                <div className="col-md-6 col-lg-6 marginB04">
+                <div className="col-md-6 col-lg-6 marginB04 displayInline">
                     <label className="flex">Start Date:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.props.selectedAccount.startDate}</h5></label>
                 </div>
-                <div className="col-md-6 col-lg-6 marginB04">
+                <div className="col-md-6 col-lg-6 marginB04 displayInline">
                     <label className="flex">End Date:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.state.currentAccount.endDate}</h5></label>
                 </div>
-                <div className="col-md-12 col-lg-12 borderBottom">
+                <div className="col-md-12 col-lg-12 borderBottom displayInline">
                     <div className="col-md-10 col-lg-10 textAlignCenter">
                         <h5 className="marginT0 font fontSize17">Projects</h5>
                     </div>
-                    <div className="col-md-2 col-lg-2 textAlignCenter">
+                    <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
 
                     <FloatingActionButton mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createProject()} style={addProjectButtonstyle} >
                     <ContentAdd />

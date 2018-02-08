@@ -424,6 +424,9 @@ background-color: #26A69A
 						.paddingB7{
 							padding-bottom:7px; 
 						}
+						.paddingB5{
+							padding-bottom:5px; 
+						}
 						.actionsFontSize{
 							font-size: 18px !important
 						}
@@ -488,4 +491,11 @@ background-color: #26A69A
 					}
 					
 
-					
+					@media screen and (min-width:890px){
+						.marginTop0{
+							margin-top: 0px !important
+						}
+						.displayInline{
+							display: inline-flex !important
+						}
+					}
