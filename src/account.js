@@ -6,7 +6,7 @@ import { Button } from 'react-bootstrap';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 import axios from 'axios';
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
+import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend,BarChart, Bar, Tooltip } from 'recharts';
 import Modal from 'react-modal';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -67,7 +67,7 @@ class Account extends React.Component {
 			selectedTab3: false,
 			selectedTab4: false,
 			selectedTab5: false,
-			projects:'',
+			projects: '',
 			listofepics: [],
 			selecteditem: '',
 			issueTracking: '',
@@ -100,7 +100,8 @@ class Account extends React.Component {
 			peoplesArray: [],
 			hintStyle2: { opacity: 1 },
 			renderChild: true,
-			activeSprint:''
+			activeSprint: '',
+			epicBurdownChart: ''
 		}
 
 		this.onDrop = this.onDrop.bind(this);
@@ -113,7 +114,9 @@ class Account extends React.Component {
 		this.selectedBoard = this.selectedBoard.bind(this);
 		this.sonarQubeData = this.sonarQubeData.bind(this);
 		this.selectedBoardforIssues = this.selectedBoardforIssues.bind(this);
-		
+		this.epicBurdownChart = this.epicBurdownChart.bind(this);
+
+
 	}
 
 	addProjectModal() {
@@ -143,7 +146,7 @@ class Account extends React.Component {
 	}
 
 	accountsListArray(accounts) {
-		
+
 		return accounts.map((account) => (
 			<MenuItem
 				key={account._id}
@@ -167,12 +170,14 @@ class Account extends React.Component {
 
 		this.state.accounts.customerName = value;
 
-		this.setState({ projectDetails: selecteAccount[ind], value: value, 
-			projects:<SelectedProjectDetails  projectDetails={selecteAccount[ind]} onSelectProject={this.selectProject}
-			
-			
-			
-			/> })
+		this.setState({
+			projectDetails: selecteAccount[ind], value: value,
+			projects: <SelectedProjectDetails projectDetails={selecteAccount[ind]} onSelectProject={this.selectProject}
+
+
+
+			/>
+		})
 	}
 	projectsListArray(projects) {
 		return projects.map((project) => (
@@ -184,7 +189,7 @@ class Account extends React.Component {
 			/>
 		));
 	}
-	selectProject(boardDetails,userNmae,password,hostedUrl,peopleList) {
+	selectProject(boardDetails, userName, password, hostedUrl, peopleList) {
 
 		// this.state.hintStyle2 = {
 		// 	opacity: 0
@@ -201,19 +206,22 @@ class Account extends React.Component {
 		// })
 		// 	.then(response => {
 
-				this.setState({
-					selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={boardDetails}
-						selectedUserName={userNmae}
-						selectedUserPwd={password}
-						selectedUrl={hostedUrl}
-						onSelectBoard={this.selectedBoard} currentBoard={this.selectedBoardforIssues} />,
-						peoplesArray: <PeoplesList peoplesList={peopleList} />,
-						sonarQubedata:<SonarQubeData sonarQubeDetails={this.sonarQubeData}/>
-								
+		this.setState({
+			selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={boardDetails}
+				selectedUserName={userName}
+				selectedUserPwd={password}
+				selectedUrl={hostedUrl}
+				onSelectBoard={this.selectedBoard} currentBoard={this.selectedBoardforIssues} listOfEpics={this.epicBurdownChart} />,
+			peoplesArray: <PeoplesList peoplesList={peopleList} />,
+			sonarQubedata: <SonarQubeData sonarQubeDetails={this.sonarQubeData} />
 
-				})
 
-			//})
+
+
+
+		})
+
+		//})
 
 
 		// this.setState({ peoplesArray: <PeoplesList peoplesList={this.state.projectDetails.projects[ind].people} /> })
@@ -222,57 +230,78 @@ class Account extends React.Component {
 
 	}
 	selectedBoardforIssues(allIssues) {
-	
-				
-			var issuesDataArray=[]
 
-		allIssues.forEach(function(eachIssue){
-	
 
-			if(eachIssue.issues.length==0){
-			
-				issuesDataArray.push({name:eachIssue.name,done:0,toDo:0,inQa:0,inProgress:0,inCodeReview:0})
+		var issuesDataArray = []
+
+
+		allIssues.forEach(function (eachIssue) {
+
+
+			if (eachIssue.issues.length == 0) {
+
+				issuesDataArray.push({ name: eachIssue.name, done: 0, toDo: 0, inQa: 0, inProgress: 0, inCodeReview: 0 })
 			}
-			else{
-				var Done=[]
-				var ToDo=[]
-				var InQA=[]
-				var InProgress=[]
-				var InCodeReview=[]
+			else {
+				var Done = []
+				var ToDo = []
+				var InQA = []
+				var InProgress = []
+				var InCodeReview = []
 
-				eachIssue.issues.forEach(function(issuestatus){
-						if(issuestatus.fields.status.name=="Done"){
-							Done.push(issuestatus)
-						}
-						if(issuestatus.fields.status.name=="To Do"){
-							ToDo.push(issuestatus)
-						}
-						if(issuestatus.fields.status.name=="In QA"){
-							InQA.push(issuestatus)
-						}
-						if(issuestatus.fields.status.name=="In Progress"){
-							InProgress.push(issuestatus)
-						}
-						if(issuestatus.fields.status.name=="In Code Review"){
-							InCodeReview.push(issuestatus)
-						}
+				eachIssue.issues.forEach(function (issuestatus) {
+					if (issuestatus.fields.status.name == "Done") {
+						Done.push(issuestatus)
+					}
+					if (issuestatus.fields.status.name == "To Do") {
+						ToDo.push(issuestatus)
+					}
+					if (issuestatus.fields.status.name == "In QA") {
+						InQA.push(issuestatus)
+					}
+					if (issuestatus.fields.status.name == "In Progress") {
+						InProgress.push(issuestatus)
+					}
+					if (issuestatus.fields.status.name == "In Code Review") {
+						InCodeReview.push(issuestatus)
+					}
 
-					
-				
-				 })
-				 issuesDataArray.push({name:eachIssue.name,done:Done.length,
-					toDo:ToDo.length,inQa:InQA.length,inProgress:InProgress.length,inCodeReview:InCodeReview.length})
+
+
+				})
+				issuesDataArray.push({
+					name: eachIssue.name, done: Done.length,
+					toDo: ToDo.length, inQa: InQA.length, inProgress: InProgress.length, inCodeReview: InCodeReview.length
+				})
 			}
 
 		})
-		this.setState({ issuesListArray: <IssuesList issuesArray={issuesDataArray} />
-			})
-			
-	
+		this.setState({
+			issuesListArray: <IssuesList issuesArray={issuesDataArray} />
+
+
+		})
+
+
 
 	}
+	epicBurdownChart(listOfEpics, boardId,hostedUrl,userName,password) {
+
+		this.setState({
+			epicBurndownChart: <EpicBurdownChart 
+				epicsArray={listOfEpics}
+				selectedUserName={userName}
+				selectedUserPwd={password}
+				selectedUrl={hostedUrl}
+				boardID={boardId}  />,
+	
+		})
+
+
+	}
+
 	sonarQubeData() {
-		this.setState({ sonarQubeData: <SonarQubeData />})
+		this.setState({ sonarQubeData: <SonarQubeData /> })
 	}
 	selectedBoard(sprintList, boardId, url, username, pwd) {
 
@@ -281,13 +310,13 @@ class Account extends React.Component {
 		if (sprintList !== undefined) {
 
 			var sprintListArray = sprintList
-		
-			for(var i=0;i<sprintListArray.length;i++){
-				if(sprintListArray[i].state==="active"){
 
-					var activeSprint=sprintListArray[i].id
+			for (var i = 0; i < sprintListArray.length; i++) {
+				if (sprintListArray[i].state === "active") {
+
+					var activeSprint = sprintListArray[i].id
 				}
-				
+
 			}
 
 			this.setState({
@@ -298,9 +327,9 @@ class Account extends React.Component {
 					selectedUserPwd={pwd}
 					//sonarQubeDetails={this.sonarQubeData}
 					activeSprint={activeSprint}
-					 />
+				/>
 
-					
+
 
 			});
 
@@ -312,7 +341,7 @@ class Account extends React.Component {
 
 			});
 		}
-       
+
 
 
 	}
@@ -377,35 +406,37 @@ class Account extends React.Component {
 
 				<div className="row">
 					{/* <div className="col-md-12 col-lg-12 padding0 displayInline"> */}
-						<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
-							<div className="col-md-12 col-lg-12 textAlignCenter">
+					<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
+						<div className="col-md-12 col-lg-12 textAlignCenter">
 
-									{/* <SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+							{/* <SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
 										hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
 										{this.projectsListArray(this.state.projectDetails.projects)}
 									</SelectField> */}
 
-									{this.state.projects}
+							{this.state.projects}
 
-								</div> 
-								<div className="col-md-12 col-lg-12 textAlignCenter">
-									{this.state.selectedProjectBoardDetails}
-
-
-								</div>
-								<div className="col-md-12 col-lg-12 padding0">
-									{this.state.peoplesArray}
-									{this.state.issuesListArray}			
-								</div>
-							</div>
-						<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
-							{this.state.sonarQubedata}
-
-							</div>
-						<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
-						{this.state.sprintDetails}
-							
 						</div>
+						<div className="col-md-12 col-lg-12 textAlignCenter">
+							{this.state.selectedProjectBoardDetails}
+
+
+						</div>
+						<div className="col-md-12 col-lg-12 padding0">
+							{this.state.peoplesArray}
+							{this.state.sonarQubedata}
+						
+						</div>
+					</div>
+					<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
+						{this.state.epicBurndownChart}
+						{this.state.issuesListArray}
+
+					</div>
+					<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
+						{this.state.sprintDetails}
+
+					</div>
 					{/* </div> */}
 
 				</div>
@@ -467,22 +498,22 @@ class Account extends React.Component {
 
 				</Modal>
 				<div className="footer ">
-					<div  className="col-md-12 displayInline">
+					<div className="col-md-12 displayInline">
 						<div className="col-md-4">
-						<h6><a href="https://www.atlassian.com/software/jira" target="/">jira</a></h6>
-						<h6><a href="https://www.sonarqube.org/" target="/">Quality</a></h6>
-							</div>
-							<div className="col-md-4">
+							<h6><a href="https://www.atlassian.com/software/jira" target="/">jira</a></h6>
+							<h6><a href="https://www.sonarqube.org/" target="/">Quality</a></h6>
+						</div>
+						<div className="col-md-4">
 							<h6><a href="https://www.atlassian.com/software/confluence" target="/">confluence</a></h6>
 							<h6><a href="https://bitbucket.org/" target="/">Version Control</a></h6>
-							</div>
-							<div className="col-md-4">
+						</div>
+						<div className="col-md-4">
 							<h6><a href="https://www.comakeit.com" target="/">AES</a></h6>
 							<h6><a href="https://www.comakeit.com" target="/">comakeIT</a></h6>
-							</div>
-						
-					
 						</div>
+
+
+					</div>
 
 				</div>
 			</div>
@@ -511,7 +542,7 @@ class SelectedProjectDetails extends React.Component {
 
 	componentWillMount() {
 
-	
+
 
 
 		this.setState({
@@ -535,7 +566,7 @@ class SelectedProjectDetails extends React.Component {
 	}
 	selectProject(event, ind, value) {
 
-			this.setState({ selectedProject: value })
+		this.setState({ selectedProject: value })
 
 		this.state.hintStyle2 = {
 			opacity: 0
@@ -552,14 +583,14 @@ class SelectedProjectDetails extends React.Component {
 		})
 			.then(response => {
 
-				var boardDetails=response.data.values
-				var userNmae=this.state.projectDetails.projects[ind].tools[IM].userName
-				var password=this.state.projectDetails.projects[ind].tools[IM].password
-				var hostedUrl=this.state.projectDetails.projects[ind].tools[IM].hostedURL
-				var peopleList=this.state.projectDetails.projects[ind].people
+				var boardDetails = response.data.values
+				var userName = this.state.projectDetails.projects[ind].tools[IM].userName
+				var password = this.state.projectDetails.projects[ind].tools[IM].password
+				var hostedUrl = this.state.projectDetails.projects[ind].tools[IM].hostedURL
+				var peopleList = this.state.projectDetails.projects[ind].people
 
 
-				this.props.onSelectProject(boardDetails,userNmae,password,hostedUrl,peopleList)
+				this.props.onSelectProject(boardDetails, userName, password, hostedUrl, peopleList)
 
 				// this.setState({
 				// 	selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={response.data.values}
@@ -568,7 +599,7 @@ class SelectedProjectDetails extends React.Component {
 				// 		selectedUrl={this.state.projectDetails.projects[ind].tools[IM].hostedURL}
 				// 		onSelectBoard={this.selectedBoard} currentBoard={this.selectedBoardforIssues} />,
 
-								
+
 
 				// })
 
@@ -615,12 +646,12 @@ class SelectedProjectDetails extends React.Component {
 		return (
 
 			<div>
-		
-					<SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+
+				<SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
 					hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
-						{this.projectDetailsListarray(this.state.projectDetails.projects)}
-					</SelectField>
-		
+					{this.projectDetailsListarray(this.state.projectDetails.projects)}
+				</SelectField>
+
 				{/* <div>
 					{this.state.selectedProjectVersion}
 				</div> */}
@@ -641,7 +672,7 @@ class SelectedProjectBoardDetails extends React.Component {
 			pwd: '',
 			url: '',
 			selectedBoardSprintsArray: [],
-			epicArray:[],
+			epicArray: [],
 			issuesList: '',
 			hintStyle2: {
 				opacity: 1
@@ -649,7 +680,7 @@ class SelectedProjectBoardDetails extends React.Component {
 
 		}
 
- 		//this.epicsArray=this.epicsArray.bind(this)
+		//this.epicsArray=this.epicsArray.bind(this)
 	}
 
 	componentWillMount() {
@@ -692,7 +723,7 @@ class SelectedProjectBoardDetails extends React.Component {
 		})
 			.then(response => {
 
-				this.props.onSelectBoard(response.data.values, this.state.projectBoardDetailsListarray[index].id, this.state.url, this.state.userName, this.state.pwd,boardId);
+				this.props.onSelectBoard(response.data.values, this.state.projectBoardDetailsListarray[index].id, this.state.url, this.state.userName, this.state.pwd, boardId);
 				// this.props.sonarQubeDetails()
 				this.setState({
 					selectedBoardSprintsArray: response.data.values
@@ -702,53 +733,68 @@ class SelectedProjectBoardDetails extends React.Component {
 
 			})
 
+		
+		var hostedURL=this.state.url
+
 		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
 			"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/epic",
 			"userName": this.state.userName,
 			"password": this.state.pwd,
 			"actionMethod": "get"
-			
+
+		},{
+			boardId:this.state.projectBoardDetailsListarray[index].id,
+			ur:hostedURL
 		})
 			.then(response => {
+					
+				var listOfEpics = response.data.values
+				var boardId = response.config.boardId
+				var resourceURL= response.config.ur
+				var userName= JSON.parse(response.config.data).userName
+				var password=JSON.parse(response.config.data).password
 			
-				var epicArray=[]
-					var counter=0
-				for(var i =0;i<response.data.values.length;i++){
-						var epicName=response.data.values[i].name
+
+				this.props.listOfEpics(listOfEpics, boardId,resourceURL,userName,password)
+
+				var epicArray = []
+				var counter = 0
+				for (var i = 0; i < response.data.values.length; i++) {
+					var epicName = response.data.values[i].name
 					axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-						"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/epic/"+ response.data.values[i].id+"/issue",
+						"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/epic/" + response.data.values[i].id + "/issue",
 						"userName": this.state.userName,
 						"password": this.state.pwd,
 						"actionMethod": "get"
-					},{
-					
-							epicName:response.data.values[i].name,
-							index:i,
-							length:response.data.values.length
+					}, {
 
-						
-					})
-						.then(response=>{
+							epicName: response.data.values[i].name,
+							index: i,
+							length: response.data.values.length
 
-							 epicArray.push({name:response.config.epicName,issues:response.data.issues})
 
-								if(response.config.index==(response.config.length-1)){
+						})
+						.then(response => {
+
+							epicArray.push({ name: response.config.epicName, issues: response.data.issues })
+
+							if (response.config.index == (response.config.length - 1)) {
 								this.props.currentBoard(epicArray)
 							}
-					
+
 						})
 
 				}
 
 
 			})
-			
-			
+
+
 
 	}
 
 	projectBoardDetailsListarray(board) {
-	
+
 		return board.map((board) => (
 			<MenuItem
 				key={board.id}
@@ -812,7 +858,7 @@ class SprintDetails extends React.Component {
 			userNme: '',
 			pwd: '',
 			url: '',
-			activeSprint:''
+			activeSprint: ''
 		};
 		this.handleChange = this.handleChange.bind(this);
 
@@ -820,22 +866,22 @@ class SprintDetails extends React.Component {
 
 	componentWillMount() {
 
-	
+
 		this.state.sprintListSorted = this.props.sprinttList.sort(function (a, b) {
 
 
 			return parseFloat(b.id) - parseFloat(a.id);
 		})
 
-	
+
 
 		this.setState({
 			boardId: this.props.boardId,
-	
+
 			url: this.props.selectedUrl,
 			userName: this.props.selectedUserName,
 			pwd: this.props.selectedUserPwd,
-			values:this.props.activeSprint
+			values: this.props.activeSprint
 
 		})
 
@@ -844,10 +890,10 @@ class SprintDetails extends React.Component {
 
 	}
 
-	componentDidMount(){
-		this.handleChange("1","2",this.state.values)
-		
-			}
+	componentDidMount() {
+		this.handleChange("1", "2", this.state.values)
+
+	}
 
 	componentWillReceiveProps(nextProps) {
 
@@ -860,7 +906,7 @@ class SprintDetails extends React.Component {
 			url: nextProps.selectedUrl,
 			userName: nextProps.selectedUserName,
 			pwd: nextProps.selectedUserPwd,
-			values:nextProps.activeSprint
+			values: nextProps.activeSprint
 		})
 		//this.state.boardID = nextProps.boardId
 
@@ -879,7 +925,7 @@ class SprintDetails extends React.Component {
 			"actionMethod": "get"
 
 		}).then(response => {
-			console.log(response)
+
 
 			this.setState({
 				sprintStartTime: '',
@@ -919,7 +965,7 @@ class SprintDetails extends React.Component {
 			var changesArray = Object.keys(response.data.changes)
 
 			if (response.data.completeTime == undefined) {
-				//console.log(new Date().getTime() / 1000)
+
 				var date = new Date()
 				var month = '' + (date.getMonth() + 1)
 				var day = '' + date.getDate()
@@ -1016,7 +1062,7 @@ class SprintDetails extends React.Component {
 		//this.props.sonarQubeDetails();
 	}
 	sprintItems(sprintList) {
-	
+
 
 		return sprintList.map((sprintList) => (
 			<MenuItem
@@ -1030,11 +1076,11 @@ class SprintDetails extends React.Component {
 	}
 
 	render() {
-			
+
 		return (
 			<div className="">
 				<div className="col-md-12 col-lg-12 textAlignCenter titleBackgroundColor">
-				<h3>Sprint Burndown</h3>
+					<h3>Sprint Burndown</h3>
 				</div>
 				<div className="col-md-12 col-lg-12 textAlignLeft">
 					<SelectField
@@ -1069,20 +1115,20 @@ class SprintDetails extends React.Component {
 
 class Hourschart extends React.Component {
 	render() {
-		
+
 		return (
-					
-				<div className="chartSize">
-					<LineChart width={500} height={300} data={this.props.data}>
-						<XAxis dataKey="name" />
-						<YAxis />
-						<CartesianGrid strokeDasharray="1 1" />
-						<Legend />
-						<Line type="stepAfter" dataKey="hr" stroke="#82ca9d" />
-						<Line type="monotone" dataKey="y" stroke="#82ca9d" />
-					</LineChart>
-				</div>
-			
+
+			<div className="chartSize">
+				<LineChart width={500} height={300} data={this.props.data}>
+					<XAxis dataKey="name" />
+					<YAxis />
+					<CartesianGrid strokeDasharray="1 1" />
+					<Legend />
+					<Line type="stepAfter" dataKey="hr" stroke="#82ca9d" />
+					<Line type="monotone" dataKey="y" stroke="#82ca9d" />
+				</LineChart>
+			</div>
+
 		)
 
 	}
@@ -1105,7 +1151,7 @@ class Piechart extends React.Component {
 			todoArrayListlength: '',
 			inqaArrayListlength: '',
 			sonarQubeData: '',
-			piechartPercentagesArray:[],piechart:[]
+			piechartPercentagesArray: [], piechart: []
 		}
 		// this.handleChange = this.handleChange.bind(this);
 	}
@@ -1190,46 +1236,46 @@ class Piechart extends React.Component {
 	render() {
 
 		//this.state.piechartPercentagesArray=[]
-		const todoArrayPercentage=Math.round(((this.state.todoArrayListlength/(this.state.todoArrayListlength+this.state.inprogressArrayListlength +this.state.inqaArrayListlength +this.state.doneArrayListlength))*100))
-		const inprogressArrayPercentage=Math.round(((this.state.inprogressArrayListlength/(this.state.todoArrayListlength+this.state.inprogressArrayListlength +this.state.inqaArrayListlength +this.state.doneArrayListlength))*100))
-		const inqaArrayPercentage=Math.round(((this.state.inqaArrayListlength/(this.state.todoArrayListlength+this.state.inprogressArrayListlength +this.state.inqaArrayListlength +this.state.doneArrayListlength))*100))
-		const doneArrayPercentage=Math.round(((this.state.doneArrayListlength/(this.state.todoArrayListlength+this.state.inprogressArrayListlength +this.state.inqaArrayListlength +this.state.doneArrayListlength))*100))
+		const todoArrayPercentage = Math.round(((this.state.todoArrayListlength / (this.state.todoArrayListlength + this.state.inprogressArrayListlength + this.state.inqaArrayListlength + this.state.doneArrayListlength)) * 100))
+		const inprogressArrayPercentage = Math.round(((this.state.inprogressArrayListlength / (this.state.todoArrayListlength + this.state.inprogressArrayListlength + this.state.inqaArrayListlength + this.state.doneArrayListlength)) * 100))
+		const inqaArrayPercentage = Math.round(((this.state.inqaArrayListlength / (this.state.todoArrayListlength + this.state.inprogressArrayListlength + this.state.inqaArrayListlength + this.state.doneArrayListlength)) * 100))
+		const doneArrayPercentage = Math.round(((this.state.doneArrayListlength / (this.state.todoArrayListlength + this.state.inprogressArrayListlength + this.state.inqaArrayListlength + this.state.doneArrayListlength)) * 100))
 
 
 
 		const data = [
 			{ name: 'Group C', value: this.state.todoArrayListlength },
-		 { name: 'Group B', value: this.state.inprogressArrayListlength },
-		{ name: 'Group D', value: this.state.inqaArrayListlength }, 
-		{ name: 'Group A', value: this.state.doneArrayListlength }];
+			{ name: 'Group B', value: this.state.inprogressArrayListlength },
+			{ name: 'Group D', value: this.state.inqaArrayListlength },
+			{ name: 'Group A', value: this.state.doneArrayListlength }];
 		const COLORS = ['#FF8042', '#00C49F', '#FFBB28', '#0088FE'];
 
 
 		const RADIAN = Math.PI / 180;
-		const renderCustomizedLabel = ({data, cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+		const renderCustomizedLabel = ({ data, cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
 			const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
 			const x = cx + radius * Math.cos(-midAngle * RADIAN);
 			const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-			 return (
-			`${(percent * 100).toFixed(0)}%`
-		
-				
-			  );
+			return (
+				`${(percent * 100).toFixed(0)}%`
+
+
+			);
 		};
 		return (
 
 			<div className="row textAlignCenter marginT3">
-				
+
 				<div className="col-md-12 col-lg-12 textAlignCenter titleBackgroundColor">
-				<h3>Sprint Overview</h3>
+					<h3>Sprint Overview</h3>
 				</div>
-				
+
 				<div className="displayInline  col-md-8 justify">
 
 					<PieChart width={490} height={400}>
 						<Pie
-						//nameKey='name'
+							//nameKey='name'
 							dataKey="value"
 							data={data}
 							//cx={300}
@@ -1238,29 +1284,29 @@ class Piechart extends React.Component {
 							label={renderCustomizedLabel}
 							outerRadius={180}
 							animationEasing='ease-in-out'
-							//PieLabelStyle ='outside'
-						 >
+						//PieLabelStyle ='outside'
+						>
 
 							{
-								data.map((entry, index) => < Cell fill={COLORS[index % COLORS.length]} key={index}/> )
+								data.map((entry, index) => < Cell fill={COLORS[index % COLORS.length]} key={index} />)
 
 							}
 
-							
-							
-							</Pie>
-						 
+
+
+						</Pie>
+
 
 					</PieChart>
 
 				</div>
 
-			
+
 				{/* {this.state.piechart
                                     } */}
 
-										
-				
+
+
 				<div className="col-md-4">
 
 					<div className="col-md-12 displayInline">
@@ -1425,73 +1471,73 @@ class SonarQubeData extends React.Component {
 
 	render() {
 		return (
-		
-				<div className="col-md-12 padding0">
-					<div className="textAlignCenter titleBackgroundColor">
-					<h3>Quality Overview</h3>
-						</div>
-					
 
-					<div className="col-md-12 displayInline overlay marginB08">
-						<div className="col-md-3 textAlignCenter">Bugs
+			<div className="col-md-12 padding0">
+				<div className="textAlignCenter titleBackgroundColor">
+					<h3>Quality Overview</h3>
+				</div>
+
+
+				<div className="col-md-12 displayInline overlay marginB08">
+					<div className="col-md-3 textAlignCenter">Bugs
 													<div className="textAlignCenter">
-								{this.state.sonarQubeData.bugs}
-							</div>
-						</div>
-						<div className="col-md-3 textAlignCenter"> Vulnerabilities
-													<div className="textAlignCenter">
-								{this.state.sonarQubeData.vulnerabilities}
-							</div>
-						</div>
-						<div className="col-md-3 textAlignCenter">Code Smells
-													<div className="textAlignCenter">
-								{this.state.sonarQubeData.codesmells}
-							</div>
-						</div>
-						<div className="col-md-3 textAlignCenter"> Debt
-													<div className="textAlignCenter">
-								{}
-							</div>
+							{this.state.sonarQubeData.bugs}
 						</div>
 					</div>
+					<div className="col-md-3 textAlignCenter"> Vulnerabilities
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.vulnerabilities}
+						</div>
+					</div>
+					<div className="col-md-3 textAlignCenter">Code Smells
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.codesmells}
+						</div>
+					</div>
+					<div className="col-md-3 textAlignCenter"> Debt
+													<div className="textAlignCenter">
+							{}
+						</div>
+					</div>
+				</div>
 
-					{/* <div className="col-md-12 displayInline overlay marginB08">
+				{/* <div className="col-md-12 displayInline overlay marginB08">
 											
 													</div> */}
-					<div className="col-md-12 displayInline overlay marginB08">
-						<div className="col-md-3 textAlignCenter">Duplications
+				<div className="col-md-12 displayInline overlay marginB08">
+					<div className="col-md-3 textAlignCenter">Duplications
 													<div className="textAlignCenter">
-								{this.state.sonarQubeData.duplications}
-							</div>
-						</div>
-						<div className="col-md-3 textAlignCenter"> Duplicated Blocks
-													<div className="textAlignCenter">
-								{this.state.sonarQubeData.duplicatedBlocks}
-							</div>
-						</div>
-						<div className="col-md-3 textAlignCenter">Script Lines
-													<div className="textAlignCenter">
-								{this.state.sonarQubeData.script}
-							</div>
-						</div>
-						<div className="col-md-3 textAlignCenter"> Lines of Code
-													<div className="textAlignCenter">
-								{this.state.sonarQubeData.linesofcode}
-							</div>
+							{this.state.sonarQubeData.duplications}
 						</div>
 					</div>
-
-					
-
-
-
-
+					<div className="col-md-3 textAlignCenter"> Duplicated Blocks
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.duplicatedBlocks}
+						</div>
+					</div>
+					<div className="col-md-3 textAlignCenter">Script Lines
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.script}
+						</div>
+					</div>
+					<div className="col-md-3 textAlignCenter"> Lines of Code
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.linesofcode}
+						</div>
+					</div>
 				</div>
 
 
 
 
-			
+
+
+			</div>
+
+
+
+
+
 
 
 
@@ -1583,53 +1629,53 @@ class IssuesList extends React.Component {
 	}
 
 	componentWillMount() {
-				
+
 
 		// this.state.epicsArray = this.props.issuesArray.filter(function (eachIssue) {
 		// 	if (eachIssue.fields.epic !== null||eachIssue.fields.epic!==undefined ) {
-			
+
 		// 		return eachIssue
-			
-			
+
+
 		// 	}
-			
+
 		// })
 
 		// for(var i=0;i<this.props.issuesArray.length;i++){
 		// 	if (this.props.issuesArray[i].fields.epic!= null || this.props.issuesArray[i].fields.epic!= undefined ) {
 		// 			this.state.epicsArray=this.state.epicsArray.concat(this.props.issuesArray[i])
-	//	}
+		//	}
 		this.setState({ issuesArray: this.props.issuesArray })
-	//}
-		
-	var epicName
-	var issueStatus
-	var issuesArrayWithSameEpicArray=[]
-	var x =[]
-	var closedIssues=[]
+		//}
 
-	for(var i=0;i<this.state.epicsArray.length;i++){
+		var epicName
+		var issueStatus
+		var issuesArrayWithSameEpicArray = []
+		var x = []
+		var closedIssues = []
 
-		  //issueStatus=this.state.epicsArray[i].statusCategory.name
-		//   if(epicName!=this.state.epicsArray[i].fields.epic.name){
-		// 	if(this.state.epicsArray[i].statusCategory.name=="closed"){
+		for (var i = 0; i < this.state.epicsArray.length; i++) {
+
+			//issueStatus=this.state.epicsArray[i].statusCategory.name
+			//   if(epicName!=this.state.epicsArray[i].fields.epic.name){
+			// 	if(this.state.epicsArray[i].statusCategory.name=="closed"){
 
 
-		// 	}
+			// 	}
 
 
 
 			// issuesArrayWithSameEpicArray.push(this.state.epicsArray[i])
 			// epicName=this.state.epicsArray[i].fields.epic.name
-		
-		  }
-		
-		
 
-			
+		}
 
-	
-	
+
+
+
+
+
+
 	}
 
 	render() {
@@ -1637,9 +1683,9 @@ class IssuesList extends React.Component {
 		return (
 			<div className="col-md-12 padding0">
 				<div className="textAlignCenter titleBackgroundColor">
-				<h3>Epic Details</h3>
-					</div>
-				
+					<h3>Epic Details</h3>
+				</div>
+
 
 				<div className="col-md-12 col-lg-12 padding0">
 
@@ -1709,10 +1755,10 @@ class PeoplesList extends React.Component {
 		return (
 			<div className="col-md-12 padding0">
 				<div className="textAlignCenter titleBackgroundColor">
-				<h3 >Team Details</h3>
-					</div>
+					<h3 >Team Details</h3>
+				</div>
 
-			
+
 
 				<div className="col-md-12 col-lg-12 padding0">
 
@@ -1740,6 +1786,165 @@ class PeoplesList extends React.Component {
 
 			</div>
 
+
+
+
+		)
+	}
+}
+
+class EpicBurdownChart extends React.Component {
+	_
+	constructor(props) {
+		super(props)
+	
+
+		this.state = {
+			boardId: '',
+
+			url: '',
+			userName: '',
+			pwd: '',
+			epicsArray: '',
+			selectedEpicId:''
+
+
+		}
+
+		this.handleSelectedEpic = this.handleSelectedEpic.bind(this)
+		this.listoFEpics = this.listoFEpics.bind(this)
+	}
+
+	componentWillMount() {
+
+
+		this.state.sprintListSorted = this.props.epicsArray.sort(function (a, b) {
+			
+			
+						return parseFloat(b.id) - parseFloat(a.id);
+					})
+
+		this.setState({
+			boardId: this.props.boardID,
+
+			url: this.props.selectedUrl,
+			userName: this.props.selectedUserName,
+			pwd: this.props.selectedUserPwd,
+			epicsArray: this.state.sprintListSorted
+		})
+
+	}
+
+	componentWillReceiveProps(nextProps){
+
+		this.state.sprintListSorted = nextProps.epicsArray.sort(function (a, b) {
+			
+			
+						return parseFloat(b.id) - parseFloat(a.id);
+					})
+		this.setState({boardId: nextProps.boardID,
+			
+						url: nextProps.selectedUrl,
+						userName: nextProps.selectedUserName,
+						pwd: nextProps.selectedUserPwd,
+						epicsArray: this.state.sprintListSorted })
+	}
+	handleSelectedEpic(event, index, val){
+
+
+	this.setState({selectedEpicId:val})
+
+
+	axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+		"resourceURL": this.state.url + "/rest/greenhopper/1.0/rapid/charts/epicburndownchart?rapidViewId="+this.state.boardId+"&epicKey="+val,
+		"userName": this.state.userName,
+		"password": this.state.pwd,
+		"actionMethod": "get"
+
+	}).then(response=>{
+
+		
+			var sprintArray=[]
+		Object.keys(response.data.changes).forEach(function (key, index) {
+			var eachDate = Number(key)
+		
+			response.data.sprints.forEach(function(eachSprint){
+					
+				//console.log( eachSprint )
+				//console.log(eachDate>=eachSprint.startTime,eachDate<=eachSprint.endTime,eachSprint.id)
+				//console.log(eachDate<=eachSprint.endTime)
+				if(eachDate>=eachSprint.startTime && eachDate<=eachSprint.endTime){
+					if(eachSprint.changes==undefined){
+						eachSprint.changes=[];
+					}
+					eachSprint.changes.push(response.data.changes[key][0])
+					//eachSprint.push(eachDate[index])
+					//console.log(eachDate,eachDate>=eachSprint.startTime,eachDate<=eachSprint.endTime,eachSprint.name)
+					// sprintArray.push(eachSprint)
+				
+				}
+
+				
+				
+			})
+
+			
+			
+		
+
+		})
+
+		console.log(response.data.sprints)
+
+	})
+
+	}
+
+	listoFEpics(epicsArray){
+		return epicsArray.map((epic) => (
+			<MenuItem
+				key={epic.id}
+				value={epic.key}
+				primaryText={epic.key}
+			/>
+		));
+	}
+	
+	render() {
+		const data = [
+			{name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
+			{name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
+			{name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
+			{name: 'Page D', uv: 2780, pv: 3908, amt: 2000},
+			{name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
+			{name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
+			{name: 'Page G', uv: 3490, pv: 4300, amt: 2100},
+	  ];
+		return (
+			<div className="col-md-12 padding0">
+				<div className="textAlignCenter titleBackgroundColor">
+					<h3>Epic Overview</h3>
+				</div>
+
+				<div className="col-md-12 padding0">
+
+					<SelectField hintText="Select Epic" value={this.state.selectedEpicId} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+						hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.handleSelectedEpic(e, i, v)}>
+						{this.listoFEpics(this.state.epicsArray)}
+					</SelectField>
+
+				</div>
+				<BarChart width={600} height={300} data={data}
+            margin={{top: 20, right: 30, left: 20, bottom: 5}}>
+       <XAxis dataKey="name"/>
+       <YAxis/>
+       <CartesianGrid strokeDasharray="3 3"/>
+       <Tooltip/>
+       <Legend />
+       <Bar dataKey="pv" stackId="a" fill="#8884d8" />
+       <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
+      </BarChart>
+			</div>
 
 
 
