@@ -15,7 +15,19 @@ body{
 } */
 
 
+.footer {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	background: linear-gradient(#4373d5, #5586d1);
+	color: white;
+	text-align: center;
+ }
 
+ a {
+    color: white !important;
+}
 	.loginboxBackgroundColor{
 	background-color:transparent;
 	border:1px solid #cbcbd0;
@@ -159,9 +171,14 @@ body{
 		margin-left:17px;
 	}
 
+	.paddingR08{
+		padding-right:9px !important
+	}
 	.paddingL0{
 		padding-left: 0px !important;
 	  }
+
+
 .paddingL9{
   padding-left: 9px;
 }
@@ -490,12 +507,20 @@ background-color: #26A69A
 						background-color:'aliceblue'
 					}
 					
-
-					@media screen and (min-width:890px){
+						.verticalAlign{
+							align-items: center;
+							
+							justify-content: center;
+							
+							display: flex;
+							
+							flex-direction: column;
+						}
+					/* @media screen and (min-width:890px){
 						.marginTop0{
 							margin-top: 0px !important
 						}
 						.displayInline{
 							display: inline-flex !important
 						}
-					}
+					} */

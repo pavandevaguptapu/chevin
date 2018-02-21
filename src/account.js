@@ -1,6 +1,8 @@
+///var dcopy = require('deep-copy')
 import React from 'react';
 import './App.css';
 import { Button } from 'react-bootstrap';
+
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 import axios from 'axios';
@@ -14,6 +16,7 @@ import ListItem from 'material-ui/List/ListItem';
 
 import { myConstClass } from './constants.js';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
+import Paper from 'material-ui/Paper';
 // import { Modal } from 'react-overlays';
 // Modal.prototype.componentWillMount = function componentWillMount() {
 // 	this.focus = function focus() { };
@@ -64,6 +67,7 @@ class Account extends React.Component {
 			selectedTab3: false,
 			selectedTab4: false,
 			selectedTab5: false,
+			projects:'',
 			listofepics: [],
 			selecteditem: '',
 			issueTracking: '',
@@ -94,7 +98,9 @@ class Account extends React.Component {
 			issuesListArray: [],
 			issuesArray: [],
 			peoplesArray: [],
-			hintStyle2: { opacity: 1 }
+			hintStyle2: { opacity: 1 },
+			renderChild: true,
+			activeSprint:''
 		}
 
 		this.onDrop = this.onDrop.bind(this);
@@ -107,6 +113,7 @@ class Account extends React.Component {
 		this.selectedBoard = this.selectedBoard.bind(this);
 		this.sonarQubeData = this.sonarQubeData.bind(this);
 		this.selectedBoardforIssues = this.selectedBoardforIssues.bind(this);
+		
 	}
 
 	addProjectModal() {
@@ -136,6 +143,7 @@ class Account extends React.Component {
 	}
 
 	accountsListArray(accounts) {
+		
 		return accounts.map((account) => (
 			<MenuItem
 				key={account._id}
@@ -146,10 +154,25 @@ class Account extends React.Component {
 			/>
 		));
 	}
+
 	selectedAccount(event, ind, value, selecteAccount) {
+		this.setState({
+			sprintDetails: '',
+			selectedProjectBoardDetails: '',
+			issuesListArray: '',
+			sonarQubeData: '',
+			peoplesArray: ''
+		})
+
+
 		this.state.accounts.customerName = value;
 
-		this.setState({ projectDetails: selecteAccount[ind], value: value })
+		this.setState({ projectDetails: selecteAccount[ind], value: value, 
+			projects:<SelectedProjectDetails  projectDetails={selecteAccount[ind]} onSelectProject={this.selectProject}
+			
+			
+			
+			/> })
 	}
 	projectsListArray(projects) {
 		return projects.map((project) => (
@@ -161,61 +184,96 @@ class Account extends React.Component {
 			/>
 		));
 	}
+	selectProject(boardDetails,userNmae,password,hostedUrl,peopleList) {
 
+		// this.state.hintStyle2 = {
+		// 	opacity: 0
+		// }
+		// this.setState({ selectedProjectIndex: value })
+		// var jumpStartMenuNameArray = []
+		// const IM = "Issue Management"
 
-
-	selectProject(event, ind, value) {
-
-		this.state.hintStyle2 = {
-			opacity: 0
-		}
-		this.setState({ selectedProjectIndex: value })
-		var jumpStartMenuNameArray = []
-		const IM = "Issue Management"
-
-		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-			"resourceURL": this.state.projectDetails.projects[ind].tools[IM].hostedURL + "/rest/agile/1.0/board",
-			"userName": this.state.projectDetails.projects[ind].tools[IM].userName,
-			"password": this.state.projectDetails.projects[ind].tools[IM].password,
-			"actionMethod": "get"
-		})
-			.then(response => {
-
+		// axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+		// 	"resourceURL": this.state.projectDetails.projects[ind].tools[IM].hostedURL + "/rest/agile/1.0/board",
+		// 	"userName": this.state.projectDetails.projects[ind].tools[IM].userName,
+		// 	"password": this.state.projectDetails.projects[ind].tools[IM].password,
+		// 	"actionMethod": "get"
+		// })
+		// 	.then(response => {
 
 				this.setState({
-					selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={response.data.values}
-						selectedUserName={this.state.projectDetails.projects[ind].tools[IM].userName}
-						selectedUserPwd={this.state.projectDetails.projects[ind].tools[IM].password}
-						selectedUrl={this.state.projectDetails.projects[ind].tools[IM].hostedURL}
+					selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={boardDetails}
+						selectedUserName={userNmae}
+						selectedUserPwd={password}
+						selectedUrl={hostedUrl}
 						onSelectBoard={this.selectedBoard} currentBoard={this.selectedBoardforIssues} />,
-
-
+						peoplesArray: <PeoplesList peoplesList={peopleList} />,
+						sonarQubedata:<SonarQubeData sonarQubeDetails={this.sonarQubeData}/>
+								
 
 				})
 
-			})
+			//})
 
 
-		this.setState({ peoplesArray: <PeoplesList peoplesList={this.state.projectDetails.projects[ind].people} /> })
+		// this.setState({ peoplesArray: <PeoplesList peoplesList={this.state.projectDetails.projects[ind].people} /> })
 
 
 
 	}
 	selectedBoardforIssues(allIssues) {
-		var issuesList = allIssues
-		if (issuesList != undefined) {
-			this.setState({ issuesListArray: <IssuesList issuesArray={issuesList} /> })
-		}
+	
+				
+			var issuesDataArray=[]
+
+		allIssues.forEach(function(eachIssue){
+	
+
+			if(eachIssue.issues.length==0){
+			
+				issuesDataArray.push({name:eachIssue.name,done:0,toDo:0,inQa:0,inProgress:0,inCodeReview:0})
+			}
+			else{
+				var Done=[]
+				var ToDo=[]
+				var InQA=[]
+				var InProgress=[]
+				var InCodeReview=[]
+
+				eachIssue.issues.forEach(function(issuestatus){
+						if(issuestatus.fields.status.name=="Done"){
+							Done.push(issuestatus)
+						}
+						if(issuestatus.fields.status.name=="To Do"){
+							ToDo.push(issuestatus)
+						}
+						if(issuestatus.fields.status.name=="In QA"){
+							InQA.push(issuestatus)
+						}
+						if(issuestatus.fields.status.name=="In Progress"){
+							InProgress.push(issuestatus)
+						}
+						if(issuestatus.fields.status.name=="In Code Review"){
+							InCodeReview.push(issuestatus)
+						}
+
+					
+				
+				 })
+				 issuesDataArray.push({name:eachIssue.name,done:Done.length,
+					toDo:ToDo.length,inQa:InQA.length,inProgress:InProgress.length,inCodeReview:InCodeReview.length})
+			}
+
+		})
+		this.setState({ issuesListArray: <IssuesList issuesArray={issuesDataArray} />
+			})
+			
+	
 
 	}
-
-
-	sonarQubeData(sonarQubedata) {
-		this.setState({ sonarQubeData: sonarQubedata })
+	sonarQubeData() {
+		this.setState({ sonarQubeData: <SonarQubeData />})
 	}
-
-
-
 	selectedBoard(sprintList, boardId, url, username, pwd) {
 
 		//this.setState({issuesListArray: <IssuesList  issuesArray={boardId} />})
@@ -223,6 +281,14 @@ class Account extends React.Component {
 		if (sprintList !== undefined) {
 
 			var sprintListArray = sprintList
+		
+			for(var i=0;i<sprintListArray.length;i++){
+				if(sprintListArray[i].state==="active"){
+
+					var activeSprint=sprintListArray[i].id
+				}
+				
+			}
 
 			this.setState({
 				sprintDetails: <SprintDetails sprinttList={sprintListArray}
@@ -230,7 +296,11 @@ class Account extends React.Component {
 					selectedUrl={url}
 					selectedUserName={username}
 					selectedUserPwd={pwd}
-					sonarQubeDetails={this.sonarQubeData} />,
+					//sonarQubeDetails={this.sonarQubeData}
+					activeSprint={activeSprint}
+					 />
+
+					
 
 			});
 
@@ -242,7 +312,7 @@ class Account extends React.Component {
 
 			});
 		}
-
+       
 
 
 	}
@@ -266,7 +336,7 @@ class Account extends React.Component {
 					<div className="col-md-12 flex">
 						<div className="col-md-3 col-lg-2 marginT16">
 							{/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
-							<h4 className="margin0 pointer paddingL04" onClick={() => this.openSideMenu()} ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
+							<h4 className="margin0 pointer paddingL04"  ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
 						</div>
 						<div className="col-md-7 col-lg-8 textAlignCenter">
 							{/* <h4 className="margin0">{this.state.projectDetails.account.customerName}</h4> */}
@@ -306,18 +376,18 @@ class Account extends React.Component {
 
 
 				<div className="row">
-					<div className="col-md-12 col-lg-12 marginT50 padding0">
+					<div className="col-md-12 col-lg-12 padding0 marginT50">
 						<div className="col-md-4 col-lg-3 borderRight marginR0 padding0 verticalHeight">
-							<div className="col-md-12 col-lg-12">
+						<div className="col-md-12 col-lg-12">
 
-								<SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+								{/* <SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
 									hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
 									{this.projectsListArray(this.state.projectDetails.projects)}
-								</SelectField>
+								</SelectField> */}
 
+								{this.state.projects}
 
-
-							</div>
+							</div> 
 							<div className="col-md-12 col-lg-12">
 								{this.state.selectedProjectBoardDetails}
 
@@ -325,17 +395,19 @@ class Account extends React.Component {
 							</div>
 							<div className="col-md-12 col-lg-12">
 								{this.state.peoplesArray}
+								{this.state.issuesListArray}			
 							</div>
 						</div>
 						<div className="col-md-4 col-lg-5 borderRight marginR0 padding0 verticalHeight">
-							{this.state.sprintDetails}
+						{this.state.sonarQubedata}
 
 						</div>
 						<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
-							{this.state.issuesListArray}
-							{this.state.sonarQubeData}
+						{this.state.sprintDetails}
+							
 						</div>
 					</div>
+
 				</div>
 
 				<Modal isOpen={this.state.isModalOpen} style={customStyles}
@@ -394,7 +466,25 @@ class Account extends React.Component {
 					</div>
 
 				</Modal>
+				<div className="footer">
+					<div  className="col-md-12">
+						<div className="col-md-4">
+						<h6><a href="https://www.atlassian.com/software/jira" target="/">jira</a></h6>
+						<h6><a href="https://www.sonarqube.org/" target="/">Quality</a></h6>
+							</div>
+							<div className="col-md-4">
+							<h6><a href="https://www.atlassian.com/software/confluence" target="/">confluence</a></h6>
+							<h6><a href="https://bitbucket.org/" target="/">Version Control</a></h6>
+							</div>
+							<div className="col-md-4">
+							<h6><a href="https://www.comakeit.com" target="/">AES</a></h6>
+							<h6><a href="https://www.comakeit.com" target="/">comakeIT</a></h6>
+							</div>
+						
+					
+						</div>
 
+				</div>
 			</div>
 		)
 
@@ -407,7 +497,7 @@ class SelectedProjectDetails extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			projectDetailsListarray: [],
+			projectDetails: '',
 			selectedProject: '',
 			selectedProjectVersion: '',
 			userName: '',
@@ -420,11 +510,15 @@ class SelectedProjectDetails extends React.Component {
 	}
 
 	componentWillMount() {
+
+	
+
+
 		this.setState({
-			projectDetailsListarray: this.props.selectedProjectDetails,
-			userName: this.props.selectedUserName,
-			pwd: this.props.selectedUserPwd,
-			url: this.props.selectedUrl
+			projectDetails: this.props.projectDetails,
+			// userName: this.props.selectedUserName,
+			// pwd: this.props.selectedUserPwd,
+			// url: this.props.selectedUrl
 		})
 
 	}
@@ -432,34 +526,75 @@ class SelectedProjectDetails extends React.Component {
 	componentWillReceiveProps(nextProps) {
 
 		this.setState({
-			projectDetailsListarray: nextProps.selectedProjectDetails,
-			userName: nextProps.selectedUserName,
-			pwd: nextProps.selectedUserPwd,
-			url: nextProps.selectedUrl
+			projectDetails: nextProps.projectDetails,
+			// userName: nextProps.selectedUserName,
+			// pwd: nextProps.selectedUserPwd,
+			// url: nextProps.selectedUrl
 		})
 
 	}
 	selectProject(event, ind, value) {
-		this.setState({ selectedProject: value })
+
+			this.setState({ selectedProject: value })
+
+		this.state.hintStyle2 = {
+			opacity: 0
+		}
+		this.setState({ selectedProjectIndex: value })
+		var jumpStartMenuNameArray = []
+		const IM = "Issue Management"
 
 		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-			//this.state.projectDetails.projects[ind].tools[0].hostedURL + "/rest/api/2/project", 
-			"resourceURL": this.state.url + "/rest/api/2/project/" + this.state.projectDetailsListarray[ind].id + "/versions",
-			"username": this.state.userName,
-			"password": this.state.pwd,
+			"resourceURL": this.state.projectDetails.projects[ind].tools[IM].hostedURL + "/rest/agile/1.0/board",
+			"userName": this.state.projectDetails.projects[ind].tools[IM].userName,
+			"password": this.state.projectDetails.projects[ind].tools[IM].password,
 			"actionMethod": "get"
 		})
 			.then(response => {
 
+				var boardDetails=response.data.values
+				var userNmae=this.state.projectDetails.projects[ind].tools[IM].userName
+				var password=this.state.projectDetails.projects[ind].tools[IM].password
+				var hostedUrl=this.state.projectDetails.projects[ind].tools[IM].hostedURL
+				var peopleList=this.state.projectDetails.projects[ind].people
 
-				this.setState({
-					selectedProjectVersion: <SelectedProjectVersion selectedProjectVersion={response.data} selectedUserName={this.state.userName}
-						selectedUserPwd={this.state.pwd} />,
-				})
 
+				this.props.onSelectProject(boardDetails,userNmae,password,hostedUrl,peopleList)
 
+				// this.setState({
+				// 	selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={response.data.values}
+				// 		selectedUserName={this.state.projectDetails.projects[ind].tools[IM].userName}
+				// 		selectedUserPwd={this.state.projectDetails.projects[ind].tools[IM].password}
+				// 		selectedUrl={this.state.projectDetails.projects[ind].tools[IM].hostedURL}
+				// 		onSelectBoard={this.selectedBoard} currentBoard={this.selectedBoardforIssues} />,
+
+								
+
+				// })
 
 			})
+
+
+		//this.setState({ peoplesArray: <PeoplesList peoplesList={this.state.projectDetails.projects[ind].people} /> })
+
+		// axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+		// 	//this.state.projectDetails.projects[ind].tools[0].hostedURL + "/rest/api/2/project", 
+		// 	"resourceURL": this.state.url + "/rest/api/2/project/" + this.state.projectDetailsListarray[ind].id + "/versions",
+		// 	"username": this.state.userName,
+		// 	"password": this.state.pwd,
+		// 	"actionMethod": "get"
+		// })
+		// 	.then(response => {
+
+
+		// 		this.setState({
+		// 			selectedProjectVersion: <SelectedProjectVersion selectedProjectVersion={response.data} selectedUserName={this.state.userName}
+		// 				selectedUserPwd={this.state.pwd} />,
+		// 		})
+
+
+
+		// 	})
 
 	}
 
@@ -467,10 +602,10 @@ class SelectedProjectDetails extends React.Component {
 	projectDetailsListarray(projects) {
 		return projects.map((project) => (
 			<MenuItem
-				key={project.id}
+				key={project.projectName}
 				insetChildren={true}
-				value={project.name}
-				primaryText={project.name}
+				value={project.projectName}
+				primaryText={project.projectName}
 			/>
 		));
 	}
@@ -481,9 +616,9 @@ class SelectedProjectDetails extends React.Component {
 
 			<div>
 				<div>
-					<SelectField hintText="Select Project" value={this.state.selectedProject} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
-						hintStyle={{ opacity: "1" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
-						{this.projectDetailsListarray(this.state.projectDetailsListarray)}
+					<SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+					hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
+						{this.projectDetailsListarray(this.state.projectDetails.projects)}
 					</SelectField>
 				</div>
 				<div>
@@ -506,6 +641,7 @@ class SelectedProjectBoardDetails extends React.Component {
 			pwd: '',
 			url: '',
 			selectedBoardSprintsArray: [],
+			epicArray:[],
 			issuesList: '',
 			hintStyle2: {
 				opacity: 1
@@ -513,7 +649,7 @@ class SelectedProjectBoardDetails extends React.Component {
 
 		}
 
-
+ 		//this.epicsArray=this.epicsArray.bind(this)
 	}
 
 	componentWillMount() {
@@ -539,9 +675,14 @@ class SelectedProjectBoardDetails extends React.Component {
 	}
 
 	selectedProjectBoard(event, index, value) {
+
+
+		var boardId = this.state.projectBoardDetailsListarray[index].id
+
 		this.state.hintStyle2 = {
 			opacity: 0
 		}
+
 		this.setState({ selectedProjectBoard: value })
 		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
 			"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/sprint",
@@ -551,7 +692,8 @@ class SelectedProjectBoardDetails extends React.Component {
 		})
 			.then(response => {
 
-				this.props.onSelectBoard(response.data.values, this.state.projectBoardDetailsListarray[index].id, this.state.url, this.state.userName, this.state.pwd);
+				this.props.onSelectBoard(response.data.values, this.state.projectBoardDetailsListarray[index].id, this.state.url, this.state.userName, this.state.pwd,boardId);
+				// this.props.sonarQubeDetails()
 				this.setState({
 					selectedBoardSprintsArray: response.data.values
 
@@ -561,32 +703,52 @@ class SelectedProjectBoardDetails extends React.Component {
 			})
 
 		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-			"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/issue",
+			"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/epic",
 			"userName": this.state.userName,
 			"password": this.state.pwd,
 			"actionMethod": "get"
+			
 		})
 			.then(response => {
+			
+				var epicArray=[]
+					var counter=0
+				for(var i =0;i<response.data.values.length;i++){
+						var epicName=response.data.values[i].name
+					axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+						"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/epic/"+ response.data.values[i].id+"/issue",
+						"userName": this.state.userName,
+						"password": this.state.pwd,
+						"actionMethod": "get"
+					},{
+					
+							epicName:response.data.values[i].name,
+							index:i,
+							length:response.data.values.length
 
-				console.log(response.data)
+						
+					})
+						.then(response=>{
 
-				// 	this.props.onSelectBoard(response.data.values,this.state.projectBoardDetailsListarray[index].id,this.state.url,this.state.userName,this.state.pwd);
-				// this.setState({
-				// 	selectedBoardSprintsArray:response.data.values
+							 epicArray.push({name:response.config.epicName,issues:response.data.issues})
 
-				//  })
-				this.props.currentBoard(response.data.issues)
+								if(response.config.index==(response.config.length-1)){
+								this.props.currentBoard(epicArray)
+							}
+					
+						})
+
+				}
 
 
 			})
-
-
+			
+			
 
 	}
 
-
-
 	projectBoardDetailsListarray(board) {
+	
 		return board.map((board) => (
 			<MenuItem
 				key={board.id}
@@ -623,6 +785,7 @@ class SprintDetails extends React.Component {
 	constructor(props) {
 		super(props)
 
+
 		this.state = {
 			values: '',
 			sprintStartTime: '',
@@ -646,7 +809,8 @@ class SprintDetails extends React.Component {
 			sonarQubeData: '',
 			userNme: '',
 			pwd: '',
-			url: ''
+			url: '',
+			activeSprint:''
 		};
 		this.handleChange = this.handleChange.bind(this);
 
@@ -654,24 +818,34 @@ class SprintDetails extends React.Component {
 
 	componentWillMount() {
 
+	
 		this.state.sprintListSorted = this.props.sprinttList.sort(function (a, b) {
 
 
 			return parseFloat(b.id) - parseFloat(a.id);
 		})
 
+	
 
 		this.setState({
 			boardId: this.props.boardId,
-
+	
 			url: this.props.selectedUrl,
 			userName: this.props.selectedUserName,
-			pwd: this.props.selectedUserPwd
+			pwd: this.props.selectedUserPwd,
+			values:this.props.activeSprint
 
 		})
-		//this.state.boardId = this.props.boardId
+
+
+
 
 	}
+
+	componentDidMount(){
+		this.handleChange("1","2",this.state.values)
+		
+			}
 
 	componentWillReceiveProps(nextProps) {
 
@@ -683,26 +857,28 @@ class SprintDetails extends React.Component {
 			boardId: nextProps.boardId,
 			url: nextProps.selectedUrl,
 			userName: nextProps.selectedUserName,
-			pwd: nextProps.selectedUserPwd
+			pwd: nextProps.selectedUserPwd,
+			values:nextProps.activeSprint
 		})
 		//this.state.boardID = nextProps.boardId
 
 	}
 
-	handleChange(event, index, val) {
-
+ handleChange(event, index, val) {
+   console.log(val)
 
 		this.setState({
 			values: val
 		});
 
 		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-			"resourceURL": this.state.url + "/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId=64&sprintId=" + val,
+			"resourceURL": this.state.url + "/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId="+this.state.boardId +"&sprintId=" + val,
 			"userName": this.state.userName,
 			"password": this.state.pwd,
 			"actionMethod": "get"
 
 		}).then(response => {
+			console.log(response)
 
 			this.setState({
 				sprintStartTime: '',
@@ -728,38 +904,54 @@ class SprintDetails extends React.Component {
 				var dateString = (month + "/" + day + "/" + year)
 				return dateString
 			}
+
 			var d1 = getDateString(response.data.startTime)
 			var d2 = getDateString(response.data.endTime)
 
 			this.setState({ sprintStartTime: response.data.startTime, sprintEndTime: response.data.endTime, sprintCompleteTime: response.data.completeTime, date1: d1, date2: d2 })
-			var currentDateObj = getDateString(response.data.startTime)
-			this.setState({ currentDate: currentDateObj })
+			//var currentDateObj = getDateString(response.data.startTime)
+
+			//this.setState({ currentDate: this.state.date1 })
 			// this.state.currentDate = currentDateObj;
 
 			var currentDateEpochTime = response.data.startTime
 			var changesArray = Object.keys(response.data.changes)
 
+			if(response.data.completeTime==undefined){
+				//console.log(new Date().getTime() / 1000)
+				var date = new Date()
+				var month = '' + (date.getMonth() + 1)
+				var day = '' + date.getDate()
+				var year = date.getFullYear()
+				var dateString = (month + "/" + day + "/" + year)
 
+
+				response.data.completeTime=new Date(dateString).getTime()
+				
+				
+			}
+
+		
 			Object.keys(response.data.changes).forEach(function (key, index) {
-
-
+				
 				var eachDate = Number(key)
-
+				
 				if (eachDate >= response.data.startTime && eachDate <= response.data.completeTime) {
+				
 					var changeObjArray = response.data.changes[eachDate]
 					changeObjArray.forEach(function (item) {
-
+						
 						if (item.timeC) {
-
-
+							
 							if (item.timeC.timeSpent) {
 
 								var d = new Date(eachDate)
 								var dateString = getDateString(eachDate)
-								if (this.state.currentDate !== dateString) {
-									this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.currentDate, hr: (this.state.timeSpent / 3600) })
+								if (this.state.date1  !== dateString) {
+									
+									this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.date1 , hr: (this.state.timeSpent / 3600) })
 
-									this.setState({ currentDate: dateString, totalTimeSpentArray: this.state.eachTimeSpentArray })
+									this.setState({ date1: dateString, totalTimeSpentArray: this.state.eachTimeSpentArray })
 									var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
 									var diffDays = Math.round(Math.abs((d.getTime() - new Date(currentDateEpochTime).getTime()) / (oneDay)));
 									if (diffDays > 1) {
@@ -784,7 +976,7 @@ class SprintDetails extends React.Component {
 					}.bind(this))
 				}
 				if (index == changesArray.length - 1) {
-					this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.currentDate, hr: (this.state.timeSpent / 3600) })
+					this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.date1 , hr: (this.state.timeSpent / 3600) })
 
 					this.setState({ totalTimeSpentArray: this.state.eachTimeSpentArray })
 					var endDateObj = new Date(response.data.endTime)
@@ -803,13 +995,13 @@ class SprintDetails extends React.Component {
 
 				}
 			}.bind(this))
-
+				
 			this.setState({ workHours: <Hourschart data={this.state.totalTimeSpentArray} /> })
 		})
 
 
 		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-			"resourceURL": this.state.url + "/rest/agile/1.0/board/" + "64" + "/sprint/" + val + "/issue?maxResults=100",
+			"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.boardId + "/sprint/" + val + "/issue?maxResults=100",
 			"userName": this.state.userName,
 			"password": this.state.pwd,
 			"actionMethod": "get"
@@ -820,10 +1012,10 @@ class SprintDetails extends React.Component {
 			});
 		})
 		//this.setState({sonarQubeData:<SonarQubeData />})
-		this.props.sonarQubeDetails(<SonarQubeData />);
+		//this.props.sonarQubeDetails();
 	}
 	sprintItems(sprintList) {
-
+	
 
 		return sprintList.map((sprintList) => (
 			<MenuItem
@@ -837,9 +1029,10 @@ class SprintDetails extends React.Component {
 	}
 
 	render() {
+			
 		return (
 			<div className="row textAlignCenter marginT3">
-				<h3 className="textAlignCenter">Sprint Data</h3>
+				<h3 className="textAlignCenter">Sprint Burndown</h3>
 				<div className="col-md-6 col-lg-6 textAlignLeft">
 					<SelectField
 						hintText="Select Sprint"
@@ -873,6 +1066,7 @@ class SprintDetails extends React.Component {
 
 class Hourschart extends React.Component {
 	render() {
+		
 		return (
 					
 				<div className="chartSize">
@@ -907,8 +1101,10 @@ class Piechart extends React.Component {
 			inprogressArrayListlength: '',
 			todoArrayListlength: '',
 			inqaArrayListlength: '',
-			sonarQubeData: ''
+			sonarQubeData: '',
+			piechartPercentagesArray:[],piechart:[]
 		}
+		// this.handleChange = this.handleChange.bind(this);
 	}
 
 	componentWillMount() {
@@ -984,48 +1180,123 @@ class Piechart extends React.Component {
 		})
 	}
 
+
+
+
+
 	render() {
 
+		//this.state.piechartPercentagesArray=[]
+		const todoArrayPercentage=Math.round(((this.state.todoArrayListlength/(this.state.todoArrayListlength+this.state.inprogressArrayListlength +this.state.inqaArrayListlength +this.state.doneArrayListlength))*100))
+		const inprogressArrayPercentage=Math.round(((this.state.inprogressArrayListlength/(this.state.todoArrayListlength+this.state.inprogressArrayListlength +this.state.inqaArrayListlength +this.state.doneArrayListlength))*100))
+		const inqaArrayPercentage=Math.round(((this.state.inqaArrayListlength/(this.state.todoArrayListlength+this.state.inprogressArrayListlength +this.state.inqaArrayListlength +this.state.doneArrayListlength))*100))
+		const doneArrayPercentage=Math.round(((this.state.doneArrayListlength/(this.state.todoArrayListlength+this.state.inprogressArrayListlength +this.state.inqaArrayListlength +this.state.doneArrayListlength))*100))
 
-		const data = [{ name: 'Group C', value: this.state.todoArrayListlength }, { name: 'Group B', value: this.state.inprogressArrayListlength },
-		{ name: 'Group D', value: this.state.inqaArrayListlength }, { name: 'Group A', value: this.state.doneArrayListlength }];
+
+
+		const data = [
+			{ name: 'Group C', value: this.state.todoArrayListlength },
+		 { name: 'Group B', value: this.state.inprogressArrayListlength },
+		{ name: 'Group D', value: this.state.inqaArrayListlength }, 
+		{ name: 'Group A', value: this.state.doneArrayListlength }];
 		const COLORS = ['#FF8042', '#00C49F', '#FFBB28', '#0088FE'];
 
 
 		const RADIAN = Math.PI / 180;
-		const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+		const renderCustomizedLabel = ({data, cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
 			const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
 			const x = cx + radius * Math.cos(-midAngle * RADIAN);
 			const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-			return (
-				<text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
-					{`${(percent * 100).toFixed(0)}%`}
-				</text>
-			);
+			 return (
+			`${(percent * 100).toFixed(0)}%`
+		
+				
+			  );
 		};
 		return (
 
-			<PieChart width={800} height={400}>
-				<Pie
-					dataKey="value"
-					data={data}
-					cx={300}
-					cy={200}
-					labelLine={false}
-					label={renderCustomizedLabel}
-					outerRadius={180}
+			<div className="displayInline">
+				
 
-				>
+				
+				<div className="displayInline  col-md-8 justify">
 
-					{
-						data.map((entry, index) => < Cell fill={COLORS[index % COLORS.length]} key={index} />)
+					<PieChart width={490} height={400}>
+						<Pie
+						//nameKey='name'
+							dataKey="value"
+							data={data}
+							//cx={300}
+							//cy={200}
+							//labelLine={true}
+							label={renderCustomizedLabel}
+							outerRadius={180}
+							animationEasing='ease-in-out'
+							//PieLabelStyle ='outside'
+						 >
 
-					}
-				</Pie>
+							{
+								data.map((entry, index) => < Cell fill={COLORS[index % COLORS.length]} key={index}/> )
 
-			</PieChart>
+							}
 
+							
+							
+							</Pie>
+						 
+
+					</PieChart>
+
+				</div>
+
+			
+				{/* {this.state.piechart
+                                    } */}
+
+										
+				
+				<div className="col-md-4 verticalAlign">
+
+					<div className="col-md-12 displayInline">
+						<div className="borderRadius" style={{ backgroundColor: "#FF8042", width: "20px", height: "20px", border: "5px solid #FF8042" }}>
+
+						</div>
+
+						<div className="col-md-9">
+							<label>{todoArrayPercentage}% To Do </label>
+						</div>
+					</div>
+					<div className="col-md-12 displayInline">
+						<div className="borderRadius" style={{ backgroundColor: "#00C49F", width: "20px", height: "20px", border: "5px solid #00C49F" }}>
+
+						</div>
+
+						<div className="col-md-9">
+							<label>{inprogressArrayPercentage}% Progress</label>
+						</div>
+					</div>
+					<div className="col-md-12 displayInline">
+						<div className="borderRadius" style={{ backgroundColor: "#FFBB28", width: "20px", height: "20px", border: "5px solid #FFBB28" }}>
+
+						</div>
+
+						<div className="col-md-9">
+							<label>{inqaArrayPercentage}% In QA</label>
+						</div>
+					</div>
+					<div className="col-md-12 displayInline">
+						<div className="borderRadius" style={{ backgroundColor: "#0088FE", width: "20px", height: "20px", border: "5px solid #0088FE" }}>
+
+						</div>
+
+						<div className="col-md-9">
+							<label>{doneArrayPercentage}% Done</label>
+						</div>
+					</div>
+
+				</div>
+			</div>
 
 		)
 
@@ -1041,7 +1312,7 @@ class StatusIdentifier extends React.Component {
 		return (
 			<div className="displayInline  col-md-10 col-md-offset-2">
 
-				<div className="borderRadius" style={{ backgroundColor: "#FF8042", width: "20px", height: "20px", border: "5px solid #FF8042" }}>
+				{/* <div className="borderRadius" style={{ backgroundColor: "#FF8042", width: "20px", height: "20px", border: "5px solid #FF8042" }}>
 
 				</div>
 				<span>
@@ -1058,7 +1329,7 @@ class StatusIdentifier extends React.Component {
 
 				<div className="borderRadius" style={{ backgroundColor: "#0088FE", width: "20px", height: "20px", border: "5px solid #0088FE" }}>
 
-				</div><span><label className="col-md-10">Done</label></span>
+				</div><span><label className="col-md-10">Done</label></span> */}
 			</div>
 		)
 
@@ -1151,7 +1422,7 @@ class SonarQubeData extends React.Component {
 		return (
 			<div>
 				<div className="col-md-12">
-					<h3 className="textAlignCenter">Quality Data</h3>
+					<h3 className="textAlignCenter">Quality Overview</h3>
 					<div className="col-md-12 displayInline overlay marginB08">
 						<div className="col-md-7 textAlignCenter">Bugs
 													<div className="textAlignCenter">
@@ -1305,21 +1576,57 @@ class IssuesList extends React.Component {
 	}
 
 	componentWillMount() {
+				
+
+		// this.state.epicsArray = this.props.issuesArray.filter(function (eachIssue) {
+		// 	if (eachIssue.fields.epic !== null||eachIssue.fields.epic!==undefined ) {
+			
+		// 		return eachIssue
+			
+			
+		// 	}
+			
+		// })
+
+		// for(var i=0;i<this.props.issuesArray.length;i++){
+		// 	if (this.props.issuesArray[i].fields.epic!= null || this.props.issuesArray[i].fields.epic!= undefined ) {
+		// 			this.state.epicsArray=this.state.epicsArray.concat(this.props.issuesArray[i])
+	//	}
+		this.setState({ issuesArray: this.props.issuesArray })
+	//}
+		
+	var epicName
+	var issueStatus
+	var issuesArrayWithSameEpicArray=[]
+	var x =[]
+	var closedIssues=[]
+
+	for(var i=0;i<this.state.epicsArray.length;i++){
+
+		  //issueStatus=this.state.epicsArray[i].statusCategory.name
+		//   if(epicName!=this.state.epicsArray[i].fields.epic.name){
+		// 	if(this.state.epicsArray[i].statusCategory.name=="closed"){
 
 
-		this.state.epicsArray = this.props.issuesArray.filter(function (eachIssue) {
-			if (eachIssue.fields.epic !== null) {
+		// 	}
 
-				return eachIssue
 
-				//console.log(eachIssue)
-			}
-		})
 
-		this.setState({ issuesArray: this.state.epicsArray })
+			// issuesArrayWithSameEpicArray.push(this.state.epicsArray[i])
+			// epicName=this.state.epicsArray[i].fields.epic.name
+		
+		  }
+		
+		
+
+			
+
+	
+	
 	}
 
 	render() {
+
 		return (
 			<div className="col-md-12">
 
@@ -1328,13 +1635,14 @@ class IssuesList extends React.Component {
 				<div className="col-md-12 col-lg-12 padding0">
 
 					<Table height={this.state.height}>
-						<TableHeader displaySelectAll={this.state.showCheckboxes}>
+						<TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={false}>
 							<TableRow>
 								<TableHeaderColumn>Epic Name</TableHeaderColumn>
-								<TableHeaderColumn>Epic id</TableHeaderColumn>
-								<TableHeaderColumn>People</TableHeaderColumn>
-								<TableHeaderColumn>ACE5</TableHeaderColumn>
-								<TableHeaderColumn>Actions</TableHeaderColumn>
+								<TableHeaderColumn>Done</TableHeaderColumn>
+								<TableHeaderColumn>To Do</TableHeaderColumn>
+								<TableHeaderColumn>In Qa</TableHeaderColumn>
+								<TableHeaderColumn>In Progress</TableHeaderColumn>
+								<TableHeaderColumn>In Code Review</TableHeaderColumn>
 
 							</TableRow>
 						</TableHeader>
@@ -1342,8 +1650,12 @@ class IssuesList extends React.Component {
 							{this.state.issuesArray.map((epic, index) => (
 								<TableRow key={index}>
 									{/* <TableRowColumn>{index}</TableRowColumn> */}
-									<TableRowColumn>{epic.fields.epic.name}</TableRowColumn>
-									<TableRowColumn>{epic.fields.epic.id}      </TableRowColumn>
+									<TableRowColumn>{epic.name}</TableRowColumn>
+									<TableRowColumn>{epic.done}      </TableRowColumn>
+									<TableRowColumn>{epic.toDo}</TableRowColumn>
+									<TableRowColumn>{epic.inQa}      </TableRowColumn>
+									<TableRowColumn>{epic.inProgress}</TableRowColumn>
+									<TableRowColumn>{epic.inCodeReview}</TableRowColumn>
 
 								</TableRow>
 							))}

@@ -235,7 +235,7 @@ class manageCustomerTeams extends React.Component {
                     <div className="col-md-12 flex">
                         <div className="col-md-3 col-lg-2 marginT16">
                             {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
-                            <h4 className="margin0 pointer paddingL04" onClick={() => this.openSideMenu()} ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
+                            <h4 className="margin0 pointer paddingL04" onClick={(e) => this.openSideMenu()} ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
                         </div>
                         <div className="col-md-7 col-lg-8 textAlignCenter marginT16">
                             <h4 className="margin0">Manage Customer Teams</h4>
@@ -417,11 +417,11 @@ class manageCustomerTeams extends React.Component {
 class AccountDetails extends React.Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             newProjectDetails: {},
             projectList: [],
-          //  projectNameList: this.props.selectedAccount.projects,
+            //  projectNameList: this.props.selectedAccount.projects,
             configureTools: [
                 { "id": 1, "name": "Wiki" },
                 { "id": 2, "name": "Issue Management" },
@@ -429,15 +429,15 @@ class AccountDetails extends React.Component {
             ],
             selectTool: '',
             currentAccount: [],
-            selectedProjectIndex:'',
-            selectedItemName:'',
-            selectedItemIndex:'',
-            selectedJumpStartMenuItem:'',
-            oldselectedItemIndex:'',
-            jumpStartConfigModel:false,
-            configPeopleModel:false,
-            peoplesArray:[]
-              }
+            selectedProjectIndex: '',
+            selectedItemName: '',
+            selectedItemIndex: '',
+            selectedJumpStartMenuItem: '',
+            oldselectedItemIndex: '',
+            jumpStartConfigModel: false,
+            configPeopleModel: false,
+            peoplesArray: []
+        }
 
         this.createProject = this.createProject.bind(this);
         this.addNewProject = this.addNewProject.bind(this);
@@ -447,29 +447,30 @@ class AccountDetails extends React.Component {
         this.updateAccount = this.updateAccount.bind(this);
         this.handleNewCustomerChange = this.handleNewCustomerChange.bind(this);
         this.closeEditAccountModal = this.closeEditAccountModal.bind(this);
-        
+
         this.closeJumpStartModel = this.closeJumpStartModel.bind(this);
         this.configPeople = this.configPeople.bind(this);
         this.handlingPeopleList = this.handlingPeopleList.bind(this);
- 
+        this.updatePeopleList = this.updatePeopleList.bind(this);
+        this.deletePeopleList = this.deletePeopleList.bind(this);
+        this.toolsData = this.toolsData.bind(this);
         
-        
-     }
+    }
 
-     componentWillMount(){
-        
+    componentWillMount() {
+
         this.setState({
             currentAccount: this.props.selectedAccount
         })
-     }
-    
+    }
+
     componentWillReceiveProps(nextProps) {
-    
+
         this.setState({
             currentAccount: nextProps.selectedAccount
         })
     }
-    
+
     handleNewCustomerChange(e) {
         var currentAccountObj = this.state.currentAccount;
         currentAccountObj[e.target.name] = e.target.value
@@ -484,12 +485,12 @@ class AccountDetails extends React.Component {
     editAccount() {
         this.setState({ editAccountModal: true })
     }
-    closeEditAccountModal(){
+    closeEditAccountModal() {
         this.setState({ editAccountModal: false })
     }
     updateAccount(newCustomerDetailsObject) {
-       
-        axios.put(myConstClass.nodeAppUrl+`/accounts/` + newCustomerDetailsObject._id,
+
+        axios.put(myConstClass.nodeAppUrl + `/accounts/` + newCustomerDetailsObject._id,
             {
                 customerName: newCustomerDetailsObject.customerName,
                 startDate: '13/12/2017',
@@ -498,13 +499,13 @@ class AccountDetails extends React.Component {
                 pricingModel: newCustomerDetailsObject.pricingModel,
                 seniorSupplier: 'asewr',
                 projectManager: 'jg',
-                projects:newCustomerDetailsObject.projects,
+                projects: newCustomerDetailsObject.projects,
                 people: [],
                 customerLogo: newCustomerDetailsObject.customerLogo,
                 status: 'Active'
             })
             .then(response => {
-         
+
                 this.props.onUpdateProject(response.data);
                 this.setState({ currentAccount: response.data, createAccountModal: false });
 
@@ -517,21 +518,21 @@ class AccountDetails extends React.Component {
     createProject() {
         this.setState({ createProjectModel: true })
     }
-   
-    addNewProject(newProjectObject) {
-       // var newProjectObject
 
-      //  newProjectObject.tools = [{name:'',type:'',userName:'',password:'',hostedURL:'',index:0}]
+    addNewProject(newProjectObject) {
+        // var newProjectObject
+
+        //  newProjectObject.tools = [{name:'',type:'',userName:'',password:'',hostedURL:'',index:0}]
 
 
         var tempAccountsArray = this.state.currentAccount.projects.slice();
 
         this.state.projectList = tempAccountsArray.concat(newProjectObject)
-     
+
 
         this.setState({ projectList: this.state.projectList, newProjectDetails: {} })
 
-        axios.put(myConstClass.nodeAppUrl+`/accounts/` + this.state.currentAccount._id,
+        axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.currentAccount._id,
             {
                 customerName: this.state.currentAccount.customerName,
                 startDate: '13/12/2017',
@@ -557,131 +558,152 @@ class AccountDetails extends React.Component {
 
 
     }
-    closeCreateProjectModel(){
-        this.setState({createProjectModel:false,newCustomerDetails:{}})
+    closeCreateProjectModel() {
+        this.setState({ createProjectModel: false, newCustomerDetails: {} })
     }
 
-  
+
     configJumpStart(projectIndex) {
 
-        
+
 
         if (this.state.currentAccount.projects[projectIndex].tools === undefined) {
-            this.setState({ jumpStartConfigModel: true, selectedProjectIndex: projectIndex,selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
-                selectedProjectIndex={projectIndex}
-                selectedJumpStartMenuName={"wiki"}
-           
+            this.setState({
+                jumpStartConfigModel: true, selectedProjectIndex: projectIndex, selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
+                    selectedProjectIndex={projectIndex}
+                    selectedJumpStartMenuName={"wiki"}
 
-            />})
+
+                />
+            })
 
         }
 
-  
+
         if (this.state.currentAccount.projects[projectIndex].tools !== undefined) {
-             var jumpStartMenuNameArray = []
+            var jumpStartMenuNameArray = []
             for (var JumpStartMenuName in this.state.currentAccount.projects[projectIndex].tools) {
-                        jumpStartMenuNameArray.push(JumpStartMenuName)
+                jumpStartMenuNameArray.push(JumpStartMenuName)
             }
 
-       
+
 
             this.setState({
                 jumpStartConfigModel: true, selectedProjectIndex: projectIndex, selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
                     selectedProjectIndex={projectIndex}
                     selectedJumpStartMenuName={jumpStartMenuNameArray[0]}
-           
+
 
                 />
             })
         }
 
     }
+    toolsData(selectedObj){
+        console.log(selectedObj)
+        console.log(this.state.selectedItemName)
+        console.log(this.state.selectedProjectIndex)
 
-
-    currentItem(selectedItemName, selectedItemIndex) {
-      
-        //this.setState({selectedItemName:selectedItemName,selectedItemIndex:selectedItemIndex})
-        this.selectedItemName=selectedItemName
-       if(this.state.oldselectedItemIndex!=='' && this.state.oldselectedItemIndex!==undefined ){
-        this.state.configureTools[this.state.oldselectedItemIndex].selectedJumpStartMenuItem=false
-       }
-              
-       var i
-        for(i=0;i<this.state.configureTools.length;i++){          
-                 if(selectedItemName===this.state.configureTools[i].name){                 
-           this.state.configureTools[selectedItemIndex].selectedJumpStartMenuItem=true
-                           
-                 }
-        }
-        this.setState({oldselectedItemIndex:selectedItemIndex}) 
-                       
-              var tempArray = this.state.currentAccount
-              if(tempArray.projects[this.state.selectedProjectIndex].tools===undefined){
-                tempArray.projects[this.state.selectedProjectIndex].tools={}
+       // this.setState({currentAccount:selectedObj})
+        this.setState({currentAccount:selectedObj,
+            selectTool: <ToolConfigurationDetails selectedAccount={selectedObj}
+                selectedProjectIndex={this.state.selectedProjectIndex}
+             selectedJumpStartMenuName={this.state.selectedItemName} 
                 
-                          }
 
 
-              if(tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemName]==undefined){
-                tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemName]={ name: '',userName: '', password: '', hostedURL: ''}
-                  this.setState({
-                      selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
-                          selectedProjectIndex={this.state.selectedProjectIndex}
-                          selectedJumpStartMenuName={selectedItemName}
-            
-                        
-                      
-                         
-                      />
+            />
         });
+    }
+    currentItem(selectedItemName, selectedItemIndex) {
+        
+        this.setState({selectedItemName:selectedItemName,selectedItemIndex:selectedItemIndex})
+        //this.selectedItemName = selectedItemName
+        if (this.state.oldselectedItemIndex !== '' && this.state.oldselectedItemIndex !== undefined) {
+            this.state.configureTools[this.state.oldselectedItemIndex].selectedJumpStartMenuItem = false
+        }
 
-              }
+        var i
+        for (i = 0; i < this.state.configureTools.length; i++) {
+            if (selectedItemName === this.state.configureTools[i].name) {
+                this.state.configureTools[selectedItemIndex].selectedJumpStartMenuItem = true
 
-              else{
-                this.setState({
-                    selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
-                        selectedProjectIndex={this.state.selectedProjectIndex}
-                        selectedJumpStartMenuName={selectedItemName}
-                     
-                     
-                       
-                    />
-      });
-              }
-           
-   
+            }
+        }
+        this.setState({ oldselectedItemIndex: selectedItemIndex })
 
-              this.setState({currentAccount:tempArray})
+        var tempArray = this.state.currentAccount
 
-     
+        console.log(this.state.currentAccount)
+        if (tempArray.projects[this.state.selectedProjectIndex].tools === undefined) {
+            tempArray.projects[this.state.selectedProjectIndex].tools = {}
+
+        }
+
+
+        if (tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemName] == undefined) {
+            console.log("1")
+            tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemName] = { name: '', userName: '', password: '', hostedURL: '' }
+            this.setState({
+                selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
+                    selectedProjectIndex={this.state.selectedProjectIndex}
+                    selectedJumpStartMenuName={selectedItemName}
+                    onSubmitToolsData={this.toolsData}
+                    
+                />
+            });
+
+        }
+
+        else {
+            console.log("2")
+            this.setState({
+                selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
+                    selectedProjectIndex={this.state.selectedProjectIndex}
+                    selectedJumpStartMenuName={selectedItemName}
+                    onSubmitToolsData={this.toolsData}
+
+
+                />
+            });
+        }
+
+
+
+        this.setState({ currentAccount: tempArray })
+
+
 
     }
 
-       closeJumpStartModel(){
-        this.setState({jumpStartConfigModel:false,configPeopleModel:false})
-    }
    
-    configPeople(currentProject,projectIndex){
+
+    closeJumpStartModel() {
+        this.setState({ jumpStartConfigModel: false, configPeopleModel: false })
+    }
+
+      configPeople(currentProject, projectIndex) {
         var tempPeoplesArray = []
         var tempArray = this.state.currentAccount
 
 
         if (tempArray.projects[projectIndex].people === undefined) {
             tempArray.projects[projectIndex].people = []
-            
+
             this.setState({
                 configPeopleModel: true,
                 selectedProjectIndex: projectIndex,
                 currentAccount: tempArray,
-               // peoplesArray: tempPeoplesArray,
+                // peoplesArray: tempPeoplesArray,
                 people: <PeopleConfigurationDetails selectedAccount={this.state.currentAccount}
                     selectedProjectIndex={projectIndex}
-                    onSubmitPeopleData={this.handlingPeopleList}
+                // onSubmitPeopleData={this.handlingPeopleList}
+                  //onUpdatePeopleData={this.updatePeopleList}  
                 />
             })
 
         }
-   
+
         if (tempArray.projects[projectIndex].people !== undefined) {
             for (var i = 0; i < tempArray.projects[projectIndex].people.length; i++) {
                 tempPeoplesArray.push(tempArray.projects[projectIndex].people[i])
@@ -694,14 +716,16 @@ class AccountDetails extends React.Component {
                 peoplesArray: tempPeoplesArray,
                 people: <PeopleConfigurationDetails selectedAccount={this.state.currentAccount}
                     selectedProjectIndex={projectIndex}
-                   onSubmitPeopleData={this.handlingPeopleList}
+                    onSubmitPeopleData={this.handlingPeopleList}
+                    
                 />
             })
 
-}   
-          
+        }
 
-}
+
+    }
+
     handlingPeopleList(latestPeopleDate) {
 
         var tempPeoplesArray = []
@@ -710,15 +734,35 @@ class AccountDetails extends React.Component {
         }
         this.setState({ peoplesArray: tempPeoplesArray })
     }
-curentSelectedIteminPeople(selectedNameObj,index){
+    updatePeopleList(updatedPeopleData){
+        var tempPeoplesArray = []
+        for (var i = 0; i < updatedPeopleData.projects[this.state.selectedProjectIndex].people.length; i++) {
+            tempPeoplesArray.push(updatedPeopleData.projects[this.state.selectedProjectIndex].people[i])
+        }
+        this.setState({ peoplesArray: tempPeoplesArray })
+    }
+    deletePeopleList(deletedPeopleList){
+        var tempPeoplesArray = []
+        for (var i = 0; i < deletedPeopleList.projects[this.state.selectedProjectIndex].people.length; i++) {
+            tempPeoplesArray.push(deletedPeopleList.projects[this.state.selectedProjectIndex].people[i])
+        }
+        this.setState({ peoplesArray: tempPeoplesArray })
+    }
 
-this.setState({people: <PeopleConfigurationDetails selectedMemberObj={selectedNameObj}
-  
-/>})
-}
+    curentSelectedIteminPeople(selectedNameObj, index) {
+
+        this.setState({
+            people: <PeopleConfigurationDetails selectedMemberObj={selectedNameObj}
+                isSubmitDisable='true' selectedMemberIndex={index}
+                onSubmitPeopleData={this.handlingPeopleList}
+                    onUpdatePeopleData={this.updatePeopleList}
+                    onDeletePeopleData={this.deletePeopleList}
+            />
+        })
+    }
 
     render() {
-       
+
         return (
             <div>
                 <div className="col-md-12 col-lg-12 borderBottom displayInline">
@@ -752,68 +796,68 @@ this.setState({people: <PeopleConfigurationDetails selectedMemberObj={selectedNa
                     </div>
                     <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
 
-                    <FloatingActionButton mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createProject()} style={addProjectButtonstyle} >
-                    <ContentAdd />
-                </FloatingActionButton>
+                        <FloatingActionButton mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createProject()} style={addProjectButtonstyle} >
+                            <ContentAdd />
+                        </FloatingActionButton>
 
                     </div>
 
                 </div>
-                          <div className="col-md-12 col-lg-12 padding0">
-                   
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHeaderColumn>Project Name</TableHeaderColumn>
-                            <TableHeaderColumn>Jump Start</TableHeaderColumn>
-                            <TableHeaderColumn>People</TableHeaderColumn>
-                            <TableHeaderColumn>ACE5</TableHeaderColumn>
-                            <TableHeaderColumn>Actions</TableHeaderColumn>
+                <div className="col-md-12 col-lg-12 padding0">
 
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {this.state.currentAccount.projects.map((project, index) => (
-                            <TableRow key={index}>
-                                {/* <TableRowColumn>{index}</TableRowColumn> */}
-                                <TableRowColumn>{project.projectName}</TableRowColumn>
-                                <TableRowColumn style={tableConfigBUtton}>
-                                    <RaisedButton label="configure" primary={true} onClick={() => this.configJumpStart(index)} />
-
-                                </TableRowColumn>
-                                <TableRowColumn style={tableConfigBUtton}>
-                                    <RaisedButton label="configure" secondary={true} onClick={() => this.configPeople(project,index)} />
-                                    {/*   */}
-                                </TableRowColumn>
-                                <TableRowColumn style={tableConfigBUtton}>
-                                    <RaisedButton label="configure" default={true} />
-                                    {/* onClick={() => this.configACES5(project)} ] */}
-                                </TableRowColumn>
-                                <TableRowColumn>
-                                    <FloatingActionButton mini={true} iconStyle={editProjectButton} onClick={() => this.createProject()}>
-
-                                        <ContentEdit />
-
-
-                                    </FloatingActionButton>
-                                    <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton} onClick={() => this.createProject()}>
-
-                                        <ContentClear />
-
-
-                                    </FloatingActionButton>
-
-                                </TableRowColumn>
-
-
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHeaderColumn>Project Name</TableHeaderColumn>
+                                <TableHeaderColumn>Jump Start</TableHeaderColumn>
+                                <TableHeaderColumn>People</TableHeaderColumn>
+                                <TableHeaderColumn>ACE5</TableHeaderColumn>
+                                <TableHeaderColumn>Actions</TableHeaderColumn>
 
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {this.state.currentAccount.projects.map((project, index) => (
+                                <TableRow key={index}>
+                                    {/* <TableRowColumn>{index}</TableRowColumn> */}
+                                    <TableRowColumn>{project.projectName}</TableRowColumn>
+                                    <TableRowColumn style={tableConfigBUtton}>
+                                        <RaisedButton label="configure" primary={true} onClick={() => this.configJumpStart(index)} />
+
+                                    </TableRowColumn>
+                                    <TableRowColumn style={tableConfigBUtton}>
+                                        <RaisedButton label="configure" secondary={true} onClick={() => this.configPeople(project, index)} />
+                                        {/*   */}
+                                    </TableRowColumn>
+                                    <TableRowColumn style={tableConfigBUtton}>
+                                        <RaisedButton label="configure" default={true} />
+                                        {/* onClick={() => this.configACES5(project)} ] */}
+                                    </TableRowColumn>
+                                    <TableRowColumn>
+                                        <FloatingActionButton mini={true} iconStyle={editProjectButton} onClick={() => this.createProject()}>
+
+                                            <ContentEdit />
+
+
+                                        </FloatingActionButton>
+                                        <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton} onClick={() => this.createProject()}>
+
+                                            <ContentClear />
+
+
+                                        </FloatingActionButton>
+
+                                    </TableRowColumn>
+
+
+
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
                 </div>
 
-               
+
                 <Modal isOpen={this.state.editAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins overlay "].join(' ')}>
 
                     <div className="row">
@@ -876,7 +920,7 @@ this.setState({people: <PeopleConfigurationDetails selectedMemberObj={selectedNa
                         <div className="loginBtns">
 
                             <div>
-                            <RaisedButton label="Close" secondary={true} style={modelbuttonsStyle} onClick={() => this.closeEditAccountModal()} />
+                                <RaisedButton label="Close" secondary={true} style={modelbuttonsStyle} onClick={() => this.closeEditAccountModal()} />
                                 <RaisedButton label="Done" primary={true} style={modelbuttonsStyle} onClick={() => this.updateAccount(this.state.currentAccount)} />
                             </div>
 
@@ -918,7 +962,7 @@ this.setState({people: <PeopleConfigurationDetails selectedMemberObj={selectedNa
                         <div className="col-md-12 col-lg-12">
                             <div className="col-md-12 col-lg-12 borderBottom">
                                 <h5 className="marginT0  paddingL41 font fontSize17">Jump Start
-                                <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton}  style={addProjectButtonstyle} onClick={() => this.closeJumpStartModel()}>
+                                <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton} style={addProjectButtonstyle} onClick={() => this.closeJumpStartModel()}>
 
                                         <ContentClear />
 
@@ -928,9 +972,9 @@ this.setState({people: <PeopleConfigurationDetails selectedMemberObj={selectedNa
                                 </h5>
                             </div>
                             <div className="textAlignLeft col-md-3 col-lg-5 borderRight verticalHeight30">
-                                {this.state.configureTools.map((item,index) => (
-                                    <li className={["pointer", 
-                                    this.state.configureTools[index].selectedJumpStartMenuItem==true?"dashboardHeaderBgColor":''].join(' ')} key={item.id} onClick={() => this.currentItem(item.name,index)} >{item.name}</li>
+                                {this.state.configureTools.map((item, index) => (
+                                    <li className={["pointer",
+                                        this.state.configureTools[index].selectedJumpStartMenuItem == true ? "dashboardHeaderBgColor" : ''].join(' ')} key={item.id} onClick={() => this.currentItem(item.name, index)} >{item.name}</li>
                                 ))}
 
                             </div>
@@ -947,7 +991,7 @@ this.setState({people: <PeopleConfigurationDetails selectedMemberObj={selectedNa
                         <div className="col-md-12 col-lg-12">
                             <div className="col-md-12 col-lg-12 borderBottom">
                                 <h5 className="marginT0  paddingL41 font fontSize17">Jump Start
-                                <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton}  style={addProjectButtonstyle} onClick={() => this.closeJumpStartModel()}>
+                                <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton} style={addProjectButtonstyle} onClick={() => this.closeJumpStartModel()}>
 
                                         <ContentClear />
 
@@ -957,9 +1001,9 @@ this.setState({people: <PeopleConfigurationDetails selectedMemberObj={selectedNa
                                 </h5>
                             </div>
                             <div className="textAlignLeft col-md-3 col-lg-5 borderRight verticalHeight30">
-                                {this.state.peoplesArray.map((people,index) => (
-                                    <li className={["pointer", 
-                                    ].join(' ')} key={people.role} onClick={() => this.curentSelectedIteminPeople(people,index)} >{people.name}</li>
+                                {this.state.peoplesArray.map((people, index) => (
+                                    <li className={["pointer",
+                                    ].join(' ')} key={people.emailid} onClick={() => this.curentSelectedIteminPeople(people, index)} >{people.name}</li>
                                 ))}
 
                             </div>
@@ -1221,7 +1265,7 @@ class ToolConfigurationDetails extends React.Component {
                 status: 'Active'
             })
             .then(response => {
-       
+                   this.props.onSubmitToolsData(response.data)
                   this.setState({ dupeCurrentAccountArray: response.data })
 
             })
@@ -1290,10 +1334,15 @@ class PeopleConfigurationDetails extends React.Component {
             tempSelectedAccountobj:'',
             currentProjectIndex:'',
             currentPeopleArrayIndex:'',
-            tempObj:{name:'',role:'',emailid:''}
+            tempObj:{name:'',role:'',emailid:''},
+            disableSubmit:'',
+            selectedPeopleIndex:''
         }
         this.handleChangeInPeopleConfigInput = this.handleChangeInPeopleConfigInput.bind(this);
         this.submitPeopleData = this.submitPeopleData.bind(this);
+        this.updatePeopleData = this.updatePeopleData.bind(this);
+        this.addPeople = this.addPeople.bind(this);
+        this.deletePeopleData = this.deletePeopleData.bind(this);
     }
 
     componentWillMount(){
@@ -1304,12 +1353,23 @@ class PeopleConfigurationDetails extends React.Component {
             //tempObj:this.props.selectedMemberObj
         
         })
+
+        if(this.props.isSubmitDisable){
+            this.setState({disableSubmit:this.props.isSubmitDisable})
+        }
     }
-componentWillReceiveProps(nextProps){
-    console.log(nextProps.selectedMemberObj)
-   
-    this.setState({tempObj:nextProps.selectedMemberObj})
-}
+    
+    componentWillReceiveProps(nextProps) {
+        this.props = nextProps
+
+        this.setState({ tempObj: nextProps.selectedMemberObj, selectedPeopleIndex: nextProps.selectedMemberIndex })
+        //this.state.disableSubmit=nextProps.isSubmitDisable
+        if (nextProps.isSubmitDisable) {
+
+            this.setState({ disableSubmit: nextProps.isSubmitDisable })
+        }
+
+    }
 
     handleChangeInPeopleConfigInput(e) {
 
@@ -1371,38 +1431,112 @@ componentWillReceiveProps(nextProps){
 
 
     }
+    updatePeopleData(updateObj){
+        console.log(updateObj)
+        this.state.tempSelectedAccountobj.projects[this.state.currentProjectIndex].people[this.state.selectedPeopleIndex]=updateObj
 
+        axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.tempSelectedAccountobj._id,
+        {
+            customerName: this.state.tempSelectedAccountobj.customerName,
+            startDate: '13/12/2017',
+            endDate: '13/12/2017',
+            engagementModel: this.state.tempSelectedAccountobj.engagementModel,
+            pricingModel:this.state.tempSelectedAccountobj.pricingModel,
+            seniorSupplier: 'asewr',
+            projectManager: 'jg',
+            projects: this.state.tempSelectedAccountobj.projects,
+            people: [],
+            customerLogo: this.state.tempSelectedAccountobj.customerLogo,
+            status: 'Active'
+        })
+        .then(response => {
+            console.log(response.data)
+        
+            this.props.onUpdatePeopleData(response.data)
+            //var dummyObj=currentobj
+            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].name=''
+            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].role=''
+            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].emailid=''
+            //updateObj={name:'',role:'',emailid:''}
+        this.setState({ 
+            currentAccount: response.data, tempObj:updateObj})
+         })
+    }
+
+    addPeople(){
+
+        this.setState({ tempObj:{name:'',role:'',emailid:''},disableSubmit:false})
+    }
+
+    deletePeopleData(slectedObj){
+
+         slectedObj.projects[this.state.currentProjectIndex].people.splice(this.state.selectedPeopleIndex,1)
+
+        axios.put(myConstClass.nodeAppUrl + `/accounts/` + slectedObj._id,
+        {
+            customerName: slectedObj.customerName,
+            startDate: '13/12/2017',
+            endDate: '13/12/2017',
+            engagementModel: slectedObj.engagementModel,
+            pricingModel:slectedObj.pricingModel,
+            seniorSupplier: 'asewr',
+            projectManager: 'jg',
+            projects: slectedObj.projects,
+            people: [],
+            customerLogo: slectedObj.customerLogo,
+            status: 'Active'
+        })
+        .then(response => {
+                 
+            this.props.onDeletePeopleData(response.data)
+       
+        this.setState({ tempObj:{name:'',role:'',emailid:''},
+            currentAccount: response.data})
+         })
+    }
     render() {
+       
         return (
             // <div className="col-md-6">
             <div>
-                 <form id="create-course-form">
+                <div className="col-md-12 col-lg-12 text textAlignRight marginB08 paddingR08">
+                 <FloatingActionButton mini={true} primary={true} iconStyle={addAccountBUtton} style={editbuttonStyle} onClick={() => this.addPeople()} >
+                                 <ContentAdd />
+                             </FloatingActionButton>
+                  </div>           
+            
                                    
                     <div className="col-md-12 col-lg-12">
-                                                    
-                        <div className="col-md-5"><label>Name:</label></div>
-                        <div className="col-md-6">
+          
+                        <div className="col-md-5 displayInline marginB04"><label>Name:</label></div>
+                        <div className="col-md-6 displayInline marginB04">
                              <input value={this.state.tempObj.name} name='name' 
                             onChange={this.handleChangeInPeopleConfigInput} />
                         </div>
-                        <div className="col-md-5"><label>Role:</label></div>
-                        <div className="col-md-6">
+                        <div className="col-md-5 displayInline marginB04"><label>Role:</label></div>
+                        <div className="col-md-6 displayInline marginB04">
                              <input value={this.state.tempObj.role} name='role' 
                             onChange={this.handleChangeInPeopleConfigInput} /> 
                         </div>
-                        <div className="col-md-5"><label>emailid:</label></div>
-                        <div className="col-md-6">
+                        <div className="col-md-5 displayInline marginB04"><label>emailid:</label></div>
+                        <div className="col-md-6 displayInline marginB04">
                              <input value={this.state.tempObj.emailid} name='emailid' 
                             onChange={this.handleChangeInPeopleConfigInput} /> 
                         </div>
 
                     </div>
-                </form>
-                <div>
-                
-                    <RaisedButton label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitPeopleData(this.state.tempObj)} />
 
-                </div> 
+                    <div className="col-md-12 col-lg-12 displayInline">
+                        <div className="col-md-4 col-lg-4">
+                            <RaisedButton disabled={this.state.disableSubmit} label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitPeopleData(this.state.tempObj)} />
+                        </div>
+                        <div className="col-md-4 col-lg-4">
+                            <RaisedButton disabled={this.state.disableSubmit == false} label="Update" primary={true} buttonStyle={buttonStyle} onClick={() => this.updatePeopleData(this.state.tempObj)} />
+                        </div>
+                        <div className="col-md-4 col-lg-4">
+                            <RaisedButton disabled={this.state.disableSubmit == false} label="Delete" secondary={true} buttonStyle={buttonStyle} onClick={() => this.deletePeopleData(this.state.tempSelectedAccountobj)} />
+                        </div>
+                    </div> 
 
             </div>
         )
