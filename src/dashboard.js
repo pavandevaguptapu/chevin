@@ -4,7 +4,7 @@ import './App.css';
 import {Button } from 'react-bootstrap';
 import Modal from 'react-modal';
 import axios from 'axios';
-import 'bootstrap/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Avatar from 'material-ui/Avatar';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';

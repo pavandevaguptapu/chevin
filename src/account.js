@@ -160,7 +160,7 @@ class Account extends React.Component {
 			sprintDetails: '',
 			selectedProjectBoardDetails: '',
 			issuesListArray: '',
-			sonarQubeData: '',
+			sonarQubedata: '',
 			peoplesArray: ''
 		})
 
@@ -376,37 +376,37 @@ class Account extends React.Component {
 
 
 				<div className="row">
-					<div className="col-md-12 col-lg-12 padding0 marginT50">
-						<div className="col-md-4 col-lg-3 borderRight marginR0 padding0 verticalHeight">
-						<div className="col-md-12 col-lg-12">
+					{/* <div className="col-md-12 col-lg-12 padding0 displayInline"> */}
+						<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
+							<div className="col-md-12 col-lg-12 textAlignCenter">
 
-								{/* <SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
-									hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
-									{this.projectsListArray(this.state.projectDetails.projects)}
-								</SelectField> */}
+									{/* <SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+										hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
+										{this.projectsListArray(this.state.projectDetails.projects)}
+									</SelectField> */}
 
-								{this.state.projects}
+									{this.state.projects}
 
-							</div> 
-							<div className="col-md-12 col-lg-12">
-								{this.state.selectedProjectBoardDetails}
+								</div> 
+								<div className="col-md-12 col-lg-12 textAlignCenter">
+									{this.state.selectedProjectBoardDetails}
 
+
+								</div>
+								<div className="col-md-12 col-lg-12 padding0">
+									{this.state.peoplesArray}
+									{this.state.issuesListArray}			
+								</div>
+							</div>
+						<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
+							{this.state.sonarQubedata}
 
 							</div>
-							<div className="col-md-12 col-lg-12">
-								{this.state.peoplesArray}
-								{this.state.issuesListArray}			
-							</div>
-						</div>
-						<div className="col-md-4 col-lg-5 borderRight marginR0 padding0 verticalHeight">
-						{this.state.sonarQubedata}
-
-						</div>
 						<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
 						{this.state.sprintDetails}
 							
 						</div>
-					</div>
+					{/* </div> */}
 
 				</div>
 
@@ -466,8 +466,8 @@ class Account extends React.Component {
 					</div>
 
 				</Modal>
-				<div className="footer">
-					<div  className="col-md-12">
+				<div className="footer ">
+					<div  className="col-md-12 displayInline">
 						<div className="col-md-4">
 						<h6><a href="https://www.atlassian.com/software/jira" target="/">jira</a></h6>
 						<h6><a href="https://www.sonarqube.org/" target="/">Quality</a></h6>
@@ -615,15 +615,15 @@ class SelectedProjectDetails extends React.Component {
 		return (
 
 			<div>
-				<div>
+		
 					<SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
 					hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
 						{this.projectDetailsListarray(this.state.projectDetails.projects)}
 					</SelectField>
-				</div>
-				<div>
+		
+				{/* <div>
 					{this.state.selectedProjectVersion}
-				</div>
+				</div> */}
 			</div>
 
 
@@ -765,6 +765,8 @@ class SelectedProjectBoardDetails extends React.Component {
 		return (
 
 			<div>
+
+
 				<SelectField hintText="Boards" value={this.state.selectedProjectBoard} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
 					hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedProjectBoard(e, i, v)}>
 					{this.projectBoardDetailsListarray(this.state.projectBoardDetailsListarray)}
@@ -863,16 +865,15 @@ class SprintDetails extends React.Component {
 		//this.state.boardID = nextProps.boardId
 
 	}
+	handleChange(event, index, val) {
 
- handleChange(event, index, val) {
-   console.log(val)
 
 		this.setState({
 			values: val
 		});
 
 		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-			"resourceURL": this.state.url + "/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId="+this.state.boardId +"&sprintId=" + val,
+			"resourceURL": this.state.url + "/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId=" + this.state.boardId + "&sprintId=" + val,
 			"userName": this.state.userName,
 			"password": this.state.pwd,
 			"actionMethod": "get"
@@ -917,7 +918,7 @@ class SprintDetails extends React.Component {
 			var currentDateEpochTime = response.data.startTime
 			var changesArray = Object.keys(response.data.changes)
 
-			if(response.data.completeTime==undefined){
+			if (response.data.completeTime == undefined) {
 				//console.log(new Date().getTime() / 1000)
 				var date = new Date()
 				var month = '' + (date.getMonth() + 1)
@@ -926,30 +927,30 @@ class SprintDetails extends React.Component {
 				var dateString = (month + "/" + day + "/" + year)
 
 
-				response.data.completeTime=new Date(dateString).getTime()
-				
-				
+				response.data.completeTime = new Date(dateString).getTime()
+
+
 			}
 
-		
+
 			Object.keys(response.data.changes).forEach(function (key, index) {
-				
+
 				var eachDate = Number(key)
-				
+
 				if (eachDate >= response.data.startTime && eachDate <= response.data.completeTime) {
-				
+
 					var changeObjArray = response.data.changes[eachDate]
 					changeObjArray.forEach(function (item) {
-						
+
 						if (item.timeC) {
-							
+
 							if (item.timeC.timeSpent) {
 
 								var d = new Date(eachDate)
 								var dateString = getDateString(eachDate)
-								if (this.state.date1  !== dateString) {
-									
-									this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.date1 , hr: (this.state.timeSpent / 3600) })
+								if (this.state.date1 !== dateString) {
+
+									this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.date1, hr: (this.state.timeSpent / 3600) })
 
 									this.setState({ date1: dateString, totalTimeSpentArray: this.state.eachTimeSpentArray })
 									var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
@@ -976,7 +977,7 @@ class SprintDetails extends React.Component {
 					}.bind(this))
 				}
 				if (index == changesArray.length - 1) {
-					this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.date1 , hr: (this.state.timeSpent / 3600) })
+					this.state.eachTimeSpentArray = this.state.eachTimeSpentArray.concat({ name: this.state.date1, hr: (this.state.timeSpent / 3600) })
 
 					this.setState({ totalTimeSpentArray: this.state.eachTimeSpentArray })
 					var endDateObj = new Date(response.data.endTime)
@@ -995,7 +996,7 @@ class SprintDetails extends React.Component {
 
 				}
 			}.bind(this))
-				
+
 			this.setState({ workHours: <Hourschart data={this.state.totalTimeSpentArray} /> })
 		})
 
@@ -1031,9 +1032,11 @@ class SprintDetails extends React.Component {
 	render() {
 			
 		return (
-			<div className="row textAlignCenter marginT3">
-				<h3 className="textAlignCenter">Sprint Burndown</h3>
-				<div className="col-md-6 col-lg-6 textAlignLeft">
+			<div className="">
+				<div className="col-md-12 col-lg-12 textAlignCenter titleBackgroundColor">
+				<h3>Sprint Burndown</h3>
+				</div>
+				<div className="col-md-12 col-lg-12 textAlignLeft">
 					<SelectField
 						hintText="Select Sprint"
 						value={this.state.values}
@@ -1216,9 +1219,11 @@ class Piechart extends React.Component {
 		};
 		return (
 
-			<div className="displayInline">
+			<div className="row textAlignCenter marginT3">
 				
-
+				<div className="col-md-12 col-lg-12 textAlignCenter titleBackgroundColor">
+				<h3>Sprint Overview</h3>
+				</div>
 				
 				<div className="displayInline  col-md-8 justify">
 
@@ -1256,7 +1261,7 @@ class Piechart extends React.Component {
 
 										
 				
-				<div className="col-md-4 verticalAlign">
+				<div className="col-md-4">
 
 					<div className="col-md-12 displayInline">
 						<div className="borderRadius" style={{ backgroundColor: "#FF8042", width: "20px", height: "20px", border: "5px solid #FF8042" }}>
@@ -1272,7 +1277,7 @@ class Piechart extends React.Component {
 
 						</div>
 
-						<div className="col-md-9">
+						<div className="col-md-10">
 							<label>{inprogressArrayPercentage}% Progress</label>
 						</div>
 					</div>
@@ -1420,26 +1425,30 @@ class SonarQubeData extends React.Component {
 
 	render() {
 		return (
-			<div>
-				<div className="col-md-12">
-					<h3 className="textAlignCenter">Quality Overview</h3>
+		
+				<div className="col-md-12 padding0">
+					<div className="textAlignCenter titleBackgroundColor">
+					<h3>Quality Overview</h3>
+						</div>
+					
+
 					<div className="col-md-12 displayInline overlay marginB08">
-						<div className="col-md-7 textAlignCenter">Bugs
+						<div className="col-md-3 textAlignCenter">Bugs
 													<div className="textAlignCenter">
 								{this.state.sonarQubeData.bugs}
 							</div>
 						</div>
-						<div className="col-md-7 textAlignCenter"> Vulnerabilities
+						<div className="col-md-3 textAlignCenter"> Vulnerabilities
 													<div className="textAlignCenter">
 								{this.state.sonarQubeData.vulnerabilities}
 							</div>
 						</div>
-						<div className="col-md-7 textAlignCenter">Code Smells
+						<div className="col-md-3 textAlignCenter">Code Smells
 													<div className="textAlignCenter">
 								{this.state.sonarQubeData.codesmells}
 							</div>
 						</div>
-						<div className="col-md-5 textAlignCenter"> Debt
+						<div className="col-md-3 textAlignCenter"> Debt
 													<div className="textAlignCenter">
 								{}
 							</div>
@@ -1450,31 +1459,29 @@ class SonarQubeData extends React.Component {
 											
 													</div> */}
 					<div className="col-md-12 displayInline overlay marginB08">
-						<div className="col-md-7 textAlignCenter">Duplications
+						<div className="col-md-3 textAlignCenter">Duplications
 													<div className="textAlignCenter">
 								{this.state.sonarQubeData.duplications}
 							</div>
 						</div>
-						<div className="col-md-5 textAlignCenter"> Duplicated Blocks
+						<div className="col-md-3 textAlignCenter"> Duplicated Blocks
 													<div className="textAlignCenter">
 								{this.state.sonarQubeData.duplicatedBlocks}
 							</div>
 						</div>
-						<div className="col-md-7 textAlignCenter">Script Lines
+						<div className="col-md-3 textAlignCenter">Script Lines
 													<div className="textAlignCenter">
 								{this.state.sonarQubeData.script}
 							</div>
 						</div>
-						<div className="col-md-5 textAlignCenter"> Lines of Code
+						<div className="col-md-3 textAlignCenter"> Lines of Code
 													<div className="textAlignCenter">
 								{this.state.sonarQubeData.linesofcode}
 							</div>
 						</div>
 					</div>
 
-					<div className="col-md-12 displayInline overlay marginB08">
-
-					</div>
+					
 
 
 
@@ -1484,7 +1491,7 @@ class SonarQubeData extends React.Component {
 
 
 
-			</div>
+			
 
 
 
@@ -1628,9 +1635,11 @@ class IssuesList extends React.Component {
 	render() {
 
 		return (
-			<div className="col-md-12">
-
-				<h3 className="textAlignCenter">Epic Details</h3>
+			<div className="col-md-12 padding0">
+				<div className="textAlignCenter titleBackgroundColor">
+				<h3>Epic Details</h3>
+					</div>
+				
 
 				<div className="col-md-12 col-lg-12 padding0">
 
@@ -1698,9 +1707,12 @@ class PeoplesList extends React.Component {
 	render() {
 
 		return (
-			<div className="col-md-12">
+			<div className="col-md-12 padding0">
+				<div className="textAlignCenter titleBackgroundColor">
+				<h3 >Team Details</h3>
+					</div>
 
-				<h3 className="textAlignCenter">Team Details</h3>
+			
 
 				<div className="col-md-12 col-lg-12 padding0">
 

@@ -479,7 +479,11 @@ background-color: #26A69A
 					
 
 						.borderRight{
-							border-right: 1px solid #76aad8
+							border-right: 5px solid #d4d4d4
+						}
+
+						.titleBackgroundColor{
+							background-color: #edecec
 						}
 						.marginR0{
 							margin-right: 0px !important;
@@ -488,10 +492,7 @@ background-color: #26A69A
 						.borderBottom{
 							border-bottom:1px solid #76aad8;
 						}
-						.borderRight{
-							border-right:1px solid #76aad8;
-						}
-
+						
 						.verticalHeight{
 							height: 100vh
 						}

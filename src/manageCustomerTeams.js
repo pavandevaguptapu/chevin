@@ -303,7 +303,7 @@ class manageCustomerTeams extends React.Component {
                 </div>
 
                 <div className="row">
-                    <div className="col-md-12 col-lg-12 marginT50 marginTop0 displayInline padding0">
+                    <div className="col-md-12 col-lg-12  marginTop0 displayInline padding0">
                         <div className="col-md-3 col-lg-2 borderRight marginR0 padding0 verticalHeight">
                                  <div className="col-md-10 col-lg-10 textAlignLeft borderBottom displayInline">
                                      <h5 className="marginT0 font fontSize17 paddingT2">Account </h5>
