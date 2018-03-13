@@ -170,7 +170,9 @@ html,body{
 .marginT16{
 	margin-top:16px;
 }
-
+.marginT25{
+	margin-top:25px
+}
 /* .marginT35{
 		margin-top:35px;
 	} */
@@ -182,6 +184,9 @@ html,body{
 	}
 	.marginT68{
 		margin-top:68px;
+	}
+	.marginL9{
+		margin-left: 9px;
 	}
 	.marginL17{
 		margin-left:17px;
@@ -217,8 +222,8 @@ html,body{
 .modalMargins{
     width: 400px;
     text-Align: center;
-    border: 1px solid #76aad8;
-    /* margin-top: 100px; */
+    border: 1px solid rgb(158, 158, 158);
+    
        border-radius: 23px;
 }
 
@@ -249,10 +254,9 @@ html,body{
 .paddingL16{
 	padding-left: 16px !important;
 }
-.overlay {
-	 /* margin-top: 220px;  */
-    /* position          : fixed; */
-    background-color   : aliceblue
+.modalBgColor {
+
+    background-color   : white;
   }
   .pointer{
 	  cursor: pointer !important;
@@ -510,19 +514,19 @@ background-color: #26A69A
 						}
 						
 						.borderBottom{
-							border-bottom:1px solid #76aad8;
+							border-bottom:1px solid rgb(229, 226, 226);
 						}
 						
-						.verticalHeight{
+						/* .verticalHeight{
 							height: 87vh
-						}
+						} */
 						.inlineGrid{
 							display: inline-grid !important;
 						}
 						
 
-					.verticalHeight30{
-						height: 30vh;
+					.vh{
+						height: 32vh;
 					}
 					.backgroundcolor{
 						background-color:'aliceblue'
@@ -558,8 +562,19 @@ background-color: #26A69A
 							height: 84vh 
 						}
 
+						.mctverticalHeight{
+							height: 92vh 
+						}
+
 						.marginB08{
 							margin-bottom: 3%;
+						}
+						.mctaccdetailsboxmargin{
+							margin: 0 0 0 1.2% !important
+						}
+
+						.mctboxmargin{
+							margin: 0 0 0 2% !important
 						}
 					}
 					@media screen and (min-device-width: 1500px){
@@ -575,6 +590,14 @@ background-color: #26A69A
 						}
 						.verticalHeight{
 							height: 88vh 
+						}
+
+						.mctverticalHeight{
+							height: 93vh 
+						}
+
+						.mctaccdetailsboxmargin{
+							margin: 0 0 0 1% !important
 						}
 					}
 
@@ -603,6 +626,10 @@ background-color: #26A69A
 				.boxmargin{
 					margin: 2% 0 0 8% !important
 				}
+				
+				.mctmargintT{
+					margin-top: 0.6%
+				}
 
 				.boxmarginTop{
 					margin: 2% 0 0 4% !important
@@ -615,7 +642,13 @@ background-color: #26A69A
 					background-color: darkgrey !important
 				}
 
-				
+				.mctaccdetailsminwidth{
+					min-width: 76%
+									}
+
+				.mctJumpstartmodalmargins{
+					margin:0% 2% 0% 2%
+				}
 
 
 				.epicdetailstableheadrowStyle{								
@@ -664,6 +697,8 @@ background-color: #26A69A
 				.wordwrap{
 					word-wrap: break-word !important;
 				}
+
+			
 					/* justify-content: center;
 					
 					display: flex;

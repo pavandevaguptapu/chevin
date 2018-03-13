@@ -40,7 +40,7 @@ const customStylesJumpStart = {
         transform: 'translate(-50%, -50%)',
         padding: "0px",
         width: "615px",
-        height: "291px"
+        height: "42%"
     }
 };
 
@@ -57,20 +57,25 @@ const buttonStyle = {
     marginRight: '5px'
 }
 const modelbuttonsStyle = {
-    backgroundColor:'#f0f8ff',
+    backgroundColor:'rgb(229, 226, 226)',
     paddingRight: '10px',
     boxShadow:'none'
 }
 
 const addAccountBUtton = {
     height: "20px",
-    width: "20px"
+    width: "20px",
+   
+}
+const boxShadow={
+    zDepthShadows:"0px",
+    
 }
 const editbuttonStyle={
     marginLeft: "50%"
 }
 const addProjectButtonstyle={
-    marginLeft: "64%"
+    marginLeft: "1%"
 }
 const addAcountstyle = {
     marginLeft: "61%"
@@ -88,6 +93,7 @@ const deleteProjectButton = {
     height: "20px",
     width: "20px"
 }
+
 class manageCustomerTeams extends React.Component {
     constructor(props) {
         super(props);
@@ -303,14 +309,14 @@ class manageCustomerTeams extends React.Component {
 
                 </div>
 
-                <div className="row">
+                <div className="row mctmargintT">
                     <div className="col-md-12 col-lg-12  marginTop0 displayInline padding0">
-                        <div className="col-md-3 col-lg-2 borderRight marginR0 padding0 verticalHeight">
+                        <div className="col-md-3 col-lg-3  boxshadowfordata mctboxmargin borderRadius mctverticalHeight padding0">
                                  <div className="col-md-10 col-lg-10 textAlignLeft borderBottom displayInline">
                                      <h5 className="marginT0 font fontSize17 paddingT2">Account </h5>
                                  </div>
                                  <div className="col-md-2 col-lg-2 textAlignCenter borderBottom displayInline paddingT3 paddingB5 paddingL0">
-                                 <FloatingActionButton mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createAccount()} style={addAcountstyle} >
+                                 <FloatingActionButton  style={boxShadow} mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createAccount()} style={addAcountstyle} >
                                  <ContentAdd />
                              </FloatingActionButton>
 
@@ -327,14 +333,14 @@ class manageCustomerTeams extends React.Component {
                              </div>
 
                        
-                        <div className="col-md-9 col-lg-10 padding0 marginT2">
+                        <div className="col-md-9 col-lg-10 padding0 marginT2 mctaccdetailsminwidth mctaccdetailsboxmargin">
                             {this.state.accountDetails}
                         </div>
                      
                     </div>
 
                 </div>
-                <Modal isOpen={this.state.createAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins overlay "].join(' ')}>
+                <Modal isOpen={this.state.createAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
@@ -601,9 +607,7 @@ class AccountDetails extends React.Component {
 
     }
     toolsData(selectedObj){
-        console.log(selectedObj)
-        console.log(this.state.selectedItemName)
-        console.log(this.state.selectedProjectIndex)
+
 
        // this.setState({currentAccount:selectedObj})
         this.setState({currentAccount:selectedObj,
@@ -635,7 +639,7 @@ class AccountDetails extends React.Component {
 
         var tempArray = this.state.currentAccount
 
-        console.log(this.state.currentAccount)
+ 
         if (tempArray.projects[this.state.selectedProjectIndex].tools === undefined) {
             tempArray.projects[this.state.selectedProjectIndex].tools = {}
 
@@ -643,7 +647,7 @@ class AccountDetails extends React.Component {
 
 
         if (tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemName] == undefined) {
-            console.log("1")
+        
             tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemName] = { name: '', userName: '', password: '', hostedURL: '' }
             this.setState({
                 selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
@@ -657,7 +661,7 @@ class AccountDetails extends React.Component {
         }
 
         else {
-            console.log("2")
+      
             this.setState({
                 selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
                     selectedProjectIndex={this.state.selectedProjectIndex}
@@ -765,7 +769,7 @@ class AccountDetails extends React.Component {
     render() {
 
         return (
-            <div>
+            <div className="col-lg-10 boxshadowfordata  borderRadius mctverticalHeight padding0">
                 <div className="col-md-12 col-lg-12 borderBottom displayInline">
                     <div className="col-md-10 col-lg-10 textAlignCenter">
                         <h5 className="marginT0 font fontSize17 displayInline">Account Details </h5>
@@ -859,7 +863,7 @@ class AccountDetails extends React.Component {
                 </div>
 
 
-                <Modal isOpen={this.state.editAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins overlay "].join(' ')}>
+                <Modal isOpen={this.state.editAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
@@ -932,7 +936,7 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </Modal>
-                <Modal isOpen={this.state.createProjectModel} style={customStyles} className={["col-md-6 col-lg-5 modalMargins overlay "].join(' ')}>
+                <Modal isOpen={this.state.createProjectModel} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
                             <h1 className="marginT0">Project Details</h1>
@@ -957,12 +961,13 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </Modal>
-                <Modal isOpen={this.state.jumpStartConfigModel} style={customStylesJumpStart} className={["col-md-6 modalMargins overlay "].join(' ')}>
+                <Modal isOpen={this.state.jumpStartConfigModel} style={customStylesJumpStart} className={["col-md-6 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
-                        <div className="col-md-12 col-lg-12">
-                            <div className="col-md-12 col-lg-12 borderBottom">
-                                <h5 className="marginT0  paddingL41 font fontSize17">Jump Start
+                      
+                            <div className="col-md-12 col-lg-12">
+                                <h5 className="marginT0 font fontSize17">
+                                    Jump Start
                                 <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton} style={addProjectButtonstyle} onClick={() => this.closeJumpStartModel()}>
 
                                         <ContentClear />
@@ -972,26 +977,31 @@ class AccountDetails extends React.Component {
 
                                 </h5>
                             </div>
-                            <div className="textAlignLeft col-md-3 col-lg-5 borderRight verticalHeight30">
-                                {this.state.configureTools.map((item, index) => (
-                                    <li className={["pointer",
-                                        this.state.configureTools[index].selectedJumpStartMenuItem == true ? "dashboardHeaderBgColor" : ''].join(' ')} key={item.id} onClick={() => this.currentItem(item.name, index)} >{item.name}</li>
-                                ))}
+                            
+                            <div className="col-lg-12 displayInline marginT25">
 
-                            </div>
+                                <div className="textAlignLeft col-md-3 col-lg-4  mctJumpstartmodalmargins boxshadowfordata borderRadius vh">
+                                    {this.state.configureTools.map((item, index) => (
+                                        <div className={["pointer",
+                                            this.state.configureTools[index].selectedJumpStartMenuItem == true ? "dashboardHeaderBgColor" : ''].join(' ')} 
+                                            key={item.id} onClick={() => this.currentItem(item.name, index)} >{item.name}</div>
+                                    ))}
 
-                            <div className="col-md-7 col-lg-7">
-                                {this.state.selectTool}
+                                </div>
+
+                                <div className="col-md-7 col-lg-7 boxshadowfordata  mctJumpstartmodalmargins borderRadius vh padding0">
+                                    {this.state.selectTool}
+                                </div>
                             </div>
-                        </div>
+                      
                     </div>
                 </Modal>
-                <Modal isOpen={this.state.configPeopleModel} style={customStylesJumpStart} className={["col-md-6 modalMargins overlay "].join(' ')}>
+                <Modal isOpen={this.state.configPeopleModel} style={customStylesJumpStart} className={["col-md-6 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
                             <div className="col-md-12 col-lg-12 borderBottom">
-                                <h5 className="marginT0  paddingL41 font fontSize17">Jump Start
+                                <h5 className="marginT0  font fontSize17">Jump Start
                                 <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton} style={addProjectButtonstyle} onClick={() => this.closeJumpStartModel()}>
 
                                         <ContentClear />
@@ -1001,16 +1011,19 @@ class AccountDetails extends React.Component {
 
                                 </h5>
                             </div>
-                            <div className="textAlignLeft col-md-3 col-lg-5 borderRight verticalHeight30">
-                                {this.state.peoplesArray.map((people, index) => (
-                                    <li className={["pointer",
-                                    ].join(' ')} key={people.emailid} onClick={() => this.curentSelectedIteminPeople(people, index)} >{people.name}</li>
-                                ))}
+                            <div className="col-lg-12 displayInline marginT25">
+                                <div className="textAlignLeft col-md-3 col-lg-4  mctJumpstartmodalmargins boxshadowfordata borderRadius vh">
+                                    {this.state.peoplesArray.map((people, index) => (
+                                        <div className={["pointer",
+                                        ].join(' ')} key={people.emailid} onClick={() => this.curentSelectedIteminPeople(people, index)} >{people.name}</div>
+                                    ))}
 
+                                </div>
+                                <div className="col-md-7 col-lg-7 boxshadowfordata  mctJumpstartmodalmargins borderRadius vh padding0">
+                                    {this.state.people}
+                                </div>
                             </div>
-                            <div className="col-md-7 col-lg-7">
-                                {this.state.people}
-                            </div>
+
                         </div>
                     </div>
                 </Modal>
@@ -1138,7 +1151,7 @@ class ToolConfigurationDetails extends React.Component {
                
                 
             })
-            document.getElementById("create-course-form").reset();
+            //document.getElementById("create-course-form").reset();
 
         }
 
@@ -1284,34 +1297,39 @@ class ToolConfigurationDetails extends React.Component {
     render() {
     
             return (
-            <div>
-                 <form id="create-course-form">
+            <div>                 
                     <SelectField hintText="Select a Tool" value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name} 
+                    listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#000000 " }}  labelStyle={{ color: "#000000 ",height:"35px"}} underlineStyle={{ display: 'none' }}
                     onChange={(e, i, v) => this.handleChangeInJumpStart(e, i, v)} >
                         {this.subMenuItems(this.state.wikiList)}
                     </SelectField>
                  
-                    <div className="col-md-12 col-lg-12">
-                    
-                                
-                        <div className="col-md-5"><label>Hosted Url:</label></div>
-                        <div className="col-md-6">
-                            <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL} name='hostedURL' 
-                            onChange={this.handleChange} />
+                    <div className="col-md-12 col-lg-12 padding0">
+
+                        <div className="col-md-12 displayInline textAlignLeft padding0">
+                            <div className="col-md-4 "><label>Hosted Url:</label></div>
+                            <div className="col-md-6 padding0">
+                                <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL} name='hostedURL'
+                                    onChange={this.handleChange} />
+                            </div>
                         </div>
-                        <div className="col-md-5"><label>userName:</label></div>
-                        <div className="col-md-6">
-                            <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName} name='userName' 
-                            onChange={this.handleChange} />
+                        <div className="col-md-12 displayInline textAlignLeft padding0">
+                            <div className="col-md-4 "><label>userName:</label></div>
+                            <div className="col-md-6 padding0">
+                                <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName} name='userName'
+                                    onChange={this.handleChange} />
+                            </div>
                         </div>
-                        <div className="col-md-5"><label>password:</label></div>
-                        <div className="col-md-6">
-                            <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password} name='password' 
-                            onChange={this.handleChange} />
+                        <div className="col-md-12 displayInline textAlignLeft padding0">
+                            <div className="col-md-4 "><label>password:</label></div>
+                            <div className="col-md-6 padding0">
+                                <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password} name='password'
+                                    onChange={this.handleChange} />
+                            </div>
                         </div>
 
                     </div>
-                </form>
+              
                 <div>
                 
                     <RaisedButton label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitToolsData(this.state.dupeCurrentAccountArray)} />
@@ -1431,7 +1449,7 @@ class PeopleConfigurationDetails extends React.Component {
 
     }
     updatePeopleData(updateObj){
-        console.log(updateObj)
+
         this.state.tempSelectedAccountobj.projects[this.state.currentProjectIndex].people[this.state.selectedPeopleIndex]=updateObj
 
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.tempSelectedAccountobj._id,
@@ -1449,7 +1467,7 @@ class PeopleConfigurationDetails extends React.Component {
             status: 'Active'
         })
         .then(response => {
-            console.log(response.data)
+         
         
             this.props.onUpdatePeopleData(response.data)
             //var dummyObj=currentobj
@@ -1502,10 +1520,35 @@ class PeopleConfigurationDetails extends React.Component {
                  <FloatingActionButton mini={true} primary={true} iconStyle={addAccountBUtton} style={editbuttonStyle} onClick={() => this.addPeople()} >
                                  <ContentAdd />
                              </FloatingActionButton>
-                  </div>           
+                  </div>       
+                <div className="col-md-12 col-lg-12 padding0">
+
+                    <div className="col-md-12 displayInline textAlignLeft padding0">
+                        <div className="col-md-4 "><label>Name:</label></div>
+                        <div className="col-md-6 padding0">
+                            <input value={this.state.tempObj.name} name='name'
+                                onChange={this.handleChangeInPeopleConfigInput} />
+                        </div>
+                    </div>
+                    <div className="col-md-12 displayInline textAlignLeft padding0">
+                        <div className="col-md-4 "><label>Role:</label></div>
+                        <div className="col-md-6 padding0">
+                            <input value={this.state.tempObj.role} name='role'
+                                onChange={this.handleChangeInPeopleConfigInput} />
+                        </div>
+                    </div>
+                    <div className="col-md-12 displayInline textAlignLeft padding0">
+                        <div className="col-md-4 "><label>emailid:</label></div>
+                        <div className="col-md-6 padding0">
+                            <input value={this.state.tempObj.emailid} name='emailid'
+                                onChange={this.handleChangeInPeopleConfigInput} />
+                        </div>
+                    </div>
+
+                </div>    
             
                                    
-                    <div className="col-md-12 col-lg-12">
+                    {/* <div className="col-md-12 col-lg-12">
           
                         <div className="col-md-5 displayInline marginB04"><label>Name:</label></div>
                         <div className="col-md-6 displayInline marginB04">
@@ -1523,7 +1566,7 @@ class PeopleConfigurationDetails extends React.Component {
                             onChange={this.handleChangeInPeopleConfigInput} /> 
                         </div>
 
-                    </div>
+                    </div> */}
 
                     <div className="col-md-12 col-lg-12 displayInline">
                         <div className="col-md-4 col-lg-4">
