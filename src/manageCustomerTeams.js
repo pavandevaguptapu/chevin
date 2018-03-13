@@ -46,7 +46,7 @@ const customStylesJumpStart = {
 
 const imageStyle = {
 
-    top: "-2px",
+    top: "-5px",
     marginLeft: "-12px"
 }
 const innerDiv = {
@@ -237,31 +237,32 @@ class manageCustomerTeams extends React.Component {
                             {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
                             <h4 className="margin0 pointer paddingL04" onClick={(e) => this.openSideMenu()} ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
                         </div>
-                        <div className="col-md-7 col-lg-8 textAlignCenter marginT16">
-                            <h4 className="margin0">Manage Customer Teams</h4>
+                        <div className="col-md-7 col-lg-8 textAlignCenter marginT07">
+                            <h5 className="margin0">Manage Customer Teams</h5>
                         </div>
                         <div className="col-md-2 col-lg-2  displayInline padding0">
-                            {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
-                            <div className="marginT07">
-                                <h5 className="font fontSize17">Administrator: </h5>
-                            </div>
-                            <div className="marginT07">
-                                <List style={innerDiv}>
-                                    <ListItem
-                                        disabled={true}
-                                        innerDivStyle={innerDiv}
-                                        leftAvatar={
-                                            <Avatar
-                                                style={imageStyle}
-                                                src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
-                                        }
-
-                                    />
-                                </List>
-                            </div>
-
-
+                        {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
+                        <div className="marginT07">
+                            <h5 className="font fontSize17 margintT06">Administrator: </h5>
                         </div>
+                        <div className="marginT07">
+                            <List style={innerDiv}>
+                                <ListItem
+                                    disabled={true}
+                                    height={"10px"}
+                                    innerDivStyle={innerDiv}
+                                    leftAvatar={
+                                        <Avatar
+                                            style={imageStyle}
+                                            src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
+                                    }
+
+                                />
+                            </List>
+                        </div>
+
+
+                    </div>
                         <div>
 
                         </div>
@@ -1019,8 +1020,6 @@ class AccountDetails extends React.Component {
 
     }
 }
-
-
 
 class ToolConfigurationDetails extends React.Component { 
     constructor(props) {

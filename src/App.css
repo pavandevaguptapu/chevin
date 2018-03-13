@@ -5,6 +5,10 @@ body{
 	overflow-x: hidden;
 	/* height: 100%;  */
 }
+
+html,body{
+    height:100%;
+}
 /* html {
     height: 100%;
 }
@@ -13,8 +17,19 @@ body{
 	height: 100%;
 
 } */
+.projectselectiondivbgcolor{
+	background-color: darkgrey !important
+}
+.backgroundoverlay{
+	overflow: hidden;
+	z-index: -1;
+	width: 100%;
+	
+	background-color: transparent;
 
-
+	top: 0;
+	left: 0;
+}
 .footer {
 	position: fixed;
 	left: 0;
@@ -62,6 +77,7 @@ body{
 		display:flex;
 		align-items:center;
 		justify-content:center;
+		flex-direction: column;
 			}
 .loginSubmit{
 	margin-right:6px;
@@ -345,6 +361,9 @@ body{
 .marginB20{
 	margin-bottom: 20px;
 }
+.margintT06{
+	margin-top: 6% !important
+}
 .marginT35{
 	margin-top: -35px;
 }
@@ -373,11 +392,12 @@ background-color: #26A69A
 	height:calc(100%-86.4px)
 }
 .navbarBgColor{
-	background: #4373d5; /* For browsers that do not support gradients */
-	background: -webkit-linear-gradient(#4373d5, #5586d1); /* For Safari 5.1 to 6.0 */
-	background: -o-linear-gradient(#4373d5, #5586d1); /* For Opera 11.1 to 12.0 */
-	background: -moz-linear-gradient(#4373d5, #5586d1); /* For Firefox 3.6 to 15 */
-	background: linear-gradient(#4373d5, #5586d1); /* Standard syntax (must be last) */
+	background-color: #786f71
+	/* background: #4373d5;  For browsers that do not support gradients 
+	 background: -webkit-linear-gradient(#4373d5, #5586d1); 
+	background: -o-linear-gradient(#4373d5, #5586d1);  For Opera 11.1 to 12.0 
+	background: -moz-linear-gradient(#4373d5, #5586d1);  For Firefox 3.6 to 15 
+	background: linear-gradient(#4373d5, #5586d1); Standard syntax (must be last)  */
 	}
 	.navbarFontColor{
 		color:white;
@@ -494,7 +514,7 @@ background-color: #26A69A
 						}
 						
 						.verticalHeight{
-							height: 100vh
+							height: 87vh
 						}
 						.inlineGrid{
 							display: inline-grid !important;
@@ -517,11 +537,140 @@ background-color: #26A69A
 							
 							flex-direction: column;
 						}
-					/* @media screen and (min-width:890px){
-						.marginTop0{
-							margin-top: 0px !important
+
+						.epicTablediv{
+							overflow: scroll;
+							
+							height: 100%;
 						}
-						.displayInline{
-							display: inline-flex !important
+
+						.sprintStatusMenuWidth{
+							width:100%
 						}
-					} */
+						@media screen and (min-device-width: 1170px){
+						.marginTop6{
+							margin-top: 3% !important
+						}
+						.marginTop4{
+							margin-top:-6% !important
+						}
+						.verticalHeight{
+							height: 84vh 
+						}
+
+						.marginB08{
+							margin-bottom: 3%;
+						}
+					}
+					@media screen and (min-device-width: 1500px){
+						.marginTop6{
+							margin-top: 0 !important
+						}
+						.marginTop4{
+							margin-top:-2% !important
+						}
+						
+						.marginB08{
+							margin-bottom: 8%;
+						}
+						.verticalHeight{
+							height: 88vh 
+						}
+					}
+
+					.sprintselectboxheight{
+						height: 8% !important
+					}
+					.sprintburndownheight{
+						height: 37% !important
+					}
+					.sprintoverviewheight{
+						height: 51% !important
+					}
+
+					
+					.teamdetailsheight{
+						height: 47% !important
+					}
+					.sonarqubedataheight{
+						height: 51% !important
+					}
+
+				.boxshadowfordata{
+					box-shadow: 0px 0px 2px 4px #cecece
+				}
+
+				.boxmargin{
+					margin: 2% 0 0 8% !important
+				}
+
+				.boxmarginTop{
+					margin: 2% 0 0 4% !important
+				}
+				.boxmarginTopforsprintdata{
+					margin: 2% 0 0 0 !important
+				}
+
+				.qualityoverviewrowbgcolor{
+					background-color: darkgrey !important
+				}
+
+				
+
+
+				.epicdetailstableheadrowStyle{								
+								
+					height: 48px !important;
+					 font-family: 'Roboto', sans-serif !important;
+					font-weight: normal;
+					font-size: 12px;
+					
+
+				}
+				.epictableheadverticalalign{
+					vertical-align: middle !important;
+					border-top: none !important;
+					border-bottom: 1px solid #dee2e6 !important;
+					padding-bottom: 0px !important;
+					padding-top: 0px !important;
+					text-align: left !important;
+					color:rgb(158, 158, 158);
+					font-family: 'Roboto', sans-serif !important;
+					font-size: 12px;
+					font-weight: normal;
+				}
+
+				.epicTableDataStyle{
+
+					vertical-align: middle !important;
+					border-top: none !important;
+					border-bottom: 1px solid #dee2e6 !important;
+					padding-bottom: 0px !important;
+					padding-top: 0px !important;
+					text-align: left !important;
+					color:rgba(0, 0, 0, 0.87);
+					font-family: 'Roboto', sans-serif !important;
+					font-weight: normal;
+					font-size: 12px;
+					padding-left: 24px;
+					padding-right: 24px;
+					height: 48px;
+					text-align: left;
+					font-size: 13px;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+				}
+				.wordwrap{
+					word-wrap: break-word !important;
+				}
+					/* justify-content: center;
+					
+					display: flex;
+					
+					flex-direction: column-reverse; */
+
+				
+					
+					  
+					  

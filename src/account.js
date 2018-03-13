@@ -6,7 +6,7 @@ import { Button } from 'react-bootstrap';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 import axios from 'axios';
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend,BarChart, Bar, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend, BarChart, Bar, Tooltip,ResponsiveContainer } from 'recharts';
 import Modal from 'react-modal';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -17,6 +17,11 @@ import ListItem from 'material-ui/List/ListItem';
 import { myConstClass } from './constants.js';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
+
+
+//import RefreshIndicatorExampleLoading from './loader'
+
 // import { Modal } from 'react-overlays';
 // Modal.prototype.componentWillMount = function componentWillMount() {
 // 	this.focus = function focus() { };
@@ -50,7 +55,26 @@ const tableScroll = {
 	overflow: 'scroll'
 }
 
+const style = {
+	container: {
+		position: 'relative',
+	},
+	refresh: {
+		display: 'inline-block',
+		position: 'relative',
+		boxShadow: 'none',
+		backgroundColor: 'none',
+		
+		
+	},
 
+	show: {
+		status: "loading"
+
+	}
+
+
+};
 class Account extends React.Component {
 	constructor(props) {
 		super(props)
@@ -58,6 +82,7 @@ class Account extends React.Component {
 
 		this.state = {
 			accounts: [],
+			accountName:'',
 			isModalOpen: false,
 			projectName: '',
 			teamName: '',
@@ -101,7 +126,15 @@ class Account extends React.Component {
 			hintStyle2: { opacity: 1 },
 			renderChild: true,
 			activeSprint: '',
-			epicBurdownChart: ''
+			epicBurdownChart: '',
+			loaderforpeople:'',
+			loaderforsonar:'',			
+			loaderforsprintburndownchart:'',
+			loaderforsprintoverviewpiechart:'',
+			loaderforEpicDetails:'',			
+			loaderforEpicOverviewburndownchart:'',
+			sprintPieChart: '',
+			overlay:false
 		}
 
 		this.onDrop = this.onDrop.bind(this);
@@ -111,12 +144,17 @@ class Account extends React.Component {
 		this.accountsListArray = this.accountsListArray.bind(this);
 		this.selectedAccount = this.selectedAccount.bind(this);
 		this.selectProject = this.selectProject.bind(this);
-		this.selectedBoard = this.selectedBoard.bind(this);
+		this.selectedBoardforSprintData = this.selectedBoardforSprintData.bind(this);
 		this.sonarQubeData = this.sonarQubeData.bind(this);
 		this.selectedBoardforIssues = this.selectedBoardforIssues.bind(this);
+		this.sprintburndownchart = this.sprintburndownchart.bind(this);	
+		this.sprintoverviewpiechart = this.sprintoverviewpiechart.bind(this);	
 		this.epicBurdownChart = this.epicBurdownChart.bind(this);
+		this.ShowLoaderforTeamandQuality = this.ShowLoaderforTeamandQuality.bind(this);
+		this.ShowLoaderforEpicData = this.ShowLoaderforEpicData.bind(this);
+		this.ShowLoaderforSprintData = this.ShowLoaderforSprintData.bind(this);
 
-
+		
 	}
 
 	addProjectModal() {
@@ -159,153 +197,90 @@ class Account extends React.Component {
 	}
 
 	selectedAccount(event, ind, value, selecteAccount) {
+
 		this.setState({
+			peoplesArray: '',
+			sonarQubedata: '',
+			issuesListArray: '',
+			epicBurndownChart:'',
 			sprintDetails: '',
 			selectedProjectBoardDetails: '',
-			issuesListArray: '',
-			sonarQubedata: '',
-			peoplesArray: ''
+			workHours:'',
+			sprintPieChart:''
+			
+		
+			
 		})
 
 
-		this.state.accounts.customerName = value;
+		//this.state.accounts.customerName = value;
 
 		this.setState({
+			accountName:value,
 			projectDetails: selecteAccount[ind], value: value,
 			projects: <SelectedProjectDetails projectDetails={selecteAccount[ind]} onSelectProject={this.selectProject}
-
+					showLoader={this.ShowLoaderforTeamandQuality}
 
 
 			/>
 		})
 	}
-	projectsListArray(projects) {
-		return projects.map((project) => (
-			<MenuItem
-				key={project.projectName}
-				insetChildren={true}
-				value={project.projectName}
-				primaryText={project.projectName}
-			/>
-		));
+
+	ShowLoaderforTeamandQuality(){
+
+		this.setState({  loaderforpeople:<RefreshIndicatorExampleLoading status={"loading"}/>,
+						 loaderforsonar:<RefreshIndicatorExampleLoading status={"loading"}/>
+	})
 	}
+	ShowLoaderforSprintData(){
+		
+				this.setState({  
+			 					 loaderforsprintburndownchart:<RefreshIndicatorExampleLoading status={"loading"}/>,
+								   loaderforsprintoverviewpiechart:<RefreshIndicatorExampleLoading status={"loading"}/>,
+								   sprintburndownoverlay:true,
+								   sprintoverviewoverlay:true,
+								   overlay:true
+								})
+	}
+
+	 ShowLoaderforEpicData(){
+		
+		 this.setState({
+			 loaderforEpicDetails: <RefreshIndicatorExampleLoading status={"loading"} />,
+			 loaderforEpicOverviewburndownchart: <RefreshIndicatorExampleLoading status={"loading"} />,
+		 })
+	 }
+	
 	selectProject(boardDetails, userName, password, hostedUrl, peopleList) {
-
-		// this.state.hintStyle2 = {
-		// 	opacity: 0
-		// }
-		// this.setState({ selectedProjectIndex: value })
-		// var jumpStartMenuNameArray = []
-		// const IM = "Issue Management"
-
-		// axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-		// 	"resourceURL": this.state.projectDetails.projects[ind].tools[IM].hostedURL + "/rest/agile/1.0/board",
-		// 	"userName": this.state.projectDetails.projects[ind].tools[IM].userName,
-		// 	"password": this.state.projectDetails.projects[ind].tools[IM].password,
-		// 	"actionMethod": "get"
-		// })
-		// 	.then(response => {
-
 		this.setState({
 			selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={boardDetails}
 				selectedUserName={userName}
 				selectedUserPwd={password}
 				selectedUrl={hostedUrl}
-				onSelectBoard={this.selectedBoard} currentBoard={this.selectedBoardforIssues} listOfEpics={this.epicBurdownChart} />,
-			peoplesArray: <PeoplesList peoplesList={peopleList} />,
-			sonarQubedata: <SonarQubeData sonarQubeDetails={this.sonarQubeData} />
-
-
-
-
-
+				onSelectBoard={this.selectedBoardforSprintData}
+				currentBoard={this.selectedBoardforIssues}
+				listOfEpics={this.epicBurdownChart}
+				showLoaderforEpicData={this.ShowLoaderforEpicData}
+				showLoaderforSprintData={this.ShowLoaderforSprintData} />,
+				peoplesArray: <PeoplesList peoplesList={peopleList} />,					
+				loaderforpeople:'',
+				sonarQubedata: <SonarQubeData sonarQubeDetails={this.sonarQubeData} />,
+				loaderforsonar: ''
 		})
-
-		//})
-
-
-		// this.setState({ peoplesArray: <PeoplesList peoplesList={this.state.projectDetails.projects[ind].people} /> })
-
-
-
-	}
-	selectedBoardforIssues(allIssues) {
-
-
-		var issuesDataArray = []
-
-
-		allIssues.forEach(function (eachIssue) {
-
-
-			if (eachIssue.issues.length == 0) {
-
-				issuesDataArray.push({ name: eachIssue.name, done: 0, toDo: 0, inQa: 0, inProgress: 0, inCodeReview: 0 })
-			}
-			else {
-				var Done = []
-				var ToDo = []
-				var InQA = []
-				var InProgress = []
-				var InCodeReview = []
-
-				eachIssue.issues.forEach(function (issuestatus) {
-					if (issuestatus.fields.status.name == "Done") {
-						Done.push(issuestatus)
-					}
-					if (issuestatus.fields.status.name == "To Do") {
-						ToDo.push(issuestatus)
-					}
-					if (issuestatus.fields.status.name == "In QA") {
-						InQA.push(issuestatus)
-					}
-					if (issuestatus.fields.status.name == "In Progress") {
-						InProgress.push(issuestatus)
-					}
-					if (issuestatus.fields.status.name == "In Code Review") {
-						InCodeReview.push(issuestatus)
-					}
-
-
-
-				})
-				issuesDataArray.push({
-					name: eachIssue.name, done: Done.length,
-					toDo: ToDo.length, inQa: InQA.length, inProgress: InProgress.length, inCodeReview: InCodeReview.length
-				})
-			}
-
-		})
-		this.setState({
-			issuesListArray: <IssuesList issuesArray={issuesDataArray} />
-
-
-		})
-
-
-
-	}
-	epicBurdownChart(listOfEpics, boardId,hostedUrl,userName,password) {
-
-		this.setState({
-			epicBurndownChart: <EpicBurdownChart 
-				epicsArray={listOfEpics}
-				selectedUserName={userName}
-				selectedUserPwd={password}
-				selectedUrl={hostedUrl}
-				boardID={boardId}  />,
-	
-		})
-
-
 	}
 
 	sonarQubeData() {
 		this.setState({ sonarQubeData: <SonarQubeData /> })
 	}
-	selectedBoard(sprintList, boardId, url, username, pwd) {
+	sprintburndownchart(timespentArray){
+		this.setState({ workHours: <Hourschart data={timespentArray} />,loaderforsprintburndownchart:'',sprintburndownoverlay:false })
+	}
+	sprintoverviewpiechart(workProgress){
+		this.setState({ sprintPieChart: <Piechart sprinttList={workProgress} />,loaderforsprintoverviewpiechart:'',sprintoverviewoverlay:false,overlay:false})
+	}
+	selectedBoardforSprintData(sprintList, boardId, url, username, pwd) {
 
-		//this.setState({issuesListArray: <IssuesList  issuesArray={boardId} />})
+	
 
 		if (sprintList !== undefined) {
 
@@ -327,7 +302,10 @@ class Account extends React.Component {
 					selectedUserPwd={pwd}
 					//sonarQubeDetails={this.sonarQubeData}
 					activeSprint={activeSprint}
-				/>
+					sprintBurnDownChart={this.sprintburndownchart}
+					sprintOverviewPiechart={this.sprintoverviewpiechart}
+				/>,
+		
 
 
 
@@ -345,19 +323,92 @@ class Account extends React.Component {
 
 
 	}
+	selectedBoardforIssues(epicsArray, resourceURL, userName, password) {
+
+
+		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+			"resourceURL": resourceURL + "/rest/api/2/status",
+			"userName": userName,
+			"password": password,
+			"actionMethod": "get"
+		}).then(response => {
+
+			var statusArray = []
+			response.data.forEach(function (eachStatus) {
+				statusArray.push(eachStatus.name)
+			})
+			var issuesDataArray = []
+			epicsArray.forEach(function (eachEpicDetails) {
+				var issuesObj = {}
+				issuesObj.epicName = eachEpicDetails.name;
+				for (var i = 0; i < statusArray.length; i++) {
+					var currentStatusIssuesArray = []
+					if (eachEpicDetails.issues.length == 0) {
+						issuesObj[statusArray[i]]=0	
+						
+					}else{
+						eachEpicDetails.issues.forEach(function (issue) {
+							if (statusArray[i] == issue.fields.status.name) {
+								currentStatusIssuesArray.push(issue)
+							}
+						})
+						issuesObj[statusArray[i]]=currentStatusIssuesArray.length
+					}
+				}
+				issuesDataArray.push(issuesObj);
+			})
+			
+			this.setState({
+				issuesListArray: <IssuesList issuesArray={issuesDataArray} 
+				
+				/>,
+				loaderforEpicDetails:''
+
+			})
+		})
+	}
+	epicBurdownChart(listOfEpics, boardId, hostedUrl, userName, password) {
+
+				this.setState({
+					epicBurndownChart: <EpicBurdownChart
+						epicsArray={listOfEpics}
+						selectedUserName={userName}
+						selectedUserPwd={password}
+						selectedUrl={hostedUrl}
+						boardID={boardId} 
+						
+						/>,
+						loaderforEpicOverviewburndownchart:'',
+		
+				})
+		
+		
+	}
+	projectsListArray(projects) {
+		return projects.map((project) => (
+			<MenuItem
+				key={project.projectName}
+				insetChildren={true}
+				value={project.projectName}
+				primaryText={project.projectName}
+			/>
+		));
+	}
 	componentWillMount() {
-
-
 		axios.get(myConstClass.nodeAppUrl + '/accounts')
 			.then(response => {
+				this.setState({
+					accounts: this.state.accounts.concat(response.data),
+				})
 
-				this.setState({ accounts: this.state.accounts.concat(response.data) })
-
+				
 			})
 	}
 
-	render() {
+	
 
+	render() {
+	
 		return (
 			<div className="container-fluid padding0">
 
@@ -369,15 +420,15 @@ class Account extends React.Component {
 						</div>
 						<div className="col-md-7 col-lg-8 textAlignCenter">
 							{/* <h4 className="margin0">{this.state.projectDetails.account.customerName}</h4> */}
-							<SelectField hintText="Select Account" value={this.state.accounts.customerName} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
-								hintStyle={placeholderColor} labelStyle={{ color: "#fff" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedAccount(e, i, v, this.state.accounts)} >
+							<SelectField hintText="Select Account" value={this.state.accountName} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+								hintStyle={placeholderColor} labelStyle={{ color: "#fff",height:"40px"}} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedAccount(e, i, v, this.state.accounts)} >
 								{this.accountsListArray(this.state.accounts)}
 							</SelectField>
 						</div>
 						<div className="col-md-2 col-lg-2  displayInline padding0">
 							{/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
 							<div className="marginT07">
-								<h5 className="font fontSize17">Administrator: </h5>
+								<h5 className="font fontSize17 margintT06">Administrator: </h5>
 							</div>
 							<div className="marginT07">
 								<List style={innerDiv}>
@@ -403,42 +454,76 @@ class Account extends React.Component {
 					</div>
 				</nav>
 
-
-				<div className="row">
-					{/* <div className="col-md-12 col-lg-12 padding0 displayInline"> */}
-					<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
-						<div className="col-md-12 col-lg-12 textAlignCenter">
-
-							{/* <SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
-										hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
-										{this.projectsListArray(this.state.projectDetails.projects)}
-									</SelectField> */}
-
-							{this.state.projects}
-
-						</div>
-						<div className="col-md-12 col-lg-12 textAlignCenter">
-							{this.state.selectedProjectBoardDetails}
-
-
-						</div>
-						<div className="col-md-12 col-lg-12 padding0">
-							{this.state.peoplesArray}
-							{this.state.sonarQubedata}
+				<div className="row projectselectiondivbgcolor">
+					<div className="col-lg-12 displayInline">
+						<div className="col-lg-2 textAlignCenter">
+						 {this.state.projects} 
 						
+							</div>
+							<div className="col-lg-2 textAlignCenter">
+							 {this.state.selectedProjectBoardDetails} 						
+								</div>
 						</div>
 					</div>
-					<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
-						{this.state.epicBurndownChart}
-						{this.state.issuesListArray}
 
+
+				<div className="row">			
+					<div className="col-md-4 col-lg-4   padding0 verticalHeight">
+						{/* <div className="col-md-12 col-lg-12 textAlignCenter selectionbox">
+							{this.state.projects}
+						</div>
+
+						<div className="col-md-12 col-lg-12 textAlignCenter selectionbox">
+							{this.state.selectedProjectBoardDetails}
+						</div> */}
+
+						<div className="col-md-12 col-lg-11  teamdetailsheight boxshadowfordata boxmargin borderRadius">
+
+							<div className="textAlignCenter">
+								{this.state.loaderforpeople}
+							</div>
+								{this.state.peoplesArray}
+						</div>
+						<div className="col-md-12 col-lg-11  sonarqubedataheight boxshadowfordata boxmargin borderRadius">
+							<div className="textAlignCenter">
+								{this.state.loaderforsonar}
+							</div>
+							{this.state.sonarQubedata}
+						</div>
 					</div>
-					<div className="col-md-4 col-lg-4 borderRight marginR0 padding0 verticalHeight">
-						{this.state.sprintDetails}
+					<div className="col-md-4 col-lg-4   padding0 verticalHeight">
+						<div className="col-md-12 col-lg-11  teamdetailsheight boxshadowfordata boxmarginTop borderRadius">
+						<div className="textAlignCenter">
+								{this.state.loaderforEpicDetails}
+							</div>
+							{this.state.issuesListArray}
+						</div>
+						<div className="col-md-12 col-lg-11  sonarqubedataheight boxshadowfordata boxmarginTop borderRadius">
+						<div className="textAlignCenter">
+								{this.state.loaderforEpicOverviewburndownchart}
+							</div>
+							{this.state.epicBurndownChart}
+						</div>
+					</div>					
 
+					<div className={["col-md-4 col-lg-4   padding0 verticalHeight"].join(' ')} >
+						<div className={["col-md-12 col-lg-11 textAlignCenter  sprintselectboxheight boxshadowfordata boxmarginTopforsprintdata borderRadius", this.state.overlay == true ? "backgroundoverlay" : ''].join(' ')}>
+							{this.state.sprintDetails}
+						</div>
+						<div className={["col-md-12 col-lg-11 textAlignCenter  sprintburndownheight boxshadowfordata boxmarginTopforsprintdata borderRadius", this.state.sprintburndownoverlay == true ? "backgroundoverlay" : ''].join(' ')}>
+							<div className="col-lg-12 textAlignCenter">
+								{this.state.loaderforsprintburndownchart}
+							</div>
+							{this.state.workHours}
+						</div>
+
+						<div className={["col-md-12 col-lg-11 textAlignCenter sprintoverviewheight boxshadowfordata boxmarginTopforsprintdata borderRadius", this.state.sprintoverviewoverlay == true ? "backgroundoverlay" : ''].join(' ')}>
+							<div className="textAlignCenter">
+								{this.state.loaderforsprintoverviewpiechart}
+							</div>
+							{this.state.sprintPieChart}
+						</div>
 					</div>
-					{/* </div> */}
-
 				</div>
 
 				<Modal isOpen={this.state.isModalOpen} style={customStyles}
@@ -481,8 +566,8 @@ class Account extends React.Component {
 							<label>Project Title:<input value={this.state.projectTitle} name='projectTitle' onChange={this.handleChange} /></label>
 						</div>
 						{/* <div className="loginPwd">
-							<label >Password:<input value='' name='pswd' /></label>
-						</div> */}
+								<label >Password:<input value='' name='pswd' /></label>
+							</div> */}
 						<div className="loginBtns">
 
 							<div>
@@ -497,9 +582,9 @@ class Account extends React.Component {
 					</div>
 
 				</Modal>
-				<div className="footer ">
-					<div className="col-md-12 displayInline">
-						<div className="col-md-4">
+				{/* <div className="footer ">
+					<div className="col-md-12 displayInline"> */}
+						{/* <div className="col-md-4">
 							<h6><a href="https://www.atlassian.com/software/jira" target="/">jira</a></h6>
 							<h6><a href="https://www.sonarqube.org/" target="/">Quality</a></h6>
 						</div>
@@ -510,12 +595,12 @@ class Account extends React.Component {
 						<div className="col-md-4">
 							<h6><a href="https://www.comakeit.com" target="/">AES</a></h6>
 							<h6><a href="https://www.comakeit.com" target="/">comakeIT</a></h6>
-						</div>
+						</div> */}
 
 
-					</div>
+					{/* </div>
 
-				</div>
+				</div> */}
 			</div>
 		)
 
@@ -530,7 +615,7 @@ class SelectedProjectDetails extends React.Component {
 		this.state = {
 			projectDetails: '',
 			selectedProject: '',
-			selectedProjectVersion: '',
+			// loader:'',
 			userName: '',
 			pwd: '',
 			url: ''
@@ -550,6 +635,7 @@ class SelectedProjectDetails extends React.Component {
 			// userName: this.props.selectedUserName,
 			// pwd: this.props.selectedUserPwd,
 			// url: this.props.selectedUrl
+			//loader:<RefreshIndicatorExampleLoading status={""}/> 
 		})
 
 	}
@@ -565,12 +651,18 @@ class SelectedProjectDetails extends React.Component {
 
 	}
 	selectProject(event, ind, value) {
+	
+		
+		
 
-		this.setState({ selectedProject: value })
+
+		this.setState({ selectedProject: value})
 
 		this.state.hintStyle2 = {
 			opacity: 0
 		}
+
+		this.props.showLoader()
 		this.setState({ selectedProjectIndex: value })
 		var jumpStartMenuNameArray = []
 		const IM = "Issue Management"
@@ -588,44 +680,11 @@ class SelectedProjectDetails extends React.Component {
 				var password = this.state.projectDetails.projects[ind].tools[IM].password
 				var hostedUrl = this.state.projectDetails.projects[ind].tools[IM].hostedURL
 				var peopleList = this.state.projectDetails.projects[ind].people
-
-
 				this.props.onSelectProject(boardDetails, userName, password, hostedUrl, peopleList)
-
-				// this.setState({
-				// 	selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={response.data.values}
-				// 		selectedUserName={this.state.projectDetails.projects[ind].tools[IM].userName}
-				// 		selectedUserPwd={this.state.projectDetails.projects[ind].tools[IM].password}
-				// 		selectedUrl={this.state.projectDetails.projects[ind].tools[IM].hostedURL}
-				// 		onSelectBoard={this.selectedBoard} currentBoard={this.selectedBoardforIssues} />,
-
-
-
-				// })
-
 			})
 
+			// this.setState({ loader:<RefreshIndicatorExampleLoading status={""}/> })
 
-		//this.setState({ peoplesArray: <PeoplesList peoplesList={this.state.projectDetails.projects[ind].people} /> })
-
-		// axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-		// 	//this.state.projectDetails.projects[ind].tools[0].hostedURL + "/rest/api/2/project", 
-		// 	"resourceURL": this.state.url + "/rest/api/2/project/" + this.state.projectDetailsListarray[ind].id + "/versions",
-		// 	"username": this.state.userName,
-		// 	"password": this.state.pwd,
-		// 	"actionMethod": "get"
-		// })
-		// 	.then(response => {
-
-
-		// 		this.setState({
-		// 			selectedProjectVersion: <SelectedProjectVersion selectedProjectVersion={response.data} selectedUserName={this.state.userName}
-		// 				selectedUserPwd={this.state.pwd} />,
-		// 		})
-
-
-
-		// 	})
 
 	}
 
@@ -645,17 +704,16 @@ class SelectedProjectDetails extends React.Component {
 
 		return (
 
-			<div>
+		
+				<div>
+					<SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+						hintStyle={this.state.hintStyle2} labelStyle={{ color: "#fff",height:"40px"}} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
+						{this.projectDetailsListarray(this.state.projectDetails.projects)}
+					</SelectField>
 
-				<SelectField hintText="Select Project" value={this.state.selectedProjectIndex} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
-					hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProject(e, i, v)}>
-					{this.projectDetailsListarray(this.state.projectDetails.projects)}
-				</SelectField>
+				</div>
 
-				{/* <div>
-					{this.state.selectedProjectVersion}
-				</div> */}
-			</div>
+
 
 
 		)
@@ -707,14 +765,16 @@ class SelectedProjectBoardDetails extends React.Component {
 
 	selectedProjectBoard(event, index, value) {
 
-
+	
 		var boardId = this.state.projectBoardDetailsListarray[index].id
 
 		this.state.hintStyle2 = {
 			opacity: 0
 		}
-
+		this.props.showLoaderforSprintData()
+		this.props.showLoaderforEpicData()
 		this.setState({ selectedProjectBoard: value })
+
 		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
 			"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/sprint",
 			"userName": this.state.userName,
@@ -723,18 +783,19 @@ class SelectedProjectBoardDetails extends React.Component {
 		})
 			.then(response => {
 
+				console.log(response.data,"sprint")
 				this.props.onSelectBoard(response.data.values, this.state.projectBoardDetailsListarray[index].id, this.state.url, this.state.userName, this.state.pwd, boardId);
 				// this.props.sonarQubeDetails()
-				this.setState({
-					selectedBoardSprintsArray: response.data.values
+				// this.setState({
+				// 	selectedBoardSprintsArray: response.data.values
 
-				})
+				// })
 
 
 			})
 
-		
-		var hostedURL=this.state.url
+
+		var hostedURL = this.state.url
 
 		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
 			"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/epic",
@@ -742,49 +803,59 @@ class SelectedProjectBoardDetails extends React.Component {
 			"password": this.state.pwd,
 			"actionMethod": "get"
 
-		},{
-			boardId:this.state.projectBoardDetailsListarray[index].id,
-			ur:hostedURL
-		})
+		}, {
+				boardId: this.state.projectBoardDetailsListarray[index].id,
+				hostedUrl: hostedURL
+			})
 			.then(response => {
-					
-				var listOfEpics = response.data.values
-				var boardId = response.config.boardId
-				var resourceURL= response.config.ur
-				var userName= JSON.parse(response.config.data).userName
-				var password=JSON.parse(response.config.data).password
+
+				console.log(response.data,"epic")
+	setTimeout (function(){
+
+		var listOfEpics = response.data.values
+		var boardId = response.config.boardId
+		var resourceURL = response.config.hostedUrl
+		var userName = JSON.parse(response.config.data).userName
+		var password = JSON.parse(response.config.data).password
+
+
+		this.props.listOfEpics(listOfEpics, boardId, resourceURL, userName, password)
+
+		var epicArray = []
+		var counter = 0
+		for (var i = 0; i < response.data.values.length; i++) {
+			var epicName = response.data.values[i].name
+			var hostedURL = this.state.url
+			axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+				"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/epic/" + response.data.values[i].id + "/issue",
+				"userName": this.state.userName,
+				"password": this.state.pwd,
+				"actionMethod": "get"
+			}, {
+
+					epicName: response.data.values[i].name,
+					index: i,
+					length: response.data.values.length,
+					hostedUrl: hostedURL
+
+				})
+				.then(response => {
+				
+					var resourceURL = response.config.hostedUrl
+					var userName = JSON.parse(response.config.data).userName
+					var password = JSON.parse(response.config.data).password
+
+					epicArray.push({ name: response.config.epicName, issues: response.data.issues })
+
+					if (response.config.index == (response.config.length - 1)) {
+						this.props.currentBoard(epicArray, resourceURL, userName, password)
+					}
+
+				})
+
+		}
+	}.bind(this),1000)
 			
-
-				this.props.listOfEpics(listOfEpics, boardId,resourceURL,userName,password)
-
-				var epicArray = []
-				var counter = 0
-				for (var i = 0; i < response.data.values.length; i++) {
-					var epicName = response.data.values[i].name
-					axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-						"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/epic/" + response.data.values[i].id + "/issue",
-						"userName": this.state.userName,
-						"password": this.state.pwd,
-						"actionMethod": "get"
-					}, {
-
-							epicName: response.data.values[i].name,
-							index: i,
-							length: response.data.values.length
-
-
-						})
-						.then(response => {
-
-							epicArray.push({ name: response.config.epicName, issues: response.data.issues })
-
-							if (response.config.index == (response.config.length - 1)) {
-								this.props.currentBoard(epicArray)
-							}
-
-						})
-
-				}
 
 
 			})
@@ -813,8 +884,8 @@ class SelectedProjectBoardDetails extends React.Component {
 			<div>
 
 
-				<SelectField hintText="Boards" value={this.state.selectedProjectBoard} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
-					hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedProjectBoard(e, i, v)}>
+				<SelectField hintText="Select Board" value={this.state.selectedProjectBoard} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+					hintStyle={this.state.hintStyle2} labelStyle={{ color: "#fff",height:"40px"}} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedProjectBoard(e, i, v)}>
 					{this.projectBoardDetailsListarray(this.state.projectBoardDetailsListarray)}
 				</SelectField>
 
@@ -851,8 +922,8 @@ class SprintDetails extends React.Component {
 			sprintListSorted: '',
 			numbers: [1, 2, 4, 3],
 			numbersSorted: '',
-			sprintPieChart: '',
-			pieChartIssueStatusIdentifier: '',
+			
+
 			boardId: '',
 			sonarQubeData: '',
 			userNme: '',
@@ -942,7 +1013,7 @@ class SprintDetails extends React.Component {
 
 
 			});
-
+		
 			var getDateString = function (epochTime) {
 				var date = new Date(epochTime)
 				var month = '' + (date.getMonth() + 1)
@@ -1043,7 +1114,9 @@ class SprintDetails extends React.Component {
 				}
 			}.bind(this))
 
-			this.setState({ workHours: <Hourschart data={this.state.totalTimeSpentArray} /> })
+			//this.setState({ workHours: <Hourschart data={this.state.totalTimeSpentArray} /> })
+
+			this.props.sprintBurnDownChart(this.state.totalTimeSpentArray)
 		})
 
 
@@ -1054,9 +1127,11 @@ class SprintDetails extends React.Component {
 			"actionMethod": "get"
 		}).then(response => {
 
-			this.setState({
-				sprintPieChart: <Piechart sprinttList={response.data} />, pieChartIssueStatusIdentifier: <StatusIdentifier />
-			});
+			// this.setState({
+			// 	sprintPieChart: <Piechart sprinttList={response.data} />
+			// });
+
+			this.props.sprintOverviewPiechart(response.data)
 		})
 		//this.setState({sonarQubeData:<SonarQubeData />})
 		//this.props.sonarQubeDetails();
@@ -1078,15 +1153,18 @@ class SprintDetails extends React.Component {
 	render() {
 
 		return (
-			<div className="">
-				<div className="col-md-12 col-lg-12 textAlignCenter titleBackgroundColor">
-					<h3>Sprint Burndown</h3>
+			<div className="padding0">
+				<div className="col-md-12 col-lg-12 textAlignCenter ">
+
+					<h5>Select Sprint</h5>
 				</div>
-				<div className="col-md-12 col-lg-12 textAlignLeft">
+				<div className="col-md-12 col-lg-12 textAlignLeft marginTop4">
 					<SelectField
+					underlineStyle={{ display: 'none' }}
 						hintText="Select Sprint"
 						value={this.state.values}
 						onChange={(e, i, v) => this.handleChange(e, i, v)}
+						labelStyle={{height:"40px"}}
 
 					>
 						{this.sprintItems(this.state.sprintListSorted)}
@@ -1097,12 +1175,10 @@ class SprintDetails extends React.Component {
 				<div className="col-md-12 col-lg-12">
 					{this.state.workHours}
 				</div>
-				<div className="col-md-12 col-lg-12">
+				<div className="col-md-12 col-lg-12 padding0" >
 					{this.state.sprintPieChart}
 				</div>
-				<div className="col-md-12 col-lg-12">
-					{this.state.pieChartIssueStatusIdentifier}
-				</div>
+	
 
 
 			</div>
@@ -1117,18 +1193,23 @@ class Hourschart extends React.Component {
 	render() {
 
 		return (
-
-			<div className="chartSize">
-				<LineChart width={500} height={300} data={this.props.data}>
-					<XAxis dataKey="name" />
-					<YAxis />
-					<CartesianGrid strokeDasharray="1 1" />
-					<Legend />
-					<Line type="stepAfter" dataKey="hr" stroke="#82ca9d" />
-					<Line type="monotone" dataKey="y" stroke="#82ca9d" />
-				</LineChart>
+			<div>
+				<div className="col-md-12 col-lg-12 textAlignCenter ">
+					<h5>Sprint Burndown</h5>
+				</div>
+				<div className="col-md-12 col-lg-11 justify padding0 marginTop6">
+					<ResponsiveContainer width='100%' aspect={5.0 / 2.8}>
+						<LineChart data={this.props.data}>
+							<XAxis dataKey="name" />
+							<YAxis />
+							<CartesianGrid strokeDasharray="1 1" />
+							<Legend />
+							<Line type="stepAfter" dataKey="hr" stroke="#82ca9d" />
+							<Line type="monotone" dataKey="y" stroke="#82ca9d" />
+						</LineChart>
+					</ResponsiveContainer>
+				</div>
 			</div>
-
 		)
 
 	}
@@ -1230,9 +1311,6 @@ class Piechart extends React.Component {
 	}
 
 
-
-
-
 	render() {
 
 		//this.state.piechartPercentagesArray=[]
@@ -1264,91 +1342,92 @@ class Piechart extends React.Component {
 			);
 		};
 		return (
+			<div>
 
-			<div className="row textAlignCenter marginT3">
-
-				<div className="col-md-12 col-lg-12 textAlignCenter titleBackgroundColor">
-					<h3>Sprint Overview</h3>
+				<div className="col-md-12 col-lg-12 textAlignCenter ">
+					<h5>Sprint Overview</h5>
 				</div>
-
-				<div className="displayInline  col-md-8 justify">
-
-					<PieChart width={490} height={400}>
-						<Pie
-							//nameKey='name'
-							dataKey="value"
-							data={data}
-							//cx={300}
-							//cy={200}
-							//labelLine={true}
-							label={renderCustomizedLabel}
-							outerRadius={180}
-							animationEasing='ease-in-out'
-						//PieLabelStyle ='outside'
-						>
-
-							{
-								data.map((entry, index) => < Cell fill={COLORS[index % COLORS.length]} key={index} />)
-
-							}
+				<div className="col-lg-12 padding0  displayInline" style={{height:"35vh"}}>
 
 
 
-						</Pie>
+					<div className="col-md-8 col-lg-9 justify padding0">
+					<ResponsiveContainer>
+						<PieChart>
+							<Pie
+								//nameKey='name'
+								dataKey="value"
+								data={data}
+						//cx={100}
+							//cy={50}  
+								//labelLine={true}
+								label={renderCustomizedLabel}
+								outerRadius={100}
+								animationEasing='ease-in-out'
+							//PieLabelStyle ='outside'
+							>
+
+								{
+									data.map((entry, index) => < Cell fill={COLORS[index % COLORS.length]} key={index} />)
+
+								}
 
 
-					</PieChart>
 
-				</div>
-
-
-				{/* {this.state.piechart
-                                    } */}
+							</Pie>
 
 
+						</PieChart>
+						</ResponsiveContainer>
 
-				<div className="col-md-4">
-
-					<div className="col-md-12 displayInline">
-						<div className="borderRadius" style={{ backgroundColor: "#FF8042", width: "20px", height: "20px", border: "5px solid #FF8042" }}>
-
-						</div>
-
-						<div className="col-md-9">
-							<label>{todoArrayPercentage}% To Do </label>
-						</div>
-					</div>
-					<div className="col-md-12 displayInline">
-						<div className="borderRadius" style={{ backgroundColor: "#00C49F", width: "20px", height: "20px", border: "5px solid #00C49F" }}>
-
-						</div>
-
-						<div className="col-md-10">
-							<label>{inprogressArrayPercentage}% Progress</label>
-						</div>
-					</div>
-					<div className="col-md-12 displayInline">
-						<div className="borderRadius" style={{ backgroundColor: "#FFBB28", width: "20px", height: "20px", border: "5px solid #FFBB28" }}>
-
-						</div>
-
-						<div className="col-md-9">
-							<label>{inqaArrayPercentage}% In QA</label>
-						</div>
-					</div>
-					<div className="col-md-12 displayInline">
-						<div className="borderRadius" style={{ backgroundColor: "#0088FE", width: "20px", height: "20px", border: "5px solid #0088FE" }}>
-
-						</div>
-
-						<div className="col-md-9">
-							<label>{doneArrayPercentage}% Done</label>
-						</div>
 					</div>
 
+
+
+
+
+					<div className="col-md-3  col-lg-3 justify padding0">
+
+						<div className="displayInline sprintStatusMenuWidth">
+							<div className="borderRadius" style={{ backgroundColor: "#FF8042", width: "20px", height: "20px", border: "10px solid #FF8042" }}>
+
+							</div>
+
+							<div className="col-md-12 padding0">
+								<label>{todoArrayPercentage}% To Do </label>
+							</div>
+						</div>
+						<div className="displayInline sprintStatusMenuWidth">
+							<div className="borderRadius" style={{ backgroundColor: "#00C49F", width: "20px", height: "20px", border: "10px solid #00C49F" }}>
+
+							</div>
+
+							<div className="col-md-12 padding0">
+								<label>{inprogressArrayPercentage}% Progress</label>
+							</div>
+						</div>
+						<div className="displayInline sprintStatusMenuWidth">
+							<div className="borderRadius" style={{ backgroundColor: "#FFBB28", width: "20px", height: "20px", border: "10px solid #FFBB28" }}>
+
+							</div>
+
+							<div className="col-md-12 padding0">
+								<label>{inqaArrayPercentage}% In QA</label>
+							</div>
+						</div>
+						<div className="displayInline sprintStatusMenuWidth">
+							<div className="borderRadius" style={{ backgroundColor: "#0088FE", width: "20px", height: "20px", border: "10px solid #0088FE" }}>
+
+							</div>
+
+							<div className="col-md-12 padding0">
+								<label>{doneArrayPercentage}% Done</label>
+							</div>
+						</div>
+
+					</div>
 				</div>
 			</div>
-
 		)
 
 
@@ -1356,37 +1435,6 @@ class Piechart extends React.Component {
 
 
 	}
-}
-class StatusIdentifier extends React.Component {
-
-	render() {
-		return (
-			<div className="displayInline  col-md-10 col-md-offset-2">
-
-				{/* <div className="borderRadius" style={{ backgroundColor: "#FF8042", width: "20px", height: "20px", border: "5px solid #FF8042" }}>
-
-				</div>
-				<span>
-					<label className="col-md-10">To Do</label>
-				</span>
-
-				<div className="borderRadius" style={{ backgroundColor: "#00C49F", width: "20px", height: "20px", border: "5px solid #00C49F" }}>
-
-				</div><span><label className="col-md-10">In Progress</label></span>
-
-				<div className="borderRadius" style={{ backgroundColor: "#FFBB28", width: "20px", height: "20px", border: "5px solid #FFBB28" }}>
-
-				</div><span><label className="col-md-10">In QA</label></span>
-
-				<div className="borderRadius" style={{ backgroundColor: "#0088FE", width: "20px", height: "20px", border: "5px solid #0088FE" }}>
-
-				</div><span><label className="col-md-10">Done</label></span> */}
-			</div>
-		)
-
-	}
-
-
 }
 
 class SonarQubeData extends React.Component {
@@ -1471,67 +1519,72 @@ class SonarQubeData extends React.Component {
 
 	render() {
 		return (
-
+			
 			<div className="col-md-12 padding0">
-				<div className="textAlignCenter titleBackgroundColor">
-					<h3>Quality Overview</h3>
+				<div className="col-md-12 col-lg-12 marginB08 textAlignCenter ">
+					<h5>Quality Overview</h5>
 				</div>
 
 
-				<div className="col-md-12 displayInline overlay marginB08">
-					<div className="col-md-3 textAlignCenter">Bugs
+				<div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
+					<div className="col-md-3 col-lg-4 textAlignCenter">Bugs
 													<div className="textAlignCenter">
 							{this.state.sonarQubeData.bugs}
 						</div>
 					</div>
-					<div className="col-md-3 textAlignCenter"> Vulnerabilities
+					<div className="col-md-4 col-lg-4 textAlignCenter"> Vulnerabilities
 													<div className="textAlignCenter">
 							{this.state.sonarQubeData.vulnerabilities}
 						</div>
 					</div>
-					<div className="col-md-3 textAlignCenter">Code Smells
+					<div className="col-md-5 col-lg-4 textAlignCenter">Code Smells
 													<div className="textAlignCenter">
 							{this.state.sonarQubeData.codesmells}
 						</div>
 					</div>
-					<div className="col-md-3 textAlignCenter"> Debt
+					
+				</div>
+
+			
+				<div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
+
+				<div className="col-md-3 col-lg-4 textAlignCenter"> Debt
 													<div className="textAlignCenter">
 							{}
 						</div>
 					</div>
-				</div>
-
-				{/* <div className="col-md-12 displayInline overlay marginB08">
-											
-													</div> */}
-				<div className="col-md-12 displayInline overlay marginB08">
-					<div className="col-md-3 textAlignCenter">Duplications
+					<div className="col-md-4 col-lg-4 textAlignCenter">Duplications
 													<div className="textAlignCenter">
 							{this.state.sonarQubeData.duplications}
 						</div>
 					</div>
-					<div className="col-md-3 textAlignCenter"> Duplicated Blocks
+					<div className="col-md-5 col-lg-4 textAlignCenter"> Duplicated Blocks
 													<div className="textAlignCenter">
 							{this.state.sonarQubeData.duplicatedBlocks}
 						</div>
 					</div>
-					<div className="col-md-3 textAlignCenter">Script Lines
-													<div className="textAlignCenter">
-							{this.state.sonarQubeData.script}
-						</div>
-					</div>
-					<div className="col-md-3 textAlignCenter"> Lines of Code
+					
+				</div>
+
+				<div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
+
+				<div className="col-md-3 col-lg-4 textAlignCenter"> Lines of Code
 													<div className="textAlignCenter">
 							{this.state.sonarQubeData.linesofcode}
 						</div>
 					</div>
+					
+				<div className="col-md-4 col-lg-4 textAlignCenter wordwrap">Script Lines
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.script}
+						</div>
+					</div>
+					
 				</div>
 
 
 
 
-
-
 			</div>
 
 
@@ -1545,72 +1598,7 @@ class SonarQubeData extends React.Component {
 		)
 	}
 }
-class SelectedProjectVersion extends React.Component {
-	_
-	constructor(props) {
-		super(props)
-		this.state = {
-			projectVersionDetailsListarray: [],
-			selectedProjectVersionDetails: '',
-			userName: '',
-			pwd: ''
-		}
-		this.selectProjectVersionDetails = this.selectProjectVersionDetails.bind(this)
-		this.projectVersionDetailsListarray = this.projectVersionDetailsListarray.bind(this)
 
-	}
-
-	componentWillMount() {
-
-		this.setState({ projectVersionDetailsListarray: this.props.selectedProjectVersion, userName: this.props.selectedUserName, pwd: this.props.selectedUserPwd })
-
-	}
-
-	componentWillReceiveProps(nextProps) {
-
-		this.setState({ projectVersionDetailsListarray: nextProps.selectedProjectVersion, userName: nextProps.selectedUserName, pwd: nextProps.selectedUserPwd })
-
-	}
-
-	selectProjectVersionDetails(event, ind, value) {
-		this.setState({ selectedProjectVersionDetails: value })
-
-
-	}
-
-	projectVersionDetailsListarray(versions) {
-		return versions.map((version) => (
-			<MenuItem
-				key={version.id}
-				insetChildren={true}
-				value={version.name}
-				primaryText={version.name}
-			/>
-		));
-	}
-
-
-	render() {
-
-		return (
-
-			<div>
-				<SelectField hintText="Release" value={this.state.selectedProjectVersionDetails} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
-					hintStyle={{ opacity: "1" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectProjectVersionDetails(e, i, v)}>
-					{this.projectVersionDetailsListarray(this.state.projectVersionDetailsListarray)}
-				</SelectField>
-
-
-
-
-			</div>
-
-
-
-
-		)
-	}
-}
 
 class IssuesList extends React.Component {
 	_
@@ -1620,102 +1608,95 @@ class IssuesList extends React.Component {
 		this.state = {
 			epicsArray: [],
 			issuesArray: [],
-			height: '400px',
+			height: '300px',
 			showCheckboxes: false,
+			issuesHeaderItems:[]
 
 		}
 
 
 	}
 
-	componentWillMount() {
 
+	
+	componentDidMount() {
 
-		// this.state.epicsArray = this.props.issuesArray.filter(function (eachIssue) {
-		// 	if (eachIssue.fields.epic !== null||eachIssue.fields.epic!==undefined ) {
+		
 
-		// 		return eachIssue
+		for (var i = 0; i < 1; i++) {
 
-
-		// 	}
-
-		// })
-
-		// for(var i=0;i<this.props.issuesArray.length;i++){
-		// 	if (this.props.issuesArray[i].fields.epic!= null || this.props.issuesArray[i].fields.epic!= undefined ) {
-		// 			this.state.epicsArray=this.state.epicsArray.concat(this.props.issuesArray[i])
-		//	}
-		this.setState({ issuesArray: this.props.issuesArray })
-		//}
-
-		var epicName
-		var issueStatus
-		var issuesArrayWithSameEpicArray = []
-		var x = []
-		var closedIssues = []
-
-		for (var i = 0; i < this.state.epicsArray.length; i++) {
-
-			//issueStatus=this.state.epicsArray[i].statusCategory.name
-			//   if(epicName!=this.state.epicsArray[i].fields.epic.name){
-			// 	if(this.state.epicsArray[i].statusCategory.name=="closed"){
-
-
-			// 	}
-
-
-
-			// issuesArrayWithSameEpicArray.push(this.state.epicsArray[i])
-			// epicName=this.state.epicsArray[i].fields.epic.name
+			var headerItems = Object.keys(this.props.issuesArray[1])
 
 		}
 
-
-
-
-
-
+		this.setState({ issuesArray: this.props.issuesArray, issuesHeaderItems: headerItems })
 
 	}
+
+	// componentDidMount(nextProps){
+
+	// 	this.setState({ issuesArray: nextProps.issuesArray })
+	// }
 
 	render() {
 
 		return (
-			<div className="col-md-12 padding0">
-				<div className="textAlignCenter titleBackgroundColor">
-					<h3>Epic Details</h3>
+			<div className="padding0 epicTablediv">
+				<div className="col-md-12 col-lg-12 textAlignCenter ">
+					<h5>Epic Details</h5>
 				</div>
 
 
 				<div className="col-md-12 col-lg-12 padding0">
 
-					<Table height={this.state.height}>
-						<TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={false}>
-							<TableRow>
-								<TableHeaderColumn>Epic Name</TableHeaderColumn>
-								<TableHeaderColumn>Done</TableHeaderColumn>
-								<TableHeaderColumn>To Do</TableHeaderColumn>
-								<TableHeaderColumn>In Qa</TableHeaderColumn>
-								<TableHeaderColumn>In Progress</TableHeaderColumn>
-								<TableHeaderColumn>In Code Review</TableHeaderColumn>
+		
+					<table className="table table-fixed">
+						<thead className="">
+							<tr className="epicdetailstableheadrowStyle">
+							{this.state.issuesHeaderItems.map((row,i)  => (
+						
+									
+										<th className="epictableheadverticalalign" key={i}>{row}</th >
+									
+					
+							))}
+							</tr>
+						</thead>
 
-							</TableRow>
+						<tbody>
+						{this.state.issuesArray.map((row,i) => (
+							<tr key={i}>
+								{Object.values(row).map(rowValue =>
+									<td className="epicTableDataStyle">{rowValue}</td>
+								)}
+							</tr>
+						))}
+							</tbody>
+					</table>
+
+					{/* <Table height={this.state.height}>
+						<TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={false}>
+						{this.state.issuesHeaderItems.map((row,i)  => (
+						
+									
+										<TableHeaderColumn key={i}>{row}</TableHeaderColumn>
+									
+					
+							))}
+
+					
 						</TableHeader>
 						<TableBody displayRowCheckbox={this.state.showCheckboxes}>
-							{this.state.issuesArray.map((epic, index) => (
-								<TableRow key={index}>
-									{/* <TableRowColumn>{index}</TableRowColumn> */}
-									<TableRowColumn>{epic.name}</TableRowColumn>
-									<TableRowColumn>{epic.done}      </TableRowColumn>
-									<TableRowColumn>{epic.toDo}</TableRowColumn>
-									<TableRowColumn>{epic.inQa}      </TableRowColumn>
-									<TableRowColumn>{epic.inProgress}</TableRowColumn>
-									<TableRowColumn>{epic.inCodeReview}</TableRowColumn>
-
+							{this.state.issuesArray.map((row,i) => (
+								<TableRow key={i}>
+									{Object.values(row).map(rowValue =>
+										<TableRowColumn>{rowValue}</TableRowColumn>
+									)}
 								</TableRow>
 							))}
+
 						</TableBody>
-					</Table>
+					</Table> */}
 				</div>
 
 
@@ -1738,6 +1719,7 @@ class PeoplesList extends React.Component {
 
 			peoplesArray: [],
 			showCheckboxes: false,
+			height: '194px'
 
 		}
 
@@ -1753,16 +1735,16 @@ class PeoplesList extends React.Component {
 	render() {
 
 		return (
-			<div className="col-md-12 padding0">
-				<div className="textAlignCenter titleBackgroundColor">
-					<h3 >Team Details</h3>
+			<div className="padding0">
+				<div className="col-md-12 col-lg-12 textAlignCenter ">
+					<h5>Team Details</h5>
 				</div>
 
 
 
 				<div className="col-md-12 col-lg-12 padding0">
 
-					<Table>
+					<Table height={this.state.height}>
 						<TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={false}>
 							<TableRow>
 								<TableHeaderColumn>Name</TableHeaderColumn>
@@ -1797,110 +1779,100 @@ class EpicBurdownChart extends React.Component {
 	_
 	constructor(props) {
 		super(props)
-	
-
 		this.state = {
 			boardId: '',
-
 			url: '',
 			userName: '',
 			pwd: '',
 			epicsArray: '',
-			selectedEpicId:''
-
-
+			selectedEpicId: '',
+			epicBurnDownDataArray:[]
 		}
-
 		this.handleSelectedEpic = this.handleSelectedEpic.bind(this)
 		this.listoFEpics = this.listoFEpics.bind(this)
 	}
 
 	componentWillMount() {
-
-
-		this.state.sprintListSorted = this.props.epicsArray.sort(function (a, b) {
-			
-			
-						return parseFloat(b.id) - parseFloat(a.id);
-					})
-
+		this.state.epicListSorted = this.props.epicsArray.sort(function (a, b) {
+			return parseFloat(b.id) - parseFloat(a.id);
+		})
 		this.setState({
 			boardId: this.props.boardID,
-
 			url: this.props.selectedUrl,
 			userName: this.props.selectedUserName,
 			pwd: this.props.selectedUserPwd,
-			epicsArray: this.state.sprintListSorted
+			epicsArray: this.state.epicListSorted
 		})
-
 	}
 
-	componentWillReceiveProps(nextProps){
+	componentWillReceiveProps(nextProps) {
 
 		this.state.sprintListSorted = nextProps.epicsArray.sort(function (a, b) {
-			
-			
-						return parseFloat(b.id) - parseFloat(a.id);
-					})
-		this.setState({boardId: nextProps.boardID,
-			
-						url: nextProps.selectedUrl,
-						userName: nextProps.selectedUserName,
-						pwd: nextProps.selectedUserPwd,
-						epicsArray: this.state.sprintListSorted })
+
+
+			return parseFloat(b.id) - parseFloat(a.id);
+		})
+		this.setState({
+			boardId: nextProps.boardID,
+
+			url: nextProps.selectedUrl,
+			userName: nextProps.selectedUserName,
+			pwd: nextProps.selectedUserPwd,
+			epicsArray: this.state.sprintListSorted
+		})
 	}
-	handleSelectedEpic(event, index, val){
-
-
-	this.setState({selectedEpicId:val})
-
-
-	axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-		"resourceURL": this.state.url + "/rest/greenhopper/1.0/rapid/charts/epicburndownchart?rapidViewId="+this.state.boardId+"&epicKey="+val,
-		"userName": this.state.userName,
-		"password": this.state.pwd,
-		"actionMethod": "get"
-
-	}).then(response=>{
-
+	componentDidMount(){
+		var epicId=this.state.epicsArray[0].key
+	
+		this.handleSelectedEpic("1","2",epicId)
 		
-			var sprintArray=[]
-		Object.keys(response.data.changes).forEach(function (key, index) {
-			var eachDate = Number(key)
+	}
+	handleSelectedEpic(event, index, val) {
 		
-			response.data.sprints.forEach(function(eachSprint){
-					
-				//console.log( eachSprint )
-				//console.log(eachDate>=eachSprint.startTime,eachDate<=eachSprint.endTime,eachSprint.id)
-				//console.log(eachDate<=eachSprint.endTime)
-				if(eachDate>=eachSprint.startTime && eachDate<=eachSprint.endTime){
-					if(eachSprint.changes==undefined){
-						eachSprint.changes=[];
+		this.setState({ selectedEpicId: val })
+		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+			"resourceURL": this.state.url + "/rest/greenhopper/1.0/rapid/charts/epicburndownchart?rapidViewId=" + this.state.boardId + "&epicKey=" + val,
+			"userName": this.state.userName,
+			"password": this.state.pwd,
+			"actionMethod": "get"
+		}).then(response => {
+
+			var sprintsArray = []
+			Object.keys(response.data.changes).forEach(function (key, index) {
+				var eachChangesObj = response.data.changes[key][0]
+
+				var eachDate = Number(key)
+				
+				
+				response.data.sprints.forEach(function (eachSprint) {
+					if (eachDate >= eachSprint.startTime && eachDate <= eachSprint.endTime) {
+						if (eachSprint.changes == undefined) {
+							eachSprint.changes = [];
+						}
+						if(eachChangesObj.statC !== undefined && eachChangesObj.statC !== {}){
+							// console.log(eachSprint.name ,"Change in ",eachChangesObj.key , eachChangesObj.statC.newValue?eachChangesObj.statC.newValue:"NA" , eachChangesObj.statC.oldValue?eachChangesObj.statC.oldValue:"NA")
+						}
+						eachSprint.changes.push(response.data.changes[key][0])
 					}
-					eachSprint.changes.push(response.data.changes[key][0])
-					//eachSprint.push(eachDate[index])
-					//console.log(eachDate,eachDate>=eachSprint.startTime,eachDate<=eachSprint.endTime,eachSprint.name)
-					// sprintArray.push(eachSprint)
-				
-				}
-
-				
+				})
 				
 			})
-
-			
-			
-		
-
+			//console.log(response.data.sprints)
+			response.data.sprints.forEach(function(eachSprint){
+				if(eachSprint.changes!=undefined){
+					eachSprint.uv=4000
+					eachSprint.pv=3000
+					sprintsArray.push(eachSprint)	
+				}
+			})
+			this.setState({
+				epicBurnDownDataArray:sprintsArray
+			})
 		})
-
-		console.log(response.data.sprints)
-
-	})
-
+		
 	}
 
-	listoFEpics(epicsArray){
+	listoFEpics(epicsArray) {
 		return epicsArray.map((epic) => (
 			<MenuItem
 				key={epic.id}
@@ -1909,41 +1881,44 @@ class EpicBurdownChart extends React.Component {
 			/>
 		));
 	}
-	
+
 	render() {
+		//console.log(this.state.epicBurnDownDataArray)
 		const data = [
-			{name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
-			{name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
-			{name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
-			{name: 'Page D', uv: 2780, pv: 3908, amt: 2000},
-			{name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
-			{name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
-			{name: 'Page G', uv: 3490, pv: 4300, amt: 2100},
-	  ];
+			{ name: 'Page A', uv: 4000, pv: 2400, },
+			{ name: 'Page B', uv: 3000, pv: 1398, },
+			{ name: 'Page C', uv: 2000, pv: 9800, },
+			{ name: 'Page D', uv: 2780, pv: 3908, },
+			{ name: 'Page E', uv: 1890, pv: 4800, },
+			{ name: 'Page F', uv: 2390, pv: 3800, },
+			{ name: 'Page G', uv: 3490, pv: 4300,  },
+		];
 		return (
-			<div className="col-md-12 padding0">
-				<div className="textAlignCenter titleBackgroundColor">
-					<h3>Epic Overview</h3>
+			<div className="padding0">
+				<div className="col-md-12 col-lg-12 textAlignCenter ">
+					<h5>Epic Overview</h5>
 				</div>
 
 				<div className="col-md-12 padding0">
 
-					<SelectField hintText="Select Epic" value={this.state.selectedEpicId} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#fff" }}
+					<SelectField hintText="Select Epic" value={this.state.selectedEpicId} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#000000" }}
 						hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.handleSelectedEpic(e, i, v)}>
 						{this.listoFEpics(this.state.epicsArray)}
 					</SelectField>
 
 				</div>
-				<BarChart width={600} height={300} data={data}
-            margin={{top: 20, right: 30, left: 20, bottom: 5}}>
-       <XAxis dataKey="name"/>
-       <YAxis/>
-       <CartesianGrid strokeDasharray="3 3"/>
-       <Tooltip/>
-       <Legend />
-       <Bar dataKey="pv" stackId="a" fill="#8884d8" />
-       <Bar dataKey="uv" stackId="a" fill="#82ca9d" />
-      </BarChart>
+				<ResponsiveContainer width='100%' aspect={5.0/2.8}>
+				<BarChart width={600} height={300} data={this.state.epicBurnDownDataArray}
+					margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+					<XAxis dataKey="name"/>
+					<YAxis/>
+					<CartesianGrid strokeDasharray="3  3" />
+				
+				
+					<Bar dataKey="uv" stackId="a" fill="#8884d8" />
+					<Bar dataKey="pv" stackId="a" fill="#82ca9d" />
+				</BarChart>
+				</ResponsiveContainer>
 			</div>
 
 
@@ -1951,4 +1926,38 @@ class EpicBurdownChart extends React.Component {
 		)
 	}
 }
+
+class RefreshIndicatorExampleLoading extends React.Component {
+	constructor(props) {
+		super(props)
+			this.state = {
+		laoderStatus:this.props.status
+		}
+	
+	}
+
+
+
+	
+	render() {
+
+		return (
+			<div>
+				<RefreshIndicator
+					size={40}
+					left={10}
+					top={170}
+					status={this.state.laoderStatus}
+					style={style.refresh}
+					loadingColor={'grey'}
+				/>
+			
+			</div>
+		)
+
+	}
+}
+
+
+
 export default Account;
