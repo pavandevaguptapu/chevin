@@ -443,7 +443,9 @@ class AccountDetails extends React.Component {
             oldselectedItemIndex: '',
             jumpStartConfigModel: false,
             configPeopleModel: false,
-            peoplesArray: []
+            peoplesArray: [],
+            createGithubProjectModel:false,
+            githubInstance:{"repoName":"","projectName":"","projectUrl":""}
         }
 
         this.createProject = this.createProject.bind(this);
@@ -461,9 +463,89 @@ class AccountDetails extends React.Component {
         this.updatePeopleList = this.updatePeopleList.bind(this);
         this.deletePeopleList = this.deletePeopleList.bind(this);
         this.toolsData = this.toolsData.bind(this);
-        
+        this.autoCreate = this.autoCreate.bind(this);
+        this.submitGithubDetails = this.submitGithubDetails.bind(this);
+        this.handleGithubInstance = this.handleGithubInstance.bind(this);
+        this.closeGithubDetails = this.closeGithubDetails.bind(this);
     }
 
+
+
+
+    autoCreate(){
+        this.setState({createGithubProjectModel:true})          
+    }
+    closeGithubDetails(){
+        this.setState({createGithubProjectModel:false})           
+    }
+
+    submitGithubDetails(githubObj){
+
+        console.log(githubObj)
+this.setState({githubInstance:githubObj})
+
+        var repoName=githubObj.repoName
+        var projectName=githubObj.projectName
+        var projectUrl=githubObj.projecturl
+        axios.post("https://api.github.com/user/repos",
+        {            
+             "name": repoName,
+            "description": "This is your first repository" ,
+            "projectName": projectName       
+        },
+        {
+            headers:{
+                "Accept":"application/json",
+                "Authorization":"Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
+            }
+
+        }).then(response =>{           
+            var repo=response.data.name
+            var owner=response.data.owner.login
+            var projectName=JSON.parse(response.config.data).projectName
+
+            axios.post("https://api.github.com/repos/"+owner+"/"+repo+"/projects",
+            {            
+                 "name": projectName,
+                 "repo":repo,  
+                 "owner": owner           
+            },
+            {
+                headers:{
+                    "Accept":"application/vnd.github.inertia-preview+json",
+                    "Authorization":"Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
+                }
+            })
+
+          axios.put("https://api.github.com/repos/"+owner+"/"+repo+"/import",
+            {            
+                 "vcs_url":this.state.githubInstance.projectUrl              
+            },
+            {
+                headers:{
+                    "Accept":"application/vnd.github.barred-rock-preview",
+                    "Authorization":"Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
+                }
+            })
+
+        })
+
+        // this.setState({createGithubProjectModel:false})     
+
+    }
+   
+
+    handleGithubInstance(e){
+        var currentGithubInstanceObj = this.state.githubInstance;
+        currentGithubInstanceObj[e.target.name] = e.target.value
+        this.setState(
+            {
+                githubInstance: currentGithubInstanceObj
+            }
+
+        )
+
+    }
     componentWillMount() {
 
         this.setState({
@@ -568,8 +650,6 @@ class AccountDetails extends React.Component {
     closeCreateProjectModel() {
         this.setState({ createProjectModel: false, newCustomerDetails: {} })
     }
-
-
     configJumpStart(projectIndex) {
 
 
@@ -680,8 +760,6 @@ class AccountDetails extends React.Component {
 
 
     }
-
-   
 
     closeJumpStartModel() {
         this.setState({ jumpStartConfigModel: false, configPeopleModel: false })
@@ -831,11 +909,11 @@ class AccountDetails extends React.Component {
 
                                     </TableRowColumn>
                                     <TableRowColumn style={tableConfigBUtton}>
-                                        <RaisedButton label="configure" secondary={true} onClick={() => this.configPeople(project, index)} />
+                                        <RaisedButton label="configure" secondary={true} onClick={() => this.autoCreate()} />
                                         {/*   */}
                                     </TableRowColumn>
                                     <TableRowColumn style={tableConfigBUtton}>
-                                        <RaisedButton label="configure" default={true} />
+                                        <RaisedButton label="configure" default={true} onClick={() => this.autoCreate()}/>
                                         {/* onClick={() => this.configACES5(project)} ] */}
                                     </TableRowColumn>
                                     <TableRowColumn>
@@ -1027,11 +1105,45 @@ class AccountDetails extends React.Component {
                         </div>
                     </div>
                 </Modal>
+                <Modal isOpen={this.state.createGithubProjectModel} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
+                    <div className="row">
+                        <div className="col-md-12 col-lg-12">
+                            <h1 className="marginT0">Github Project Details</h1>
+                        </div>
+                    </div>
+
+                    <div className="textAlignLeft">
+                        <div className="row margin0">
+                            <div className="col-md-5 margin10"><label>Repositpry Name:</label></div>
+                            <div className="col-md-6 custId">
+                                <input value={this.state.githubInstance.repoName} name='repoName' onChange={this.handleGithubInstance} />
+                            </div>
+                            <div className="col-md-5 margin10"><label>Project Name:</label></div>
+                            <div className="col-md-6 custId">
+                                <input value={this.state.githubInstance.projectName} name='projectName' onChange={this.handleGithubInstance} />
+                            </div>
+                            <div className="col-md-5 margin10"><label>Project Url(import):</label></div>
+                            <div className="col-md-6 custId">
+                                <input value={this.state.githubInstance.projectUrl} name='projectUrl' onChange={this.handleGithubInstance} />
+                            </div>
+                        </div>
+                        <div className="loginBtns">
+                            <div>
+                                <RaisedButton label="Close" secondary={true} style={modelbuttonsStyle} onClick={() => this.closeGithubDetails()} />
+                                <RaisedButton label="Done" primary={true} style={modelbuttonsStyle} onClick={() => this.submitGithubDetails(this.state.githubInstance)} />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </Modal>
             </div>
 
         )
 
     }
+
 }
 
 class ToolConfigurationDetails extends React.Component { 
@@ -1332,7 +1444,14 @@ class ToolConfigurationDetails extends React.Component {
               
                 <div>
                 
-                    <RaisedButton label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitToolsData(this.state.dupeCurrentAccountArray)} />
+                    <RaisedButton label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitToolsData(this.state.dupeCurrentAccountArray)} 
+                        
+                        disabled={
+                            !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL||
+                            !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName ||
+                            !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password ||
+                            !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name
+                            }/>
 
                 </div> 
 
@@ -1352,7 +1471,7 @@ class PeopleConfigurationDetails extends React.Component {
             currentProjectIndex:'',
             currentPeopleArrayIndex:'',
             tempObj:{name:'',role:'',emailid:''},
-            disableSubmit:'',
+            disableSubmit:false,
             selectedPeopleIndex:''
         }
         this.handleChangeInPeopleConfigInput = this.handleChangeInPeopleConfigInput.bind(this);
@@ -1573,10 +1692,10 @@ class PeopleConfigurationDetails extends React.Component {
                             <RaisedButton disabled={this.state.disableSubmit} label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitPeopleData(this.state.tempObj)} />
                         </div>
                         <div className="col-md-4 col-lg-4">
-                            <RaisedButton disabled={this.state.disableSubmit == false} label="Update" primary={true} buttonStyle={buttonStyle} onClick={() => this.updatePeopleData(this.state.tempObj)} />
+                            <RaisedButton disabled={this.state.disableSubmit === false} label="Update" primary={true} buttonStyle={buttonStyle} onClick={() => this.updatePeopleData(this.state.tempObj)} />
                         </div>
                         <div className="col-md-4 col-lg-4">
-                            <RaisedButton disabled={this.state.disableSubmit == false} label="Delete" secondary={true} buttonStyle={buttonStyle} onClick={() => this.deletePeopleData(this.state.tempSelectedAccountobj)} />
+                            <RaisedButton disabled={this.state.disableSubmit === false} label="Delete" secondary={true} buttonStyle={buttonStyle} onClick={() => this.deletePeopleData(this.state.tempSelectedAccountobj)} />
                         </div>
                     </div> 
 

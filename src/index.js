@@ -6,7 +6,8 @@ import Dashboard from './dashboard.js';
 import Account from './account.js';
 import manageCustomerTeams from './manageCustomerTeams.js';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-    
+
+
 ReactDOM.render((
 	<MuiThemeProvider >
      <HashRouter>

@@ -37,6 +37,17 @@ const customStyles = {
 		transform: 'translate(-50%, -50%)'
 	}
 };
+const emptyObjectModalStyles = {
+	content: {
+		top: '48%',
+		left: '50%',
+		right: 'auto',
+		bottom: 'auto',
+		marginRight: '-50%',
+		transform: 'translate(-50%, -50%)',
+		backgroundColor:"rgb(197, 197, 197)"
+	}
+};
 const imageStyle = {
 
 	top: "-2px",
@@ -134,7 +145,10 @@ class Account extends React.Component {
 			loaderforEpicDetails:'',			
 			loaderforEpicOverviewburndownchart:'',
 			sprintPieChart: '',
-			overlay:false
+			overlay:false,
+			emptyAccountsObj:false,
+			emptyProjectsObj:false,
+			emptyToolsandPeopleObj:false
 		}
 
 		this.onDrop = this.onDrop.bind(this);
@@ -153,6 +167,8 @@ class Account extends React.Component {
 		this.ShowLoaderforTeamandQuality = this.ShowLoaderforTeamandQuality.bind(this);
 		this.ShowLoaderforEpicData = this.ShowLoaderforEpicData.bind(this);
 		this.ShowLoaderforSprintData = this.ShowLoaderforSprintData.bind(this);
+		this.displayErrorMessage = this.displayErrorMessage.bind(this);
+		
 
 		
 	}
@@ -175,7 +191,7 @@ class Account extends React.Component {
 		this.setState({ isModalOpen: true })
 	}
 	cancelModal() {
-		this.setState({ isModalOpen: false });
+		this.setState({ isModalOpen: false,emptyAccountsObj:false });
 	}
 
 	onDrop(data) {
@@ -219,11 +235,16 @@ class Account extends React.Component {
 			accountName:value,
 			projectDetails: selecteAccount[ind], value: value,
 			projects: <SelectedProjectDetails projectDetails={selecteAccount[ind]} onSelectProject={this.selectProject}
-					showLoader={this.ShowLoaderforTeamandQuality}
+					showLoader={this.ShowLoaderforTeamandQuality} errorMessage={this.displayErrorMessage}
 
 
 			/>
 		})
+	}
+	displayErrorMessage(){
+	
+		// if(projectDetails.projects.tools == undefined && projectDetails.projects.people==undefined)
+		this.setState({ emptyToolsandPeopleObj: true })
 	}
 
 	ShowLoaderforTeamandQuality(){
@@ -252,21 +273,44 @@ class Account extends React.Component {
 	 }
 	
 	selectProject(boardDetails, userName, password, hostedUrl, peopleList) {
-		this.setState({
-			selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={boardDetails}
-				selectedUserName={userName}
-				selectedUserPwd={password}
-				selectedUrl={hostedUrl}
-				onSelectBoard={this.selectedBoardforSprintData}
-				currentBoard={this.selectedBoardforIssues}
-				listOfEpics={this.epicBurdownChart}
-				showLoaderforEpicData={this.ShowLoaderforEpicData}
-				showLoaderforSprintData={this.ShowLoaderforSprintData} />,
-				peoplesArray: <PeoplesList peoplesList={peopleList} />,					
-				loaderforpeople:'',
-				sonarQubedata: <SonarQubeData sonarQubeDetails={this.sonarQubeData} />,
-				loaderforsonar: ''
-		})
+		if(peopleList!=undefined){
+			this.setState({
+				selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={boardDetails}
+					selectedUserName={userName}
+					selectedUserPwd={password}
+					selectedUrl={hostedUrl}
+					onSelectBoard={this.selectedBoardforSprintData}
+					currentBoard={this.selectedBoardforIssues}
+					listOfEpics={this.epicBurdownChart}
+					showLoaderforEpicData={this.ShowLoaderforEpicData}
+					showLoaderforSprintData={this.ShowLoaderforSprintData} />,
+					peoplesArray: <PeoplesList peoplesList={peopleList} />,					
+					loaderforpeople:'',
+					sonarQubedata: <SonarQubeData sonarQubeDetails={this.sonarQubeData} />,
+					loaderforsonar: ''
+			})
+
+		}
+
+		else if(peopleList==undefined || JSON.stringify(peopleList)===JSON.stringify([])){			
+			this.setState({
+				selectedProjectBoardDetails: <SelectedProjectBoardDetails selectedProjectBoardDetails={boardDetails}
+					selectedUserName={userName}
+					selectedUserPwd={password}
+					selectedUrl={hostedUrl}
+					onSelectBoard={this.selectedBoardforSprintData}
+					currentBoard={this.selectedBoardforIssues}
+					listOfEpics={this.epicBurdownChart}
+					showLoaderforEpicData={this.ShowLoaderforEpicData}
+					showLoaderforSprintData={this.ShowLoaderforSprintData} />,
+					//peoplesArray: <PeoplesList peoplesList={peopleList} />,					
+					loaderforpeople:'',
+					sonarQubedata: <SonarQubeData sonarQubeDetails={this.sonarQubeData} />,
+					loaderforsonar: '',
+					//peoplesArray:"",
+					emptyPeoplesArray:"No members to dispaly"
+			})
+		}	
 	}
 
 	sonarQubeData() {
@@ -280,20 +324,13 @@ class Account extends React.Component {
 	}
 	selectedBoardforSprintData(sprintList, boardId, url, username, pwd) {
 
-	
-
 		if (sprintList !== undefined) {
-
 			var sprintListArray = sprintList
-
 			for (var i = 0; i < sprintListArray.length; i++) {
 				if (sprintListArray[i].state === "active") {
-
 					var activeSprint = sprintListArray[i].id
 				}
-
 			}
-
 			this.setState({
 				sprintDetails: <SprintDetails sprinttList={sprintListArray}
 					boardId={boardId}
@@ -305,25 +342,24 @@ class Account extends React.Component {
 					sprintBurnDownChart={this.sprintburndownchart}
 					sprintOverviewPiechart={this.sprintoverviewpiechart}
 				/>,
-		
-
-
-
+				emptySprintArray:''
 			});
-
 		}
-
 		else {
 			this.setState({
-				sprintDetails: <SprintDetails sprinttList={[]} boardId={boardId} />,
-
+				// sprintDetails: <SprintDetails sprinttList={[]} boardId={boardId} />,
+				workHours:'',
+				sprintPieChart:'',
+				sprintDetails:'',
+				emptySprintArray:'No Sprints to display data',
+				loaderforsprintoverviewpiechart:'',
+				loaderforsprintburndownchart:''
 			});
 		}
-
-
-
 	}
 	selectedBoardforIssues(epicsArray, resourceURL, userName, password) {
+
+		
 
 
 		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
@@ -369,18 +405,39 @@ class Account extends React.Component {
 	}
 	epicBurdownChart(listOfEpics, boardId, hostedUrl, userName, password) {
 
-				this.setState({
-					epicBurndownChart: <EpicBurdownChart
-						epicsArray={listOfEpics}
-						selectedUserName={userName}
-						selectedUserPwd={password}
-						selectedUrl={hostedUrl}
-						boardID={boardId} 
-						
-						/>,
-						loaderforEpicOverviewburndownchart:'',
 		
-				})
+
+		if(JSON.stringify(listOfEpics)==JSON.stringify([])){
+		
+			this.setState({
+				epicBurndownChart: '',
+				loaderforEpicOverviewburndownchart:'',
+				emptyEpicsArray:"No epics to show data",
+				issuesListArray:'',
+				loaderforEpicDetails:''
+	
+			})
+
+		}
+
+		else{
+
+			this.setState({
+				epicBurndownChart: <EpicBurdownChart
+					epicsArray={listOfEpics}
+					selectedUserName={userName}
+					selectedUserPwd={password}
+					selectedUrl={hostedUrl}
+					boardID={boardId} 
+					
+					/>,
+					loaderforEpicOverviewburndownchart:'',
+					emptyEpicsArray:''
+
+	
+			})
+		}
+				
 		
 		
 	}
@@ -397,21 +454,28 @@ class Account extends React.Component {
 	componentWillMount() {
 		axios.get(myConstClass.nodeAppUrl + '/accounts')
 			.then(response => {
-				this.setState({
-					accounts: this.state.accounts.concat(response.data),
-				})
+			
+
+				if (JSON.stringify(response.data)!== undefined && JSON.stringify(response.data) != JSON.stringify([])) {
+	
+					this.setState({
+						accounts: this.state.accounts.concat(response.data),
+					})
+				}
+				
+				else if(JSON.stringify(response.data) == JSON.stringify([])){
+	
+					this.setState({emptyAccountsObj:true})
+				}
+			
+				
 
 				
 			})
-	}
-
-	
-
-	render() {
-	
+	}	
+	render() {	
 		return (
 			<div className="container-fluid padding0">
-
 				<nav className="navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
 					<div className="col-md-12 flex">
 						<div className="col-md-3 col-lg-2 marginT16">
@@ -453,20 +517,17 @@ class Account extends React.Component {
 
 					</div>
 				</nav>
-
 				<div className="row projectselectiondivbgcolor">
 					<div className="col-lg-12 displayInline">
 						<div className="col-lg-2 textAlignCenter">
 						 {this.state.projects} 
 						
 							</div>
-							<div className="col-lg-2 textAlignCenter">
+							<div className="col-lg-2 textAlignCenter marginL1">
 							 {this.state.selectedProjectBoardDetails} 						
 								</div>
 						</div>
 					</div>
-
-
 				<div className="row">			
 					<div className="col-md-4 col-lg-4   padding0 verticalHeight">
 						{/* <div className="col-md-12 col-lg-12 textAlignCenter selectionbox">
@@ -477,18 +538,28 @@ class Account extends React.Component {
 							{this.state.selectedProjectBoardDetails}
 						</div> */}
 
-						<div className="col-md-12 col-lg-11  teamdetailsheight boxshadowfordata boxmargin borderRadius">
+						<div className="col-md-12 col-lg-11  teamdetailsheight boxshadowfordata boxmargin borderRadius justify">
 
 							<div className="textAlignCenter">
 								{this.state.loaderforpeople}
 							</div>
+							<div>
+								{this.state.emptyPeoplesArray}
+								</div>
+							<div className="col-md-12 col-lg-12 textAlignCenter">
+								<h5>Team Details</h5>
 								{this.state.peoplesArray}
+							</div>								
 						</div>
+
 						<div className="col-md-12 col-lg-11  sonarqubedataheight boxshadowfordata boxmargin borderRadius">
 							<div className="textAlignCenter">
 								{this.state.loaderforsonar}
 							</div>
-							{this.state.sonarQubedata}
+							<div className="col-md-12 col-lg-12 marginB08 textAlignCenter ">
+								<h5>Quality Overview</h5>
+								{this.state.sonarQubedata}
+							</div>							
 						</div>
 					</div>
 					<div className="col-md-4 col-lg-4   padding0 verticalHeight">
@@ -496,23 +567,51 @@ class Account extends React.Component {
 						<div className="textAlignCenter">
 								{this.state.loaderforEpicDetails}
 							</div>
+							
+						<div className="col-md-12 col-lg-12 textAlignCenter  padding0">
+							<h5>Epic Overview</h5>
+							
+						</div>
+						<div className="epicTablediv">
 							{this.state.issuesListArray}
+							<div className="textAlignCenter justify">
+								{this.state.emptyEpicsArray}
+							</div>
+							</div>
 						</div>
 						<div className="col-md-12 col-lg-11  sonarqubedataheight boxshadowfordata boxmarginTop borderRadius">
 						<div className="textAlignCenter">
 								{this.state.loaderforEpicOverviewburndownchart}
 							</div>
+						<div className="col-md-12 col-lg-12 textAlignCenter">
+							<h5>Epic BurndownChart</h5>
+							
+						</div>
 							{this.state.epicBurndownChart}
+							<div className="textAlignCenter verticalAlign">
+								{this.state.emptyEpicsArray}
+							</div>
 						</div>
 					</div>					
 
 					<div className={["col-md-4 col-lg-4   padding0 verticalHeight"].join(' ')} >
+						
 						<div className={["col-md-12 col-lg-11 textAlignCenter  sprintselectboxheight boxshadowfordata boxmarginTopforsprintdata borderRadius", this.state.overlay == true ? "backgroundoverlay" : ''].join(' ')}>
+							<div className="col-md-12 col-lg-12 textAlignCenter ">
+
+							<h5>Select Sprint</h5>
+						</div>
 							{this.state.sprintDetails}
 						</div>
 						<div className={["col-md-12 col-lg-11 textAlignCenter  sprintburndownheight boxshadowfordata boxmarginTopforsprintdata borderRadius", this.state.sprintburndownoverlay == true ? "backgroundoverlay" : ''].join(' ')}>
 							<div className="col-lg-12 textAlignCenter">
 								{this.state.loaderforsprintburndownchart}
+							</div>
+							<div className="col-md-12 col-lg-12 textAlignCenter ">
+								<h5>Sprint Burndown</h5>
+								<div className="textAlignCenter">
+								{this.state.emptySprintArray}
+							</div>
 							</div>
 							{this.state.workHours}
 						</div>
@@ -520,6 +619,12 @@ class Account extends React.Component {
 						<div className={["col-md-12 col-lg-11 textAlignCenter sprintoverviewheight boxshadowfordata boxmarginTopforsprintdata borderRadius", this.state.sprintoverviewoverlay == true ? "backgroundoverlay" : ''].join(' ')}>
 							<div className="textAlignCenter">
 								{this.state.loaderforsprintoverviewpiechart}
+							</div>
+							<div className="col-md-12 col-lg-12 textAlignCenter ">
+								<h5>Sprint Overview</h5>
+								<div className="textAlignCenter">
+								{this.state.emptySprintArray}
+							</div>
 							</div>
 							{this.state.sprintPieChart}
 						</div>
@@ -582,6 +687,58 @@ class Account extends React.Component {
 					</div>
 
 				</Modal>
+				<Modal isOpen={this.state.emptyAccountsObj} style={emptyObjectModalStyles}
+					className={["col-md-3 col-lg-3  modalMargins overlay "].join(' ')}>
+
+					<div>
+			
+							<h5 className="font">No Account to select</h5>
+					
+					
+
+
+							 {/* <div>
+								
+								 <Button bsStyle="danger" bsSize="small" className="loginSubmitBtn" onClick={() => this.cancelModal()} >Cancel</Button> 
+							</div>   */}
+
+
+
+				
+
+					</div>
+
+				</Modal>
+				<Modal isOpen={this.state.emptyProjectsObj} style={emptyObjectModalStyles}
+					className={["col-md-3 col-lg-3  modalMargins overlay "].join(' ')}>
+
+					<div>
+			
+							<h5 className="font">No projects for this Account to select</h5>
+					
+					
+
+
+							 {/* <div>
+								
+								 <Button bsStyle="danger" bsSize="small" className="loginSubmitBtn" onClick={() => this.cancelModal()} >Cancel</Button> 
+							</div>   */}
+
+
+
+				
+
+					</div>
+
+				</Modal>
+				<Modal isOpen={this.state.emptyToolsandPeopleObj} style={emptyObjectModalStyles}
+					className={["col-md-3 col-lg-3  modalMargins overlay "].join(' ')}>
+					<div>
+							<h5 className="font">No tools & people for the selected project</h5>
+	
+					</div>
+
+				</Modal>
 				{/* <div className="footer ">
 					<div className="col-md-12 displayInline"> */}
 						{/* <div className="col-md-4">
@@ -623,21 +780,29 @@ class SelectedProjectDetails extends React.Component {
 
 		this.projectDetailsListarray = this.projectDetailsListarray.bind(this);
 		this.selectProject = this.selectProject.bind(this);
+		this.getBoard = this.getBoard.bind(this);
 	}
 
 	componentWillMount() {
 
 
+			this.setState({
+				projectDetails: this.props.projectDetails,
+				// userName: this.props.selectedUserName,
+				// pwd: this.props.selectedUserPwd,
+				// url: this.props.selectedUrl
+				//loader:<RefreshIndicatorExampleLoading status={""}/> 
+			})
+		
 
+	
 
-		this.setState({
-			projectDetails: this.props.projectDetails,
-			// userName: this.props.selectedUserName,
-			// pwd: this.props.selectedUserPwd,
-			// url: this.props.selectedUrl
-			//loader:<RefreshIndicatorExampleLoading status={""}/> 
-		})
+	}
 
+	componentDidMount(){
+		if (JSON.stringify(this.props.projectDetails.projects) == JSON.stringify([])) {
+			return this.props.errorMessage()
+ 		}
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -650,44 +815,74 @@ class SelectedProjectDetails extends React.Component {
 		})
 
 	}
-	selectProject(event, ind, value) {
+	getBoard(url,username,password,people){
+		
+		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+			"resourceURL": url + "/rest/agile/1.0/board",
+			"userName": username,
+			"password": password,
+			"actionMethod": "get"
+		})
+			.then(response => {
+				var boardDetails = response.data.values
+				var userName = username
+				var Password = password
+				var hostedUrl = url
+				var peopleList = people
+				this.props.onSelectProject(boardDetails, userName, Password, hostedUrl, peopleList)
+			})	
+	}
 	
-		
-		
+	selectProject(event, ind, value) {
+		//this.setState({ selectedProject: value })
 
-
-		this.setState({ selectedProject: value})
+		this.setState({ selectedProjectIndex: value })
 
 		this.state.hintStyle2 = {
 			opacity: 0
 		}
 
-		this.props.showLoader()
-		this.setState({ selectedProjectIndex: value })
-		var jumpStartMenuNameArray = []
-		const IM = "Issue Management"
 
-		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-			"resourceURL": this.state.projectDetails.projects[ind].tools[IM].hostedURL + "/rest/agile/1.0/board",
-			"userName": this.state.projectDetails.projects[ind].tools[IM].userName,
-			"password": this.state.projectDetails.projects[ind].tools[IM].password,
-			"actionMethod": "get"
-		})
-			.then(response => {
+		if(this.state.projectDetails.projects[ind].tools ==undefined &&this.state.projectDetails.projects[ind].people==undefined){
 
-				var boardDetails = response.data.values
-				var userName = this.state.projectDetails.projects[ind].tools[IM].userName
-				var password = this.state.projectDetails.projects[ind].tools[IM].password
-				var hostedUrl = this.state.projectDetails.projects[ind].tools[IM].hostedURL
-				var peopleList = this.state.projectDetails.projects[ind].people
-				this.props.onSelectProject(boardDetails, userName, password, hostedUrl, peopleList)
-			})
+			return this.props.errorMessage()
+		}
 
+		if(this.state.projectDetails.projects[ind].tools !=undefined && 
+			(this.state.projectDetails.projects[ind].people==undefined || JSON.stringify(this.state.projectDetails.projects[ind].people)==JSON.stringify([]) ))
+		
+						{
+					
+							this.props.showLoader()
+							var jumpStartMenuNameArray = []
+							const IM = "Issue Management"
+							this.getBoard(
+								this.state.projectDetails.projects[ind].tools[IM].hostedURL,
+								this.state.projectDetails.projects[ind].tools[IM].userName,
+								this.state.projectDetails.projects[ind].tools[IM].password,
+								this.state.projectDetails.projects[ind].tools[IM].people
+							)
+							
+						}	
+
+		if(this.state.projectDetails.projects[ind].tools !=undefined && this.state.projectDetails.projects[ind].people!=undefined && JSON.stringify(this.state.projectDetails.projects[ind].people)!=JSON.stringify([])){
+		
+			
+			this.props.showLoader()
+			var jumpStartMenuNameArray = []
+			const IM = "Issue Management"
+		
+			this.getBoard(
+				
+				this.state.projectDetails.projects[ind].tools[IM].hostedURL,
+				this.state.projectDetails.projects[ind].tools[IM].userName,
+				this.state.projectDetails.projects[ind].tools[IM].password,
+				this.state.projectDetails.projects[ind].people
+			)
+
+		}				
 			// this.setState({ loader:<RefreshIndicatorExampleLoading status={""}/> })
-
-
 	}
-
 
 	projectDetailsListarray(projects) {
 		return projects.map((project) => (
@@ -783,7 +978,6 @@ class SelectedProjectBoardDetails extends React.Component {
 		})
 			.then(response => {
 
-				console.log(response.data,"sprint")
 				this.props.onSelectBoard(response.data.values, this.state.projectBoardDetailsListarray[index].id, this.state.url, this.state.userName, this.state.pwd, boardId);
 				// this.props.sonarQubeDetails()
 				// this.setState({
@@ -809,53 +1003,72 @@ class SelectedProjectBoardDetails extends React.Component {
 			})
 			.then(response => {
 
-				console.log(response.data,"epic")
-	setTimeout (function(){
-
-		var listOfEpics = response.data.values
-		var boardId = response.config.boardId
-		var resourceURL = response.config.hostedUrl
-		var userName = JSON.parse(response.config.data).userName
-		var password = JSON.parse(response.config.data).password
-
-
-		this.props.listOfEpics(listOfEpics, boardId, resourceURL, userName, password)
-
-		var epicArray = []
-		var counter = 0
-		for (var i = 0; i < response.data.values.length; i++) {
-			var epicName = response.data.values[i].name
-			var hostedURL = this.state.url
-			axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-				"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/epic/" + response.data.values[i].id + "/issue",
-				"userName": this.state.userName,
-				"password": this.state.pwd,
-				"actionMethod": "get"
-			}, {
-
-					epicName: response.data.values[i].name,
-					index: i,
-					length: response.data.values.length,
-					hostedUrl: hostedURL
-
-				})
-				.then(response => {
-				
-					var resourceURL = response.config.hostedUrl
-					var userName = JSON.parse(response.config.data).userName
-					var password = JSON.parse(response.config.data).password
-
-					epicArray.push({ name: response.config.epicName, issues: response.data.issues })
-
-					if (response.config.index == (response.config.length - 1)) {
-						this.props.currentBoard(epicArray, resourceURL, userName, password)
-					}
-
-				})
-
-		}
-	}.bind(this),1000)
 			
+			if(JSON.stringify(response.data.values)==JSON.stringify([])){
+
+				var listOfEpics = response.data.values
+				var boardId = response.config.boardId
+				var resourceURL = response.config.hostedUrl
+				var userName = JSON.parse(response.config.data).userName
+				var password = JSON.parse(response.config.data).password
+	
+	
+				 this.props.listOfEpics(listOfEpics, boardId, resourceURL, userName, password)
+
+
+			}
+
+			else{
+				
+				setTimeout (function(){
+					
+								var listOfEpics = response.data.values
+								var boardId = response.config.boardId
+								var resourceURL = response.config.hostedUrl
+								var userName = JSON.parse(response.config.data).userName
+								var password = JSON.parse(response.config.data).password
+					
+					
+								this.props.listOfEpics(listOfEpics, boardId, resourceURL, userName, password)
+					
+								var epicArray = []
+								var counter = 0
+								for (var i = 0; i < response.data.values.length; i++) {
+									var epicName = response.data.values[i].name
+									var hostedURL = this.state.url
+									axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+										"resourceURL": this.state.url + "/rest/agile/1.0/board/" + this.state.projectBoardDetailsListarray[index].id + "/epic/" + response.data.values[i].id + "/issue",
+										"userName": this.state.userName,
+										"password": this.state.pwd,
+										"actionMethod": "get"
+									}, {
+					
+											epicName: response.data.values[i].name,
+											index: i,
+											length: response.data.values.length,
+											hostedUrl: hostedURL
+					
+										})
+										.then(response => {
+										
+											var resourceURL = response.config.hostedUrl
+											var userName = JSON.parse(response.config.data).userName
+											var password = JSON.parse(response.config.data).password
+					
+											epicArray.push({ name: response.config.epicName, issues: response.data.issues })
+					
+											if (response.config.index == (response.config.length - 1)) {
+												this.props.currentBoard(epicArray, resourceURL, userName, password)
+											}
+					
+										})
+					
+								}
+							}.bind(this),1000)
+
+			}
+
+					
 
 
 			})
@@ -894,6 +1107,429 @@ class SelectedProjectBoardDetails extends React.Component {
 
 			</div>
 
+
+
+
+		)
+	}
+}
+class PeoplesList extends React.Component {
+	_
+	constructor(props) {
+		super(props)
+
+		this.state = {
+
+			peoplesArray: [],
+			showCheckboxes: false,
+			height: '194px'
+
+		}
+
+
+	}
+	componentWillMount() {
+
+
+		this.setState({ peoplesArray: this.props.peoplesList })
+
+
+	}
+	render() {
+		return (
+			<div className="padding0">	
+				<div className="col-md-12 col-lg-12 padding0">
+					<Table height={this.state.height}>
+						<TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={false}>
+							<TableRow>
+								<TableHeaderColumn>Name</TableHeaderColumn>
+								<TableHeaderColumn>Role</TableHeaderColumn>
+								<TableHeaderColumn>Email ID</TableHeaderColumn>
+							</TableRow>
+						</TableHeader>
+						<TableBody displayRowCheckbox={this.state.showCheckboxes}>
+							{this.state.peoplesArray.map((people, index) => (
+								<TableRow key={index}>
+									<TableRowColumn>{people.name}</TableRowColumn>
+									<TableRowColumn>{people.role}</TableRowColumn>
+									<TableRowColumn>{people.emailid}</TableRowColumn>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				</div>
+			</div>
+		)
+	}
+}
+class SonarQubeData extends React.Component {
+	_
+	constructor(props) {
+		super(props)
+		this.state = {
+			sonarQubeData: {
+				"bugs": "",
+				"vulnerabilities": "",
+				"codesmells": "",
+				"duplicatedBlocks": "",
+				"duplications": "",
+				"script": "", "linesofcode": "",
+			}
+
+		}
+
+
+	}
+
+	componentWillMount() {
+		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+			"resourceURL": "http://172.16.27.27:4950/sonar/api/measures/component?additionalFields=metrics,periods&componentKey=_Fic1&metricKeys=alert_status,quality_gate_details,bugs,new_bugs,reliability_rating,vulnerabilities,new_vulnerabilities,security_rating,code_smells,new_code_smells,sqale_rating,sqale_index,new_technical_debt,overall_coverage,new_overall_coverage,coverage,new_coverage,it_coverage,new_it_coverage,new_lines_to_cover,new_it_lines_to_cover,new_overall_lines_to_cover,tests,duplicated_lines_density,duplicated_blocks,ncloc,ncloc_language_distribution",
+			"userName": "admin", "password": "admin", "actionMethod": "get"
+		})
+			.then(response => {
+
+				var i
+				// 	this.state.closedIssues=[]
+				// 	this.state.openIssues=[]
+				for (i = 0; i < response.data.component.measures.length; i++) {
+					if (response.data.component.measures[i].metric == "bugs") {
+						this.state.bugs = response.data.component.measures[i].value
+
+					}
+					if (response.data.component.measures[i].metric == "vulnerabilities") {
+						this.state.vulnerabilities = response.data.component.measures[i].value
+					}
+					if (response.data.component.measures[i].metric == "code_smells") {
+						this.state.codesmells = response.data.component.measures[i].value
+
+					}
+
+					if (response.data.component.measures[i].metric == "duplicated_blocks") {
+						this.state.duplicatedBlocks = response.data.component.measures[i].value
+
+					}
+					if (response.data.component.measures[i].metric == "duplicated_lines_density") {
+						this.state.duplications = response.data.component.measures[i].value
+
+					}
+					if (response.data.component.measures[i].metric == "ncloc_language_distribution") {
+						this.state.script = response.data.component.measures[i].value
+
+					}
+					if (response.data.component.measures[i].metric == "ncloc") {
+						this.state.linesofcode = response.data.component.measures[i].value
+
+					}
+
+				}
+				this.setState({
+					sonarQubeData: {
+						"bugs": this.state.bugs,
+						"vulnerabilities": this.state.vulnerabilities,
+						"codesmells": this.state.codesmells,
+						"duplicatedBlocks": this.state.duplicatedBlocks,
+						"duplications": this.state.duplications,
+						"script": this.state.script,
+						"linesofcode": this.state.linesofcode,
+					}
+				})
+
+				//  this.props.sonarQubeDetails(this.state.sonarQubeData);
+
+
+			})
+
+
+	}
+
+	render() {
+		return (
+			
+			<div className="col-md-12 padding0">
+				{/* <div className="col-md-12 col-lg-12 marginB08 textAlignCenter ">
+					<h5>Quality Overview</h5>
+				</div> */}
+
+
+				<div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
+					<div className="col-md-3 col-lg-4 textAlignCenter">Bugs
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.bugs}
+						</div>
+					</div>
+					<div className="col-md-4 col-lg-4 textAlignCenter"> Vulnerabilities
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.vulnerabilities}
+						</div>
+					</div>
+					<div className="col-md-5 col-lg-4 textAlignCenter">Code Smells
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.codesmells}
+						</div>
+					</div>
+					
+				</div>
+
+			
+				<div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
+
+				<div className="col-md-3 col-lg-4 textAlignCenter"> Debt
+													<div className="textAlignCenter">
+							{}
+						</div>
+					</div>
+					<div className="col-md-4 col-lg-4 textAlignCenter">Duplications
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.duplications}
+						</div>
+					</div>
+					<div className="col-md-5 col-lg-4 textAlignCenter"> Duplicated Blocks
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.duplicatedBlocks}
+						</div>
+					</div>
+					
+				</div>
+
+				<div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
+
+				<div className="col-md-3 col-lg-4 textAlignCenter"> Lines of Code
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.linesofcode}
+						</div>
+					</div>
+					
+				<div className="col-md-4 col-lg-4 textAlignCenter wordwrap">Script Lines
+													<div className="textAlignCenter">
+							{this.state.sonarQubeData.script}
+						</div>
+					</div>
+					
+				</div>
+
+
+
+
+			</div>
+
+
+
+
+
+
+
+
+
+		)
+	}
+}
+class IssuesList extends React.Component {
+	_
+	constructor(props) {
+		super(props)
+		this.state = {
+			epicsArray: [],
+			issuesArray: [],
+			height: '300px',
+			showCheckboxes: false,
+			issuesHeaderItems:[]
+		}
+	}	
+	componentDidMount() {	
+		for (var i = 0; i < 1; i++) {
+			var headerItems = Object.keys(this.props.issuesArray[1])
+		}
+		this.setState({ issuesArray: this.props.issuesArray, issuesHeaderItems: headerItems })
+	}
+	render() {
+		return (
+	
+				<div className="col-md-12 col-lg-12 padding0">		
+					<table className="table table-fixed">
+						<thead className="">
+							<tr className="epicdetailstableheadrowStyle">
+							{this.state.issuesHeaderItems.map((row,i)  => (								
+										<th className="epictableheadverticalalign" key={i}>{row}</th>				
+							))}
+							</tr>
+						</thead>
+						<tbody>
+						{this.state.issuesArray.map((row,i) => (
+							<tr key={i}>
+								{Object.values(row).map(rowValue =>
+									<td className="epicTableDataStyle">{rowValue}</td>
+								)}
+							</tr>
+						))}
+							</tbody>
+					</table>
+					{/* <Table height={this.state.height}>
+						<TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={false}>
+						{this.state.issuesHeaderItems.map((row,i)  => (									
+										<TableHeaderColumn key={i}>{row}</TableHeaderColumn>					
+							))}				
+						</TableHeader>
+						<TableBody displayRowCheckbox={this.state.showCheckboxes}>
+							{this.state.issuesArray.map((row,i) => (
+								<TableRow key={i}>
+									{Object.values(row).map(rowValue =>
+										<TableRowColumn>{rowValue}</TableRowColumn>
+									)}
+								</TableRow>
+							))}
+						</TableBody>
+					</Table> */}
+				</div>
+		
+
+		)
+	}
+}
+class EpicBurdownChart extends React.Component {
+	_
+	constructor(props) {
+		super(props)
+		this.state = {
+			boardId: '',
+			url: '',
+			userName: '',
+			pwd: '',
+			epicsArray: '',
+			selectedEpicId: '',
+			epicBurnDownDataArray:[]
+		}
+		this.handleSelectedEpic = this.handleSelectedEpic.bind(this)
+		this.listoFEpics = this.listoFEpics.bind(this)
+	}
+
+	componentWillMount() {
+		this.state.epicListSorted = this.props.epicsArray.sort(function (a, b) {
+			return parseFloat(b.id) - parseFloat(a.id);
+		})
+		this.setState({
+			boardId: this.props.boardID,
+			url: this.props.selectedUrl,
+			userName: this.props.selectedUserName,
+			pwd: this.props.selectedUserPwd,
+			epicsArray: this.state.epicListSorted
+		})
+	}
+
+	componentWillReceiveProps(nextProps) {
+
+		this.state.sprintListSorted = nextProps.epicsArray.sort(function (a, b) {
+
+
+			return parseFloat(b.id) - parseFloat(a.id);
+		})
+		this.setState({
+			boardId: nextProps.boardID,
+
+			url: nextProps.selectedUrl,
+			userName: nextProps.selectedUserName,
+			pwd: nextProps.selectedUserPwd,
+			epicsArray: this.state.sprintListSorted
+		})
+	}
+	componentDidMount(){
+		var epicId=this.state.epicsArray[0].key
+	
+		this.handleSelectedEpic("1","2",epicId)
+		
+	}
+	handleSelectedEpic(event, index, val) {
+		
+		this.setState({ selectedEpicId: val })
+		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+			"resourceURL": this.state.url + "/rest/greenhopper/1.0/rapid/charts/epicburndownchart?rapidViewId=" + this.state.boardId + "&epicKey=" + val,
+			"userName": this.state.userName,
+			"password": this.state.pwd,
+			"actionMethod": "get"
+		}).then(response => {
+
+			var sprintsArray = []
+			Object.keys(response.data.changes).forEach(function (key, index) {
+				var eachChangesObj = response.data.changes[key][0]
+
+				var eachDate = Number(key)
+				
+				
+				response.data.sprints.forEach(function (eachSprint) {
+					if (eachDate >= eachSprint.startTime && eachDate <= eachSprint.endTime) {
+						if (eachSprint.changes == undefined) {
+							eachSprint.changes = [];
+						}
+						if(eachChangesObj.statC !== undefined && eachChangesObj.statC !== {}){
+							// console.log(eachSprint.name ,"Change in ",eachChangesObj.key , eachChangesObj.statC.newValue?eachChangesObj.statC.newValue:"NA" , eachChangesObj.statC.oldValue?eachChangesObj.statC.oldValue:"NA")
+						}
+						eachSprint.changes.push(response.data.changes[key][0])
+					}
+				})
+				
+			})
+			//console.log(response.data.sprints)
+			response.data.sprints.forEach(function(eachSprint){
+				if(eachSprint.changes!=undefined){
+					eachSprint.uv=4000
+					eachSprint.pv=3000
+					sprintsArray.push(eachSprint)	
+				}
+			})
+			this.setState({
+				epicBurnDownDataArray:sprintsArray
+			})
+		})
+		
+	}
+
+	listoFEpics(epicsArray) {
+		return epicsArray.map((epic) => (
+			<MenuItem
+				key={epic.id}
+				value={epic.key}
+				primaryText={epic.key}
+			/>
+		));
+	}
+
+	render() {
+	
+		const data = [
+			{ name: 'Page A', uv: 4000, pv: 2400, },
+			{ name: 'Page B', uv: 3000, pv: 1398, },
+			{ name: 'Page C', uv: 2000, pv: 9800, },
+			{ name: 'Page D', uv: 2780, pv: 3908, },
+			{ name: 'Page E', uv: 1890, pv: 4800, },
+			{ name: 'Page F', uv: 2390, pv: 3800, },
+			{ name: 'Page G', uv: 3490, pv: 4300,  },
+		];
+		return (
+			<div className="padding0">
+				{/* <div className="col-md-12 col-lg-12 textAlignCenter ">
+					<h5>Epic Overview</h5>
+				</div> */}
+
+				<div className="col-md-12 padding0">
+
+					<SelectField hintText="Select Epic" value={this.state.selectedEpicId} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#000000" }}
+						hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.handleSelectedEpic(e, i, v)}>
+						{this.listoFEpics(this.state.epicsArray)}
+					</SelectField>
+
+				</div>
+				<ResponsiveContainer width='100%' aspect={5.0/2.8}>
+				<BarChart width={600} height={300} data={this.state.epicBurnDownDataArray}
+					margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+					<XAxis dataKey="name"/>
+					<YAxis/>
+					<CartesianGrid strokeDasharray="3  3" />
+				
+				
+					<Bar dataKey="uv" stackId="a" fill="#8884d8" />
+					<Bar dataKey="pv" stackId="a" fill="#82ca9d" />
+				</BarChart>
+				</ResponsiveContainer>
+			</div>
 
 
 
@@ -1154,10 +1790,10 @@ class SprintDetails extends React.Component {
 
 		return (
 			<div className="padding0">
-				<div className="col-md-12 col-lg-12 textAlignCenter ">
+				{/* <div className="col-md-12 col-lg-12 textAlignCenter ">
 
 					<h5>Select Sprint</h5>
-				</div>
+				</div> */}
 				<div className="col-md-12 col-lg-12 textAlignLeft marginTop4">
 					<SelectField
 					underlineStyle={{ display: 'none' }}
@@ -1194,9 +1830,9 @@ class Hourschart extends React.Component {
 
 		return (
 			<div>
-				<div className="col-md-12 col-lg-12 textAlignCenter ">
+				{/* <div className="col-md-12 col-lg-12 textAlignCenter ">
 					<h5>Sprint Burndown</h5>
-				</div>
+				</div> */}
 				<div className="col-md-12 col-lg-11 justify padding0 marginTop6">
 					<ResponsiveContainer width='100%' aspect={5.0 / 2.8}>
 						<LineChart data={this.props.data}>
@@ -1344,9 +1980,9 @@ class Piechart extends React.Component {
 		return (
 			<div>
 
-				<div className="col-md-12 col-lg-12 textAlignCenter ">
+				{/* <div className="col-md-12 col-lg-12 textAlignCenter ">
 					<h5>Sprint Overview</h5>
-				</div>
+				</div> */}
 				<div className="col-lg-12 padding0  displayInline" style={{height:"35vh"}}>
 
 
@@ -1434,496 +2070,6 @@ class Piechart extends React.Component {
 
 
 
-	}
-}
-
-class SonarQubeData extends React.Component {
-	_
-	constructor(props) {
-		super(props)
-		this.state = {
-			sonarQubeData: {
-				"bugs": "",
-				"vulnerabilities": "",
-				"codesmells": "",
-				"duplicatedBlocks": "",
-				"duplications": "",
-				"script": "", "linesofcode": "",
-			}
-
-		}
-
-
-	}
-
-	componentWillMount() {
-		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-			"resourceURL": "http://172.16.27.27:4950/sonar/api/measures/component?additionalFields=metrics,periods&componentKey=_Fic1&metricKeys=alert_status,quality_gate_details,bugs,new_bugs,reliability_rating,vulnerabilities,new_vulnerabilities,security_rating,code_smells,new_code_smells,sqale_rating,sqale_index,new_technical_debt,overall_coverage,new_overall_coverage,coverage,new_coverage,it_coverage,new_it_coverage,new_lines_to_cover,new_it_lines_to_cover,new_overall_lines_to_cover,tests,duplicated_lines_density,duplicated_blocks,ncloc,ncloc_language_distribution",
-			"userName": "admin", "password": "admin", "actionMethod": "get"
-		})
-			.then(response => {
-
-				var i
-				// 	this.state.closedIssues=[]
-				// 	this.state.openIssues=[]
-				for (i = 0; i < response.data.component.measures.length; i++) {
-					if (response.data.component.measures[i].metric == "bugs") {
-						this.state.bugs = response.data.component.measures[i].value
-
-					}
-					if (response.data.component.measures[i].metric == "vulnerabilities") {
-						this.state.vulnerabilities = response.data.component.measures[i].value
-					}
-					if (response.data.component.measures[i].metric == "code_smells") {
-						this.state.codesmells = response.data.component.measures[i].value
-
-					}
-
-					if (response.data.component.measures[i].metric == "duplicated_blocks") {
-						this.state.duplicatedBlocks = response.data.component.measures[i].value
-
-					}
-					if (response.data.component.measures[i].metric == "duplicated_lines_density") {
-						this.state.duplications = response.data.component.measures[i].value
-
-					}
-					if (response.data.component.measures[i].metric == "ncloc_language_distribution") {
-						this.state.script = response.data.component.measures[i].value
-
-					}
-					if (response.data.component.measures[i].metric == "ncloc") {
-						this.state.linesofcode = response.data.component.measures[i].value
-
-					}
-
-				}
-				this.setState({
-					sonarQubeData: {
-						"bugs": this.state.bugs,
-						"vulnerabilities": this.state.vulnerabilities,
-						"codesmells": this.state.codesmells,
-						"duplicatedBlocks": this.state.duplicatedBlocks,
-						"duplications": this.state.duplications,
-						"script": this.state.script,
-						"linesofcode": this.state.linesofcode,
-					}
-				})
-
-				//  this.props.sonarQubeDetails(this.state.sonarQubeData);
-
-
-			})
-
-
-	}
-
-	render() {
-		return (
-			
-			<div className="col-md-12 padding0">
-				<div className="col-md-12 col-lg-12 marginB08 textAlignCenter ">
-					<h5>Quality Overview</h5>
-				</div>
-
-
-				<div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
-					<div className="col-md-3 col-lg-4 textAlignCenter">Bugs
-													<div className="textAlignCenter">
-							{this.state.sonarQubeData.bugs}
-						</div>
-					</div>
-					<div className="col-md-4 col-lg-4 textAlignCenter"> Vulnerabilities
-													<div className="textAlignCenter">
-							{this.state.sonarQubeData.vulnerabilities}
-						</div>
-					</div>
-					<div className="col-md-5 col-lg-4 textAlignCenter">Code Smells
-													<div className="textAlignCenter">
-							{this.state.sonarQubeData.codesmells}
-						</div>
-					</div>
-					
-				</div>
-
-			
-				<div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
-
-				<div className="col-md-3 col-lg-4 textAlignCenter"> Debt
-													<div className="textAlignCenter">
-							{}
-						</div>
-					</div>
-					<div className="col-md-4 col-lg-4 textAlignCenter">Duplications
-													<div className="textAlignCenter">
-							{this.state.sonarQubeData.duplications}
-						</div>
-					</div>
-					<div className="col-md-5 col-lg-4 textAlignCenter"> Duplicated Blocks
-													<div className="textAlignCenter">
-							{this.state.sonarQubeData.duplicatedBlocks}
-						</div>
-					</div>
-					
-				</div>
-
-				<div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
-
-				<div className="col-md-3 col-lg-4 textAlignCenter"> Lines of Code
-													<div className="textAlignCenter">
-							{this.state.sonarQubeData.linesofcode}
-						</div>
-					</div>
-					
-				<div className="col-md-4 col-lg-4 textAlignCenter wordwrap">Script Lines
-													<div className="textAlignCenter">
-							{this.state.sonarQubeData.script}
-						</div>
-					</div>
-					
-				</div>
-
-
-
-
-			</div>
-
-
-
-
-
-
-
-
-
-		)
-	}
-}
-
-
-class IssuesList extends React.Component {
-	_
-	constructor(props) {
-		super(props)
-
-		this.state = {
-			epicsArray: [],
-			issuesArray: [],
-			height: '300px',
-			showCheckboxes: false,
-			issuesHeaderItems:[]
-
-		}
-
-
-	}
-
-
-	
-	componentDidMount() {
-
-		
-
-		for (var i = 0; i < 1; i++) {
-
-			var headerItems = Object.keys(this.props.issuesArray[1])
-
-		}
-
-		this.setState({ issuesArray: this.props.issuesArray, issuesHeaderItems: headerItems })
-
-	}
-
-	// componentDidMount(nextProps){
-
-	// 	this.setState({ issuesArray: nextProps.issuesArray })
-	// }
-
-	render() {
-
-		return (
-			<div className="padding0 epicTablediv">
-				<div className="col-md-12 col-lg-12 textAlignCenter ">
-					<h5>Epic Details</h5>
-				</div>
-
-
-				<div className="col-md-12 col-lg-12 padding0">
-
-		
-					<table className="table table-fixed">
-						<thead className="">
-							<tr className="epicdetailstableheadrowStyle">
-							{this.state.issuesHeaderItems.map((row,i)  => (
-						
-									
-										<th className="epictableheadverticalalign" key={i}>{row}</th >
-									
-					
-							))}
-							</tr>
-						</thead>
-
-						<tbody>
-						{this.state.issuesArray.map((row,i) => (
-							<tr key={i}>
-								{Object.values(row).map(rowValue =>
-									<td className="epicTableDataStyle">{rowValue}</td>
-								)}
-							</tr>
-						))}
-							</tbody>
-					</table>
-
-					{/* <Table height={this.state.height}>
-						<TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={false}>
-						{this.state.issuesHeaderItems.map((row,i)  => (
-						
-									
-										<TableHeaderColumn key={i}>{row}</TableHeaderColumn>
-									
-					
-							))}
-
-					
-						</TableHeader>
-						<TableBody displayRowCheckbox={this.state.showCheckboxes}>
-							{this.state.issuesArray.map((row,i) => (
-								<TableRow key={i}>
-									{Object.values(row).map(rowValue =>
-										<TableRowColumn>{rowValue}</TableRowColumn>
-									)}
-								</TableRow>
-							))}
-
-						</TableBody>
-					</Table> */}
-				</div>
-
-
-
-			</div>
-
-
-
-
-		)
-	}
-}
-
-class PeoplesList extends React.Component {
-	_
-	constructor(props) {
-		super(props)
-
-		this.state = {
-
-			peoplesArray: [],
-			showCheckboxes: false,
-			height: '194px'
-
-		}
-
-
-	}
-
-	componentWillMount() {
-
-		this.setState({ peoplesArray: this.props.peoplesList })
-
-	}
-
-	render() {
-
-		return (
-			<div className="padding0">
-				<div className="col-md-12 col-lg-12 textAlignCenter ">
-					<h5>Team Details</h5>
-				</div>
-
-
-
-				<div className="col-md-12 col-lg-12 padding0">
-
-					<Table height={this.state.height}>
-						<TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={false}>
-							<TableRow>
-								<TableHeaderColumn>Name</TableHeaderColumn>
-								<TableHeaderColumn>Role</TableHeaderColumn>
-								<TableHeaderColumn>Email ID</TableHeaderColumn>
-							</TableRow>
-						</TableHeader>
-						<TableBody displayRowCheckbox={this.state.showCheckboxes}>
-							{this.state.peoplesArray.map((people, index) => (
-								<TableRow key={index}>
-									<TableRowColumn>{people.name}</TableRowColumn>
-									<TableRowColumn>{people.role}</TableRowColumn>
-									<TableRowColumn>{people.emailid}</TableRowColumn>
-								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</div>
-
-
-
-			</div>
-
-
-
-
-		)
-	}
-}
-
-class EpicBurdownChart extends React.Component {
-	_
-	constructor(props) {
-		super(props)
-		this.state = {
-			boardId: '',
-			url: '',
-			userName: '',
-			pwd: '',
-			epicsArray: '',
-			selectedEpicId: '',
-			epicBurnDownDataArray:[]
-		}
-		this.handleSelectedEpic = this.handleSelectedEpic.bind(this)
-		this.listoFEpics = this.listoFEpics.bind(this)
-	}
-
-	componentWillMount() {
-		this.state.epicListSorted = this.props.epicsArray.sort(function (a, b) {
-			return parseFloat(b.id) - parseFloat(a.id);
-		})
-		this.setState({
-			boardId: this.props.boardID,
-			url: this.props.selectedUrl,
-			userName: this.props.selectedUserName,
-			pwd: this.props.selectedUserPwd,
-			epicsArray: this.state.epicListSorted
-		})
-	}
-
-	componentWillReceiveProps(nextProps) {
-
-		this.state.sprintListSorted = nextProps.epicsArray.sort(function (a, b) {
-
-
-			return parseFloat(b.id) - parseFloat(a.id);
-		})
-		this.setState({
-			boardId: nextProps.boardID,
-
-			url: nextProps.selectedUrl,
-			userName: nextProps.selectedUserName,
-			pwd: nextProps.selectedUserPwd,
-			epicsArray: this.state.sprintListSorted
-		})
-	}
-	componentDidMount(){
-		var epicId=this.state.epicsArray[0].key
-	
-		this.handleSelectedEpic("1","2",epicId)
-		
-	}
-	handleSelectedEpic(event, index, val) {
-		
-		this.setState({ selectedEpicId: val })
-		axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-			"resourceURL": this.state.url + "/rest/greenhopper/1.0/rapid/charts/epicburndownchart?rapidViewId=" + this.state.boardId + "&epicKey=" + val,
-			"userName": this.state.userName,
-			"password": this.state.pwd,
-			"actionMethod": "get"
-		}).then(response => {
-
-			var sprintsArray = []
-			Object.keys(response.data.changes).forEach(function (key, index) {
-				var eachChangesObj = response.data.changes[key][0]
-
-				var eachDate = Number(key)
-				
-				
-				response.data.sprints.forEach(function (eachSprint) {
-					if (eachDate >= eachSprint.startTime && eachDate <= eachSprint.endTime) {
-						if (eachSprint.changes == undefined) {
-							eachSprint.changes = [];
-						}
-						if(eachChangesObj.statC !== undefined && eachChangesObj.statC !== {}){
-							// console.log(eachSprint.name ,"Change in ",eachChangesObj.key , eachChangesObj.statC.newValue?eachChangesObj.statC.newValue:"NA" , eachChangesObj.statC.oldValue?eachChangesObj.statC.oldValue:"NA")
-						}
-						eachSprint.changes.push(response.data.changes[key][0])
-					}
-				})
-				
-			})
-			//console.log(response.data.sprints)
-			response.data.sprints.forEach(function(eachSprint){
-				if(eachSprint.changes!=undefined){
-					eachSprint.uv=4000
-					eachSprint.pv=3000
-					sprintsArray.push(eachSprint)	
-				}
-			})
-			this.setState({
-				epicBurnDownDataArray:sprintsArray
-			})
-		})
-		
-	}
-
-	listoFEpics(epicsArray) {
-		return epicsArray.map((epic) => (
-			<MenuItem
-				key={epic.id}
-				value={epic.key}
-				primaryText={epic.key}
-			/>
-		));
-	}
-
-	render() {
-		//console.log(this.state.epicBurnDownDataArray)
-		const data = [
-			{ name: 'Page A', uv: 4000, pv: 2400, },
-			{ name: 'Page B', uv: 3000, pv: 1398, },
-			{ name: 'Page C', uv: 2000, pv: 9800, },
-			{ name: 'Page D', uv: 2780, pv: 3908, },
-			{ name: 'Page E', uv: 1890, pv: 4800, },
-			{ name: 'Page F', uv: 2390, pv: 3800, },
-			{ name: 'Page G', uv: 3490, pv: 4300,  },
-		];
-		return (
-			<div className="padding0">
-				<div className="col-md-12 col-lg-12 textAlignCenter ">
-					<h5>Epic Overview</h5>
-				</div>
-
-				<div className="col-md-12 padding0">
-
-					<SelectField hintText="Select Epic" value={this.state.selectedEpicId} listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#000000" }}
-						hintStyle={this.state.hintStyle2} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.handleSelectedEpic(e, i, v)}>
-						{this.listoFEpics(this.state.epicsArray)}
-					</SelectField>
-
-				</div>
-				<ResponsiveContainer width='100%' aspect={5.0/2.8}>
-				<BarChart width={600} height={300} data={this.state.epicBurnDownDataArray}
-					margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-					<XAxis dataKey="name"/>
-					<YAxis/>
-					<CartesianGrid strokeDasharray="3  3" />
-				
-				
-					<Bar dataKey="uv" stackId="a" fill="#8884d8" />
-					<Bar dataKey="pv" stackId="a" fill="#82ca9d" />
-				</BarChart>
-				</ResponsiveContainer>
-			</div>
-
-
-
-		)
 	}
 }
 
