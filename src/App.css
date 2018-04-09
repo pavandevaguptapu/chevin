@@ -97,6 +97,10 @@ html,body{
 	text-align:center;
 
 }
+.manageAccount {
+	background-color: #eee !important;
+	border-radius: 3px;
+}
 .modal{
 	height:320px;
 	width:400px;
@@ -702,7 +706,24 @@ background-color: #26A69A
 				.wordwrap{
 					word-wrap: break-word !important;
 				}
+				.project_details img {
+					width: 100px !important;
+					height: 100px !important;
+					color: rgb(255, 255, 255);
+					background-color: rgb(188, 188, 188);
+					user-select: none;
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					font-size: 20px;
+					border-radius: 50%;
+					margin-right: 16px;					
+				}
+				.project_details span {
+					font-size: 30px !important;
+				}
 
+					
 			
 					/* justify-content: center;
 					

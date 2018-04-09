@@ -21,10 +21,10 @@
     "recharts": "^1.0.0-beta.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set PORT=3001 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://192.168.29.14:8087/"
+  "proxy": "http://172.16.25.50:8585/"
 }
