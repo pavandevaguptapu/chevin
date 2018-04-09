@@ -1,17 +1,15 @@
 import React from 'react';
 import './App.css';
-import PropTypes from 'prop-types';
+
 import Modal from 'react-modal';
 import axios from 'axios';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import Avatar from 'material-ui/Avatar';
-import {List, ListItem, makeSelectable} from 'material-ui/List';
-import TextField  from 'material-ui/TextField';
-import Subheader from 'material-ui/Subheader';
+import List from 'material-ui/List/List';
+import ListItem from 'material-ui/List/ListItem';
 
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
@@ -19,11 +17,8 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import ContentEdit from 'material-ui/svg-icons/editor/mode-edit';
 import {myConstClass} from './constants.js';
-
 var dcopy = require('deep-copy')
 
-
-let SelectableList = makeSelectable(List);
 const customStyles = {
     content: {
         top: '50%',
@@ -50,10 +45,10 @@ const customStylesJumpStart = {
 };
 
 const imageStyle = {
+
     top: "-5px",
     marginLeft: "-12px"
 }
-
 const innerDiv = {
     padding: "0px"
 }
@@ -62,36 +57,33 @@ const buttonStyle = {
     marginRight: '5px'
 }
 const modelbuttonsStyle = {
-    backgroundColor:'rgba(255, 255, 255, 0.87)',
+    backgroundColor:'rgb(229, 226, 226)',
     paddingRight: '10px',
     boxShadow:'none'
 }
 
 const addAccountBUtton = {
     height: "20px",
-    width: "20px"  
+    width: "20px",
+   
 }
 const boxShadow={
     zDepthShadows:"0px",
     
 }
 const editbuttonStyle={
-    marginLeft: "50%",
-    boxShadow: "none"
+    marginLeft: "50%"
 }
 const addProjectButtonstyle={
-    marginLeft: "2%",
-    boxShadow: "none"
+    marginLeft: "1%"
 }
 const addAcountstyle = {
-    // marginLeft: "61%",
-    boxShadow: "none"
+    marginLeft: "61%"
 }
 
 const tableConfigBUtton = {
     paddingLeft: "0px"
 }
-
 const editProjectButton = {
     height: "20px",
     width: "20px"
@@ -113,9 +105,7 @@ class manageCustomerTeams extends React.Component {
             newCustomerDetails: {},
             accountsArray: [],
             accountDetails: '',
-            selectedAccountIndex:'',
-            itemIndex:0,
-            
+            selectedAccountIndex:''
         }
         this.createAccount = this.createAccount.bind(this);
         this.openSideMenu = this.openSideMenu.bind(this);
@@ -129,7 +119,6 @@ class manageCustomerTeams extends React.Component {
         this.reset = this.reset.bind(this);
         this.closeNewAccount = this.closeNewAccount.bind(this);
     }
-
     handleAccountName(accountName) {
         var tempAccountsArray = this.state.accountsArray.slice();
         tempAccountsArray[this.state.selectedAccountIndex].customerName= accountName.customerName;
@@ -141,7 +130,6 @@ class manageCustomerTeams extends React.Component {
         // this.setState({accountsArray:accountName.customerName})
 
     }
-
     handleProject(accountName) {
 
         var tempAccountsArray = this.state.accountsArray.slice();
@@ -151,25 +139,28 @@ class manageCustomerTeams extends React.Component {
         })
        // this.state.accountsArray[this.state.selectedAccountIndex].customerName = accountName.customerName
     }
-
-    currentAccountProfile(currentAccountDetails, index) {   
-        this.setState({
-            selectedItem: currentAccountDetails._id
-        });
-
+    currentAccountProfile(currentAccountDetails, index) {
         axios.get(myConstClass.nodeAppUrl+'/accounts/'+currentAccountDetails._id)
         .then(response => {
+        
+
+    
             this.setState(
                 {
                     selectedAccountIndex: index,
                     accountDetails: <AccountDetails selectedAccount={response.data} onSelectProject={this.handleProject} onUpdateProject={this.handleAccountName} />
                 }
             )
+
+       
+
         })
-
+      
     }
-
     addNewAccount(newCustomerDetailsObject) {
+
+
+
         axios.post(myConstClass.nodeAppUrl+`/accounts`,
             {
                 customerName: newCustomerDetailsObject.customerName,
@@ -185,44 +176,40 @@ class manageCustomerTeams extends React.Component {
                 status: 'Active'
             })
             .then(response => {
+                
                 this.state.accountsArray = this.state.accountsArray.concat(response.data)
                 this.setState({ createAccountModal: false, newCustomerDetails: {} });
+
                 //  window.sessionStorage.setItem("DashboardData", JSON.stringify(this.state.items));
             })
 
     }
-
     handleNewCustomerChange(e) {                               
 
         this.state.newCustomerDetails[e.target.name] = e.target.value
 
     }
-
     createAccount() {
 
         this.setState({ createAccountModal: true })
     }
-
     reset(){
-        this.myFormRef.reset();
-        // var tempObj={} 
-        // this.setState({newCustomerDetails:tempObj})
+      
+     
+        var tempObj={} 
+        this.setState({newCustomerDetails:tempObj})
     }
-
     closeNewAccount(){
         this.setState({createAccountModal:false})
         this.reset()
     }
-
     openSideMenu() {
         document.getElementById("mySidenav").style.width = "250px";
     }
-
     closeSideMenu() {
         document.getElementById("mySidenav").style.width = "0px";
 
     }
-
     selectedDashboardItem(item) {
 
         if (this.state.currentSelectedDashboardItem !== undefined) {
@@ -232,17 +219,16 @@ class manageCustomerTeams extends React.Component {
         this.state.currentSelectedDashboardItem = item.target.parentNode.id
         document.getElementById(item.target.parentNode.id).classList.add("selectedDashboardItem");
     }
-
     componentWillMount() {
         Modal.setAppElement('body');
         axios.get(myConstClass.nodeAppUrl+'/accounts')
             .then(response => {
+             
                 this.setState({ accountsArray: this.state.accountsArray.concat(response.data) })
-                this.currentAccountProfile(this.state.accountsArray[0], 0);
+
             })
 
     }
-
     componentDidMount() {
         document.getElementById('customerTeams').classList.add("selectedDashboardItem");
 
@@ -323,102 +309,64 @@ class manageCustomerTeams extends React.Component {
 
                 </div>
 
-                <div className="flex-row">
-                    <div className="d-lg-inline-flex d-md-inline-flex mctverticalHeight boxshadowfordata m-2">
-                        <div className="col-md-2 col-lg-2  p-0" style={{borderRight:'1px solid #cecece'}}>
-                                <div className="d-flex borderBottom" style={{justifyContent: 'center',alignItems: 'center'}}>
-                                    <div className="col-md-10 col-lg-10 ">
-                                        {/* <h5 className="font fontSize17">Account </h5> */}
-                                        <Subheader className="font"  style={{fontSize:'16px'}}>Accounts</Subheader>
-                                    </div>
-                                    <div className="col-md-2 col-lg-2">
-                                        <FloatingActionButton  
-                                            style={boxShadow} 
-                                            mini={true} 
-                                            secondary={true} 
-                                            iconStyle={addAccountBUtton} 
-                                            onClick={() => this.createAccount()} 
-                                            style={addAcountstyle} 
-                                        >
-                                        <ContentAdd />
-                                        </FloatingActionButton>
-                                    </div>                                    
-                                </div>
-                                <div className="col-md-12 col-lg-12">
-                                    <SelectableList className="textAlignLeft">
-                                        {this.state.accountsArray.map((item, index) => (
-                                            <ListItem
-                                                key={item._id} 
-                                                onClick={() => this.currentAccountProfile(item, index)} 
-                                                primaryText={item.customerName}
-                                                value={index}
-                                                className=
-                                                {["pointer",
-                                                item._id==this.state.selectedItem?'manageAccount':''].join(' ')}
-                                                leftAvatar={<Avatar src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />}                                              
-                                                />
-                                        ))}
-                                    </SelectableList>  
-                                </div>
-                        </div>
+                <div className="row mctmargintT">
+                    <div className="col-md-12 col-lg-12  marginTop0 displayInline padding0">
+                        <div className="col-md-3 col-lg-3  boxshadowfordata mctboxmargin borderRadius mctverticalHeight padding0">
+                                 <div className="col-md-10 col-lg-10 textAlignLeft borderBottom displayInline">
+                                     <h5 className="marginT0 font fontSize17 paddingT2">Account </h5>
+                                 </div>
+                                 <div className="col-md-2 col-lg-2 textAlignCenter borderBottom displayInline paddingT3 paddingB5 paddingL0">
+                                 <FloatingActionButton  style={boxShadow} mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createAccount()} style={addAcountstyle} >
+                                 <ContentAdd />
+                             </FloatingActionButton>
+
+                                 </div>
+                    
+
+                            <div className="col-md-12 col-lg-12">
+                           
+                                    {this.state.accountsArray.map((item, index) => (
+                                        <div className="textAlignLeft pointer" key={item._id} onClick={() => this.currentAccountProfile(item, index)}>{item.customerName}</div>
+                                    ))}
+                             
+                            </div>
+                             </div>
+
                        
-                        <div className="col-md-10 col-lg-10 p-0">
+                        <div className="col-md-9 col-lg-10 padding0 marginT2 mctaccdetailsminwidth mctaccdetailsboxmargin">
                             {this.state.accountDetails}
                         </div>
                      
                     </div>
 
                 </div>
-                <Modal isOpen={this.state.createAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor 1 "].join(' ')}>
+                <Modal isOpen={this.state.createAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
-                            <h2 className="marginT0">Account Details</h2>
+                            <h1 className="marginT0">Account Details</h1>
                         </div>
                     </div>
 
                     <div className="textAlignLeft">
-                    <form ref={(el) => this.myFormRef = el} >
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>CustomerID:</label></div> */}
-                            <div className="col-md-12 custId">
-                                <TextField 
-                                        fullWidth={true}
-                                        floatingLabelText="CustomerID"
-                                        hintText="CustomerID"
-                                        value={this.state.newCustomerDetails.customerID} 
-                                        name='customerID' 
-                                        onChange={this.handleNewCustomerChange}
-                                        type="number"
-                                />                            
+                            <div className="col-md-5 margin10"><label>CustomerID:</label></div>
+                            <div className="col-md-6 custId">
+                                <input value={this.state.newCustomerDetails.customerID} name='customerID' onChange={this.handleNewCustomerChange} />
                             </div>
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Customer Name:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField 
-                                        fullWidth={true}
-                                        floatingLabelText="Customer Name"
-                                        hintText="Customer Name"
-                                        value={this.state.newCustomerDetails.customerName} 
-                                        name='customerName' 
-                                        onChange={this.handleNewCustomerChange}
-                                />                            
+                            <div className="col-md-5 margin10"><label>Customer Name:</label></div>
+                            <div className="col-md-6">
+                                <input value={this.state.newCustomerDetails.customerName} name='customerName' onChange={this.handleNewCustomerChange} />
                             </div>
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Status:</label></div> */}
-                            <div className="col-md-12">
-                                <SelectField 
-                                    value={this.state.value} 
-                                    name='status' 
-                                    onChange={this.handleNewCustomerChange}
-                                    fullWidth={true}
-                                    floatingLabelText="Status"
-                                    hintText="Status"
-                                >
+                            <div className="col-md-5 margin10"><label>Status:</label></div>
+                            <div className="col-md-6">
+                                <SelectField value={this.state.value} name='status' onChange={this.handleNewCustomerChange}>
                                     <MenuItem value={1} primaryText="Active" />
                                     <MenuItem value={2} primaryText="Finished" />
 
@@ -427,44 +375,23 @@ class manageCustomerTeams extends React.Component {
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Engagement Model:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField 
-                                        fullWidth={true}
-                                        floatingLabelText="Engagement Model"
-                                        hintText="Engagement Model"
-                                        value={this.state.newCustomerDetails.engagementModel} 
-                                        name='engagementModel' 
-                                        onChange={this.handleNewCustomerChange} 
-                                />                            
+                            <div className="col-md-5 margin10"><label>Engagement Model:</label></div>
+                            <div className="col-md-6">
+                                <input value={this.state.newCustomerDetails.engagementModel} name='engagementModel' onChange={this.handleNewCustomerChange} />
                             </div>
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Pricing Model:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField 
-                                        fullWidth={true}
-                                        floatingLabelText="Pricing Model"
-                                        hintText="Pricing Model"
-                                        value={this.state.newCustomerDetails.pricingModel} 
-                                        name='pricingModel' 
-                                        onChange={this.handleNewCustomerChange} 
-                                />                            
+                            <div className="col-md-5 margin10"><label>Pricing Model:</label></div>
+                            <div className="col-md-6">
+                                <input value={this.state.newCustomerDetails.pricingModel} name='pricingModel' onChange={this.handleNewCustomerChange} />
                             </div>
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Logo:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField 
-                                        fullWidth={true}
-                                        floatingLabelText="Logo"
-                                        hintText="Logo"
-                                        value={this.state.newCustomerDetails.customerLogo} 
-                                        name='customerLogo' 
-                                        onChange={this.handleNewCustomerChange}
-                                />                            
+                            <div className="col-md-5 margin10"><label>Logo:</label></div>
+                            <div className="col-md-6">
+                                <input value={this.state.newCustomerDetails.customerLogo} name='customerLogo' onChange={this.handleNewCustomerChange} />
                             </div>
 
                         </div>
@@ -472,39 +399,17 @@ class manageCustomerTeams extends React.Component {
 
                         <div className="loginBtns backgroundcolor marginT10">
 
-                            <div>
+                            <div className="textAlignCenter">
                                 {/* <RaisedButton label="Next" primary={true} buttonStyle={buttonStyle} onClick={() => this.addNewCustomer(this.state.newCustomerDetails)} /> */}
-                                <div className="d-inline">
-                                    <RaisedButton 
-                                        label="Close" 
-                                        secondary={true} 
-                                        style={modelbuttonsStyle} 
-                                        onClick={() => this.closeNewAccount()} 
-                                    />
-                                </div>
-                                <div className="d-inline">
-                                    <RaisedButton 
-                                        label="Reset" 
-                                        default={true} 
-                                        style={modelbuttonsStyle} 
-                                        onClick={() => this.reset()} 
-                                    />
-                                </div>
-                                <div className="d-inline">
-                                    <RaisedButton 
-                                        label="Submit" 
-                                        primary={true} 
-                                        style={modelbuttonsStyle} 
-                                        onClick={() => this.addNewAccount(this.state.newCustomerDetails)} 
-                                        // disabled={!this.state.newCustomerDetails.customerID}
-                                        />
-                                </div>
+                                <RaisedButton label="Close" secondary={true} style={modelbuttonsStyle} onClick={() => this.closeNewAccount()} />
+                                <RaisedButton label="Reset" default={true} style={modelbuttonsStyle} onClick={() => this.reset()} />
+                                <RaisedButton label="Submit" primary={true} style={modelbuttonsStyle} onClick={() => this.addNewAccount(this.state.newCustomerDetails)} />
                             </div>
 
 
 
                         </div>
-                    </form>
+
                     </div>
 
                 </Modal>
@@ -565,10 +470,11 @@ class AccountDetails extends React.Component {
     }
 
 
+
+
     autoCreate(){
         this.setState({createGithubProjectModel:true})          
     }
-
     closeGithubDetails(){
         this.setState({createGithubProjectModel:false})           
     }
@@ -576,7 +482,7 @@ class AccountDetails extends React.Component {
     submitGithubDetails(githubObj){
 
         console.log(githubObj)
-        this.setState({githubInstance:githubObj})
+this.setState({githubInstance:githubObj})
 
         var repoName=githubObj.repoName
         var projectName=githubObj.projectName
@@ -640,8 +546,8 @@ class AccountDetails extends React.Component {
         )
 
     }
-
     componentWillMount() {
+
         this.setState({
             currentAccount: this.props.selectedAccount
         })
@@ -656,7 +562,7 @@ class AccountDetails extends React.Component {
 
     handleNewCustomerChange(e) {
         var currentAccountObj = this.state.currentAccount;
-        currentAccountObj[e.target.name] = e.target.value;
+        currentAccountObj[e.target.name] = e.target.value
         this.setState(
             {
                 currentAccount: currentAccountObj
@@ -665,16 +571,14 @@ class AccountDetails extends React.Component {
         )
 
     }
-
     editAccount() {
         this.setState({ editAccountModal: true })
     }
-
     closeEditAccountModal() {
         this.setState({ editAccountModal: false })
     }
-
     updateAccount(newCustomerDetailsObject) {
+
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + newCustomerDetailsObject._id,
             {
                 customerName: newCustomerDetailsObject.customerName,
@@ -697,13 +601,9 @@ class AccountDetails extends React.Component {
             })
 
     }
-
     newProjectDetails(e) {
-        const updatedProjectDetails = {...this.state.newProjectDetails}
-        updatedProjectDetails[e.target.name] = e.target.value        
-        this.setState({newProjectDetails:updatedProjectDetails})
+        this.state.newProjectDetails[e.target.name] = e.target.value
     }
-
     createProject() {
         this.setState({ createProjectModel: true })
     }
@@ -717,6 +617,9 @@ class AccountDetails extends React.Component {
         var tempAccountsArray = this.state.currentAccount.projects.slice();
 
         this.state.projectList = tempAccountsArray.concat(newProjectObject)
+
+
+        this.setState({ projectList: this.state.projectList, newProjectDetails: {} })
 
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.currentAccount._id,
             {
@@ -744,12 +647,13 @@ class AccountDetails extends React.Component {
 
 
     }
-
     closeCreateProjectModel() {
         this.setState({ createProjectModel: false, newCustomerDetails: {} })
     }
-
     configJumpStart(projectIndex) {
+
+
+
         if (this.state.currentAccount.projects[projectIndex].tools === undefined) {
             this.setState({
                 jumpStartConfigModel: true, selectedProjectIndex: projectIndex, selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
@@ -762,11 +666,14 @@ class AccountDetails extends React.Component {
 
         }
 
+
         if (this.state.currentAccount.projects[projectIndex].tools !== undefined) {
             var jumpStartMenuNameArray = []
             for (var JumpStartMenuName in this.state.currentAccount.projects[projectIndex].tools) {
                 jumpStartMenuNameArray.push(JumpStartMenuName)
             }
+
+
 
             this.setState({
                 jumpStartConfigModel: true, selectedProjectIndex: projectIndex, selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
@@ -779,7 +686,6 @@ class AccountDetails extends React.Component {
         }
 
     }
-    
     toolsData(selectedObj){
 
 
@@ -794,7 +700,6 @@ class AccountDetails extends React.Component {
             />
         });
     }
-
     currentItem(selectedItemName, selectedItemIndex) {
         
         this.setState({selectedItemName:selectedItemName,selectedItemIndex:selectedItemIndex})
@@ -860,7 +765,7 @@ class AccountDetails extends React.Component {
         this.setState({ jumpStartConfigModel: false, configPeopleModel: false })
     }
 
-    configPeople(currentProject, projectIndex) {
+      configPeople(currentProject, projectIndex) {
         var tempPeoplesArray = []
         var tempArray = this.state.currentAccount
 
@@ -911,10 +816,7 @@ class AccountDetails extends React.Component {
             tempPeoplesArray.push(latestPeopleDate.projects[this.state.selectedProjectIndex].people[i])
         }
         this.setState({ peoplesArray: tempPeoplesArray })
-    
-    
     }
-
     updatePeopleList(updatedPeopleData){
         var tempPeoplesArray = []
         for (var i = 0; i < updatedPeopleData.projects[this.state.selectedProjectIndex].people.length; i++) {
@@ -922,7 +824,6 @@ class AccountDetails extends React.Component {
         }
         this.setState({ peoplesArray: tempPeoplesArray })
     }
-
     deletePeopleList(deletedPeopleList){
         var tempPeoplesArray = []
         for (var i = 0; i < deletedPeopleList.projects[this.state.selectedProjectIndex].people.length; i++) {
@@ -932,6 +833,7 @@ class AccountDetails extends React.Component {
     }
 
     curentSelectedIteminPeople(selectedNameObj, index) {
+
         this.setState({
             people: <PeopleConfigurationDetails selectedMemberObj={selectedNameObj}
                 isSubmitDisable='true' selectedMemberIndex={index}
@@ -943,55 +845,23 @@ class AccountDetails extends React.Component {
     }
 
     render() {
-        return (
-            <div className="col-lg-12">
-                <div className="d-flex borderBottom" style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <div className="col-md-10 col-lg-10 ">
-                        <Subheader className={"font text-center"} style={{fontSize:'16px'}}>Account Details</Subheader>
-                    </div>
-                    <div className="col-md-2 col-lg-2">
 
-                        <FloatingActionButton 
-                            mini={true} 
-                            iconStyle={addAccountBUtton} 
-                            style={editbuttonStyle} 
-                            onClick={() => this.editAccount()}
-                        >
+        return (
+            <div className="col-lg-10 boxshadowfordata  borderRadius mctverticalHeight padding0">
+                <div className="col-md-12 col-lg-12 borderBottom displayInline">
+                    <div className="col-md-10 col-lg-10 textAlignCenter">
+                        <h5 className="marginT0 font fontSize17 displayInline">Account Details </h5>
+                    </div>
+                    <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
+
+                        <FloatingActionButton mini={true} iconStyle={addAccountBUtton} style={editbuttonStyle} onClick={() => this.editAccount()}>
                             <ContentEdit />
                         </FloatingActionButton>
 
                     </div>
-                </div>
 
-                <div className="tata">
-                <Card>
-                    <div className="d-flex"> 
-                        <div className={"project_details p-3 d-inline-flex"}>
-                            <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
-                        </div>
-                        <div>
-                        <CardTitle title={this.state.currentAccount.customerName} subtitle={this.state.currentAccount.status} />
-                        <span>{this.props.selectedAccount.startDate} | {this.props.selectedAccount.endDate}</span>
-                        </div>
-                    </div>
-                        <div>
-                            <SelectField 
-                                value={this.state.value} 
-                                onChange={this.handleChange} 
-                                maxHeight={200}
-                                floatingLabelText="Please Select a project"
-                            >
-                                {this.state.currentAccount.projects.map((project, index) => (
-                                    <MenuItem 
-                                        primaryText={project.projectName}
-                                    />
-                                ))}
-                            </SelectField>                              
-                        </div>
-                 </Card>
                 </div>
-
-                {/* <div className="col-md-6 col-lg-6 marginB04 displayInline">
+                <div className="col-md-6 col-lg-6 marginB04 displayInline">
                     <label className="flex">Account Name:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.state.currentAccount.customerName}</h5></label>
                 </div>
                 <div className="col-md-6 col-lg-6 marginB04 displayInline">
@@ -1002,19 +872,14 @@ class AccountDetails extends React.Component {
                 </div>
                 <div className="col-md-6 col-lg-6 marginB04 displayInline">
                     <label className="flex">End Date:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.state.currentAccount.endDate}</h5></label>
-                </div> */}
+                </div>
                 <div className="col-md-12 col-lg-12 borderBottom displayInline">
                     <div className="col-md-10 col-lg-10 textAlignCenter">
                         <h5 className="marginT0 font fontSize17">Projects</h5>
                     </div>
                     <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
 
-                        <FloatingActionButton 
-                            mini={true} 
-                            secondary={true} 
-                            iconStyle={addAccountBUtton} 
-                            onClick={() => this.createProject()} 
-                            style={addProjectButtonstyle} >
+                        <FloatingActionButton mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createProject()} style={addProjectButtonstyle} >
                             <ContentAdd />
                         </FloatingActionButton>
 
@@ -1022,6 +887,7 @@ class AccountDetails extends React.Component {
 
                 </div>
                 <div className="col-md-12 col-lg-12 padding0">
+
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -1075,55 +941,35 @@ class AccountDetails extends React.Component {
                 </div>
 
 
-                <Modal isOpen={this.state.editAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor 2 "].join(' ')}>
+                <Modal isOpen={this.state.editAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
-                            <h2 className="marginT0">Account Details</h2>
+                            <h1 className="marginT0">Account Details</h1>
                         </div>
                     </div>
 
                     <div className="textAlignLeft">
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>CustomerID:</label></div> */}
-                            <div className="col-md-12 custId">
-                                <TextField 
-                                    hintText="Customer ID" 
-                                    floatingLabelText="Customer ID" 
-                                    value={this.state.currentAccount.customerID || ''}
-                                    name='customerID' 
-                                    onChange={this.handleNewCustomerChange}
-                                    type="number"
-                                    fullWidth={true}
-                                />
+                            <div className="col-md-5 margin10"><label>CustomerID:</label></div>
+                            <div className="col-md-6 custId">
+                                <input value={this.state.currentAccount.customerID} name='customerID' onChange={this.handleNewCustomerChange} />
                             </div>
+
+
+
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Customer Name:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField 
-                                    value={this.state.currentAccount.customerName || ''} 
-                                    name='customerName' 
-                                    onChange={this.handleNewCustomerChange}      
-                                    hintText="Customer Name" 
-                                    floatingLabelText="Customer Name"
-                                    type="text"
-                                    fullWidth={true}
-                                />
+                            <div className="col-md-5 margin10"><label>Customer Name:</label></div>
+                            <div className="col-md-6">
+                                <input value={this.state.currentAccount.customerName} name='customerName' onChange={this.handleNewCustomerChange} />
                             </div>
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Status:</label></div> */}
-                            <div className="col-md-12">
-                                <SelectField 
-                                    value={this.state.value} 
-                                    name='status' 
-                                    onChange={this.handleNewCustomerChange}
-                                    floatingLabelText="Status ?"
-                                    fullWidth={true}
-                                    hintText="Status"
-                                >
+                            <div className="col-md-5 margin10"><label>Status:</label></div>
+                            <div className="col-md-6">
+                                <SelectField value={this.state.value} name='status' onChange={this.handleNewCustomerChange}>
                                     <MenuItem value={1} primaryText="Active" />
                                     <MenuItem value={2} primaryText="Finished" />
 
@@ -1132,71 +978,42 @@ class AccountDetails extends React.Component {
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Engagement Model:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField 
-                                    fullWidth={true}
-                                    floatingLabelText="Engagement Model"
-                                    hintText="Engagement Model"
-                                    value={this.state.currentAccount.engagementModel || ''}
-                                    name='engagementModel'
-                                    onChange={this.handleNewCustomerChange} 
-                                />
+                            <div className="col-md-5 margin10"><label>Engagement Model:</label></div>
+                            <div className="col-md-6">
+                                <input value={this.state.currentAccount.engagementModel} name='engagementModel' onChange={this.handleNewCustomerChange} />
                             </div>
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Pricing Model:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField 
-                                    fullWidth={true}
-                                    floatingLabelText="Pricing Model"
-                                    hintText="Pricing Model"
-                                    value={this.state.currentAccount.pricingModel || ''} 
-                                    name='pricingModel' 
-                                    onChange={this.handleNewCustomerChange}                   
-                                />
+                            <div className="col-md-5 margin10"><label>Pricing Model:</label></div>
+                            <div className="col-md-6">
+                                <input value={this.state.currentAccount.pricingModel} name='pricingModel' onChange={this.handleNewCustomerChange} />
                             </div>
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Logo:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField  
-                                    fullWidth={true}
-                                    floatingLabelText="Logo"
-                                    hintText="Logo"
-                                    value={this.state.currentAccount.customerLogo || ''} 
-                                    name='customerLogo' 
-                                    onChange={this.handleNewCustomerChange}                                
-                                />
+                            <div className="col-md-5 margin10"><label>Logo:</label></div>
+                            <div className="col-md-6">
+                                <input value={this.state.currentAccount.customerLogo} name='customerLogo' onChange={this.handleNewCustomerChange} />
                             </div>
 
                         </div>
 
 
-                        <div className="loginBtns" style={{}}>
+                        <div className="loginBtns">
+
                             <div>
-                                <RaisedButton 
-                                    label="Close" 
-                                    secondary={true} 
-                                    style={modelbuttonsStyle} 
-                                    onClick={() => this.closeEditAccountModal()} 
-                                />
-                                <RaisedButton 
-                                    label="Done" 
-                                    primary={true} 
-                                    style={modelbuttonsStyle} 
-                                    onClick={() => this.updateAccount(this.state.currentAccount)}
-                                    disabled= {!this.state.currentAccount.customerID || !this.state.currentAccount.customerName}
-                                />
+                                <RaisedButton label="Close" secondary={true} style={modelbuttonsStyle} onClick={() => this.closeEditAccountModal()} />
+                                <RaisedButton label="Done" primary={true} style={modelbuttonsStyle} onClick={() => this.updateAccount(this.state.currentAccount)} />
                             </div>
+
+
+
                         </div>
 
                     </div>
 
                 </Modal>
-
                 <Modal isOpen={this.state.createProjectModel} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
@@ -1208,24 +1025,13 @@ class AccountDetails extends React.Component {
                         <div className="row margin0">
                             <div className="col-md-5 margin10"><label>Project Name:</label></div>
                             <div className="col-md-6 custId">
-                                <input value={this.state.newProjectDetails.projectName || ''} name='projectName' onChange={this.newProjectDetails} />
+                                <input value={this.state.newProjectDetails.projectName} name='projectName' onChange={this.newProjectDetails} />
                             </div>
                         </div>
                         <div className="loginBtns">
                             <div>
-                                <RaisedButton 
-                                    label="Close" 
-                                    secondary={true} 
-                                    style={modelbuttonsStyle} 
-                                    onClick={() => this.closeCreateProjectModel()} 
-                                />
-                                <RaisedButton 
-                                    label="Done" 
-                                    primary={true} 
-                                    style={modelbuttonsStyle} 
-                                    onClick={() => this.addNewProject(this.state.newProjectDetails)} 
-                                    disabled = {!this.state.newProjectDetails.projectName}
-                                />
+                                <RaisedButton label="Close" secondary={true} style={modelbuttonsStyle} onClick={() => this.closeCreateProjectModel()} />
+                                <RaisedButton label="Done" primary={true} style={modelbuttonsStyle} onClick={() => this.addNewProject(this.state.newProjectDetails)} />
                             </div>
 
                         </div>
@@ -1233,7 +1039,6 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </Modal>
-
                 <Modal isOpen={this.state.jumpStartConfigModel} style={customStylesJumpStart} className={["col-md-6 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
@@ -1269,7 +1074,6 @@ class AccountDetails extends React.Component {
                       
                     </div>
                 </Modal>
-
                 <Modal isOpen={this.state.configPeopleModel} style={customStylesJumpStart} className={["col-md-6 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
@@ -1301,7 +1105,6 @@ class AccountDetails extends React.Component {
                         </div>
                     </div>
                 </Modal>
-
                 <Modal isOpen={this.state.createGithubProjectModel} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
@@ -1335,7 +1138,6 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </Modal>
-                
             </div>
 
         )
@@ -1568,6 +1370,8 @@ class ToolConfigurationDetails extends React.Component {
     }
 
     submitToolsData(toolsList) {
+
+
         this.setState({ dupeCurrentAccountArray: toolsList })
        
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.dupeCurrentAccountArray._id,
@@ -1647,8 +1451,7 @@ class ToolConfigurationDetails extends React.Component {
                             !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName ||
                             !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password ||
                             !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name
-                            }
-                    />
+                            }/>
 
                 </div> 
 
@@ -1657,7 +1460,6 @@ class ToolConfigurationDetails extends React.Component {
         )
     }
 }
-
 class PeopleConfigurationDetails extends React.Component {
     constructor(props) {
         super(props)
@@ -1901,6 +1703,5 @@ class PeopleConfigurationDetails extends React.Component {
         )
     }
 }
-
 export default manageCustomerTeams
 
