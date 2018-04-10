@@ -530,27 +530,96 @@ class AccountDetails extends React.Component {
     }
     submitGithubDetails(githubObj) {
         console.log(githubObj)
+        var builder = require('xmlbuilder');
+        var xml = builder.create('project')     
+        .ele('description',"Build") .ele('/description')       
+        .ele('scm',{'class':'hudson.plugins.scm_sync_configuration'})
+        .ele('configVersion',2).ele('/configVersion')
+        .ele('userRemoteConfigs')
+        .ele('hudson.plugins.git.UserRemoteConfig')
+        .ele('url',"http://192.168.29.16:8081/scm/git/Spring").ele('/url')
+        .ele('/hudson.plugins.git.UserRemoteConfig')
+        .ele('/userRemoteConfigs')
+        .ele('branches')
+        .ele('hudson.plugins.git.BranchSpec')
+        .ele('name','*/master').ele('/name')        
+        .ele('/hudson.plugins.git.BranchSpec')
+        .ele('/branches')
+        .ele('/scm')
+        .ele('triggers') 
+        .ele('hudson.triggers.SCMTrigger') 
+        .ele('spec','H/15***').ele('/spec') 
+        .ele('ignorePostCommitHooks','false').ele('/ignorePostCommitHooks') 
+        .ele('/hudson.triggers.SCMTrigger') 
+        .ele('/triggers')
+        .ele('concurrentBuild','false').ele('/concurrentBuild')
+        .ele('builders')
+        .ele('hudson.tasks.BatchFile')
+        .ele('command','npm install')
+        .ele('/command')
+        .ele('/hudson.tasks.BatchFile')
+        .ele('hudson.tasks.BatchFile')
+        .ele('command','npm run build')
+        .ele('/command')
+        .ele('/hudson.tasks.BatchFile')
+        .ele('hudson.tasks.BatchFile')
+        .ele('command','xcopy C:\Program Files (x86)\Jenkins\workspace\samplejob\build   C:\apache-tomcat-9.0.1\webapps\ROOT /s/h/e/k/f/c/y')
+        .ele('/command')
+        .ele('/hudson.tasks.BatchFile')       
+        .ele('hudson.plugins.sonar.SonarRunnerBuilder')
+        .ele('project').ele('/project')
+        .ele('properties','sonar.projectKey=sonarproject , sonar.projectVersion=1.0,sonar.projectVersion=1.0,sonar.sources=src,sonar.language=js')
+        .ele('/properties')
+        .ele('javaOpts').ele('/javaOpts')
+        .ele('jdk','(Inherit From Job)').ele('/jdk')
+        .ele('/hudson.plugins.sonar.SonarRunnerBuilder')
+        .ele('/builders')
+        .ele('/buildWrappers')
+      .end({ pretty: true});
+
         this.setState({ githubInstanceDetails: githubObj })
 
-        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-            "resourceURL": "https://api.github.com/orgs/coMakeIT-Git/repos",
-            "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "post",
-            postParams: JSON.stringify({
-                "name": this.state.githubInstanceDetails.repoName,
-                "description": "This is your first repository"
-            }),
-            headersToForwrad: [
-                {
-                    "headerName": "Accept",
-                    "headerValue": "application/vnd.github.mercy-preview+json"
+        // axios.post(`sbtpgateway/tp/rest/esccors/generic1/`, {
+        //     "resourceURL": "https://api.github.com/orgs/coMakeIT-Git/repos",
+        //     "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "post",
+        //     postParams: {
+        //         "name": this.state.githubInstanceDetails.repoName,
+        //         "description": "This is your first repository"
+        //     },
+        //     headersToForward: [
+        //         {
+        //             "headerName": "Accept",
+        //             "headerValue": "application/vnd.github.mercy-preview+json"
 
-                }
-            ]
-        },
-        )
-            .then(response => {
+        //         }
+        //     ]
+        // },
+        // )
+        //     .then(response => {
 
-                console.log(response)
+        //         console.log(response)
+
+        //     })
+            axios.post(`sbtpgateway/tp/rest/esccors/generic1/`, {
+                "resourceURL": "https://192.168.29.25:8080/createItem?name=samplejob2",
+                "userName": "admin", "password": "1ce543883f6441ee931fe0adffcacd4e", "actionMethod": "post",
+                postParams: 
+                xml
+                ,
+                headersToForward: [
+                    {
+                        "headerName": "Accept",
+                        "headerValue": "text/xml"
+    
+                    }
+                ]
+            },
+            )
+                .then(response => {
+    
+                    console.log(response)
+    
+                })
                 //             var owner = response.data.owner.login
                 //             axios.post("https://api.github.com/repos/" + owner + "/" + this.state.githubInstanceDetails.repoName + "/projects",
                 //                 {
@@ -609,7 +678,7 @@ class AccountDetails extends React.Component {
                 //             "Accept":"application/vnd.github.barred-rock-preview",
                 //             "Authorization":"Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
                 //         }
-            })
+           // })
 
         // })
     }
