@@ -946,10 +946,10 @@ class AccountDetails extends React.Component {
         return (
             <div className="col-lg-12">
                 <div className="d-flex borderBottom" style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <div className="col-md-10 col-lg-10 ">
+                    <div className="col-md-12 col-lg-12 ">
                         <Subheader className={"font text-center"} style={{fontSize:'16px'}}>Account Details</Subheader>
                     </div>
-                    <div className="col-md-2 col-lg-2">
+                    {/* <div className="col-md-2 col-lg-2">
 
                         <FloatingActionButton 
                             mini={true} 
@@ -960,35 +960,62 @@ class AccountDetails extends React.Component {
                             <ContentEdit />
                         </FloatingActionButton>
 
-                    </div>
+                    </div> */}
                 </div>
 
                 <div className="tata">
-                <Card>
-                    <div className="d-flex"> 
-                        <div className={"project_details p-3 d-inline-flex"}>
-                            <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
-                        </div>
-                        <div>
-                        <CardTitle title={this.state.currentAccount.customerName} subtitle={this.state.currentAccount.status} />
-                        <span>{this.props.selectedAccount.startDate} | {this.props.selectedAccount.endDate}</span>
-                        </div>
-                    </div>
-                        <div>
-                            <SelectField 
-                                value={this.state.value} 
-                                onChange={this.handleChange} 
-                                maxHeight={200}
-                                floatingLabelText="Please Select a project"
+                    <Card>
+                        <div className="col-lg-12">
+                            <FloatingActionButton 
+                                mini={true} 
+                                iconStyle={addAccountBUtton} 
+                                style={editbuttonStyle} 
+                                onClick={() => this.editAccount()}
+                                className="float-right"
                             >
-                                {this.state.currentAccount.projects.map((project, index) => (
-                                    <MenuItem 
-                                        primaryText={project.projectName}
+                                <ContentEdit />
+                            </FloatingActionButton>
+                        </div>                        
+                        <div className="d-flex"> 
+                            <div className={"project_details p-3 d-inline-flex"}>
+                                <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
+                            </div>
+                            <div>
+                                <CardTitle 
+                                    title={this.state.currentAccount.customerName} 
+                                    subtitle={this.state.currentAccount.status} 
+                                    style={{padding:'20px 16px 10px'}}
                                     />
-                                ))}
-                            </SelectField>                              
+                                <span className="col-lg-12" style={{fontSize:'14px', color: 'rgba(0, 0, 0, 0.54)'}}>{this.props.selectedAccount.startDate} | {this.props.selectedAccount.endDate}</span>
+                            </div>
                         </div>
-                 </Card>
+                            <div className={"d-inline-flex col-lg-12"}>
+                                <div className={'col-lg-6'}>
+                                    <label style={{color: 'rgba(0, 0, 0, 0.54)'}}>Please Select a project</label>
+                                    <SelectField 
+                                        value={this.state.value} 
+                                        onChange={this.handleChange} 
+                                    >
+                                        {this.state.currentAccount.projects.map((project, index) => (
+                                            <MenuItem 
+                                                primaryText={project.projectName}
+                                                key={index}
+                                            />
+                                        ))}
+                                    </SelectField>                                 
+                                </div>                             
+                                <div className={'col-lg-6 d-flex'} style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+                                    <FloatingActionButton 
+                                        mini={true} 
+                                        secondary={true}  
+                                        onClick={() => this.createProject()}
+                                        className="float-right"
+                                        >
+                                        <ContentAdd />
+                                    </FloatingActionButton>
+                                </div>                                
+                            </div>                                                
+                    </Card>
                 </div>
 
                 {/* <div className="col-md-6 col-lg-6 marginB04 displayInline">
@@ -1007,7 +1034,7 @@ class AccountDetails extends React.Component {
                     <div className="col-md-10 col-lg-10 textAlignCenter">
                         <h5 className="marginT0 font fontSize17">Projects</h5>
                     </div>
-                    <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
+                    {/* <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
 
                         <FloatingActionButton 
                             mini={true} 
@@ -1018,7 +1045,7 @@ class AccountDetails extends React.Component {
                             <ContentAdd />
                         </FloatingActionButton>
 
-                    </div>
+                    </div> */}
 
                 </div>
                 <div className="col-md-12 col-lg-12 padding0">
