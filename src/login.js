@@ -25,7 +25,7 @@ class Login extends React.Component {
   }
   handleClick(username) {
     console.log(username)
-            this.props.history.push({pathname:'/manageCustomerTeams',state: { userName: username }});
+            this.props.history.push({pathname:'/app',state: { userName: username }});
   }
   render() {
     return (

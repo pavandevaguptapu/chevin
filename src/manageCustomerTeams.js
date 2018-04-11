@@ -23,7 +23,6 @@ import ContentClear from 'material-ui/svg-icons/content/clear';
 import ContentEdit from 'material-ui/svg-icons/editor/mode-edit';
 import {myConstClass} from './constants.js';
 
-import SideBar from './components/SideBar';
 
 var dcopy = require('deep-copy')
 
@@ -108,7 +107,7 @@ const deleteProjectButton = {
     width: "20px"
 }
 
-class manageCustomerTeams extends React.Component {
+class ManageCustomerTeams extends React.Component {
     constructor(props) {
         super(props);
 
@@ -331,19 +330,6 @@ class manageCustomerTeams extends React.Component {
 
                 </div>
 
-                <div className="flex-row">
-                    <div className="col-md-12 col-lg-12 d-flex mctverticalHeight">
-                        <div style={{width:'4%',borderRight:'1px solid #cecece'}}>
-                                <SideBar/>
-                        </div>
-                       
-                        <div style={{width:'96%',}}>
-                            {this.state.accountDetails}
-                        </div>
-                     
-                    </div>
-
-                </div>
                 <Modal isOpen={this.state.createAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor 1 "].join(' ')}>
 
                     <div className="row">
@@ -907,7 +893,6 @@ class AccountDetails extends React.Component {
 
     render() {
         return (
-
             <div className="col-lg-12 col-md-12 mt-2">
                 <div className="col-lg-12 col-md-12">
                     <div>
@@ -1939,5 +1924,5 @@ class PeopleConfigurationDetails extends React.Component {
     }
 }
 
-export default manageCustomerTeams
+export default ManageCustomerTeams;
 
