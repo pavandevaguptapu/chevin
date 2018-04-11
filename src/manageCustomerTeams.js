@@ -23,6 +23,8 @@ import ContentClear from 'material-ui/svg-icons/content/clear';
 import ContentEdit from 'material-ui/svg-icons/editor/mode-edit';
 import {myConstClass} from './constants.js';
 
+import SideBar from './components/SideBar';
+
 var dcopy = require('deep-copy')
 
 
@@ -238,12 +240,14 @@ class manageCustomerTeams extends React.Component {
     }
 
     componentWillMount() {
-        Modal.setAppElement('body');
+        // Modal.setAppElement('body');
         axios.get(myConstClass.nodeAppUrl+'/accounts')
             .then(response => {
                 this.setState({ accountsArray: this.state.accountsArray.concat(response.data) })
                 this.currentAccountProfile(this.state.accountsArray[0], 0);
             })
+
+            
 
     }
 
@@ -328,45 +332,12 @@ class manageCustomerTeams extends React.Component {
                 </div>
 
                 <div className="flex-row">
-                    <div className="d-lg-inline-flex d-md-inline-flex mctverticalHeight boxshadowfordata m-2">
-                        <div className="col-md-2 col-lg-2  p-0" style={{borderRight:'1px solid #cecece'}}>
-                                <div className="d-flex borderBottom" style={{justifyContent: 'center',alignItems: 'center'}}>
-                                    <div className="col-md-10 col-lg-10 ">
-                                        {/* <h5 className="font fontSize17">Account </h5> */}
-                                        <Subheader className="font"  style={{fontSize:'16px'}}>Accounts</Subheader>
-                                    </div>
-                                    <div className="col-md-2 col-lg-2">
-                                        <FloatingActionButton  
-                                            style={boxShadow} 
-                                            mini={true} 
-                                            secondary={true} 
-                                            iconStyle={addAccountBUtton} 
-                                            onClick={() => this.createAccount()} 
-                                            style={addAcountstyle} 
-                                        >
-                                        <ContentAdd />
-                                        </FloatingActionButton>
-                                    </div>                                    
-                                </div>
-                                <div className="col-md-12 col-lg-12">
-                                    <SelectableList className="textAlignLeft">
-                                        {this.state.accountsArray.map((item, index) => (
-                                            <ListItem
-                                                key={item._id} 
-                                                onClick={() => this.currentAccountProfile(item, index)} 
-                                                primaryText={item.customerName}
-                                                value={index}
-                                                className=
-                                                {["pointer",
-                                                item._id===this.state.selectedItem?'manageAccount':''].join(' ')}
-                                                leftAvatar={<Avatar src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />}                                              
-                                                />
-                                        ))}
-                                    </SelectableList>  
-                                </div>
+                    <div className="col-md-12 col-lg-12 d-flex mctverticalHeight">
+                        <div style={{width:'4%',borderRight:'1px solid #cecece'}}>
+                                <SideBar/>
                         </div>
                        
-                        <div className="col-md-10 col-lg-10 p-0">
+                        <div style={{width:'96%',}}>
                             {this.state.accountDetails}
                         </div>
                      
@@ -848,13 +819,7 @@ class AccountDetails extends React.Component {
                 />
             });
         }
-
-
-
         this.setState({ currentAccount: tempArray })
-
-
-
     }
 
     closeJumpStartModel() {
@@ -901,8 +866,6 @@ class AccountDetails extends React.Component {
             })
 
         }
-
-
     }
 
     handlingPeopleList(latestPeopleDate) {
@@ -944,176 +907,160 @@ class AccountDetails extends React.Component {
 
     render() {
         return (
-            <div className="col-lg-12">
-                <div className="d-flex" style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <div className="col-md-12 col-lg-12 ">
-                        <Subheader className={"font text-center"} style={{fontSize:'16px'}}>Account Details</Subheader>
-                    </div>
-                </div>
 
-                <div className="col-lg-12 clearfix">
-                    <Card>
-                        <div className="col-lg-12 clearfix">
-                            <FloatingActionButton 
-                                mini={true} 
-                                onClick={() => this.editAccount()}
-                                className="float-right"
-                            >
-                                <ContentEdit />
-                            </FloatingActionButton>
-                        </div>                        
-                        <div className="d-flex"> 
-                            <div className={"project_details p-3 d-inline-flex"}>
-                                <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
-                            </div>
-                            <div>
-                                <CardTitle 
-                                    title={this.state.currentAccount.customerName} 
-                                    subtitle={this.state.currentAccount.status} 
-                                    style={{padding:'20px 16px 10px'}}
-                                    />
-                                <span className="col-lg-12" style={{fontSize:'14px', color: 'rgba(0, 0, 0, 0.54)'}}>{this.props.selectedAccount.startDate} | {this.props.selectedAccount.endDate}</span>
-                            </div>
-                        </div>
-                        <div className={"d-inline-flex col-lg-12"}>
-                            <div className={'col-lg-6 d-flex align-items-center'}>
-                                <label style={{color: 'rgba(0, 0, 0, 0.54)', margin: '0 20px 0 0'}}>Please Select a project</label>
-                                <SelectField 
-                                    value={this.state.value} 
-                                    onChange={this.handleChange} 
-                                >
-                                    {this.state.currentAccount.projects.map((project, index) => (
+            <div className="col-lg-12 col-md-12 mt-2">
+                <div className="col-lg-12 col-md-12">
+                    <div>
+                        <Card>
+                            <div className="col-lg-12 d-flex align-items-end clearfix">
+                                <div className="col-lg-6 d-flex  align-items-center">
+                                    <label className="marginB0 p-1" style={{color: 'rgba(0, 0, 0, 0.54)'}}>Select Team</label>
+                                    <SelectField 
+                                        value={this.state.value} 
+                                        onChange={this.handleChange} 
+                                    >
+                                    {/* {this.state.currentAccount.projects.map((project, index) => (
                                         <MenuItem 
                                             primaryText={project.projectName}
                                             key={index}
                                         />
-                                    ))}
-                                </SelectField>                                 
-                            </div>                             
-                            <div className={'col-lg-6 d-flex'} style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-                                <div style={{marginBottom: '-15px'}}>
+                                    ))} */}
+                                    </SelectField>                                
+                                </div>
+                                <div className="col-lg-6">
                                     <FloatingActionButton 
                                         mini={true} 
-                                        secondary={true}  
-                                        onClick={() => this.createProject()}
+                                        onClick={() => this.editAccount()}
                                         className="float-right"
-                                        >
-                                        <ContentAdd />
-                                    </FloatingActionButton>
+                                    >
+                                        <ContentEdit />
+                                    </FloatingActionButton>                                
+                                </div>                          
+                            </div>                    
+                            <div className="d-flex col-md-3 col-lg-3 p-0"> 
+                                <div className={"project_details p-3 d-inline-flex"}>
+                                    <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
                                 </div>
-                            </div>                                
-                        </div>                                                
-                    </Card>
-                </div>
-
-                {/* <div className="col-md-6 col-lg-6 marginB04 displayInline">
-                    <label className="flex">Account Name:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.state.currentAccount.customerName}</h5></label>
-                </div>
-                <div className="col-md-6 col-lg-6 marginB04 displayInline">
-                    <label className="flex">Status:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.state.currentAccount.status}</h5></label>
-                </div>
-                <div className="col-md-6 col-lg-6 marginB04 displayInline">
-                    <label className="flex">Start Date:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.props.selectedAccount.startDate}</h5></label>
-                </div>
-                <div className="col-md-6 col-lg-6 marginB04 displayInline">
-                    <label className="flex">End Date:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.state.currentAccount.endDate}</h5></label>
-                </div> */}
-                {/* <div className="col-md-12 col-lg-12 borderBottom displayInline">
-                    <div className="col-md-10 col-lg-10 textAlignCenter">
-                        <h5 className="marginT0 font fontSize17">Projects</h5>
-                    </div>
-                    <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
-
-                        <FloatingActionButton 
-                            mini={true} 
-                            secondary={true} 
-                            iconStyle={addAccountBUtton} 
-                            onClick={() => this.createProject()} 
-                            style={addProjectButtonstyle} >
-                            <ContentAdd />
-                        </FloatingActionButton>
-
-                    </div>
-
-                </div> */}
-                <div className="col-md-12 col-lg-12 my-4">
-                    <Tabs style={{border:' 1px solid #eee'}}>
-                        <Tab label="Projects" >
-                            <div>
-                                <Table>
-                                    <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                                        <TableRow >
-                                            <TableHeaderColumn>Project Name</TableHeaderColumn>
-                                            <TableHeaderColumn>Settings</TableHeaderColumn>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody displayRowCheckbox={false}>
+                                <div>
+                                    <CardTitle 
+                                        title={this.state.currentAccount.customerName} 
+                                        subtitle={this.state.currentAccount.status} 
+                                        style={{padding:'20px 16px 10px'}}
+                                        />
+                                    <span className="col-lg-12" style={{fontSize:'14px', color: 'rgba(0, 0, 0, 0.54)'}}>{this.props.selectedAccount.startDate} | {this.props.selectedAccount.endDate}</span>
+                                </div> 
+                            </div>
+                            <div className={"d-inline-flex col-lg-12"}>
+                                <div className={'col-lg-6 d-flex align-items-center'}>
+                                    {/* <label style={{color: 'rgba(0, 0, 0, 0.54)', margin: '0 20px 0 0'}}>Please Select a project</label>
+                                    <SelectField 
+                                        value={this.state.value} 
+                                        onChange={this.handleChange} 
+                                    >
                                         {this.state.currentAccount.projects.map((project, index) => (
-                                            <TableRow key={index} style={{border: '1px solid rgb(224, 224, 224)'}}>
-                                                {/* <TableRowColumn>{index}</TableRowColumn> */}
-                                                <TableRowColumn >{project.projectName}</TableRowColumn>
-                                                <TableRowColumn>
-                                                    <FloatingActionButton 
-                                                        mini={true} 
-                                                        iconStyle={editProjectButton} 
-                                                        onClick={() => this.createProject()}
-                                                    >
-                                                        <ContentEdit />
-                                                    </FloatingActionButton>
-                                                    <FloatingActionButton 
-                                                        mini={true} 
-                                                        secondary={true} 
-                                                        iconStyle={deleteProjectButton} 
-                                                        onClick={() => this.createProject()}
-                                                    >
-                                                        <ContentDeleteSweep />
-                                                    </FloatingActionButton>
-                                                </TableRowColumn>
-                                            </TableRow>
+                                            <MenuItem 
+                                                primaryText={project.projectName}
+                                                key={index}
+                                            />
                                         ))}
-                                    </TableBody>
-                                </Table>                                
-                            </div>
-                        </Tab>
-                        <Tab label="People" >
-                            <div>
-                                People
-                            </div>
-                        </Tab>
-                        <Tab label="Jump Start">
-                            <div className="col-lg-12 d-flex">
-                                <div className="col-lg-3 col-md-3 py-2">
-                                    <SelectableList style={{border: '1px solid #eee'}}>
-                                        {this.state.configureTools.map((item, index) => (
-                                            <ListItem 
-                                                style={{borderBottom: '1px solid #eee'}}
-                                                primaryText={item.name}
-                                                value={index}
-                                                key={item.id} 
-                                                onClick={() => this.currentItem(item.name, index)}
-                                                className={["pointer",
-                                                this.state.configureTools[index].selectedJumpStartMenuItem == true ? "dashboardHeaderBgColor" : ''].join(' ')}
-                                            />                                    
-                                        ))}   
-                                    </SelectableList>
+                                    </SelectField>                                  */}
+                                </div>                             
+                                <div className={'col-lg-6 d-flex'} style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+                                    <div style={{marginBottom: '-15px'}}>
+                                        <FloatingActionButton 
+                                            mini={true} 
+                                            secondary={true}  
+                                            onClick={() => this.createProject()}
+                                            className="float-right"
+                                            >
+                                            <ContentAdd />
+                                        </FloatingActionButton>
+                                    </div>
+                                </div>                                
+                            </div>                                                
+                        </Card>
+                    </div>
+
+                    <div className="my-4">
+                        <Tabs style={{border:' 1px solid #eee'}}>
+                            <Tab label="Projects" >
+                                <div>
+                                    <Table>
+                                        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                                            <TableRow >
+                                                <TableHeaderColumn>Project Name</TableHeaderColumn>
+                                                <TableHeaderColumn>Settings</TableHeaderColumn>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody displayRowCheckbox={false}>
+                                            {this.state.currentAccount.projects.map((project, index) => (
+                                                <TableRow key={index} style={{border: '1px solid rgb(224, 224, 224)'}}>
+                                                    {/* <TableRowColumn>{index}</TableRowColumn> */}
+                                                    <TableRowColumn >{project.projectName}</TableRowColumn>
+                                                    <TableRowColumn>
+                                                        <FloatingActionButton 
+                                                            mini={true} 
+                                                            iconStyle={editProjectButton} 
+                                                            onClick={() => this.createProject()}
+                                                        >
+                                                            <ContentEdit />
+                                                        </FloatingActionButton>
+                                                        <FloatingActionButton 
+                                                            mini={true} 
+                                                            secondary={true} 
+                                                            iconStyle={deleteProjectButton} 
+                                                            onClick={() => this.createProject()}
+                                                        >
+                                                            <ContentDeleteSweep />
+                                                        </FloatingActionButton>
+                                                    </TableRowColumn>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>                                
                                 </div>
-                                <div className="col-lg-9 col-md-9">
-                                   {this.state.selectTool}
+                            </Tab>
+                            <Tab label="People" >
+                                <div>
+                                    People
                                 </div>
-                            </div>
-                        </Tab>
-                        <Tab label="ACE5">
-                            <div>
-                                <h2 >Tab fOUR</h2>
-                                <p>
-                                This is a third example tab.
-                                </p>
-                            </div>
-                        </Tab>                        
-                    </Tabs>
-                </div>
-                
-                <div className="col-md-12 col-lg-12 padding0">
+                            </Tab>
+                            <Tab label="Jump Start">
+                                <div className="col-lg-12 d-flex">
+                                    <div className="col-lg-3 col-md-3 py-2">
+                                        <SelectableList style={{border: '1px solid #eee'}}>
+                                            {this.state.configureTools.map((item, index) => (
+                                                <ListItem 
+                                                    style={{borderBottom: '1px solid #eee'}}
+                                                    primaryText={item.name}
+                                                    value={index}
+                                                    key={item.id} 
+                                                    onClick={() => this.currentItem(item.name, index)}
+                                                    className={["pointer",
+                                                    this.state.configureTools[index].selectedJumpStartMenuItem == true ? "dashboardHeaderBgColor" : ''].join(' ')}
+                                                />                                    
+                                            ))}   
+                                        </SelectableList>
+                                    </div>
+                                    <div className="col-lg-9 col-md-9">
+                                    {this.state.selectTool}
+                                    </div>
+                                </div>
+                            </Tab>
+                            <Tab label="ACE5">
+                                <div>
+                                    <h2 >Tab fOUR</h2>
+                                    <p>
+                                    This is a third example tab.
+                                    </p>
+                                </div>
+                            </Tab>                        
+                        </Tabs>
+                    </div>
+
+                </div> 
+                 <div className="col-md-12 col-lg-12 padding0">
+
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -1128,7 +1075,7 @@ class AccountDetails extends React.Component {
                         <TableBody>
                             {this.state.currentAccount.projects.map((project, index) => (
                                 <TableRow key={index}>
-                                    {/* <TableRowColumn>{index}</TableRowColumn> */}
+                                   
                                     <TableRowColumn>{project.projectName}</TableRowColumn>
                                     <TableRowColumn style={tableConfigBUtton}>
                                         <RaisedButton label="configure" primary={true} onClick={() => this.configJumpStart(index)} />
@@ -1136,11 +1083,11 @@ class AccountDetails extends React.Component {
                                     </TableRowColumn>
                                     <TableRowColumn style={tableConfigBUtton}>
                                         <RaisedButton label="configure" secondary={true} onClick={() => this.autoCreate()} />
-                                        {/*   */}
+                                    
                                     </TableRowColumn>
                                     <TableRowColumn style={tableConfigBUtton}>
                                         <RaisedButton label="configure" default={true} onClick={() => this.autoCreate()}/>
-                                        {/* onClick={() => this.configACES5(project)} ] */}
+                     
                                     </TableRowColumn>
                                     <TableRowColumn>
                                         <FloatingActionButton mini={true} iconStyle={editProjectButton} onClick={() => this.createProject()}>
@@ -1164,7 +1111,7 @@ class AccountDetails extends React.Component {
                             ))}
                         </TableBody>
                     </Table>
-                </div>
+                </div> 
 
 
                 <Modal isOpen={this.state.editAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor 2 "].join(' ')}>
@@ -1439,8 +1386,6 @@ class AccountDetails extends React.Component {
 class ToolConfigurationDetails extends React.Component { 
     constructor(props) {
         super(props)
-
-
         var obj = dcopy(this.props.selectedAccount)
         this.state = {
             wikiList: [{ "id": 1, "name": "Confluence" },
