@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import '../App.css';
 
 // Components
-// import manageCustomerTeams from '../manageCustomerTeams';
+import ManageCustomerTeams from '../manageCustomerTeams';
 
 
 import {myConstClass} from '../constants.js';
@@ -56,11 +56,12 @@ class SideBar extends Component {
                     </Link>
                 </div>
                 <div className="p-1">
-                    <FloatingActionButton mini={true} secondary={true} onClick={this.getAllAccounts}>
-                        <ActionViewModule />                        
-                    </FloatingActionButton>
-                    <Subheader className="p-1" style={{fontSize:'10px',lineHeight:"26px"}}>Accounts</Subheader>
-
+                    <Link to="/ManageCustomerTeams">
+                        <FloatingActionButton mini={true} secondary={true} onClick={this.getAllAccounts}>
+                            <ActionViewModule />                        
+                        </FloatingActionButton>
+                        <Subheader className="p-1" style={{fontSize:'10px',lineHeight:"26px"}}>Teams</Subheader>
+                    </Link>
                 </div>
             </div>
         );

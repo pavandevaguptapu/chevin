@@ -291,7 +291,7 @@ class ManageCustomerTeams extends React.Component {
 
                     </div>
                         <div>
-
+                            
                         </div>
 
                     </div>
@@ -469,6 +469,8 @@ class ManageCustomerTeams extends React.Component {
                     </div>
 
                 </Modal>
+
+                {this.state.accountDetails}
             </div>
 
 

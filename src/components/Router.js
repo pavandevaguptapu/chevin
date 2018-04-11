@@ -15,6 +15,7 @@ const Router = () => (
             <Route path="/dashboard" component= {Dashboard } />
             <Route path="/account" component={Account}/>
             <Route path="/app" component={App} />
+            <Route path="/manageCustomerTeams" component={ManageCustomerTeams} />
             <Route path="/people" component={People} />
             <Route render= {function() {
                 return <h1>Not Found</h1>

@@ -15,7 +15,7 @@ const App = () => (
 
       <div style={{ width: "96%" }}>
         <ManageCustomerTeams /> 
-        <People />       
+        {/* <People />     */}
       </div>
     </div>
   </div>
