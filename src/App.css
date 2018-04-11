@@ -73,12 +73,12 @@ html,body{
 	margin-bottom: 35px;
 }
 
-	.justify{
-		display:flex;
-		align-items:center;
-		justify-content:center;
-		flex-direction: column;
-			}
+.justify{
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	flex-direction: column;
+}
 .loginSubmit{
 	margin-right:6px;
 	background-color:#75d475;
@@ -90,14 +90,13 @@ html,body{
 	margin-right:6px !important;
 	
 }
-.dashboardHeaderBgColor{
-	background-color:#76aad8 !important;	
-}
+/* .dashboardHeaderBgColor{
+	background-color:##eee !important;	
+} */
 .dashboardNavbarHeader{
 	text-align:center;
-
 }
-.manageAccount {
+.dashboardHeaderBgColor, .manageAccount {
 	background-color: #eee !important;
 	border-radius: 3px;
 }
@@ -706,18 +705,22 @@ background-color: #26A69A
 				.wordwrap{
 					word-wrap: break-word !important;
 				}
-				.project_details img {
-					width: 100px !important;
-					height: 100px !important;
-					color: rgb(255, 255, 255);
-					background-color: rgb(188, 188, 188);
-					user-select: none;
-					display: inline-flex;
-					align-items: center;
-					justify-content: center;
-					border-radius: 50%;
-					margin-right: 16px;					
-				}
+.project_details img {
+	width: 100px !important;
+	height: 100px !important;
+	color: rgb(255, 255, 255);
+	background-color: rgb(188, 188, 188);
+	user-select: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	margin-right: 16px;					
+}
+.edit_btn {
+	height: 40px !important;
+	width: 40px !important;
+}
 
 					
 			

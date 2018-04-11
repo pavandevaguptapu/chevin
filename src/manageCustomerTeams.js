@@ -13,7 +13,7 @@ import Avatar from 'material-ui/Avatar';
 import {List, ListItem, makeSelectable} from 'material-ui/List';
 import TextField  from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
-
+import Divider from 'material-ui/Divider'
 import ContentDeleteSweep from 'material-ui/svg-icons/content/delete-sweep';
 
 import RaisedButton from 'material-ui/RaisedButton';
@@ -358,7 +358,7 @@ class manageCustomerTeams extends React.Component {
                                                 value={index}
                                                 className=
                                                 {["pointer",
-                                                item._id==this.state.selectedItem?'manageAccount':''].join(' ')}
+                                                item._id===this.state.selectedItem?'manageAccount':''].join(' ')}
                                                 leftAvatar={<Avatar src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />}                                              
                                                 />
                                         ))}
@@ -762,7 +762,6 @@ class AccountDetails extends React.Component {
 
                 />
             })
-
         }
 
         if (this.state.currentAccount.projects[projectIndex].tools !== undefined) {
@@ -799,7 +798,6 @@ class AccountDetails extends React.Component {
     }
 
     currentItem(selectedItemName, selectedItemIndex) {
-        
         this.setState({selectedItemName:selectedItemName,selectedItemIndex:selectedItemIndex})
         //this.selectedItemName = selectedItemName
         if (this.state.oldselectedItemIndex !== '' && this.state.oldselectedItemIndex !== undefined) {
@@ -951,27 +949,13 @@ class AccountDetails extends React.Component {
                     <div className="col-md-12 col-lg-12 ">
                         <Subheader className={"font text-center"} style={{fontSize:'16px'}}>Account Details</Subheader>
                     </div>
-                    {/* <div className="col-md-2 col-lg-2">
-
-                        <FloatingActionButton 
-                            mini={true} 
-                            iconStyle={addAccountBUtton} 
-                            style={editbuttonStyle} 
-                            onClick={() => this.editAccount()}
-                        >
-                            <ContentEdit />
-                        </FloatingActionButton>
-
-                    </div> */}
                 </div>
 
-                <div className="col-lg-12">
+                <div className="col-lg-12 clearfix">
                     <Card>
-                        <div className="col-lg-12">
+                        <div className="col-lg-12 clearfix">
                             <FloatingActionButton 
                                 mini={true} 
-                                iconStyle={addAccountBUtton} 
-                                style={editbuttonStyle} 
                                 onClick={() => this.editAccount()}
                                 className="float-right"
                             >
@@ -991,22 +975,23 @@ class AccountDetails extends React.Component {
                                 <span className="col-lg-12" style={{fontSize:'14px', color: 'rgba(0, 0, 0, 0.54)'}}>{this.props.selectedAccount.startDate} | {this.props.selectedAccount.endDate}</span>
                             </div>
                         </div>
-                            <div className={"d-inline-flex col-lg-12"}>
-                                <div className={'col-lg-6'}>
-                                    <label style={{color: 'rgba(0, 0, 0, 0.54)'}}>Please Select a project</label>
-                                    <SelectField 
-                                        value={this.state.value} 
-                                        onChange={this.handleChange} 
-                                    >
-                                        {this.state.currentAccount.projects.map((project, index) => (
-                                            <MenuItem 
-                                                primaryText={project.projectName}
-                                                key={index}
-                                            />
-                                        ))}
-                                    </SelectField>                                 
-                                </div>                             
-                                <div className={'col-lg-6 d-flex'} style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+                        <div className={"d-inline-flex col-lg-12"}>
+                            <div className={'col-lg-6 d-flex align-items-center'}>
+                                <label style={{color: 'rgba(0, 0, 0, 0.54)', margin: '0 20px 0 0'}}>Please Select a project</label>
+                                <SelectField 
+                                    value={this.state.value} 
+                                    onChange={this.handleChange} 
+                                >
+                                    {this.state.currentAccount.projects.map((project, index) => (
+                                        <MenuItem 
+                                            primaryText={project.projectName}
+                                            key={index}
+                                        />
+                                    ))}
+                                </SelectField>                                 
+                            </div>                             
+                            <div className={'col-lg-6 d-flex'} style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+                                <div style={{marginBottom: '-15px'}}>
                                     <FloatingActionButton 
                                         mini={true} 
                                         secondary={true}  
@@ -1015,8 +1000,9 @@ class AccountDetails extends React.Component {
                                         >
                                         <ContentAdd />
                                     </FloatingActionButton>
-                                </div>                                
-                            </div>                                                
+                                </div>
+                            </div>                                
+                        </div>                                                
                     </Card>
                 </div>
 
@@ -1050,8 +1036,8 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </div> */}
-                <div className="col-md-12 col-lg-12">
-                    <Tabs>
+                <div className="col-md-12 col-lg-12 my-4">
+                    <Tabs style={{border:' 1px solid #eee'}}>
                         <Tab label="Projects" >
                             <div>
                                 <Table>
@@ -1091,18 +1077,29 @@ class AccountDetails extends React.Component {
                         </Tab>
                         <Tab label="People" >
                             <div>
-                                <h2 >Tab Two</h2>
-                                <p>
-                                This is another example tab.
-                                </p>
+                                People
                             </div>
                         </Tab>
                         <Tab label="Jump Start">
-                            <div>
-                                <h2 >Tab Three</h2>
-                                <p>
-                                This is a third example tab.
-                                </p>
+                            <div className="col-lg-12 d-flex">
+                                <div className="col-lg-3 col-md-3 py-2">
+                                    <SelectableList style={{border: '1px solid #eee'}}>
+                                        {this.state.configureTools.map((item, index) => (
+                                            <ListItem 
+                                                style={{borderBottom: '1px solid #eee'}}
+                                                primaryText={item.name}
+                                                value={index}
+                                                key={item.id} 
+                                                onClick={() => this.currentItem(item.name, index)}
+                                                className={["pointer",
+                                                this.state.configureTools[index].selectedJumpStartMenuItem == true ? "dashboardHeaderBgColor" : ''].join(' ')}
+                                            />                                    
+                                        ))}   
+                                    </SelectableList>
+                                </div>
+                                <div className="col-lg-9 col-md-9">
+                                   {this.state.selectTool}
+                                </div>
                             </div>
                         </Tab>
                         <Tab label="ACE5">
