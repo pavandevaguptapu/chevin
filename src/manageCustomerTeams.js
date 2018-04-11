@@ -8,10 +8,13 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Tabs, Tab} from 'material-ui/Tabs';
 import Avatar from 'material-ui/Avatar';
 import {List, ListItem, makeSelectable} from 'material-ui/List';
 import TextField  from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
+
+import ContentDeleteSweep from 'material-ui/svg-icons/content/delete-sweep';
 
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
@@ -26,6 +29,7 @@ var dcopy = require('deep-copy')
 
 
 let SelectableList = makeSelectable(List);
+
 const customStyles = {
     content: {
         top: '50%',
@@ -590,7 +594,7 @@ class AccountDetails extends React.Component {
         var projectUrl=githubObj.projecturl
         axios.post("https://api.github.com/user/repos",
         {            
-             "name": repoName,
+            "name": repoName,
             "description": "This is your first repository" ,
             "projectName": projectName       
         },
@@ -655,7 +659,6 @@ class AccountDetails extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-
         this.setState({
             currentAccount: nextProps.selectedAccount
         })
@@ -912,7 +915,6 @@ class AccountDetails extends React.Component {
     }
 
     handlingPeopleList(latestPeopleDate) {
-
         var tempPeoplesArray = []
         for (var i = 0; i < latestPeopleDate.projects[this.state.selectedProjectIndex].people.length; i++) {
             tempPeoplesArray.push(latestPeopleDate.projects[this.state.selectedProjectIndex].people[i])
@@ -951,8 +953,13 @@ class AccountDetails extends React.Component {
 
     render() {
         return (
+
             <div className="col-lg-11 ml-4 mt-2">
                 {/* <div className="d-flex borderBottom" style={{justifyContent: 'center', alignItems: 'center'}}>
+
+            <div className="col-lg-12">
+                <div className="d-flex" style={{justifyContent: 'center', alignItems: 'center'}}>
+
                     <div className="col-md-12 col-lg-12 ">
                         <Subheader className={"font text-center"} style={{fontSize:'16px'}}>Account Details</Subheader>
                     </div> 
@@ -970,7 +977,11 @@ class AccountDetails extends React.Component {
                     </div> 
                 </div> */}
 
+
                 <div className="col-md-12 col-lg-12 marginL1">
+
+                <div className="col-lg-12">
+
                     <Card>
                         <div className="col-lg-12">
                             <FloatingActionButton 
@@ -1059,7 +1070,11 @@ class AccountDetails extends React.Component {
                     <div className="col-md-10 col-lg-10 textAlignCenter">
                         <h5 className="marginT0 font fontSize17">Projects</h5>
                     </div>
+
                      <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
+
+                    <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
+
 
                         <FloatingActionButton 
                             mini={true} 
@@ -1070,10 +1085,81 @@ class AccountDetails extends React.Component {
                             <ContentAdd />
                         </FloatingActionButton>
 
-                    </div> 
 
-                </div> */}
-                {/* <div className="col-md-12 col-lg-12 padding0">
+                    </div> */}
+
+                </div> 
+            
+
+           
+                <div className="col-md-12 col-lg-12">
+                    <Tabs>
+                        <Tab label="Projects" >
+                            <div>
+                                <Table>
+                                    <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                                        <TableRow >
+                                            <TableHeaderColumn>Project Name</TableHeaderColumn>
+                                            <TableHeaderColumn>Settings</TableHeaderColumn>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody displayRowCheckbox={false}>
+                                        {this.state.currentAccount.projects.map((project, index) => (
+                                            <TableRow key={index} style={{border: '1px solid rgb(224, 224, 224)'}}>
+                                                {/* <TableRowColumn>{index}</TableRowColumn> */}
+                                                <TableRowColumn >{project.projectName}</TableRowColumn>
+                                                <TableRowColumn>
+                                                    <FloatingActionButton 
+                                                        mini={true} 
+                                                        iconStyle={editProjectButton} 
+                                                        onClick={() => this.createProject()}
+                                                    >
+                                                        <ContentEdit />
+                                                    </FloatingActionButton>
+                                                    <FloatingActionButton 
+                                                        mini={true} 
+                                                        secondary={true} 
+                                                        iconStyle={deleteProjectButton} 
+                                                        onClick={() => this.createProject()}
+                                                    >
+                                                        <ContentDeleteSweep />
+                                                    </FloatingActionButton>
+                                                </TableRowColumn>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>                                
+                            </div>
+                        </Tab>
+                        <Tab label="People" >
+                            <div>
+                                <h2 >Tab Two</h2>
+                                <p>
+                                This is another example tab.
+                                </p>
+                            </div>
+                        </Tab>
+                        <Tab label="Jump Start">
+                            <div>
+                                <h2 >Tab Three</h2>
+                                <p>
+                                This is a third example tab.
+                                </p>
+                            </div>
+                        </Tab>
+                        <Tab label="ACE5">
+                            <div>
+                                <h2 >Tab fOUR</h2>
+                                <p>
+                                This is a third example tab.
+                                </p>
+                            </div>
+                        </Tab>                        
+                    </Tabs>
+                </div>
+                
+                <div className="col-md-12 col-lg-12 padding0">
+
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -1124,7 +1210,7 @@ class AccountDetails extends React.Component {
                             ))}
                         </TableBody>
                     </Table>
-                </div> */}
+                </div>
 
 
                 <Modal isOpen={this.state.editAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor 2 "].join(' ')}>
@@ -1399,8 +1485,6 @@ class AccountDetails extends React.Component {
 class ToolConfigurationDetails extends React.Component { 
     constructor(props) {
         super(props)
-
-
         var obj = dcopy(this.props.selectedAccount)
         this.state = {
             wikiList: [{ "id": 1, "name": "Confluence" },
@@ -1517,7 +1601,6 @@ class ToolConfigurationDetails extends React.Component {
 
         }
 
-
         if (nextProps.selectedJumpStartMenuName == "Quality") {
             this.setState({
                 wikiList: [
@@ -1531,9 +1614,9 @@ class ToolConfigurationDetails extends React.Component {
             })
 
         }
-  
      
     }
+
     handleChangeInJumpStart(e, index, value) {
 
          var tempArray = this.state.dupeCurrentAccountArray
@@ -1595,6 +1678,7 @@ class ToolConfigurationDetails extends React.Component {
         //  }
 
     }
+
     handleChange(e) {
 
         var tempArray = this.state.dupeCurrentAccountArray
