@@ -530,52 +530,64 @@ class AccountDetails extends React.Component {
     }
     submitGithubDetails(githubObj) {
         console.log(githubObj)
-        var builder = require('xmlbuilder');
-        var xml = builder.create('project')     
-        .ele('description',"Build") .ele('/description')       
-        .ele('scm',{'class':'hudson.plugins.scm_sync_configuration'})
-        .ele('configVersion',2).ele('/configVersion')
-        .ele('userRemoteConfigs')
-        .ele('hudson.plugins.git.UserRemoteConfig')
-        .ele('url',"http://192.168.29.16:8081/scm/git/Spring").ele('/url')
-        .ele('/hudson.plugins.git.UserRemoteConfig')
-        .ele('/userRemoteConfigs')
-        .ele('branches')
-        .ele('hudson.plugins.git.BranchSpec')
-        .ele('name','*/master').ele('/name')        
-        .ele('/hudson.plugins.git.BranchSpec')
-        .ele('/branches')
-        .ele('/scm')
-        .ele('triggers') 
-        .ele('hudson.triggers.SCMTrigger') 
-        .ele('spec','H/15***').ele('/spec') 
-        .ele('ignorePostCommitHooks','false').ele('/ignorePostCommitHooks') 
-        .ele('/hudson.triggers.SCMTrigger') 
-        .ele('/triggers')
-        .ele('concurrentBuild','false').ele('/concurrentBuild')
-        .ele('builders')
-        .ele('hudson.tasks.BatchFile')
-        .ele('command','npm install')
-        .ele('/command')
-        .ele('/hudson.tasks.BatchFile')
-        .ele('hudson.tasks.BatchFile')
-        .ele('command','npm run build')
-        .ele('/command')
-        .ele('/hudson.tasks.BatchFile')
-        .ele('hudson.tasks.BatchFile')
-        .ele('command','xcopy C:\Program Files (x86)\Jenkins\workspace\samplejob\build   C:\apache-tomcat-9.0.1\webapps\ROOT /s/h/e/k/f/c/y')
-        .ele('/command')
-        .ele('/hudson.tasks.BatchFile')       
-        .ele('hudson.plugins.sonar.SonarRunnerBuilder')
-        .ele('project').ele('/project')
-        .ele('properties','sonar.projectKey=sonarproject , sonar.projectVersion=1.0,sonar.projectVersion=1.0,sonar.sources=src,sonar.language=js')
-        .ele('/properties')
-        .ele('javaOpts').ele('/javaOpts')
-        .ele('jdk','(Inherit From Job)').ele('/jdk')
-        .ele('/hudson.plugins.sonar.SonarRunnerBuilder')
-        .ele('/builders')
-        .ele('/buildWrappers')
-      .end({ pretty: true});
+        var XMLWriter = require('xml-writer');
+        var xw = new XMLWriter;
+        xw.startDocument();
+        xw.startElement('project');        
+        xw.writeElement('description', '2');
+        xw.writeElement('keepDependencies', 'false');   
+        xw.startElement('scm');
+        xw.writeAttribute('class','hudson.plugins.scm_sync_configuration');        
+        xw.writeElement('configVersion', '2');
+        xw.startElement('userRemoteConfigs')
+        xw.startElement('hudson.plugins.git.UserRemoteConfig')
+        xw.writeElement('url','http://192.168.29.16:8081/scm/git/Spring')
+        xw.endElement()
+        xw.endElement()
+        xw.startElement('branches')
+        xw.startElement('hudson.plugins.git.BranchSpec')
+        xw.writeElement('name','*/master')
+        xw.endElement() 
+        xw.writeElement('doGenerateSubmoduleConfigurations','false') 
+        xw.endElement() 
+        xw.endElement() 
+        xw.writeElement('canRoam','true') 
+        xw.writeElement('disabled','false') 
+        xw.writeElement('blockBuildWhenDownstreamBuilding','false')        
+        xw.writeElement('blockBuildWhenUpstreamBuilding','false') 
+        xw.startElement('triggers')
+        xw.startElement('hudson.triggers.SCMTrigger')
+        xw.writeElement('spec','h/15****') 
+        xw.writeElement('ignorePostCommitHooks','false') 
+        xw.endElement() 
+        xw.endElement() 
+        xw.writeElement('concurrentBuild','false') 
+        xw.startElement('builders')
+        xw.startElement('hudson.tasks.BatchFile')
+        xw.writeElement('command','npm install')
+        xw.endElement()  
+        xw.startElement('hudson.tasks.BatchFile')
+        xw.writeElement('command','npm run build') 
+        xw.endElement()
+        xw.startElement('hudson.plugins.sonar.SonarRunnerBuilder')
+        xw.writeElement('properties','sonar.projectKey=sonarproject sonar.projectName=JavaScript :: Simple Project :: SonarQube Scanner  sonar.projectVersion=1.0 sonar.sources=src')  
+        xw.endElement()
+        xw.writeElement('jdk','(Inherit From Job)') 
+        xw.endElement()
+        xw.endElement()
+        xw.endDocument();
+     
+     
+        var xml ="<?xml version='1.0'?><project><description>2</description><keepDependencies>false</keepDependencies><scm class='hudson.plugins.scm_sync_configuration'><configVersion>2</configVersion><userRemoteConfigs><hudson.plugins.git.UserRemoteConfig><url>http://192.168.29.16:8081/scm/git/Spring</url></hudson.plugins.git.UserRemoteConfig></userRemoteConfigs><branches><hudson.plugins.git.BranchSpec><name>*/master</name></hudson.plugins.git.BranchSpec><doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations></branches></scm><canRoam>true</canRoam><disabled>false</disabled><blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding><blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding><triggers><hudson.triggers.SCMTrigger><spec>h/15****</spec><ignorePostCommitHooks>false</ignorePostCommitHooks></hudson.triggers.SCMTrigger></triggers><concurrentBuild>false</concurrentBuild><builders><hudson.tasks.BatchFile><command>npm install</command></hudson.tasks.BatchFile><hudson.tasks.BatchFile><command>npm run build</command></hudson.tasks.BatchFile><hudson.plugins.sonar.SonarRunnerBuilder><properties>sonar.projectKey=sonarproject sonar.projectName=JavaScript :: Simple Project :: SonarQube Scanner  sonar.projectVersion=1.0 sonar.sources=src</properties></hudson.plugins.sonar.SonarRunnerBuilder><jdk>(Inherit From Job)</jdk></builders></project>"
+        
+        // var reg = new RegExp(/(\r\n?|\n|\t)/g);
+        // var ntext = xml.replace(reg, "-");
+        // console.log(ntext);
+
+        //  xml=xml.replace(/"/g, '\\"')
+         //xml=xml.replace(/\n/g, "")
+     
+        console.log(xml);
 
         this.setState({ githubInstanceDetails: githubObj })
 
@@ -600,8 +612,8 @@ class AccountDetails extends React.Component {
         //         console.log(response)
 
         //     })
-            axios.post(`sbtpgateway/tp/rest/esccors/generic1/`, {
-                "resourceURL": "https://192.168.29.25:8080/createItem?name=samplejob2",
+            axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+                "resourceURL": "https://192.168.29.25:8080/createItem?name=sa",
                 "userName": "admin", "password": "1ce543883f6441ee931fe0adffcacd4e", "actionMethod": "post",
                 postParams: 
                 xml
@@ -610,7 +622,11 @@ class AccountDetails extends React.Component {
                     {
                         "headerName": "Accept",
                         "headerValue": "text/xml"
-    
+                        
+                    },
+                    {
+                        "headerName": "Content-Type",
+                        "headerValue": "text/xml"
                     }
                 ]
             },
