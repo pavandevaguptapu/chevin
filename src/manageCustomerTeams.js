@@ -960,6 +960,8 @@ class AccountDetails extends React.Component {
             <div className="col-lg-12">
                 <div className="d-flex" style={{justifyContent: 'center', alignItems: 'center'}}>
 
+
+
                     <div className="col-md-12 col-lg-12 ">
                         <Subheader className={"font text-center"} style={{fontSize:'16px'}}>Account Details</Subheader>
                     </div> 
@@ -979,6 +981,10 @@ class AccountDetails extends React.Component {
 
 
                 <div className="col-md-12 col-lg-12 marginL1">
+
+                <div className="col-lg-12">
+
+
 
                 <div className="col-lg-12">
 
@@ -1013,7 +1019,7 @@ class AccountDetails extends React.Component {
                                 </div>                             
                                                             
                             </div>  
-                            {/* <div className={"project_details p-3 d-inline-flex"}>
+                            <div className={"project_details p-3 d-inline-flex"}>
                                 <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
                             </div>
                             <div>
@@ -1023,7 +1029,7 @@ class AccountDetails extends React.Component {
                                     style={{padding:'20px 16px 10px'}}
                                     />
                                 <span className="col-lg-12" style={{fontSize:'14px', color: 'rgba(0, 0, 0, 0.54)'}}>{this.props.selectedAccount.startDate} | {this.props.selectedAccount.endDate}</span>
-                            </div> */}
+                            </div> 
                         </div>
                             <div className={"d-inline-flex col-lg-12"}>
                                 <div className={'col-lg-6'}>
@@ -1071,7 +1077,11 @@ class AccountDetails extends React.Component {
                         <h5 className="marginT0 font fontSize17">Projects</h5>
                     </div>
 
+
                      <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
+
+                    <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
+
 
                     <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
 
@@ -1086,12 +1096,16 @@ class AccountDetails extends React.Component {
                         </FloatingActionButton>
 
 
+
                     </div> */}
 
                 </div> 
             
 
            
+
+                </div> 
+
                 <div className="col-md-12 col-lg-12">
                     <Tabs>
                         <Tab label="Projects" >
@@ -1158,7 +1172,7 @@ class AccountDetails extends React.Component {
                     </Tabs>
                 </div>
                 
-                <div className="col-md-12 col-lg-12 padding0">
+                 <div className="col-md-12 col-lg-12 padding0">
 
                     <Table>
                         <TableHeader>
@@ -1210,7 +1224,7 @@ class AccountDetails extends React.Component {
                             ))}
                         </TableBody>
                     </Table>
-                </div>
+                </div> 
 
 
                 <Modal isOpen={this.state.editAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor 2 "].join(' ')}>
