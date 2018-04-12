@@ -2,10 +2,6 @@ import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
 
-// Components
-import ManageCustomerTeams from '../manageCustomerTeams';
-
-
 import {myConstClass} from '../constants.js';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import SocialGroup from 'material-ui/svg-icons/social/group';
@@ -48,7 +44,7 @@ class SideBar extends Component {
         return(
             <div className="col-md-12 col-lg-12 p-0">
                 <div className="p-1">
-                    <Link to="/People">
+                    <Link to="/app/people">
                         <FloatingActionButton mini={true} secondary={true}>
                             <SocialGroup />
                         </FloatingActionButton>
@@ -56,8 +52,8 @@ class SideBar extends Component {
                     </Link>
                 </div>
                 <div className="p-1">
-                    <Link to="/ManageCustomerTeams">
-                        <FloatingActionButton mini={true} secondary={true} onClick={this.getAllAccounts}>
+                    <Link to="/app/manageCustomerTeams" >
+                        <FloatingActionButton mini={true} secondary={true} onClick={this.getAllAccounts} >
                             <ActionViewModule />                        
                         </FloatingActionButton>
                         <Subheader className="p-1" style={{fontSize:'10px',lineHeight:"26px"}}>Teams</Subheader>

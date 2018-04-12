@@ -245,9 +245,6 @@ class ManageCustomerTeams extends React.Component {
                 this.setState({ accountsArray: this.state.accountsArray.concat(response.data) })
                 this.currentAccountProfile(this.state.accountsArray[0], 0);
             })
-
-            
-
     }
 
     componentDidMount() {

@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-import Router from './components/Router';
+import Routes from './components/Router';
 
 
 ReactDOM.render((
 	<MuiThemeProvider >
-		<Router/>
+		<Routes/>
 	 </MuiThemeProvider >
 ),document.getElementById('root'));
   

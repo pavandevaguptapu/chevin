@@ -5,7 +5,8 @@ import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowCol
 class People extends Component {
     render() {
         return (
-        <div className="col-lg-12">
+        <div>
+          <div style={{ width: "96%" }}>
             <Table style={{border:' 1px solid #eee'}}>
               <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                 <TableRow>
@@ -42,7 +43,8 @@ class People extends Component {
                 </TableRow>
               </TableBody>
             </Table>
-          </div>
+           </div> 
+        </div>
         );
     }
 }
