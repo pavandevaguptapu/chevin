@@ -191,59 +191,8 @@ class manageCustomerTeams extends React.Component {
         this.state.newCustomerDetails[e.target.name] = e.target.value
 
     }
-    createAccount(test) {    
-
-        
-        console.log(test)
-        var builder = require('xmlbuilder');
-        var xml = builder.create('project')     
-        .ele('description',"Build") .ele('/description')       
-        .ele('scm',{'class':'hudson.plugins.scm_sync_configuration'})
-        .ele('configVersion',2).ele('/configVersion')
-        .ele('userRemoteConfigs')
-        .ele('hudson.plugins.git.UserRemoteConfig')
-        .ele('url',"http://192.168.29.16:8081/scm/git/Spring").ele('/url')
-        .ele('/hudson.plugins.git.UserRemoteConfig')
-        .ele('/userRemoteConfigs')
-        .ele('branches')
-        .ele('hudson.plugins.git.BranchSpec')
-        .ele('name','*/master').ele('/name')        
-        .ele('/hudson.plugins.git.BranchSpec')
-        .ele('/branches')
-        .ele('/scm')
-        .ele('triggers') 
-        .ele('hudson.triggers.SCMTrigger') 
-        .ele('spec','H/15***').ele('/spec') 
-        .ele('ignorePostCommitHooks','false').ele('/ignorePostCommitHooks') 
-        .ele('/hudson.triggers.SCMTrigger') 
-        .ele('/triggers')
-        .ele('concurrentBuild','false').ele('/concurrentBuild')
-        .ele('builders')
-        .ele('hudson.tasks.BatchFile')
-        .ele('command','npm install')
-        .ele('/command')
-        .ele('/hudson.tasks.BatchFile')
-        .ele('hudson.tasks.BatchFile')
-        .ele('command','npm run build')
-        .ele('/command')
-        .ele('/hudson.tasks.BatchFile')
-        .ele('hudson.tasks.BatchFile')
-        .ele('command','xcopy C:\Program Files (x86)\Jenkins\workspace\samplejob\build   C:\apache-tomcat-9.0.1\webapps\ROOT /s/h/e/k/f/c/y')
-        .ele('/command')
-        .ele('/hudson.tasks.BatchFile')       
-        .ele('hudson.plugins.sonar.SonarRunnerBuilder')
-        .ele('project').ele('/project')
-        .ele('properties','sonar.projectKey=sonarproject , sonar.projectVersion=1.0,sonar.projectVersion=1.0,sonar.sources=src,sonar.language=js')
-        .ele('/properties')
-        .ele('javaOpts').ele('/javaOpts')
-        .ele('jdk','(Inherit From Job)').ele('/jdk')
-        .ele('/hudson.plugins.sonar.SonarRunnerBuilder')
-        .ele('/builders')
-        .ele('/buildWrappers')
-      .end({ pretty: true});
-         
-        console.log(xml);
-        // this.setState({ createAccountModal: true })
+    createAccount() {        
+            this.setState({ createAccountModal: true })
     }
     reset() {
 
@@ -367,7 +316,7 @@ class manageCustomerTeams extends React.Component {
                                 <h5 className="marginT0 font fontSize17 paddingT2">Account </h5>
                             </div>
                             <div className="col-md-2 col-lg-2 textAlignCenter borderBottom displayInline paddingT3 paddingB5 paddingL0">
-                                <FloatingActionButton style={boxShadow} mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createAccount("test")} style={addAcountstyle} >
+                                <FloatingActionButton style={boxShadow} mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createAccount()} style={addAcountstyle} >
                                     <ContentAdd />
                                 </FloatingActionButton>
 
@@ -520,6 +469,7 @@ class AccountDetails extends React.Component {
         this.submitGithubDetails = this.submitGithubDetails.bind(this);
         this.handleGithubInstance = this.handleGithubInstance.bind(this);
         this.closeGithubDetails = this.closeGithubDetails.bind(this);
+        this.github = this.github.bind(this);
     }
     autoCreate() {
      
@@ -527,6 +477,46 @@ class AccountDetails extends React.Component {
     }
     closeGithubDetails() {
         this.setState({ createGithubProjectModel: false })
+    }
+    github(reponame,projecturl){
+        console.log(reponame)
+        console.log(projecturl)
+        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+            "resourceURL": "https://api.github.com/repos/coMakeIT-Git/"+reponame+"/import",
+            "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "put",
+            postParams:{
+                "vcs_url": "https://pavankumard@bitbucket.org/coesb/sb-code.git",
+                "vcs_username":"pavankumar.d@comakeit.com",
+                "vcs_password":"Abc@1234"
+            },
+            headersToForward: [
+                {
+                    "headerName": "Accept",
+                    "headerValue": "application/vnd.github.barred-rock-preview"
+
+                }
+            ]      
+        }   
+        ).then(response => {
+                console.log(response)
+
+                axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+                    "resourceURL": "https://api.github.com/repos/coMakeIT-Git/"+reponame+"/hooks",
+                    "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "post",
+                    postParams: {
+                        "name": "web",
+                        "config": {"url":"http://192.168.29.25:8080/job/" + reponame + "/build"}
+                        
+                    },                              
+                    headersToForward: [
+                        {
+                            "headerName": "Accept",
+                            "headerValue": "application/json"                    
+                        }
+                    ]
+                })       
+        })              
+            
     }
     submitGithubDetails(githubObj) {
         console.log(githubObj)
@@ -577,127 +567,74 @@ class AccountDetails extends React.Component {
         xw.endElement()
         xw.endDocument();
      
-     
-        var xml ="<?xml version='1.0'?><project><description>2</description><keepDependencies>false</keepDependencies><scm class='hudson.plugins.scm_sync_configuration'><configVersion>2</configVersion><userRemoteConfigs><hudson.plugins.git.UserRemoteConfig><url>http://192.168.29.16:8081/scm/git/Spring</url></hudson.plugins.git.UserRemoteConfig></userRemoteConfigs><branches><hudson.plugins.git.BranchSpec><name>*/master</name></hudson.plugins.git.BranchSpec><doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations></branches></scm><canRoam>true</canRoam><disabled>false</disabled><blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding><blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding><triggers><hudson.triggers.SCMTrigger><spec>h/15****</spec><ignorePostCommitHooks>false</ignorePostCommitHooks></hudson.triggers.SCMTrigger></triggers><concurrentBuild>false</concurrentBuild><builders><hudson.tasks.BatchFile><command>npm install</command></hudson.tasks.BatchFile><hudson.tasks.BatchFile><command>npm run build</command></hudson.tasks.BatchFile><hudson.plugins.sonar.SonarRunnerBuilder><properties>sonar.projectKey=sonarproject sonar.projectName=JavaScript :: Simple Project :: SonarQube Scanner  sonar.projectVersion=1.0 sonar.sources=src</properties></hudson.plugins.sonar.SonarRunnerBuilder><jdk>(Inherit From Job)</jdk></builders></project>"
-        
-        // var reg = new RegExp(/(\r\n?|\n|\t)/g);
-        // var ntext = xml.replace(reg, "-");
-        // console.log(ntext);
-
-        //  xml=xml.replace(/"/g, '\\"')
-         //xml=xml.replace(/\n/g, "")
-     
-        console.log(xml);
-
+     var xml = xw.toString();
         this.setState({ githubInstanceDetails: githubObj })
 
-        // axios.post(`sbtpgateway/tp/rest/esccors/generic1/`, {
-        //     "resourceURL": "https://api.github.com/orgs/coMakeIT-Git/repos",
-        //     "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "post",
-        //     postParams: {
-        //         "name": this.state.githubInstanceDetails.repoName,
-        //         "description": "This is your first repository"
-        //     },
-        //     headersToForward: [
-        //         {
-        //             "headerName": "Accept",
-        //             "headerValue": "application/vnd.github.mercy-preview+json"
+        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+            "resourceURL": "https://api.github.com/orgs/coMakeIT-Git/repos",
+            "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "post",
+            postParams: {
+                "name": this.state.githubInstanceDetails.repoName,
+                "description": "This is your first repository"
+            },
+            headersToForward: [
+                {
+                    "headerName": "Accept",
+                    "headerValue": "application/vnd.github.mercy-preview+json"
 
-        //         }
-        //     ]
-        // },
-        // )
-        //     .then(response => {
-
-        //         console.log(response)
-
-        //     })
-            axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-                "resourceURL": "https://192.168.29.25:8080/createItem?name=sa",
-                "userName": "admin", "password": "1ce543883f6441ee931fe0adffcacd4e", "actionMethod": "post",
-                postParams: 
-                xml
-                ,
-                headersToForward: [
+                }
+            ]
+        }).then(response => {
+            var data = JSON.stringify({
+                "resourceURL": "http://192.168.29.25:8080/createItem?name=" + this.state.githubInstanceDetails.repoName,
+                "userName": "admin",
+                "password": "1ce543883f6441ee931fe0adffcacd4e",
+                "actionMethod": "post",
+                "postParams": xml,
+                "headersToForward": [
                     {
                         "headerName": "Accept",
                         "headerValue": "text/xml"
-                        
                     },
                     {
                         "headerName": "Content-Type",
                         "headerValue": "text/xml"
                     }
                 ]
-            },
-            )
-                .then(response => {
-    
-                    console.log(response)
-    
-                })
-                //             var owner = response.data.owner.login
-                //             axios.post("https://api.github.com/repos/" + owner + "/" + this.state.githubInstanceDetails.repoName + "/projects",
-                //                 {
-                //                     "name": this.state.githubInstanceDetails.projectName,
+            });
 
-                //                 },
-                //                 {
-                //                     headers: {
-                //                         "Accept": "application/vnd.github.inertia-preview+json",
-                //                         "Authorization": "Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
-                //                     }
-                //                 })
-                // axios.post("http://192.168.29.16:8080/createItem?name=" + this.state.githubInstanceDetails.repoName,
-                //     {
-                //         headers: {
-                //             "Accept": "text/xml",
-                //             "Access-Control-Allow-Origin": "*",
-                //             "Access-Control-Allow-Methods": "GET, POST, DELETE, PUT"
-                //         },
-                //     }
-                // ).
-                //     then(response => {
-                //         axios.put("https://api.github.com/repos/pavandevaguptapu/" + this.state.githubInstanceDetails.repoName + "/import",
-                //             {
-                //                 "vcs_url": this.state.githubInstanceDetails.projectUrl
-                //             },
-                //             {
-                //                 headers: {
-                //                     "Accept": "application/vnd.github.barred-rock-preview",
-                //                     "Authorization": "Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
-                //                 }
-                //             })
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
 
-                //     }).then(response => {
-                //         axios.put("https://api.github.com/repos/pavandevaguptapu/" + this.state.githubInstanceDetails.repoName + "/hooks",
-                //             {
-                //                 "name": "web",
-                //                 "config": { "url": "http://192.168.29.16:8080/job/" + this.state.githubInstanceDetails.repoName + "/build", "content_type": "text/xml" }
-                //             },
-                //             {
-                //                 headers: {
-                //                     "Accept": "application/json",
-                //                     "Authorization": "Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
-                //                 }
-                //             })
-                //     }).then(response => {
-                //         console.log(response)
-                //     })
+            // xhr.addEventListener("readystatechange", function () {
+            //     console.log(this.readyState)
+            //     if (this.readyState === 4) {
+            //         console.log("xhr")
+                   
+            //     }
+              
+            //            this.github(this.state.githubInstanceDetails.repoName,this.state.githubInstanceDetails.projectUrl)
+                   
+               
+            
+            // }.bind(this))
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                  console.log(xhr.response);
+                  this.github(this.state.githubInstanceDetails.repoName,this.state.githubInstanceDetails.projectUrl)
+                }
+              }.bind(this)
 
-                //   axios.put("https://api.github.com/repos/"+owner+"/"+repo+"/import",
-                //     {            
-                //          "vcs_url":this.state.githubInstanceDetails.projectUrl              
-                //     },
-                //     {
-                //         headers:{
-                //             "Accept":"application/vnd.github.barred-rock-preview",
-                //             "Authorization":"Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
-                //         }
-           // })
-
-        // })
+                xhr.open("POST", "/sbtpgateway/tp/rest/esccors/generic/");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.setRequestHeader("Cache-Control", "no-cache");
+                xhr.setRequestHeader("Postman-Token", "56a8ca1a-c164-49a5-8f97-4ce631088e8e");
+                xhr.send(data)
+            
+        })              
     }
+   
+
     handleGithubInstance(e) {
         var currentGithubInstanceObj = this.state.githubInstanceDetails;
         currentGithubInstanceObj[e.target.name] = e.target.value
