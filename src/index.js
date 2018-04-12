@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
@@ -7,8 +7,10 @@ import Routes from './components/Router';
 
 
 ReactDOM.render((
-	<MuiThemeProvider >
-		<Routes/>
-	 </MuiThemeProvider >
+	<StrictMode>
+		<MuiThemeProvider >
+			<Routes/>
+		</MuiThemeProvider >
+	 </StrictMode>
 ),document.getElementById('root'));
   
