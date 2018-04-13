@@ -6,6 +6,7 @@ import Dashboard from '../dashboard';
 import People from './People';
 import Account from '../account';
 import App from './App'
+import IndividualPerson from './IndividualPerson';
 
 const Routes = () => (
    <Router>
@@ -19,7 +20,8 @@ const Routes = () => (
           />
           <Route path="/app/people" component={People} />
           <Route path="/app/dashboard" component= {Dashboard } />
-          <Route path="/app/account" component={Account}/>
+          <Route path="/app/account" component={Account} />
+          <Route path="/app/individual" component={IndividualPerson} />
         </App>
         <Route
           render={function() {

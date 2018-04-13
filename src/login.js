@@ -8,7 +8,7 @@ const style = {
   marginRight: 12,
 };
 
-class Login extends React.Component {
+class Login extends Component {
   constructor(props) {
     super(props);
 
@@ -23,10 +23,12 @@ class Login extends React.Component {
   handleChange(e){
     this.setState({ [e.target.name]: e.target.value });
   }
+
   handleClick(username) {
-    console.log(username)
-            this.props.history.push({pathname:'/app',state: { userName: username }});
+    // console.log(username)
+    this.props.history.push({pathname:'/app',state: { userName: username }});
   }
+
   render() {
     return (
       <div className="container">

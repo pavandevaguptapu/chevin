@@ -2,10 +2,6 @@ import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
 
-// Components
-import ManageCustomerTeams from '../manageCustomerTeams';
-
-
 import {myConstClass} from '../constants.js';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import SocialGroup from 'material-ui/svg-icons/social/group';
