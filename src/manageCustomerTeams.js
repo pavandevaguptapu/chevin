@@ -252,9 +252,6 @@ class ManageCustomerTeams extends React.Component {
                 })
                 this.currentAccountProfile(this.state.accountsArray[0], 0);
             })
-
-            
-
     }
 
     componentDidMount() {
@@ -271,7 +268,7 @@ class ManageCustomerTeams extends React.Component {
                             {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
                             <h4 className="margin0 pointer paddingL04" onClick={(e) => this.openSideMenu()} ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
                         </div>
-                        <div className="col-md-7 col-lg-8 textAlignCenter marginT07 marginB08">
+                        <div className="col-md-7 col-lg-8 textAlignCenter marginT07">
                             <h5 className="">Manage Customer Teams</h5>
                         </div>                   
                         <div>
@@ -435,7 +432,7 @@ class ManageCustomerTeams extends React.Component {
 class AccountDetails extends React.Component {
     constructor(props) {
         super(props);
-console.log(this.props.AccountDataArray)
+            console.log(this.props.AccountDataArray)
         this.state = {
             newProjectDetails: {},
             projectList: [],
@@ -970,7 +967,8 @@ console.log(this.props.AccountDataArray)
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-md-1 col-lg-1">
+                            <div className="col-md-1 col-lg-1" style={{display:"grid"}}>
+                                <div>
                                 <FloatingActionButton
                                     mini={true}
                                     onClick={() => this.editAccount()}
@@ -978,6 +976,17 @@ console.log(this.props.AccountDataArray)
                                 >
                                     <ContentEdit />
                                 </FloatingActionButton>
+                                </div>
+                                <div>
+                                <FloatingActionButton
+                                secondary={true}
+                                    mini={true}
+                                    onClick={() => this.editAccount()}
+                                    className="float-right"
+                                >
+                                    <ContentAdd />
+                                </FloatingActionButton>
+                                </div>
                             </div>
                         </div>
                     </Card>                   
