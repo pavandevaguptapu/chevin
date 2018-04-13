@@ -454,7 +454,9 @@ class AccountDetails extends React.Component {
             peoplesArray: [],
             createGithubProjectModel:false,
             githubInstance:{"repoName":"","projectName":"","projectUrl":""},
-            selectedTeamName:''
+            selectedTeamName:'',
+            selectedTeamIndex:'',
+            peopleArray:[]
    
         }
 
@@ -557,10 +559,12 @@ class AccountDetails extends React.Component {
     }
 
     componentWillMount() {        
-        var lastitem=this.props.AccountDataArray[this.props.AccountDataArray.length-1].customerName               
+        var lastitem=this.props.AccountDataArray[this.props.AccountDataArray.length-1].customerName 
+        var lastitemIndex=this.props.AccountDataArray.length-1              
         this.setState({ 
             currentAccount: this.props.AccountDataArray,
-            selectedTeamName:lastitem
+            selectedTeamName:lastitem,
+            selectedTeamIndex:lastitemIndex
         })
     }
 
@@ -847,8 +851,15 @@ class AccountDetails extends React.Component {
         })
     }
     selectAccount=(event, ind, value)=>{      
-        this.setState({selectedTeamName:value})
-
+        this.setState({
+            selectedTeamName:value,
+            selectedTeamIndex:ind,
+            peopleArray:[]
+        
+        })
+        console.log(event)
+        console.log(ind)
+        console.log(value)
     }
 
     selectingTeamName=(Teams)=> {
@@ -859,7 +870,20 @@ class AccountDetails extends React.Component {
 				primaryText={team.customerName}
 			/>
 		));
-	}
+    }
+    
+    selectedProject=(ind)=>{
+        var emptyPeopleArray
+        if(this.state.currentAccount[this.state.selectedTeamIndex].projects[ind].people===undefined){
+             emptyPeopleArray=this.state.currentAccount[this.state.selectedTeamIndex].projects[ind].people=[{"name":"no people"}]
+
+            this.setState({peopleArray:emptyPeopleArray})
+            return
+        }
+
+        var peopleArrayOfselectedProject=this.state.currentAccount[this.state.selectedTeamIndex].projects[ind].people 
+            this.setState({peopleArray:peopleArrayOfselectedProject})
+    }
     render() {
         return (
             <div className="col-lg-12 col-md-12 mt-1">
@@ -993,57 +1017,114 @@ class AccountDetails extends React.Component {
                   
                 </div> 
                  <div className="col-md-12 col-lg-12 padding0">
-
-                    {/* <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHeaderColumn>Project Name</TableHeaderColumn>
-                                <TableHeaderColumn>Jump Start</TableHeaderColumn>
-                                <TableHeaderColumn>People</TableHeaderColumn>
-                                <TableHeaderColumn>ACE5</TableHeaderColumn>
-                                <TableHeaderColumn>Actions</TableHeaderColumn>
-
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {this.state.currentAccount.projects.map((project, index) => (
-                                <TableRow key={index}>
-                                   
-                                    <TableRowColumn>{project.projectName}</TableRowColumn>
-                                    <TableRowColumn style={tableConfigBUtton}>
-                                        <RaisedButton label="configure" primary={true} onClick={() => this.configJumpStart(index)} />
-
-                                    </TableRowColumn>
-                                    <TableRowColumn style={tableConfigBUtton}>
-                                        <RaisedButton label="configure" secondary={true} onClick={() => this.autoCreate()} />
-                                    
-                                    </TableRowColumn>
-                                    <TableRowColumn style={tableConfigBUtton}>
-                                        <RaisedButton label="configure" default={true} onClick={() => this.autoCreate()}/>
-                     
-                                    </TableRowColumn>
-                                    <TableRowColumn>
-                                        <FloatingActionButton mini={true} iconStyle={editProjectButton} onClick={() => this.createProject()}>
-
-                                            <ContentEdit />
-
-
-                                        </FloatingActionButton>
-                                        <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton} onClick={() => this.createProject()}>
-
-                                            <ContentClear />
-
-
-                                        </FloatingActionButton>
-
-                                    </TableRowColumn>
-
-
-
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table> */}
+                 <div className="my-4">
+                        <Tabs style={{border:' 1px solid #eee'}}>
+                            <Tab label="Projects" >
+                                <div>
+                                    <Table onCellClick={this.selectedProject}>
+                                        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                                            <TableRow >
+                                                <TableHeaderColumn>Project Name</TableHeaderColumn>
+                                                <TableHeaderColumn>Settings</TableHeaderColumn>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody displayRowCheckbox={false}>
+                                             {this.state.currentAccount[this.state.selectedTeamIndex].projects.map((project, index) => ( 
+                                                <TableRow key={index} style={{border: '1px solid rgb(224, 224, 224)'}}>
+                                                     <TableRowColumn>{project.projectName}</TableRowColumn>                                                   
+                                                    <TableRowColumn>
+                                                        {/* <Button  
+                                                            mini={true} 
+                                                            iconStyle={editProjectButton} 
+                                                            onClick={() => this.createProject()}
+                                                        >
+                                                            <ContentEdit />
+                                                        </Button > */}
+                                                        {/* <Button  
+                                                            mini={true} 
+                                                            secondary={true} 
+                                                            iconStyle={deleteProjectButton} 
+                                                            onClick={() => this.createProject()}
+                                                        >
+                                                            <DeleteIcon />
+                                                        </Button > */}
+                                                    </TableRowColumn>
+                                                </TableRow>
+                                             ))} 
+                                        </TableBody>
+                                    </Table>                                
+                                </div>
+                            </Tab>
+                            <Tab label="People">
+                            <div>
+                                    <Table>
+                                        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                                            <TableRow >
+                                                <TableHeaderColumn>Project Name</TableHeaderColumn>
+                                                <TableHeaderColumn>Settings</TableHeaderColumn>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody displayRowCheckbox={false}>
+                                             {this.state.peopleArray.map((person, index) => ( 
+                                                <TableRow key={index} style={{border: '1px solid rgb(224, 224, 224)'}}>
+                                                     <TableRowColumn>{person.name}</TableRowColumn>                                                   
+                                                    <TableRowColumn>
+                                                        {/* <Button  
+                                                            mini={true} 
+                                                            iconStyle={editProjectButton} 
+                                                            onClick={() => this.createProject()}
+                                                        >
+                                                            <ContentEdit />
+                                                        </Button > */}
+                                                        {/* <Button  
+                                                            mini={true} 
+                                                            secondary={true} 
+                                                            iconStyle={deleteProjectButton} 
+                                                            onClick={() => this.createProject()}
+                                                        >
+                                                            <DeleteIcon />
+                                                        </Button > */}
+                                                    </TableRowColumn>
+                                                </TableRow>
+                                             ))} 
+                                        </TableBody>
+                                    </Table>                                
+                                </div>
+                           
+                            </Tab>
+                            <Tab label="Jump Start">
+                                <div className="col-lg-12 d-flex">
+                                    <div className="col-lg-3 col-md-3 py-2">
+                                        <SelectableList style={{border: '1px solid #eee'}}>
+                                            {this.state.configureTools.map((item, index) => (
+                                                <ListItem 
+                                                    style={{borderBottom: '1px solid #eee'}}
+                                                    primaryText={item.name}
+                                                    value={index}
+                                                    key={item.id} 
+                                                    onClick={() => this.currentItem(item.name, index)}
+                                                    className={["pointer",
+                                                    this.state.configureTools[index].selectedJumpStartMenuItem == true ? "dashboardHeaderBgColor" : ''].join(' ')}
+                                                />                                    
+                                            ))}   
+                                        </SelectableList>
+                                    </div>
+                                    <div className="col-lg-9 col-md-9">
+                                    {this.state.selectTool}
+                                    </div>
+                                </div>
+                            </Tab>
+                            <Tab label="ACE5">
+                                <div>
+                                    <h2 >Tab fOUR</h2>
+                                    <p>
+                                    This is a third example tab.
+                                    </p>
+                                </div>
+                            </Tab>                        
+                        </Tabs>
+                    </div>
+               
                 </div> 
 
 
@@ -1168,7 +1249,6 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </Modal>
-
                 <Modal isOpen={this.state.createProjectModel} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
@@ -1205,7 +1285,6 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </Modal>
-
                 <Modal isOpen={this.state.jumpStartConfigModel} style={customStylesJumpStart} className={["col-md-6 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
@@ -1241,7 +1320,6 @@ class AccountDetails extends React.Component {
                       
                     </div>
                 </Modal>
-
                 <Modal isOpen={this.state.configPeopleModel} style={customStylesJumpStart} className={["col-md-6 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
@@ -1273,7 +1351,6 @@ class AccountDetails extends React.Component {
                         </div>
                     </div>
                 </Modal>
-
                 <Modal isOpen={this.state.createGithubProjectModel} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
                     <div className="row">
                         <div className="col-md-12 col-lg-12">

@@ -32,7 +32,7 @@ class SideBar extends Component {
     getAllAccounts = () => {
         axios.get(myConstClass.nodeAppUrl+'/accounts')
         .then(response => {                                   
-            this.setState({ 
+            this.setState({               
                 accountsArray: this.state.accountsArray.concat(response.data)
             })
             // this.props.AccountsData
