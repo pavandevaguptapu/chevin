@@ -10,12 +10,8 @@ import Subheader from 'material-ui/Subheader';
 import axios from 'axios';
 
 class SideBar extends Component {
-    constructor(props) {
-        super(props)        
-        this.state = {
-            accountsArray:[]
-        }
-    
+    state = {
+        accountsArray:[]
     }
     // componentWillMount() {
     //     axios.get(myConstClass.nodeAppUrl+'/accounts')
@@ -27,7 +23,7 @@ class SideBar extends Component {
 
     getAllAccounts = () => {
         axios.get(myConstClass.nodeAppUrl+'/accounts')
-        .then(response => {                                   
+        .then(response => {                               
             this.setState({ 
                 accountsArray: this.state.accountsArray.concat(response.data)
             })
@@ -37,10 +33,10 @@ class SideBar extends Component {
     }
 
     render() {
-        // console.log(this.state.accountsArray)
+        // console.log(this.state.accountsArray, "tata")
         return(
-            <div className="col-md-12 col-lg-12 p-0">
-                <div className="p-1">
+            <div className="col-md-12 col-lg-12">
+                <div className="py-2">
                     <Link to="/app/people">
                         <FloatingActionButton mini={true} secondary={true}>
                             <SocialGroup />
@@ -48,7 +44,7 @@ class SideBar extends Component {
                         <Subheader className="p-1" style={{fontSize:'10px',lineHeight:"26px"}}>People</Subheader>
                     </Link>
                 </div>
-                <div className="p-1">
+                <div className="py-2">
                     <Link to="/app/manageCustomerTeams" >
                         <FloatingActionButton mini={true} secondary={true} onClick={this.getAllAccounts} >
                             <ActionViewModule />                        
