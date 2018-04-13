@@ -46,7 +46,7 @@ class SideBar extends Component {
     render() {
         // console.log(this.state.accountsArray)
         return(
-            <div className="col-md-12 col-lg-12 p-0">
+            <div className="col-md-12 col-lg-12 p-0 m10">
                 <div className="p-1">
                     <Link to="/People">
                         <FloatingActionButton mini={true} secondary={true}>

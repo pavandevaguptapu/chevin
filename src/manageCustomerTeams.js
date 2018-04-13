@@ -13,8 +13,12 @@ import Avatar from 'material-ui/Avatar';
 import {List, ListItem, makeSelectable} from 'material-ui/List';
 import TextField  from 'material-ui/TextField';
 import Subheader from 'material-ui/Subheader';
-import Divider from 'material-ui/Divider'
+import Divider from 'material-ui/Divider';
 import ContentDeleteSweep from 'material-ui/svg-icons/content/delete-sweep';
+import ActionGroupWork from 'material-ui/svg-icons/action/group-work';
+import SocialPeopleOutline from 'material-ui/svg-icons/social/people-outline';
+import ActionDateRange from 'material-ui/svg-icons/action/date-range';
+import ActionSettingsApplications from 'material-ui/svg-icons/action/settings-applications';
 
 import RaisedButton from 'material-ui/RaisedButton';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
@@ -167,7 +171,7 @@ class ManageCustomerTeams extends React.Component {
             this.setState(
                 {
                     selectedAccountIndex: index,
-                    accountDetails: <AccountDetails selectedAccount={response.data} onSelectProject={this.handleProject} onUpdateProject={this.handleAccountName} />
+                    // accountDetails: <AccountDetails selectedAccount={response.data} onSelectProject={this.handleProject} onUpdateProject={this.handleAccountName} />
                 }
             )
         })
@@ -242,7 +246,10 @@ class ManageCustomerTeams extends React.Component {
         // Modal.setAppElement('body');
         axios.get(myConstClass.nodeAppUrl+'/accounts')
             .then(response => {
-                this.setState({ accountsArray: this.state.accountsArray.concat(response.data) })
+                this.setState({ 
+                    accountsArray: this.state.accountsArray.concat(response.data), 
+                    accountDetails: <AccountDetails AccountDataArray={response.data}/>
+                })
                 this.currentAccountProfile(this.state.accountsArray[0], 0);
             })
 
@@ -251,7 +258,7 @@ class ManageCustomerTeams extends React.Component {
     }
 
     componentDidMount() {
-        document.getElementById('customerTeams').classList.add("selectedDashboardItem");
+        // document.getElementById('customerTeams').classList.add("selectedDashboardItem");
 
     }
 
@@ -264,32 +271,9 @@ class ManageCustomerTeams extends React.Component {
                             {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
                             <h4 className="margin0 pointer paddingL04" onClick={(e) => this.openSideMenu()} ><i className="glyphicon glyphicon-menu-hamburger"></i></h4>
                         </div>
-                        <div className="col-md-7 col-lg-8 textAlignCenter marginT07">
-                            <h5 className="margin0">Manage Customer Teams</h5>
-                        </div>
-                        <div className="col-md-2 col-lg-2  displayInline padding0">
-                        {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
-                        <div className="marginT07">
-                            <h5 className="font fontSize17 margintT06">Administrator: </h5>
-                        </div>
-                        <div className="marginT07">
-                            <List style={innerDiv}>
-                                <ListItem
-                                    disabled={true}
-                                    height={"10px"}
-                                    innerDivStyle={innerDiv}
-                                    leftAvatar={
-                                        <Avatar
-                                            style={imageStyle}
-                                            src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
-                                    }
-
-                                />
-                            </List>
-                        </div>
-
-
-                    </div>
+                        <div className="col-md-7 col-lg-8 textAlignCenter marginT07 marginB08">
+                            <h5 className="">Manage Customer Teams</h5>
+                        </div>                   
                         <div>
                             
                         </div>
@@ -297,38 +281,7 @@ class ManageCustomerTeams extends React.Component {
                     </div>
                 </nav>
 
-                <div id="mySidenav" className="sidenav">
-                    <div href="javascript:void(0)" className="closebtn pointer" onClick={() => this.closeSideMenu()}>&times;</div>
-
-                    <div id="customerTeams" className="navbarFontColor pointer  dashboardMenuHeight marginT22 paddingT1"
-                        onClick={(e) => this.selectedDashboardItem(e)}>
-                        <h5><i className="glyphicon glyphicon-group "></i>Manage Customer Teams</h5>
-                    </div>
-
-                    <div id="humanResource" className="navbarFontColor pointer  dashboardMenuHeight paddingT1"
-                        onClick={(e) => this.selectedDashboardItem(e)}>
-                        <h5><i className="glyphicon glyphicon-user "></i>User Administration</h5>
-
-                    </div>
-                    <div id="knowledgeRep0" className="navbarFontColor pointer  dashboardMenuHeight paddingT1"
-                        onClick={(e) => this.selectedDashboardItem(e)}>
-                        <h5><i className="glyphicon glyphicon-book-open"></i>Manage Knowledge Repo</h5>
-
-
-                    </div>
-
-                    <div id="settings" className="navbarFontColor pointer  dashboardMenuHeight paddingT1"
-                        onClick={(e) => this.selectedDashboardItem(e)}>
-                        <h5><i className="glyphicon glyphicon-cogwheel "></i>Application Settings</h5>
-
-                    </div>
-                    <div id="logOut" className="navbarFontColor pointer  dashboardMenuHeight paddingT1"
-                        onClick={(e) => this.selectedDashboardItem(e)}>
-                        <h5><i className="glyphicon glyphicon-log-off "></i>Log Out</h5>
-
-                    </div>
-
-                </div>
+             
 
                 <Modal isOpen={this.state.createAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor 1 "].join(' ')}>
 
@@ -482,7 +435,7 @@ class ManageCustomerTeams extends React.Component {
 class AccountDetails extends React.Component {
     constructor(props) {
         super(props);
-
+console.log(this.props.AccountDataArray)
         this.state = {
             newProjectDetails: {},
             projectList: [],
@@ -493,7 +446,7 @@ class AccountDetails extends React.Component {
                 { "id": 3, "name": "Quality" },
             ],
             selectTool: '',
-            currentAccount: [],
+            currentAccount: this.props.AccountDataArray,
             selectedProjectIndex: '',
             selectedItemName: '',
             selectedItemIndex: '',
@@ -503,7 +456,9 @@ class AccountDetails extends React.Component {
             configPeopleModel: false,
             peoplesArray: [],
             createGithubProjectModel:false,
-            githubInstance:{"repoName":"","projectName":"","projectUrl":""}
+            githubInstance:{"repoName":"","projectName":"","projectUrl":""},
+            selectedTeamName:''
+   
         }
 
         this.createProject = this.createProject.bind(this);
@@ -604,15 +559,17 @@ class AccountDetails extends React.Component {
 
     }
 
-    componentWillMount() {
-        this.setState({
-            currentAccount: this.props.selectedAccount
+    componentWillMount() {        
+        var lastitem=this.props.AccountDataArray[this.props.AccountDataArray.length-1].customerName               
+        this.setState({ 
+            currentAccount: this.props.AccountDataArray,
+            selectedTeamName:lastitem
         })
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({
-            currentAccount: nextProps.selectedAccount
+            currentAccount: nextProps.AccountDataArray
         })
     }
 
@@ -892,163 +849,143 @@ class AccountDetails extends React.Component {
             />
         })
     }
+    selectAccount=(event, ind, value)=>{      
+        this.setState({selectedTeamName:value})
 
+    }
+
+    selectingTeamName=(Teams)=> {
+		return Teams.map((team) => (
+			<MenuItem
+				key={team.customerName}			
+				value={team.customerName}
+				primaryText={team.customerName}
+			/>
+		));
+	}
     render() {
         return (
-            <div className="col-lg-12 col-md-12 mt-2">
-                <div className="col-lg-12 col-md-12">
-                    <div>
-                        <Card>
-                            <div className="col-lg-12 d-flex align-items-end clearfix">
-                                <div className="col-lg-6 d-flex  align-items-center">
-                                    <label className="marginB0 p-1" style={{color: 'rgba(0, 0, 0, 0.54)'}}>Select Team</label>
-                                    <SelectField 
-                                        value={this.state.value} 
-                                        onChange={this.handleChange} 
-                                    >
-                                    {/* {this.state.currentAccount.projects.map((project, index) => (
-                                        <MenuItem 
-                                            primaryText={project.projectName}
-                                            key={index}
-                                        />
-                                    ))} */}
-                                    </SelectField>                                
+            <div className="col-lg-12 col-md-12 mt-1">
+                <div className="col-lg-12 col-md-12 d-inline p-0">                    
+                    <Card>
+                        <div className="displayInline col-lg-12 col-md-12 p-1">
+                            <div className="col-md-2 col-lg-2 p-0">                    
+                                <div className="d-flex col-md-12 col-lg-12 pl-0 pb-2 pt-1">
+                                    <div className={"project_details pt-0 pl-2 pr-0 d-inline-flex"}>
+                                        <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
+                                    </div>
+                                    <div>
+                                    <SelectField hintText="Select Project" value={this.state.selectedTeamName}
+                                    labelStyle={{height:"37px"}} style={{ width: '100%' }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectAccount(e, i, v)}>
+                                        {this.selectingTeamName(this.state.currentAccount)}
+                                    </SelectField>
+                                        <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>Active</Subheader>
+                                    </div>
                                 </div>
-                                <div className="col-lg-6">
-                                    <FloatingActionButton 
-                                        mini={true} 
-                                        onClick={() => this.editAccount()}
-                                        className="float-right"
-                                    >
-                                        <ContentEdit />
-                                    </FloatingActionButton>                                
-                                </div>                          
-                            </div>                    
-                            <div className="d-flex col-md-3 col-lg-3 p-0"> 
-                                <div className={"project_details p-3 d-inline-flex"}>
-                                    <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
-                                </div>
-                                <div>
-                                    <CardTitle 
-                                        title={this.state.currentAccount.customerName} 
-                                        subtitle={this.state.currentAccount.status} 
-                                        style={{padding:'20px 16px 10px'}}
-                                        />
-                                    <span className="col-lg-12" style={{fontSize:'14px', color: 'rgba(0, 0, 0, 0.54)'}}>{this.props.selectedAccount.startDate} | {this.props.selectedAccount.endDate}</span>
-                                </div> 
                             </div>
-                            <div className={"d-inline-flex col-lg-12"}>
-                                <div className={'col-lg-6 d-flex align-items-center'}>
-                                    {/* <label style={{color: 'rgba(0, 0, 0, 0.54)', margin: '0 20px 0 0'}}>Please Select a project</label>
-                                    <SelectField 
-                                        value={this.state.value} 
-                                        onChange={this.handleChange} 
-                                    >
-                                        {this.state.currentAccount.projects.map((project, index) => (
-                                            <MenuItem 
-                                                primaryText={project.projectName}
-                                                key={index}
-                                            />
-                                        ))}
-                                    </SelectField>                                  */}
-                                </div>                             
-                                <div className={'col-lg-6 d-flex'} style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-                                    <div style={{marginBottom: '-15px'}}>
-                                        <FloatingActionButton 
-                                            mini={true} 
-                                            secondary={true}  
-                                            onClick={() => this.createProject()}
-                                            className="float-right"
-                                            >
-                                            <ContentAdd />
-                                        </FloatingActionButton>
-                                    </div>
-                                </div>                                
-                            </div>                                                
-                        </Card>
-                    </div>
+                            <div className="col-md-9 col-lg-9">
+                                <p style={{ color: 'rgba(0, 0, 0, 0.54)', font: '12px' }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In lobortis hendrerit metus, id laoreet nulla iaculis sit amet. Duis ac purus sit
+                                        amet arcu mattis hendrerit.
+                             </p>
+                                <div className="col-md-12 padding0">
+                                    <div className="col-md-12 col-lg-12 displayInline p-0">
+                                        <div className="col-md-2 col-lg-2 p-0 m-2 displayInline">
+                                            <div className="textAlignCenter pr-2">
+                                                <ActionGroupWork />
+                                                <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Projects</Subheader>
+                                            </div>
+                                            <div className="font" style={{ lineHeight: "38px",fontWeight: "lighter" }}>{10} </div>
 
-                    <div className="my-4">
-                        <Tabs style={{border:' 1px solid #eee'}}>
-                            <Tab label="Projects" >
-                                <div>
-                                    <Table>
-                                        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                                            <TableRow >
-                                                <TableHeaderColumn>Project Name</TableHeaderColumn>
-                                                <TableHeaderColumn>Settings</TableHeaderColumn>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody displayRowCheckbox={false}>
-                                            {this.state.currentAccount.projects.map((project, index) => (
-                                                <TableRow key={index} style={{border: '1px solid rgb(224, 224, 224)'}}>
-                                                    {/* <TableRowColumn>{index}</TableRowColumn> */}
-                                                    <TableRowColumn >{project.projectName}</TableRowColumn>
-                                                    <TableRowColumn>
-                                                        <FloatingActionButton 
-                                                            mini={true} 
-                                                            iconStyle={editProjectButton} 
-                                                            onClick={() => this.createProject()}
-                                                        >
-                                                            <ContentEdit />
-                                                        </FloatingActionButton>
-                                                        <FloatingActionButton 
-                                                            mini={true} 
-                                                            secondary={true} 
-                                                            iconStyle={deleteProjectButton} 
-                                                            onClick={() => this.createProject()}
-                                                        >
-                                                            <ContentDeleteSweep />
-                                                        </FloatingActionButton>
-                                                    </TableRowColumn>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>                                
-                                </div>
-                            </Tab>
-                            <Tab label="People" >
-                                <div>
-                                    People
-                                </div>
-                            </Tab>
-                            <Tab label="Jump Start">
-                                <div className="col-lg-12 d-flex">
-                                    <div className="col-lg-3 col-md-3 py-2">
-                                        <SelectableList style={{border: '1px solid #eee'}}>
-                                            {this.state.configureTools.map((item, index) => (
-                                                <ListItem 
-                                                    style={{borderBottom: '1px solid #eee'}}
-                                                    primaryText={item.name}
-                                                    value={index}
-                                                    key={item.id} 
-                                                    onClick={() => this.currentItem(item.name, index)}
-                                                    className={["pointer",
-                                                    this.state.configureTools[index].selectedJumpStartMenuItem == true ? "dashboardHeaderBgColor" : ''].join(' ')}
-                                                />                                    
-                                            ))}   
-                                        </SelectableList>
-                                    </div>
-                                    <div className="col-lg-9 col-md-9">
-                                    {this.state.selectTool}
-                                    </div>
-                                </div>
-                            </Tab>
-                            <Tab label="ACE5">
-                                <div>
-                                    <h2 >Tab fOUR</h2>
-                                    <p>
-                                    This is a third example tab.
-                                    </p>
-                                </div>
-                            </Tab>                        
-                        </Tabs>
-                    </div>
 
+                                        </div>
+                                        <div className="col-md-2 col-lg-2 m-2 displayInline p-0">
+                                        <div className="textAlignCenter pr-2">                                           
+                                                <SocialPeopleOutline />
+                                                <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Members</Subheader>                                         
+                                         </div>
+                                         <div className="font" style={{lineHeight: "38px",fontWeight: "lighter"  }}>{20} </div>     
+                                        {/* <FloatingActionButton mini={true} secondary={true}>
+                                                <SocialPeopleOutline />
+                                            </FloatingActionButton>
+                                            <Subheader className="p-1" style={{ fontSize: '1px', lineHeight: "26px" }}>No.of Members</Subheader> */}
+                                            {/* <label className="marginB0" style={{ color: 'rgba(0, 0, 0, 0.54)' }}>No.of Members</label> */}
+                                            
+                                            {/* <div className="textAlignCenter">
+                                                {10}
+                                            </div> */}
+                                            
+                                        </div>
+                                        <div className="col-md-2 col-lg-3 displayInline m-2 p-0">
+                                        <div className="textAlignCenter pr-2">                                           
+                                                <ActionDateRange />
+                                                <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Start Date</Subheader>                                         
+                                         </div>
+                                         <div className="" style={{lineHeight: "38px",fontWeight: "lighter", fontSize: '30px'}}>{this.props.AccountDataArray[this.props.AccountDataArray.length - 1].startDate} </div>  
+                                        {/* <FloatingActionButton mini={true} secondary={true}>
+                                                <ActionDateRange />
+                                            </FloatingActionButton>
+                                            <Subheader className="p-1" style={{ fontSize: '10px', lineHeight: "26px" }}>Start Date</Subheader> */}
+                                            {/* <label className="marginB0" style={{ color: 'rgba(0, 0, 0, 0.54)' }}>Start Date</label>
+                                            <div className="textAlignCenter">
+                                                {this.props.AccountDataArray[this.props.AccountDataArray.length - 1].startDate}
+                                            </div> */}
+                                        </div>
+                                        <div className="col-md-2 col-lg-3 displayInline m-2 p-0">
+                                        <div className="textAlignCenter pr-2">                                           
+                                                <ActionDateRange />
+                                                <Subheader className="p-1" style={{ fontSize: '12px', lineHeight: "4px" }}>End Date</Subheader>                                         
+                                         </div>
+                                         <div className="" style={{lineHeight: "38px",fontWeight: "lighter",fontSize: '30px'}}>{this.props.AccountDataArray[this.props.AccountDataArray.length - 1].startDate} </div>
+                                        {/* <FloatingActionButton mini={true} secondary={true}>
+                                                <ActionDateRange />
+                                            </FloatingActionButton>
+                                            <Subheader className="p-1" style={{ fontSize: '10px', lineHeight: "26px" }}>End Date</Subheader> */}
+                                            {/* <label className="marginB0" style={{ color: 'rgba(0, 0, 0, 0.54)' }}>End Date</label>
+                                            <div className="textAlignCenter">
+                                                {this.props.AccountDataArray[this.props.AccountDataArray.length - 1].endDate}
+                                            </div> */}
+                                        </div>
+
+                                        <div className="col-md-2 col-lg-2 textAlignCenter">
+                                        {/* <FloatingActionButton mini={true} secondary={true}>
+                                                <ActionDateRange />
+                                            </FloatingActionButton>
+                                            <Subheader className="p-1" style={{ fontSize: '10px', lineHeight: "26px" }}>End Date</Subheader> */}
+                                            {/* <label className="marginB0" style={{ color: 'rgba(0, 0, 0, 0.54)' }}>Status</label>
+                                            <div className="textAlignCenter">
+                                                {this.props.AccountDataArray[this.props.AccountDataArray.length - 1].status}
+                                            </div> */}
+                                        </div>
+                                        <div className="col-md-2 col-lg-2 textAlignCenter">
+                                        {/* <FloatingActionButton mini={true} secondary={true}>
+                                                <ActionSettingsApplications />
+                                            </FloatingActionButton>
+                                            <Subheader className="p-1" style={{ fontSize: '10px', lineHeight: "26px" }}>Settings</Subheader> */}
+
+                                            {/* <label className="marginB0" style={{ color: 'rgba(0, 0, 0, 0.54)' }}>Team Manager</label>
+                                            <div className="textAlignCenter">
+                                                {"abc"}
+                                            </div> */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-1 col-lg-1">
+                                <FloatingActionButton
+                                    mini={true}
+                                    onClick={() => this.editAccount()}
+                                    className="float-right"
+                                >
+                                    <ContentEdit />
+                                </FloatingActionButton>
+                            </div>
+                        </div>
+                    </Card>                   
+                  
                 </div> 
                  <div className="col-md-12 col-lg-12 padding0">
 
-                    <Table>
+                    {/* <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHeaderColumn>Project Name</TableHeaderColumn>
@@ -1097,7 +1034,7 @@ class AccountDetails extends React.Component {
                                 </TableRow>
                             ))}
                         </TableBody>
-                    </Table>
+                    </Table> */}
                 </div> 
 
 
