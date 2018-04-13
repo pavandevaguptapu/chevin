@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { Component, StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-import Router from './components/Router';
-
+import Routes from './components/Router';
+import MyProvider from './components/MyProvider';
 
 ReactDOM.render((
-	<MuiThemeProvider >
-		<Router/>
-	 </MuiThemeProvider >
+	<StrictMode>
+		<MuiThemeProvider >
+			<MyProvider>
+				<Routes/>
+			</MyProvider>	
+		</MuiThemeProvider >
+	 </StrictMode>
 ),document.getElementById('root'));
   

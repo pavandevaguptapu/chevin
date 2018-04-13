@@ -13,9 +13,6 @@ import ActionViewModule from 'material-ui/svg-icons/action/view-module';
 import Subheader from 'material-ui/Subheader';
 import axios from 'axios';
 
-
-
-
 class SideBar extends Component {
     constructor(props) {
         super(props)        
@@ -32,7 +29,7 @@ class SideBar extends Component {
     //         })    
     // }
 
-    getAllAccounts=() => {
+    getAllAccounts = () => {
         axios.get(myConstClass.nodeAppUrl+'/accounts')
         .then(response => {                                   
             this.setState({ 
