@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
 import Login from '../login';
 import ManageCustomerTeams from '../manageCustomerTeams';
 import Dashboard from '../dashboard';
@@ -9,7 +8,7 @@ import Account from '../account';
 import App from './App'
 
 const Routes = () => (
-  <Router>
+   <Router>
     <div>
       <Switch>
         <Route exact path="/" component={Login} />
@@ -32,4 +31,4 @@ const Routes = () => (
   </Router>
 );
 
-export default Router;
+export default Routes;
