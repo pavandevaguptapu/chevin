@@ -1,15 +1,14 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-
-import Login from "../login";
-import ManageCustomerTeams from "../manageCustomerTeams";
-import Dashboard from "../dashboard";
-import People from "./People";
-import Account from "../account";
-import App from "./App";
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Login from '../login';
+import ManageCustomerTeams from '../manageCustomerTeams';
+import Dashboard from '../dashboard';
+import People from './People';
+import Account from '../account';
+import App from './App'
 
 const Routes = () => (
-  <Router>
+   <Router>
     <div>
       <Switch>
         <Route exact path="/" component={Login} />

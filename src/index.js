@@ -8,11 +8,11 @@ import MyProvider from './components/MyProvider';
 
 ReactDOM.render((
 	<StrictMode>
-		<MuiThemeProvider >
+		<MuiThemeProvider>
 			<MyProvider>
 				<Routes/>
 			</MyProvider>	
-		</MuiThemeProvider >
+		</MuiThemeProvider>
 	 </StrictMode>
 ),document.getElementById('root'));
   
