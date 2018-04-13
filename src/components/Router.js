@@ -20,7 +20,7 @@ const Routes = () => (
           />
           <Route path="/app/people" component={People} />
           <Route path="/app/dashboard" component= {Dashboard } />
-          <Route path="/app/account" component={Account}/>                  
+          <Route path="/app/account" component={Account}/>
         </App>
         <Route
           render={function() {
