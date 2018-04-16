@@ -35,7 +35,7 @@ class SideBar extends Component {
     render() {
         // console.log(this.state.accountsArray, "tata")
         return(
-            <div className="col-md-12 col-lg-12">
+            <div className="d-flex flex-column align-items-center">
                 <div className="py-2">
                     <Link to="/app/people">
                         <FloatingActionButton mini={true} secondary={true}>
