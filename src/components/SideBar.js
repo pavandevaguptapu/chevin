@@ -25,7 +25,7 @@ class SideBar extends Component {
         axios.get(myConstClass.nodeAppUrl+'/accounts')
         .then(response => {                               
             this.setState({ 
-                accountsArray: this.state.accountsArray.concat(response.data)
+                accountsArray: response.data
             })
             // this.props.AccountsData
             // this.currentAccountProfile(this.state.accountsArray[0], 0);
@@ -33,7 +33,7 @@ class SideBar extends Component {
     }
 
     render() {
-        // console.log(this.state.accountsArray, "tata")
+        console.log(this.state.accountsArray, "tata")
         return(
             <div className="d-flex flex-column align-items-center">
                 <div className="py-2">

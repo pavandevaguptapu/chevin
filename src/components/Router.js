@@ -19,6 +19,7 @@ const Routes = () => (
             component={ManageCustomerTeams}
           />
           <Route path="/app/people" component={People} />
+          <Route path={`/app/people/:id`} component={IndividualDetails} />
           <Route path="/app/dashboard" component= {Dashboard } />
           <Route path="/app/account" component={Account} />
           <Route path="/app/individual" component={IndividualDetails} />

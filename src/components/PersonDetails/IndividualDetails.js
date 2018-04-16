@@ -4,8 +4,13 @@ import  React, { Component } from 'react';
 class IndividualDetails extends Component {
     render() {
         return(
-            <div style={{border: '1px solid #000'}}>
-                dfsdfj
+            <div className="col-lg-12 d-flex" style={{border: '1px solid #000'}}>
+                <div className="col-lg-4">
+                    as
+                </div>
+                <div className="col-lg-8">
+                asdsad
+                </div>
             </div>
         );
     }
