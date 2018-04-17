@@ -432,7 +432,7 @@ class ManageCustomerTeams extends React.Component {
 class AccountDetails extends React.Component {
     constructor(props) {
         super(props);
-            console.log(this.props.AccountDataArray)
+       
         this.state = {
             newProjectDetails: {},
             projectList: [],
@@ -558,14 +558,50 @@ class AccountDetails extends React.Component {
 
     }
 
-    componentWillMount() {        
-        var lastitem=this.props.AccountDataArray[this.props.AccountDataArray.length-1].customerName 
-        var lastitemIndex=this.props.AccountDataArray.length-1              
-        this.setState({ 
-            currentAccount: this.props.AccountDataArray,
-            selectedTeamName:lastitem,
-            selectedTeamIndex:lastitemIndex
-        })
+    componentWillMount() {    
+        var currentAccount=dcopy(this.props.AccountDataArray)
+        var lastitem=currentAccount[currentAccount.length-1].customerName 
+        var lastitemIndex=currentAccount.length-1
+        
+        var noMember=0
+        var eachProjectMembers=0
+        var x;     
+        var allMembersinProject=0
+      
+     
+
+        for (var i = 0; i < currentAccount[lastitemIndex].projects.length; i++) {    
+            x=eachProjectMembers
+            if (currentAccount[lastitemIndex].projects[i].people == undefined) {
+                noMember= 0
+                allMembersinProject=noMember+x        
+                 this.setState({totalMembers:allMembersinProject})
+            }
+            else {
+                eachProjectMembers = currentAccount[lastitemIndex].projects[i].people.length
+                allMembersinProject=x+eachProjectMembers
+                this.setState({totalMembers:allMembersinProject})
+            }
+    } 
+    
+            var emptyPeopleArray 
+        if(currentAccount[currentAccount.length-1].projects[0].people===undefined){
+
+            emptyPeopleArray=currentAccount[currentAccount.length-1].projects[0].people=[{"name":"no member is assigned to this project"}]
+           this.setState({peopleArray:emptyPeopleArray})   
+ 
+       }
+           else {
+               var peopleArrayOfselectedProject =currentAccount[currentAccount.length - 1].projects[0].people
+               this.setState({ peopleArray: peopleArrayOfselectedProject })
+           }   
+    
+           this.setState({
+            currentAccount: currentAccount,
+            selectedTeamName: lastitem,
+            selectedTeamIndex: lastitemIndex,
+        })  
+
     }
 
     componentWillReceiveProps(nextProps) {
@@ -850,16 +886,50 @@ class AccountDetails extends React.Component {
             />
         })
     }
-    selectAccount=(event, ind, value)=>{      
+    selectTeam=(event, ind, value)=>{          
+
         this.setState({
             selectedTeamName:value,
             selectedTeamIndex:ind,
             peopleArray:[]
         
         })
-        console.log(event)
-        console.log(ind)
-        console.log(value)
+        var noMember=0
+        var eachProjectMembers=0
+        var x;
+    
+        var allMembersinProject=0
+        var currentAccount=dcopy(this.props.AccountDataArray)
+     
+
+        for (var i = 0; i < currentAccount[ind].projects.length; i++) {    
+            x=eachProjectMembers
+            if (currentAccount[ind].projects[i].people == undefined) {
+                noMember= 0
+                allMembersinProject=noMember+x        
+                 this.setState({totalMembers:allMembersinProject})
+            }
+            else {
+                eachProjectMembers = currentAccount[ind].projects[i].people.length
+                allMembersinProject=x+eachProjectMembers
+                this.setState({totalMembers:allMembersinProject})
+             
+            }
+
+        }
+
+        var emptyPeopleArray
+        if (this.state.currentAccount[ind].projects[0].people === undefined) {
+            emptyPeopleArray = this.state.currentAccount[this.state.selectedTeamIndex].projects[0].people = [{ "name": "no member is assigned to this project" }]
+            this.setState({ peopleArray: emptyPeopleArray }) 
+            return          
+        }
+        else {
+            var peopleArrayOfselectedProject = this.state.currentAccount[ind].projects[0].people
+            this.setState({ peopleArray: peopleArrayOfselectedProject })
+        }
+
+ 
     }
 
     selectingTeamName=(Teams)=> {
@@ -874,16 +944,19 @@ class AccountDetails extends React.Component {
     
     selectedProject=(ind)=>{
         var emptyPeopleArray
-        if(this.state.currentAccount[this.state.selectedTeamIndex].projects[ind].people===undefined){
-             emptyPeopleArray=this.state.currentAccount[this.state.selectedTeamIndex].projects[ind].people=[{"name":"no people"}]
-
-            this.setState({peopleArray:emptyPeopleArray})
+        if (this.state.currentAccount[this.state.selectedTeamIndex].projects[ind].people === undefined) {
+            emptyPeopleArray = this.state.currentAccount[this.state.selectedTeamIndex].projects[ind].people = [{ "name": "no member is assigned to this project" }]
+            this.setState({ peopleArray: emptyPeopleArray })
             return
         }
+        else {
+            var peopleArrayOfselectedProject = this.state.currentAccount[this.state.selectedTeamIndex].projects[ind].people
+            this.setState({ peopleArray: peopleArrayOfselectedProject })
+        }
 
-        var peopleArrayOfselectedProject=this.state.currentAccount[this.state.selectedTeamIndex].projects[ind].people 
-            this.setState({peopleArray:peopleArrayOfselectedProject})
     }
+
+
     render() {
         return (
             <div className="col-lg-12 col-md-12 mt-1">
@@ -897,7 +970,7 @@ class AccountDetails extends React.Component {
                                     </div>
                                     <div>
                                     <SelectField hintText="Select Project" value={this.state.selectedTeamName}
-                                    labelStyle={{height:"37px"}} style={{ width: '100%' }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectAccount(e, i, v)}>
+                                    labelStyle={{height:"37px"}} style={{ width: '100%' }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectTeam(e, i, v)}>
                                         {this.selectingTeamName(this.state.currentAccount)}
                                     </SelectField>
                                         <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>Active</Subheader>
@@ -915,7 +988,7 @@ class AccountDetails extends React.Component {
                                                 <ActionGroupWork />
                                                 <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Projects</Subheader>
                                             </div>
-                                            <div className="font" style={{ lineHeight: "38px",fontWeight: "lighter" }}>{10} </div>
+                                            <div className="font" style={{ lineHeight: "38px",fontWeight: "lighter" }}>{this.state.currentAccount[this.state.selectedTeamIndex].projects.length} </div>
 
 
                                         </div>
@@ -924,7 +997,8 @@ class AccountDetails extends React.Component {
                                                 <SocialPeopleOutline />
                                                 <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Members</Subheader>                                         
                                          </div>
-                                         <div className="font" style={{lineHeight: "38px",fontWeight: "lighter"  }}>{20} </div>     
+                        
+                                         <div className="font" style={{lineHeight: "38px",fontWeight: "lighter"  }}>{this.state.totalMembers}</div>     
                                         {/* <FloatingActionButton mini={true} secondary={true}>
                                                 <SocialPeopleOutline />
                                             </FloatingActionButton>
@@ -941,7 +1015,7 @@ class AccountDetails extends React.Component {
                                                 <ActionDateRange />
                                                 <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Start Date</Subheader>                                         
                                          </div>
-                                         <div className="" style={{lineHeight: "38px",fontWeight: "lighter", fontSize: '30px'}}>{this.props.AccountDataArray[this.props.AccountDataArray.length - 1].startDate} </div>  
+                                         <div className="" style={{lineHeight: "38px",fontWeight: "lighter", fontSize: '25px'}}>{this.state.currentAccount[this.state.selectedTeamIndex].startDate} </div>  
                                         {/* <FloatingActionButton mini={true} secondary={true}>
                                                 <ActionDateRange />
                                             </FloatingActionButton>
@@ -956,7 +1030,7 @@ class AccountDetails extends React.Component {
                                                 <ActionDateRange />
                                                 <Subheader className="p-1" style={{ fontSize: '12px', lineHeight: "4px" }}>End Date</Subheader>                                         
                                          </div>
-                                         <div className="" style={{lineHeight: "38px",fontWeight: "lighter",fontSize: '30px'}}>{this.props.AccountDataArray[this.props.AccountDataArray.length - 1].startDate} </div>
+                                         <div className="" style={{lineHeight: "38px",fontWeight: "lighter",fontSize: '25px'}}>{this.state.currentAccount[this.state.selectedTeamIndex].endDate} </div>
                                         {/* <FloatingActionButton mini={true} secondary={true}>
                                                 <ActionDateRange />
                                             </FloatingActionButton>
@@ -1060,7 +1134,7 @@ class AccountDetails extends React.Component {
                                     <Table>
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                                             <TableRow >
-                                                <TableHeaderColumn>Project Name</TableHeaderColumn>
+                                                <TableHeaderColumn>Members Name</TableHeaderColumn>
                                                 <TableHeaderColumn>Settings</TableHeaderColumn>
                                             </TableRow>
                                         </TableHeader>
