@@ -8,6 +8,9 @@ import MenuItem from "material-ui/MenuItem";
 import IconButton from "material-ui/IconButton";
 import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
 
+import {myConstClass} from '../../constants';
+import axios from 'axios';
+
 const cardContainer = {
   cardWidth: {
     width: "17rem"
@@ -15,9 +18,10 @@ const cardContainer = {
 };
 
 class IndividualCardDetails extends Component {
+    
   render() {
     return (
-      <div className={this.props.changeView} onClick={this.props.addClassName}>
+      <div className={this.props.changeView} >
         {this.props.peoples.map((people, index) => (
           <Card
             className="mr-3 mb-3 float-left"
@@ -36,27 +40,27 @@ class IndividualCardDetails extends Component {
                 targetOrigin={{ horizontal: "left", vertical: "top" }}
               >
                 <MenuItem primaryText="Edit" />
-                <MenuItem primaryText="Delete" />
+                {/* <MenuItem primaryText="Delete" /> */}
               </IconMenu>
             </div>
             <div className="" key={index}>
-              <Link to={`/app/people/${index}`} className="d-flex">
-              <div className="d-flex align-items-center pl-2">
-                <Avatar
-                  src="https://www.gstatic.com/webp/gallery/4.sm.jpg"
-                  size={60}
-                />
+              <div className="d-flex pointer" onClick={this.props.addClassName}>
+                <div className="d-flex align-items-center pl-2">
+                    <Avatar
+                    src="https://www.gstatic.com/webp/gallery/4.sm.jpg"
+                    size={60}
+                    />
+                </div>
+                <CardTitle
+                    className="text-truncate"
+                    title={people.name}
+                    subtitle="Software Engineer"
+                >
+                    <CardText className="p-0" subtitle="asdasd">
+                    {people.emailid}
+                    </CardText>
+                </CardTitle>
               </div>
-              <CardTitle
-                className="text-truncate"
-                title={people.name}
-                subtitle="Software Engineer"
-              >
-                <CardText className="p-0" subtitle="asdasd">
-                  {people.emailid}
-                </CardText>
-              </CardTitle>
-              </Link>
             </div>
           </Card>
         ))}

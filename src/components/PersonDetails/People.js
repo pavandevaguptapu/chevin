@@ -6,12 +6,21 @@ import IndividualCardDetails from "../PersonDetails/IndividualCardDetails";
 import AutoComplete from "material-ui/AutoComplete";
 import RaisedButton from "material-ui/RaisedButton";
 import Dialog from "material-ui/Dialog";
+import StepperNavigation from "./StepperNavigation";
+import IndividualDetails from "./IndividualDetails";
+
+const deatils = {
+    moreDetails: {
+        width:'90%',
+    }
+};
 
 class People extends Component {
   state = {
     dataSource: [],
     individualModal: false,
     changeView: "d-flex flex-row",
+    moreDetails: false,
     peoples: [
       {
         emailid: "v@comakeit.com",
@@ -36,7 +45,17 @@ class People extends Component {
 
   addClassName = () => {
     const changeView = { ...this.state.changeView };
-    this.setState({ changeView: "d-flex flex-column" });
+    this.setState({ changeView: "d-flex flex-column clearfix col-lg-3 p-0", moreDetails: true });
+  };
+
+  addIndividual = e => {
+    e.preventDefault();
+    // e.currentTarget.reset();
+    console.log(this.state);
+  };
+
+  updateIndividual = e => {
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   render() {
@@ -58,24 +77,22 @@ class People extends Component {
             />
           </div>
         </div>
-        <div className="d-block clearfix">
+        <div className="d-flex clearfix">
           <IndividualCardDetails
             peoples={this.state.peoples}
             changeView={this.state.changeView}
             addClassName={this.addClassName}
           />
+          {this.state.moreDetails === true ? <IndividualDetails /> : " "}
         </div>
-        <div className="d-block clearfix">
-          <Dialog
-            title="Add Individual"
-            className="text-center"
-            modal={true}
-            //  actions={actions}
-            open={this.state.individualModal}
-          >
-            <BasicForm closeIndividualModal={this.closeIndividualModal} />
-          </Dialog>
-        </div>
+        <Dialog
+          title="Add Individual"
+          className="text-center"
+          modal={true}
+          open={this.state.individualModal}
+        >
+          <StepperNavigation closeIndividualModal={this.closeIndividualModal} />
+        </Dialog>
       </div>
     );
   }
