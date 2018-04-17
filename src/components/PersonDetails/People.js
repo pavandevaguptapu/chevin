@@ -1,25 +1,19 @@
 import React, { Component } from "react";
 
-import BasicForm from "../PersonDetails/BasicForm";
 import IndividualCardDetails from "../PersonDetails/IndividualCardDetails";
 
 import AutoComplete from "material-ui/AutoComplete";
 import RaisedButton from "material-ui/RaisedButton";
 import Dialog from "material-ui/Dialog";
-import StepperNavigation from "./StepperNavigation";
+import PeoplesWorkFlow from "./PeoplesWorkFlow";
 import IndividualDetails from "./IndividualDetails";
-
-const deatils = {
-    moreDetails: {
-        width:'90%',
-    }
-};
 
 class People extends Component {
   state = {
     dataSource: [],
     individualModal: false,
     changeView: "d-flex flex-row",
+    addBorder: "",
     moreDetails: false,
     peoples: [
       {
@@ -45,7 +39,11 @@ class People extends Component {
 
   addClassName = () => {
     const changeView = { ...this.state.changeView };
-    this.setState({ changeView: "d-flex flex-column clearfix col-lg-3 p-0", moreDetails: true });
+    this.setState({ 
+        changeView: "d-flex flex-column clearfix col-lg-3 p-0 custom_flex border-right", 
+        moreDetails: true,
+        addBorder: "border p-3"
+    });
   };
 
   addIndividual = e => {
@@ -77,7 +75,7 @@ class People extends Component {
             />
           </div>
         </div>
-        <div className="d-flex clearfix">
+        <div className={`d-flex clearfix ${this.state.addBorder}`}>
           <IndividualCardDetails
             peoples={this.state.peoples}
             changeView={this.state.changeView}
@@ -91,7 +89,7 @@ class People extends Component {
           modal={true}
           open={this.state.individualModal}
         >
-          <StepperNavigation closeIndividualModal={this.closeIndividualModal} />
+          <PeoplesWorkFlow closeIndividualModal={this.closeIndividualModal} />
         </Dialog>
       </div>
     );
