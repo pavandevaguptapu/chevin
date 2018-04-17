@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import IndividualCardDetails from "../PersonDetails/IndividualCardDetails";
+import { Myconsumer } from '../../shared/AdminDatabase'
 
 import AutoComplete from "material-ui/AutoComplete";
 import RaisedButton from "material-ui/RaisedButton";
@@ -14,19 +15,7 @@ class People extends Component {
     individualModal: false,
     changeView: "d-flex flex-row",
     addBorder: "",
-    moreDetails: false,
-    peoples: [
-      {
-        emailid: "v@comakeit.com",
-        role: "tester",
-        name: "tata"
-      },
-      {
-        emailid: "b@comakeit.com",
-        role: "developer",
-        name: "srnay"
-      }
-    ]
+    moreDetails: false
   };
 
   openIndividualModal = () => {
@@ -76,11 +65,15 @@ class People extends Component {
           </div>
         </div>
         <div className={`d-flex clearfix ${this.state.addBorder}`}>
-          <IndividualCardDetails
-            peoples={this.state.peoples}
-            changeView={this.state.changeView}
-            addClassName={this.addClassName}
-          />
+        <Myconsumer>
+            {(context) => (
+                <IndividualCardDetails
+                peoples={context.state.peoples}
+                changeView={this.state.changeView}
+                addClassName={this.addClassName}
+                />
+            )}
+          </Myconsumer>
           {this.state.moreDetails === true ? <IndividualDetails /> : " "}
         </div>
         <Dialog

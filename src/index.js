@@ -4,14 +4,14 @@ import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import Routes from './components/Router';
-import MyProvider from './components/MyProvider';
+import AdminDatabase from './shared/AdminDatabase';
 
 ReactDOM.render((
 	<StrictMode>
 		<MuiThemeProvider>
-			<MyProvider>
+			<AdminDatabase>
 				<Routes/>
-			</MyProvider>	
+			</AdminDatabase>	
 		</MuiThemeProvider>
 	 </StrictMode>
 ),document.getElementById('root'));
