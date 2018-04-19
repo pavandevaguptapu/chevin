@@ -4,14 +4,6 @@ import TextField from 'material-ui/TextField';
 // import FlatButton from 'material-ui/FlatButton';
 
 class PeoplesForm extends Component {
-    state={
-        name: "",
-        email:"",
-        designation:"",
-        accounts: "",
-        projects: "",
-        role:"",
-    }
     render() {
         return(
                 <form onSubmit={this.props.addIndividual}>
@@ -22,8 +14,7 @@ class PeoplesForm extends Component {
                                 floatingLabelText="UserName"
                                 name="name"
                                 type="text"
-                                value={this.props.name}
-                                onChange={this.props.updateIndividual}
+                                onChange={this.props.updatePeople}
                             />                                    
                         </div>
                         <div className="form-group col-lg-6 col-md-6">
@@ -32,8 +23,7 @@ class PeoplesForm extends Component {
                                 floatingLabelText="E-mail"
                                 name="email"
                                 type="email"
-                                value={this.props.email}
-                                onChange={this.props.updateIndividual}                                               
+                                onChange={this.props.updatePeople}                                               
                             />                                    
                         </div> 
                         <div className="form-group col-lg-6 col-md-6">
@@ -42,8 +32,7 @@ class PeoplesForm extends Component {
                                 floatingLabelText="Designation" 
                                 name="designation"
                                 type="text"       
-                                value={this.props.designation}
-                                onChange={this.props.updateIndividual}                                                         
+                                onChange={this.props.updatePeople}                                                         
                             />                                    
                         </div>  
                         {/* <div className="form-group col-lg-6">

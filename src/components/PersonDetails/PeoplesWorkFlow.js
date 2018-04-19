@@ -20,35 +20,30 @@ class PeoplesWorkFlow extends Component {
     finished: false,
     stepIndex: 0,
     sample: {},
-    newCustomerDetailsObject: {
-        name: "",
-        email:"",
-        designation:"",
-        accounts: "",
-        projects: "",
-        role:"",        
-    }
   };
 
-  updateIndividual = e => {
-    // let newCustomerDetailsObject = this.state.newCustomerDetailsObject;
+  updatePeople = e => {
+    // const updatedPeopleDetails = this.props.peoples;
+    // updatedPeopleDetails[e.target.name] = e.target.value        
+    // this.setState({newPeopleDetails:updatedPeopleDetails})
+    // console.log(updatedPeopleDetails);
     this.setState({ [e.target.name]: e.target.value });
   };
 
   addNewMember = newCustomerDetailsObject => {
+    let peoples = this.props.peoples;
     axios.post(myConstClass.peoples + `/save`, {
-        name: "pavan",
-        designation: "asdasd",
-        email: "pavan@gmail.com",
+        name: this.state.name,
+        designation: this.state.designation,
+        email: this.state.email,
         account: "newCustomerDetailsObject.account",
         projects: "newCustomerDetailsObject.projects",
         role: "newCustomerDetailsObject.role"
       })
       .then(response => {
+        // this.state.peoples = response.data;
         this.setState({ 
             sample: response.data,
-            // createAccountModal: false,
-            newCustomerDetails: {}
         });
       });
   };
@@ -59,7 +54,6 @@ class PeoplesWorkFlow extends Component {
       stepIndex: stepIndex + 1,
       finished: stepIndex >= 2
     });
-    console.log(this.state, "tata");
   };
 
   handlePrev = () => {
@@ -77,7 +71,7 @@ class PeoplesWorkFlow extends Component {
         return (
           <PeoplesForm
             addIndividual={this.handleNext}
-            updateIndividual={this.updateIndividual}
+            updatePeople={this.updatePeople}
           />
         );
       case 1:
@@ -162,7 +156,7 @@ class PeoplesWorkFlow extends Component {
                 <RaisedButton
                   label={stepIndex === 2 ? "Finish" : "Save & Submit"}
                   primary={true}
-                  onClick={this.handleNext}
+                  onClick={this.addNewMember}
                 />
               </div>
             </div>
