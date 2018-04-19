@@ -71,7 +71,14 @@ class People extends Component {
         return people.name.toLowerCase().includes(searchTerm.toLowerCase());
     }
   }
+  latestObj=(latestObj)=>{
+console.log(latestObj)
+var temparray=this.state.peoples
+temparray.push(latestObj)
+this.setState({peoples:temparray})
 
+
+  }
   render() {
     return (
       <div className="d-block clearfix col-lg-11 col-md-11 p-0 m-auto">
@@ -109,7 +116,7 @@ class People extends Component {
           modal={true}
           open={this.state.individualModal}
         >
-          <PeoplesWorkFlow closeIndividualModal={this.closeIndividualModal} peoples={this.state.peoples} />
+          <PeoplesWorkFlow closeIndividualModal={this.closeIndividualModal} peoples={this.state.peoples} addedObj={this.latestObj} />
         </Dialog>
       </div>
     );
