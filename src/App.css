@@ -278,7 +278,7 @@ a {
   border-radius: 23px;
 }
 .visibility {
-  display: none;
+  display: none !important;
 }
 /* Droppable div{
 	height: 200px;

@@ -805,11 +805,11 @@ class AccountDetails extends React.Component {
             // if projects array not equal to undefined and people array is udefined
             if (currentAccountArray[currentAccountArray.length - 1].projects[0].people === undefined) {
                 // emptyPeopleArray = currentAccountArray[currentAccountArray.length - 1].projects[0].people = [{ "name": "no member is assigned to this project" }]
-                this.setState({ noPeople: true, noTool: true })
+                this.setState({ noPeople: true})
             }
             else {
                 var peopleArrayOfselectedProject = currentAccountArray[currentAccountArray.length - 1].projects[0].people
-                this.setState({ peopleArray: peopleArrayOfselectedProject, noPeople: false, noTool: true })
+                this.setState({ peopleArray: peopleArrayOfselectedProject, noPeople: false })
             }
 
             // if projects array not equal to undefined and tools object is udefined
@@ -857,7 +857,7 @@ class AccountDetails extends React.Component {
         }
         else {            
             var ProjectsArray = currentAccount[selectedTeamIndex].projects
-            this.setState({projectsArray: ProjectsArray,noProject:false,noPeople:true,noTool:false})
+            this.setState({projectsArray: ProjectsArray,noProject:false,noPeople:false,noTool:false})
         }
 
         // for displaying(in card) total members in a team
@@ -883,7 +883,7 @@ class AccountDetails extends React.Component {
             }
             else {
                 var peopleArrayOfselectedProject = currentAccount[selectedTeamIndex].projects[0].people
-                this.setState({ peopleArray: peopleArrayOfselectedProject,noPeople:false })
+                this.setState({ peopleArray: peopleArrayOfselectedProject,noPeople:false})
             }
 
             if (currentAccount[selectedTeamIndex].projects[0].tools === undefined) {
@@ -1435,8 +1435,8 @@ class AccountDetails extends React.Component {
                               </Tab>
                               <Tab label="Jump Start" style={tabsBackgroundColor}>
                                   <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={["col-lg-12 d-flex", this.state.noTool === false ? 'show' : 'visibility'].join(' ')}>
-                                      <div className="col-lg-3 col-md-3 py-2"className={["col-lg-12 d-flex", this.state.noTool === false ? 'show' : 'visibility'].join(' ')}>
-                                          <SelectableList style={{ border: '1px solid #eee' }} className={["col-lg-12 d-flex", this.state.noTool === false ? 'show' : 'visibility'].join(' ')}>
+                                      <div className={["col-lg-3 col-md-3 py-2", this.state.noTool === false ? 'show' : 'visibility'].join(' ')}>
+                                          <SelectableList style={{ border: '1px solid #eee' }}>
                                               {this.state.listofToolsarray.map((item, index) => (
                                                   <ListItem
                                                       primaryText={item}
@@ -1448,7 +1448,7 @@ class AccountDetails extends React.Component {
                                               ))}
                                           </SelectableList>
                                       </div>
-                                      <div className="col-lg-9 col-md-9 displayInline p-4">
+                                      <div className={["col-lg-9 col-md-9 displayInline p-4", this.state.noTool === false ? 'show' : 'visibility'].join(' ')}>
                                           <div className="col-md-6 col-lg-6">
                                               <div className={["col-md-12 custId", this.state.isTooldata === true ? 'show' : 'visibility'].join(' ')}>
                                                   <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>Selected Tool:</Subheader>
