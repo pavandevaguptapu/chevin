@@ -814,15 +814,15 @@ class AccountDetails extends React.Component {
 
             // if projects array not equal to undefined and tools object is udefined
             if (currentAccountArray[currentAccountArray.length - 1].projects[0].tools === undefined) {
-                var jumpstartListofTools = ["no tools are configured to this project"]
-                this.setState({ isTooldata: false })
+                // var jumpstartListofTools = ["no tools are configured to this project"]
+                this.setState({ isTooldata: false,noTool:true})
 
             }
             else {
                 var jumpstartListofTools = Object.keys(currentAccountArray[currentAccountArray.length - 1].projects[0].tools)
                 //parameters passing to selectedTool function(selectedToolName, selectedITeamIndex,selectedProjectIndex,selectedToolIndex) to get tool details
                 this.selectedTool(jumpstartListofTools[0], lastitemIndex, 0, 0)
-                this.setState({ isTooldata: true, listofToolsarray: jumpstartListofTools })
+                this.setState({ isTooldata: true, listofToolsarray: jumpstartListofTools,noTool:false})
 
             }
         }
@@ -887,13 +887,13 @@ class AccountDetails extends React.Component {
             }
 
             if (currentAccount[selectedTeamIndex].projects[0].tools === undefined) {
-                var jumpstartListofTools = ["no tools are configured to this project"]
-                this.setState({ isTooldata: false, listofToolsarray: jumpstartListofTools })
+                // var jumpstartListofTools = ["no tools are configured to this project"]
+                this.setState({ isTooldata: false, noTool:true })
             }
             else {
                 var jumpstartListofTools = Object.keys(currentAccount[selectedTeamIndex].projects[0].tools)
                 this.selectedTool(jumpstartListofTools[0], selectedTeamIndex, 0, 0)
-                this.setState({ isTooldata: true, selectedProjectIndex: 0, listofToolsarray: jumpstartListofTools })
+                this.setState({ isTooldata: true, selectedProjectIndex: 0, listofToolsarray: jumpstartListofTools,noTool:false})
             }
         }
         var currentAccountArray1 = dcopy(currentAccount)
@@ -1125,13 +1125,13 @@ class AccountDetails extends React.Component {
                     }
         
                     if (currentAccount[this.state.selectedTeamIndex].projects[0].tools === undefined) {
-                        var jumpstartListofTools = ["no tools are configured to this project"]
-                        this.setState({ isTooldata: false, listofToolsarray: jumpstartListofTools })
+                        // var jumpstartListofTools = ["no tools are configured to this project"]
+                        this.setState({ isTooldata: false,noTool:true })
                     }
                     else {
                         var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[0].tools)
                         this.selectedTool(jumpstartListofTools[0], this.state.selectedTeamIndex, 0, 0)
-                        this.setState({ isTooldata: true, selectedProjectIndex: 0, listofToolsarray: jumpstartListofTools })
+                        this.setState({ isTooldata: true, selectedProjectIndex: 0, listofToolsarray: jumpstartListofTools,noTool:false })
                     }
                 }
                 var currentAccountArray1 = dcopy(currentAccount)
