@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 
 import { Card, CardTitle, CardText } from "material-ui/Card";
 import Avatar from "material-ui/Avatar";
@@ -8,30 +7,26 @@ import MenuItem from "material-ui/MenuItem";
 import IconButton from "material-ui/IconButton";
 import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
 
-import {myConstClass} from '../../constants';
-import axios from 'axios';
-
 const cardContainer = {
   cardWidth: {
     width: "17rem"
   }
 };
 
-class IndividualCardDetails extends Component {
+class PeoplesGridView extends Component {
+  onPeopleCardClick = index => {
+    this.props.changeCardLayout(index);
+  };
 
-    onPeopleCardClick = (index) =>{
-        this.props.changeCardLayout(index)
-    }
-    
   render() {
+      const {peoples,peopleSearchFilter,searchTerm} = this.props;
     return (
-      <div className={this.props.changeView} >
-        {this.props.peoples.map((people, index) => (
+      <div className={this.props.changeView}>
+        {peoples.filter(peopleSearchFilter(searchTerm)).map((people, index) => (
           <Card
             className="mr-3 mb-3 float-left"
             style={cardContainer.cardWidth}
             key={people.id}
-           
           >
             <div className="">
               <IconMenu
@@ -48,22 +43,25 @@ class IndividualCardDetails extends Component {
                 {/* <MenuItem primaryText="Delete" /> */}
               </IconMenu>
             </div>
-            <div className="" key={index}>
-              <div className="d-flex pointer"  onClick={()=>this.onPeopleCardClick(index)}>
+            <div>
+              <div
+                className="d-flex pointer"
+                onClick={() => this.onPeopleCardClick(index)}
+              >
                 <div className="d-flex align-items-center pl-2">
-                    <Avatar
+                  <Avatar
                     src="https://www.gstatic.com/webp/gallery/4.sm.jpg"
                     size={60}
-                    />
+                  />
                 </div>
                 <CardTitle
-                    className="text-truncate"
-                    title={people.name}
-                    subtitle="Software Engineer"
+                  className="text-truncate"
+                  title={people.name}
+                  subtitle="Software Engineer"
                 >
-                    <CardText className="p-0" subtitle="asdasd">
+                  <CardText className="p-0" subtitle="asdasd">
                     {people.emailid}
-                    </CardText>
+                  </CardText>
                 </CardTitle>
               </div>
             </div>
@@ -74,4 +72,4 @@ class IndividualCardDetails extends Component {
   }
 }
 
-export default IndividualCardDetails;
+export default PeoplesGridView;

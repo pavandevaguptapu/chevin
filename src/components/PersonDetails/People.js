@@ -3,19 +3,19 @@ import React, { Component } from "react";
 import axios from "axios";
 import { myConstClass } from "../../constants";
 
-import IndividualCardDetails from "../PersonDetails/IndividualCardDetails";
-import { Myconsumer, MyContext } from "../../shared/AdminDatabase";
-import AdminDatabase from "../../shared/AdminDatabase";
+import PeoplesGridView from "../PersonDetails/PeoplesGridView";
+import PeoplesWorkFlow from "./PeoplesWorkFlow";
+import PeoplesDetails from "./PeoplesDetails";
+// import { Myconsumer, MyContext } from "../../shared/AdminDatabase";
+// import AdminDatabase from "../../shared/AdminDatabase";
 
-import AutoComplete from "material-ui/AutoComplete";
+import TextField from 'material-ui/TextField';
 import RaisedButton from "material-ui/RaisedButton";
 import Dialog from "material-ui/Dialog";
-import PeoplesWorkFlow from "./PeoplesWorkFlow";
-import IndividualDetails from "./IndividualDetails";
 
 class People extends Component {
   state = {
-    dataSource: [],
+    searchTerm: "",
     individualModal: false,
     changeView: "d-block flex-row",
     addBorder: "",
@@ -33,7 +33,6 @@ class People extends Component {
   };
 
   changeCardLayout = index => {
-    const changeView = { ...this.state.changeView };
     let tempSelectePeopleDetailsObj = this.state.peoples[index];
     this.setState({
       changeView:
@@ -42,7 +41,7 @@ class People extends Component {
       addBorder: "border p-3",
       selectePeopleDetailsObj: tempSelectePeopleDetailsObj,
       load: (
-        <IndividualDetails
+        <PeoplesDetails
           selectePeopleDetailsObj={tempSelectePeopleDetailsObj}
         />
       )
@@ -50,8 +49,7 @@ class People extends Component {
   };
 
   getAllPeople = () => {
-    let peoples = this.state.peoples;
-    axios.get(myConstClass.peoples + "/user").then(response => {
+    axios.get(myConstClass.peoples + "/users").then(response => {
       this.setState({
         peoples: response.data
       });
@@ -62,15 +60,28 @@ class People extends Component {
     this.getAllPeople();
   }
 
+  peopleInputSearch = e => {
+    this.setState({
+      searchTerm: e.target.value
+    });
+  };
+
+  peopleSearchFilter= (searchTerm) => {
+    return function(people) {
+        return people.name.toLowerCase().includes(searchTerm.toLowerCase());
+    }
+  }
+
   render() {
     return (
       <div className="d-block clearfix col-lg-11 col-md-11 p-0 m-auto">
         <div className="mb-2 col-lg-12 d-flex align-items-baseline p-0">
           <div className="col-lg-6 p-0">
-            <AutoComplete
-              hintText="Search Here"
-              dataSource={this.state.dataSource}
-              floatingLabelText="Search Here"
+            <TextField
+            type="text"
+            hintText="Search People"
+            floatingLabelText="Search People"            
+            onChange={this.peopleInputSearch}
             />
           </div>
           <div className="col-lg-6 d-inline-flex justify-content-end p-0">
@@ -83,10 +94,12 @@ class People extends Component {
         </div>
         <div className={`d-flex clearfix ${this.state.addBorder}`}>
           {/* <AdminDatabase value={this.state.peoples}> */}
-          <IndividualCardDetails
+          <PeoplesGridView
             peoples={this.state.peoples}
             changeView={this.state.changeView}
             changeCardLayout={this.changeCardLayout}
+            searchTerm = {this.state.searchTerm}
+            peopleSearchFilter = {this.peopleSearchFilter}
           />
           {this.state.moreDetails === true ? this.state.load : " "}
         </div>

@@ -31,7 +31,7 @@ class PeoplesWorkFlow extends Component {
   };
 
   updateIndividual = e => {
-      let newCustomerDetailsObject = this.state.newCustomerDetailsObject;
+    // let newCustomerDetailsObject = this.state.newCustomerDetailsObject;
     this.setState({ [e.target.name]: e.target.value });
   };
 
@@ -45,9 +45,11 @@ class PeoplesWorkFlow extends Component {
         role: "newCustomerDetailsObject.role"
       })
       .then(response => {
-        this.state.sample = response.data;
-        this.setState({ createAccountModal: false, newCustomerDetails: {} });
-        //  window.sessionStorage.setItem("DashboardData", JSON.stringify(this.state.items));
+        this.setState({ 
+            sample: response.data,
+            // createAccountModal: false,
+            newCustomerDetails: {}
+        });
       });
   };
 
@@ -160,7 +162,7 @@ class PeoplesWorkFlow extends Component {
                 <RaisedButton
                   label={stepIndex === 2 ? "Finish" : "Save & Submit"}
                   primary={true}
-                  onClick={this.addNewMember}
+                  onClick={this.handleNext}
                 />
               </div>
             </div>
