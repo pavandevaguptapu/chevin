@@ -1,37 +1,39 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import {myConstClass} from '../constants';
 
 const MyContext = React.createContext();
+
 export const Myconsumer = MyContext.Consumer;
+
 
 class AdminDatabase extends Component {
   state = {
-    peoples: [
-        {
-            emailid: "v@comakeit.com",
-            role: "tester",
-            name: "tata"
-        },
-        {
-            emailid: "b@comakeit.com",
-            role: "developer",
-            name: "srnay"
-        }     ,
-        {
-            emailid: "d@comakeit.com",
-            role: "developer",
-            name: "1"
-        }                ,
-        {
-            emailid: "a@comakeit.com",
-            role: "developer",
-            name: "2"
-        }             
-    ]
+    peoples: [],
+    clicked:0
+
   };
+
+//   getAllPeople = () => {
+//     let peoples = this.state.peoples;
+//     axios.get(myConstClass.peoples + "/user").then(response => {
+//       this.setState({
+//         peoples: response.data
+//       });
+//     });
+//   };
+
+//   componentDidMount() {
+//     this.getAllPeople();
+//   }
+
+//   clickedPeople = (clickedIndex) => {
+//     this.state.clicked = clickedIndex;
+//   }
 
   render() {
     return (
-      <MyContext.Provider value={{state: this.state}}>
+      <MyContext.Provider value={{state: this.state, clickedPeopleFunc:this.clickedPeople}}>
         {this.props.children}
       </MyContext.Provider>
     );

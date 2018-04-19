@@ -18,6 +18,10 @@ const cardContainer = {
 };
 
 class IndividualCardDetails extends Component {
+
+    onPeopleCardClick = (index) =>{
+        this.props.changeCardLayout(index)
+    }
     
   render() {
     return (
@@ -26,7 +30,8 @@ class IndividualCardDetails extends Component {
           <Card
             className="mr-3 mb-3 float-left"
             style={cardContainer.cardWidth}
-            key={people.emailid}
+            key={people.id}
+           
           >
             <div className="">
               <IconMenu
@@ -44,7 +49,7 @@ class IndividualCardDetails extends Component {
               </IconMenu>
             </div>
             <div className="" key={index}>
-              <div className="d-flex pointer" onClick={this.props.addClassName}>
+              <div className="d-flex pointer"  onClick={()=>this.onPeopleCardClick(index)}>
                 <div className="d-flex align-items-center pl-2">
                     <Avatar
                     src="https://www.gstatic.com/webp/gallery/4.sm.jpg"

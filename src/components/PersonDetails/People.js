@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 
+import axios from "axios";
+import { myConstClass } from "../../constants";
+
 import IndividualCardDetails from "../PersonDetails/IndividualCardDetails";
-import { Myconsumer } from '../../shared/AdminDatabase'
+import { Myconsumer, MyContext } from "../../shared/AdminDatabase";
+import AdminDatabase from "../../shared/AdminDatabase";
 
 import AutoComplete from "material-ui/AutoComplete";
 import RaisedButton from "material-ui/RaisedButton";
@@ -13,9 +17,11 @@ class People extends Component {
   state = {
     dataSource: [],
     individualModal: false,
-    changeView: "d-flex flex-row",
+    changeView: "d-block flex-row",
     addBorder: "",
-    moreDetails: false
+    moreDetails: false,
+    peoples: [],
+    selectePeopleDetailsObj: {}
   };
 
   openIndividualModal = () => {
@@ -26,24 +32,35 @@ class People extends Component {
     this.setState({ individualModal: false });
   };
 
-  addClassName = () => {
+  changeCardLayout = index => {
     const changeView = { ...this.state.changeView };
-    this.setState({ 
-        changeView: "d-flex flex-column clearfix col-lg-3 p-0 custom_flex border-right", 
-        moreDetails: true,
-        addBorder: "border p-3"
+    let tempSelectePeopleDetailsObj = this.state.peoples[index];
+    this.setState({
+      changeView:
+        "d-flex flex-column clearfix p-0 custom_flex border-right overflow-y",
+      moreDetails: true,
+      addBorder: "border p-3",
+      selectePeopleDetailsObj: tempSelectePeopleDetailsObj,
+      load: (
+        <IndividualDetails
+          selectePeopleDetailsObj={tempSelectePeopleDetailsObj}
+        />
+      )
     });
   };
 
-  addIndividual = e => {
-    e.preventDefault();
-    // e.currentTarget.reset();
-    console.log(this.state);
+  getAllPeople = () => {
+    let peoples = this.state.peoples;
+    axios.get(myConstClass.peoples + "/user").then(response => {
+      this.setState({
+        peoples: response.data
+      });
+    });
   };
 
-  updateIndividual = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
+  componentDidMount() {
+    this.getAllPeople();
+  }
 
   render() {
     return (
@@ -65,16 +82,13 @@ class People extends Component {
           </div>
         </div>
         <div className={`d-flex clearfix ${this.state.addBorder}`}>
-        <Myconsumer>
-            {(context) => (
-                <IndividualCardDetails
-                peoples={context.state.peoples}
-                changeView={this.state.changeView}
-                addClassName={this.addClassName}
-                />
-            )}
-          </Myconsumer>
-          {this.state.moreDetails === true ? <IndividualDetails /> : " "}
+          {/* <AdminDatabase value={this.state.peoples}> */}
+          <IndividualCardDetails
+            peoples={this.state.peoples}
+            changeView={this.state.changeView}
+            changeCardLayout={this.changeCardLayout}
+          />
+          {this.state.moreDetails === true ? this.state.load : " "}
         </div>
         <Dialog
           title="Add Individual"

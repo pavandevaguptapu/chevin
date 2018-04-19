@@ -5,13 +5,12 @@ import TextField from 'material-ui/TextField';
 
 class PeoplesForm extends Component {
     state={
-        firstName: "",
-        lastName:"",
-        mobileNumber:"",
-        city:"",
-        address:"",
+        name: "",
         email:"",
         designation:"",
+        accounts: "",
+        projects: "",
+        role:"",
     }
     render() {
         return(
@@ -20,23 +19,13 @@ class PeoplesForm extends Component {
                         <div className="form-group col-lg-6 col-md-6">
                             <TextField 
                                 fullWidth={true}                                
-                                floatingLabelText="First Name"
-                                name="firstName"
+                                floatingLabelText="UserName"
+                                name="name"
                                 type="text"
-                                value={this.props.firstName}
+                                value={this.props.name}
                                 onChange={this.props.updateIndividual}
                             />                                    
                         </div>
-                        <div className="form-group col-lg-6 col-md-6">
-                            <TextField 
-                                fullWidth={true}
-                                floatingLabelText="Last Name" 
-                                name="lastName"
-                                type="text"
-                                value={this.props.lastName}
-                                onChange={this.props.updateIndividual}
-                            />                                    
-                        </div> 
                         <div className="form-group col-lg-6 col-md-6">
                             <TextField 
                                 fullWidth={true}
@@ -57,38 +46,36 @@ class PeoplesForm extends Component {
                                 onChange={this.props.updateIndividual}                                                         
                             />                                    
                         </div>  
-                        <div className="form-group col-lg-6">
+                        {/* <div className="form-group col-lg-6">
                             <TextField 
                                 fullWidth={true}
-                                floatingLabelText="City"
-                                name="city"
+                                floatingLabelText="Accounts"
+                                name="accounts"
                                 type="text"  
-                                value={this.props.city}
+                                value={this.props.accounts}
                                 onChange={this.props.updateIndividual}                                                             
                             />                                    
                         </div>                                                      
                         <div className="form-group col-lg-6 col-md-6">
                             <TextField 
                                 fullWidth={true}
-                                floatingLabelText="Mobile Number"
-                                name="mobileNumber"
-                                type="number"  
-                                value={this.props.mobileNumber}
+                                floatingLabelText="Projects"
+                                name="projects"
+                                type="text"  
+                                value={this.props.projects}
                                 onChange={this.props.updateIndividual}                                                            
                             />                                    
                         </div> 
                         <div className="form-group col-lg-12">
                             <TextField 
                                 fullWidth={true}
-                                floatingLabelText="Address, State, City & Zipcode "
-                                rows={2}
-                                rowsMax={4}
+                                floatingLabelText="Role"
                                 type="text"
-                                name="address"
-                                value={this.props.address}
+                                name="role"
+                                value={this.props.role}
                                 onChange={this.props.updateIndividual}                               
                             />                                    
-                        </div>                                                                                                                                                                                                     
+                        </div>                                                                                                                                                                                                      */}
                     </div>
                     {/* <FlatButton
                         label="Cancel"
