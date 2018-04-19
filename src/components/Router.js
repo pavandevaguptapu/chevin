@@ -6,7 +6,7 @@ import Dashboard from '../dashboard';
 import People from './PersonDetails/People';
 import Account from '../account';
 import App from './App'
-import IndividualDetails from './PersonDetails/IndividualDetails';
+// import IndividualDetails from './PersonDetails/IndividualDetails';
 
 const Routes = () => (
    <Router>
@@ -19,10 +19,10 @@ const Routes = () => (
             component={ManageCustomerTeams}
           />
           <Route path="/app/people" component={People} />
-          <Route path={`/app/people/:id`} component={IndividualDetails} />
+          {/* <Route path={`/app/people/:id`} component={IndividualDetails} /> */}
           <Route path="/app/dashboard" component= {Dashboard } />
           <Route path="/app/account" component={Account} />
-          <Route path="/app/individual" component={IndividualDetails} />
+          {/* <Route path="/app/individual" component={IndividualDetails} /> */}
         </App>
         <Route
           render={function() {

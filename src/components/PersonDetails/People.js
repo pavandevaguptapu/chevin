@@ -1,29 +1,27 @@
 import React, { Component } from "react";
 
-import BasicForm from "../PersonDetails/BasicForm";
-import IndividualCardDetails from "../PersonDetails/IndividualCardDetails";
+import axios from "axios";
+import { myConstClass } from "../../constants";
 
-import AutoComplete from "material-ui/AutoComplete";
+import PeoplesGridView from "../PersonDetails/PeoplesGridView";
+import PeoplesWorkFlow from "./PeoplesWorkFlow";
+import PeoplesDetails from "./PeoplesDetails";
+// import { Myconsumer, MyContext } from "../../shared/AdminDatabase";
+// import AdminDatabase from "../../shared/AdminDatabase";
+
+import TextField from 'material-ui/TextField';
 import RaisedButton from "material-ui/RaisedButton";
 import Dialog from "material-ui/Dialog";
 
 class People extends Component {
   state = {
-    dataSource: [],
+    searchTerm: "",
     individualModal: false,
-    changeView: "d-flex flex-row",
-    peoples: [
-      {
-        emailid: "v@comakeit.com",
-        role: "tester",
-        name: "tata"
-      },
-      {
-        emailid: "b@comakeit.com",
-        role: "developer",
-        name: "srnay"
-      }
-    ]
+    changeView: "d-block flex-row",
+    addBorder: "",
+    moreDetails: false,
+    peoples: [],
+    selectePeopleDetailsObj: {}
   };
 
   openIndividualModal = () => {
@@ -34,20 +32,56 @@ class People extends Component {
     this.setState({ individualModal: false });
   };
 
-  addClassName = () => {
-    const changeView = { ...this.state.changeView };
-    this.setState({ changeView: "d-flex flex-column" });
+  changeCardLayout = index => {
+    let tempSelectePeopleDetailsObj = this.state.peoples[index];
+    this.setState({
+      changeView:
+        "d-flex flex-column clearfix p-0 custom_flex border-right overflow-y",
+      moreDetails: true,
+      addBorder: "border p-3",
+      selectePeopleDetailsObj: tempSelectePeopleDetailsObj,
+      load: (
+        <PeoplesDetails
+          selectePeopleDetailsObj={tempSelectePeopleDetailsObj}
+        />
+      )
+    });
   };
+
+  getAllPeople = () => {
+    axios.get(myConstClass.peoples + "/users").then(response => {
+      this.setState({
+        peoples: response.data
+      });
+    });
+  };
+
+  componentDidMount() {
+    this.getAllPeople();
+  }
+
+  peopleInputSearch = e => {
+    this.setState({
+      searchTerm: e.target.value
+    });
+  };
+
+  peopleSearchFilter= (searchTerm) => {
+    return function(people) {
+        return people.name.toLowerCase().includes(searchTerm.toLowerCase());
+    }
+  }
 
   render() {
     return (
       <div className="d-block clearfix col-lg-11 col-md-11 p-0 m-auto">
         <div className="mb-2 col-lg-12 d-flex align-items-baseline p-0">
           <div className="col-lg-6 p-0">
-            <AutoComplete
-              hintText="Search Here"
-              dataSource={this.state.dataSource}
-              floatingLabelText="Search Here"
+            <TextField
+            type="text"
+            hintText="Search People"
+            floatingLabelText="Search People"            
+            onChange={this.peopleInputSearch}
             />
           </div>
           <div className="col-lg-6 d-inline-flex justify-content-end p-0">
@@ -58,24 +92,25 @@ class People extends Component {
             />
           </div>
         </div>
-        <div className="d-block clearfix">
-          <IndividualCardDetails
+        <div className={`d-flex clearfix ${this.state.addBorder}`}>
+          {/* <AdminDatabase value={this.state.peoples}> */}
+          <PeoplesGridView
             peoples={this.state.peoples}
             changeView={this.state.changeView}
-            addClassName={this.addClassName}
+            changeCardLayout={this.changeCardLayout}
+            searchTerm = {this.state.searchTerm}
+            peopleSearchFilter = {this.peopleSearchFilter}
           />
+          {this.state.moreDetails === true ? this.state.load : " "}
         </div>
-        <div className="d-block clearfix">
-          <Dialog
-            title="Add Individual"
-            className="text-center"
-            modal={true}
-            //  actions={actions}
-            open={this.state.individualModal}
-          >
-            <BasicForm closeIndividualModal={this.closeIndividualModal} />
-          </Dialog>
-        </div>
+        <Dialog
+          title="Add Individual"
+          className="text-center"
+          modal={true}
+          open={this.state.individualModal}
+        >
+          <PeoplesWorkFlow closeIndividualModal={this.closeIndividualModal} />
+        </Dialog>
       </div>
     );
   }
