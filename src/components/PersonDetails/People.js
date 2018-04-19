@@ -49,7 +49,7 @@ class People extends Component {
   };
 
   getAllPeople = () => {
-    axios.get(myConstClass.peoples + "/users").then(response => {
+    axios.get(myConstClass.peoples + "/user").then(response => {
       this.setState({
         peoples: response.data
       });
@@ -109,7 +109,7 @@ class People extends Component {
           modal={true}
           open={this.state.individualModal}
         >
-          <PeoplesWorkFlow closeIndividualModal={this.closeIndividualModal} />
+          <PeoplesWorkFlow closeIndividualModal={this.closeIndividualModal} peoples={this.state.peoples} />
         </Dialog>
       </div>
     );
