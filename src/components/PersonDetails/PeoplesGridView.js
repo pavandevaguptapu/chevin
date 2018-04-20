@@ -9,7 +9,10 @@ import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
 
 const cardContainer = {
   cardWidth: {
-    width: "17rem"
+    width: "17rem",
+    height:"6.88rem",
+    flex: '1 0 auto',
+    margin: '0 5px 5px 0'
   }
 };
 
@@ -21,10 +24,9 @@ class PeoplesGridView extends Component {
   render() {
       const {peoples,peopleSearchFilter,searchTerm} = this.props;
     return (
-      <div className={this.props.changeView}>
+      <div className="d-flex flex-row flex-wrap">
         {peoples.filter(peopleSearchFilter(searchTerm)).map((people, index) => (
           <Card
-            className="mr-3 mb-3 float-left"
             style={cardContainer.cardWidth}
             key={people.id}
           >
@@ -57,10 +59,10 @@ class PeoplesGridView extends Component {
                 <CardTitle
                   className="text-truncate"
                   title={people.name}
-                  subtitle="Software Engineer"
+                  subtitle={people.designation}
                 >
                   <CardText className="p-0" subtitle="asdasd">
-                    {people.emailid}
+                    {people.email}
                   </CardText>
                 </CardTitle>
               </div>

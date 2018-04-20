@@ -588,116 +588,6 @@ input[type="text"] {
   }
 }
 
-<<<<<<< HEAD
-						.borderRight{
-							border-right: 5px solid #d4d4d4
-						}
-
-						.titleBackgroundColor{
-							background-color: #edecec
-						}
-						.marginR0{
-							margin-right: 0px !important;
-						}
-						
-						.borderBottom{
-							border-bottom:1px solid rgb(229, 226, 226);
-						}
-						
-						/* .verticalHeight{
-							height: 87vh
-						} */
-						.inlineGrid{
-							display: inline-grid !important;
-						}
-						
-
-					.vh{
-						height: 32vh;
-					}
-					.backgroundcolor{
-						background-color:'aliceblue'
-					}
-					
-						.verticalAlign{
-							align-items: center;
-							
-							justify-content: center;
-							
-							display: flex;
-							
-							flex-direction: column;
-						}
-
-						.epicTablediv{
-							overflow: scroll;
-							
-							height: 91%;
-						}
-
-						.sprintStatusMenuWidth{
-							width:100%
-						}
-						@media screen and (min-device-width: 1170px){
-						.marginTop6{
-							margin-top: 3% !important
-						}
-						.marginTop4{
-							margin-top:-6% !important
-						}
-						.verticalHeight{
-							height: 84vh 
-						}
-
-						.mctverticalHeight{
-							height: 100vh 
-						}
-
-						.marginB08{
-							margin-bottom: 3%;
-						}
-						.mctaccdetailsboxmargin{
-							margin: 0 0 0 1.2% !important
-						}
-
-						.mctboxmargin{
-							margin: 0 0 0 2% !important
-						}
-					}
-					@media screen and (min-device-width: 1500px){
-						.marginTop6{
-							margin-top: 0 !important
-						}
-						.marginTop4{
-							margin-top:-2% !important
-						}
-						
-						.marginB08{
-							margin-bottom: 8%;
-						}
-						.verticalHeight{
-							height: 88vh 
-						}
-
-						.mctverticalHeight{
-							height: 100vh 
-						}
-
-						.mctaccdetailsboxmargin{
-							margin: 0 0 0 1% !important
-						}
-					}
-
-					.sprintselectboxheight{
-						height: 8% !important
-					}
-					.sprintburndownheight{
-						height: 37% !important
-					}
-					.sprintoverviewheight{
-						height: 51% !important
-					}
-=======
 .sprintselectboxheight {
   height: 8% !important;
 }
@@ -707,7 +597,6 @@ input[type="text"] {
 .sprintoverviewheight {
   height: 51% !important;
 }
->>>>>>> a0230a6e622896db5686ce85cfee33ea21a8c6b2
 
 .teamdetailsheight {
   height: 47% !important;

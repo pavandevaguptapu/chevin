@@ -18,40 +18,27 @@ const styles = {
 class PeoplesWorkFlow extends Component {
   state = {
     finished: false,
-    stepIndex: 0,
-    sample: {},
-    newSam: {
-      name: "",
-      designation:"",
-      email:""
-    },
-    peoples: this.props.peoples,
+    stepIndex: 0
   };
 
   updatePeople = e => {
-    const updatedPeopleDetails = this.state.newSam;
-    updatedPeopleDetails[e.target.name] = e.target.value        
-    this.setState({newSam:updatedPeopleDetails})
-    console.log(updatedPeopleDetails);
-    // this.setState({ [e.target.name]: e.target.value });
+    this.setState({ [e.target.name]: e.target.value });
   };
 
   addNewMember = newCustomerDetailsObject => {
-    let peoples = this.state.peoples;
-    axios.post(myConstClass.peoples + `/save`, {
-        name: this.state.newSam.name,
-        designation: this.state.newSam.designation,
-        email: this.state.newSam.email,
+    const { name, email, designation } = this.state;
+
+    axios
+      .post(myConstClass.peoples + `/save`, {
+        name: name,
+        designation: designation,
+        email: email,
         account: "newCustomerDetailsObject.account",
         projects: "newCustomerDetailsObject.projects",
         role: "newCustomerDetailsObject.role"
       })
       .then(response => {
-        this.props.addedObj(response.data)
-        // this.state.peoples = response.data;
-        // this.setState({ 
-        //     sample: response.data,
-        // });
+        this.props.newPeopleObj(response.data);
       });
   };
 

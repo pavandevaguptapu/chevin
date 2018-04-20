@@ -35,6 +35,15 @@ class PeoplesForm extends Component {
                                 onChange={this.props.updatePeople}                                                         
                             />                                    
                         </div>  
+                        <div className="form-group col-lg-6 col-md-6">
+                            <TextField 
+                                fullWidth={true}
+                                floatingLabelText="Role"
+                                type="text"
+                                name="role"
+                                onChange={this.props.updatePeople}                               
+                            />                                    
+                        </div>                        
                         {/* <div className="form-group col-lg-6">
                             <TextField 
                                 fullWidth={true}
