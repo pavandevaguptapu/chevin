@@ -25,7 +25,8 @@ class PeoplesGridView extends Component {
     const { peoples, peopleSearchFilter, searchTerm, changeView } = this.props;
     return (
       <div className={`d-flex ${changeView}`}>
-        {peoples.filter(peopleSearchFilter(searchTerm)).map((people, index) => (
+        {peoples.filter(people => people.name.toLowerCase().includes(searchTerm.toLowerCase())
+        ).map((people, index) => (
           <Card style={cardContainer.cardWidth} key={people.id}>
             <div className="">
               <IconMenu

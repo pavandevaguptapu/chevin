@@ -22,7 +22,8 @@ class People extends Component {
     moreDetails: false,
     peoples: [],
     selectePeopleDetailsObj: {},
-    filterArray:[],
+    // filterArray:[],
+    // filterString: ''
   };
 
   openIndividualModal = () => {
@@ -57,15 +58,15 @@ class People extends Component {
 
   peopleInputSearch = e => {
     this.setState({
-      searchTerm: e.target.value
+      searchTerm: e.target.value,
     });
   };
 
-  peopleSearchFilter = searchTerm => {
-    return function(people) {
-      return people.name.toLowerCase().includes(searchTerm.toLowerCase());
-    };
-  };
+//   peopleSearchFilter = searchTerm => {
+//     return function(people) {
+//       return people.name.toLowerCase().includes(searchTerm.toLowerCase());
+//     };
+//   };
 
   newPeopleObj = newPeopleObj => {
     const newPeoplesArray = this.state.peoples;
@@ -75,6 +76,7 @@ class People extends Component {
 
   componentDidMount() {
     this.getAllPeople();
+    
   }
 
   render() {
@@ -86,7 +88,7 @@ class People extends Component {
               type="text"
               hintText="Search People by name"
               floatingLabelText="Search People"
-              onChange={this.peopleInputSearch}
+              onKeyUp={this.peopleInputSearch}
             />
           </div>
           <div className="col-lg-6 d-inline-flex justify-content-end p-0">
@@ -104,7 +106,6 @@ class People extends Component {
             changeView={this.state.changeView}
             changeCardLayout={this.changeCardLayout}
             searchTerm={this.state.searchTerm}
-            peopleSearchFilter={this.peopleSearchFilter}
           />
           {this.state.moreDetails === true ? this.state.load : " "}
         </div>
