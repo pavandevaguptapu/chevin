@@ -221,13 +221,7 @@ a {
 .textAlignRight {
   text-align: right;
 }
-.modalMargins {
-  width: 400px;
-  text-align: center;
-  border: 1px solid rgb(158, 158, 158);
 
-  border-radius: 23px;
-}
 
 .fontSize17 {
   font-size: 17px;

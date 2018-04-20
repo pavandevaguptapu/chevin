@@ -33,7 +33,6 @@ class SideBar extends Component {
     }
 
     render() {
-        console.log(this.state.accountsArray, "tata")
         return(
             <div className="d-flex flex-column align-items-center" style={{"borderTop":"39px solid #786f71"}}>
                 <div className="py-2">
