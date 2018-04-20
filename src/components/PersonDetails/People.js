@@ -17,11 +17,12 @@ class People extends Component {
   state = {
     searchTerm: "",
     individualModal: false,
-    changeView: "d-block flex-row",
+    changeView: "flex-row flex-wrap",
     addBorder: "",
     moreDetails: false,
     peoples: [],
-    selectePeopleDetailsObj: {}
+    selectePeopleDetailsObj: {},
+    filterArray:[],
   };
 
   openIndividualModal = () => {
@@ -36,9 +37,9 @@ class People extends Component {
     let tempSelectePeopleDetailsObj = this.state.peoples[index];
     this.setState({
       changeView:
-        "d-flex flex-column clearfix p-0 custom_flex border-right overflow-y",
+        "flex-column clearfix p-0 custom_flex border-right overflow-y",
       moreDetails: true,
-      addBorder: "border p-3",
+      addBorder: "border p-3 d-flex",
       selectePeopleDetailsObj: tempSelectePeopleDetailsObj,
       load: (
         <PeoplesDetails selectePeopleDetailsObj={tempSelectePeopleDetailsObj} />
@@ -83,7 +84,7 @@ class People extends Component {
           <div className="col-lg-6 p-0">
             <TextField
               type="text"
-              hintText="Search People"
+              hintText="Search People by name"
               floatingLabelText="Search People"
               onChange={this.peopleInputSearch}
             />

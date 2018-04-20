@@ -10,9 +10,9 @@ import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
 const cardContainer = {
   cardWidth: {
     width: "17rem",
-    height:"6.88rem",
-    flex: '1 0 auto',
-    margin: '0 5px 5px 0'
+    height: "6.88rem",
+    flex: "1 0 auto",
+    margin: "0 5px 5px 0"
   }
 };
 
@@ -22,14 +22,11 @@ class PeoplesGridView extends Component {
   };
 
   render() {
-      const {peoples,peopleSearchFilter,searchTerm} = this.props;
+    const { peoples, peopleSearchFilter, searchTerm, changeView } = this.props;
     return (
-      <div className="d-flex flex-row flex-wrap">
+      <div className={`d-flex ${changeView}`}>
         {peoples.filter(peopleSearchFilter(searchTerm)).map((people, index) => (
-          <Card
-            style={cardContainer.cardWidth}
-            key={people.id}
-          >
+          <Card style={cardContainer.cardWidth} key={people.id}>
             <div className="">
               <IconMenu
                 className="float-right"
