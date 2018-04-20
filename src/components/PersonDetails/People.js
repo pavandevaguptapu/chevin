@@ -4,7 +4,7 @@ import axios from "axios";
 import { myConstClass } from "../../constants";
 
 import PeoplesGridView from "../PersonDetails/PeoplesGridView";
-import PeoplesWorkFlow from "./PeoplesWorkFlow";
+import PeoplesForm from "./PeoplesForm";
 import PeoplesDetails from "./PeoplesDetails";
 // import { Myconsumer, MyContext } from "../../shared/AdminDatabase";
 // import AdminDatabase from "../../shared/AdminDatabase";
@@ -114,7 +114,7 @@ class People extends Component {
           modal={true}
           open={this.state.individualModal}
         >
-          <PeoplesWorkFlow
+          <PeoplesForm
             closeIndividualModal={this.closeIndividualModal}
             peoples={this.state.peoples}
             newPeopleObj={this.newPeopleObj}
