@@ -8,6 +8,10 @@ import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
 
 class PeoplesForm extends Component {
+state = {
+    name: '',
+    email: ''
+}
   updatePeople = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
@@ -39,8 +43,6 @@ class PeoplesForm extends Component {
               name="name"
               type="text"
               onChange={this.updatePeople}
-              errorText="Enter name"
-              required
             />
           </div>
           <div className="form-group col-lg-6 col-md-6">
@@ -50,7 +52,6 @@ class PeoplesForm extends Component {
               name="email"
               type="email"
               onChange={this.updatePeople}
-              errorText="Enter proper Email Address"
             />
           </div>
           <div className="form-group col-lg-6 col-md-6">
@@ -96,6 +97,7 @@ class PeoplesForm extends Component {
           primary={true}
           onClick={this.addNewMember}
           type="submit"
+          disabled= {!this.state.name || !this.state.email}
         />
       </form>
     );
