@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
+import Dialog from 'material-ui/Dialog';
 import axios from 'axios';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 import SelectField from 'material-ui/SelectField';
@@ -34,17 +35,7 @@ var dcopy = require('deep-copy')
 
 let SelectableList = makeSelectable(List);
 
-const customStyles = {
-    content: {
-        top: '50%',
-        left: '61%',
-        right: 'auto',
-        bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
-        padding: "0px"
-    }
-};
+
 const customStylesJumpStart = {
     content: {
         top: '50%',
@@ -289,7 +280,7 @@ class ManageCustomerTeams extends React.Component {
 
              
 
-                <Modal isOpen={this.state.createAccountModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor 1 "].join(' ')}>
+                <Dialog open={this.state.createAccountModal}  className={["col-md-6 col-lg-5 modalMargins modalBgColor 1 "].join(' ')}>
 
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
@@ -427,7 +418,7 @@ class ManageCustomerTeams extends React.Component {
                     </form>
                     </div>
 
-                </Modal>
+                </Dialog>
 
                 {this.state.accountDetails}
             </div>
@@ -766,12 +757,25 @@ class AccountDetails extends React.Component {
             />
         })
     }
-
+    // getDateString = (date) => {
+    //     console.log(date)
+    //     // var date = new Date(epochTime)
+    //     var month = '' + (date.getMonth() + 1)
+    //     var day = '' + date.getDate()
+    //     var year = date.getFullYear()
+    //     var dateString = (day + "/" + month + "/" + year)
+    //     return dateString
+    // }
     componentWillMount() {     
 
         var currentAccountArray = dcopy(this.props.AccountDataArray)        
          var latestTeam = currentAccountArray[currentAccountArray.length - 1].customerName
         var lastitemIndex = currentAccountArray.length - 1
+
+        // var startDate=this.getDateString(currentAccountArray[currentAccountArray.length - 1].startDate)
+        // var endDate=this.getDateString(currentAccountArray[currentAccountArray.length - 1].endDate)
+        console.log(currentAccountArray)
+      
 
         var noMember = 0
         var eachProjectMembers = 0
@@ -800,7 +804,7 @@ class AccountDetails extends React.Component {
             }
         }
         var emptyPeopleArray  
-            // if projects are
+            // if projects are available
         if (currentAccountArray[lastitemIndex].projects.length !== 0) {
             // if projects array not equal to undefined and people array is udefined
             if (currentAccountArray[currentAccountArray.length - 1].projects[0].people === undefined) {
@@ -838,13 +842,8 @@ class AccountDetails extends React.Component {
             })
 
     }    
-    selectTeam = (event, selectedTeamIndex, value) => {
-        // this.setState({
+    selectTeam = (event, selectedTeamIndex, value) => {       
 
-        // })
-        // var currentAccount=dcopy(this.props.AccountDataArray)  
-        
-        console.log(this.state.currentAccount)
         var currentAccount = this.state.currentAccount
         var noMember = 0
         var eachProjectMembers = 0
@@ -912,9 +911,7 @@ class AccountDetails extends React.Component {
     addTeamModal=()=>{
         this.setState({ addTeamModal: true })
     }
-    handleAddTeamDetails=(e)=> {
-        //   console.log(this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex])
-        //   console.log(this.state.currentAccount[this.state.selectedTeamIndex])
+    handleAddTeamDetails=(e)=> {    
         var newAccountInputs= this.state.newTeamObj
         newAccountInputs[e.target.name] = e.target.value;
 
@@ -927,12 +924,12 @@ class AccountDetails extends React.Component {
 
     }
     addTeam=(newTeamObj)=>{
-        console.log(newTeamObj)
+
         axios.post(myConstClass.nodeAppUrl+`/accounts`,
         {
             customerName: newTeamObj.customerName,
-            startDate: '13/12/2017',
-            endDate: '13/12/2017',
+            startDate: newTeamObj.startDate,
+            endDate: newTeamObj.endDate,
             engagementModel: newTeamObj.engagementModel,
             pricingModel: 0,
             seniorSupplier: 'siva',
@@ -944,24 +941,32 @@ class AccountDetails extends React.Component {
         })
         .then(response => {
             var addedObj = this.state.currentAccount.concat(response.data)
-
             this.setState({ currentAccount:addedObj,addTeamModal:false});
-            //  window.sessionStorage.setItem("DashboardData", JSON.stringify(this.state.items));
+            
         })
-    }
-   
+    }   
     closeAddTeamModal=()=>{
         this.setState({addTeamModal:false})
     }
     editTeam=()=> {
-     
-        this.setState({ editTeamModal: true })
+     var tempArray = dcopy(this.state.currentAccount)
+        this.setState({ editTeamModal: true,TeamDetailsArrayForEditing:tempArray })
     }
     handleTeamDetails=(e)=> { 
-        
-        var EditedAccountObj = this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex];
-       
-        EditedAccountObj[e.target.name] = e.target.value;
+  
+        // if(e!==null){
+            var EditedAccountObj = this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex];
+            
+                    EditedAccountObj[e.target.name] = e.target.value;
+        // }     
+        //         if(e===null && string==='startDate'){                  
+        //             var EditedAccountObj = this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex];
+        //             EditedAccountObj.startDate=x
+        //         }
+        //         if(e===null && string==='endDate'){                  
+        //             var EditedAccountObj = this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex];
+        //             EditedAccountObj.endDate=x
+        //         }
 
         this.setState(
             {
@@ -971,12 +976,12 @@ class AccountDetails extends React.Component {
         )
 
     }
-    updateTeam(modifiedTeamObj) {        
+    updateTeam(modifiedTeamObj) {     
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + modifiedTeamObj._id,
             {
                 customerName: modifiedTeamObj.customerName,
-                startDate: '13/12/2017',
-                endDate: '13/12/2017',
+                startDate: modifiedTeamObj.startDate,
+                endDate: modifiedTeamObj.endDate,
                 engagementModel: modifiedTeamObj.engagementModel,
                 pricingModel: modifiedTeamObj.pricingModel,
                 seniorSupplier: 'asewr',
@@ -987,30 +992,22 @@ class AccountDetails extends React.Component {
                 status: 'Active'
             })
             .then(response => {
+                console.log(response.data)
             var updatedObj=this.state.currentAccount        
             updatedObj.splice(this.state.selectedTeamIndex,1)
             updatedObj.splice(this.state.selectedTeamIndex,0,response.data)
             var updatedTeamName=updatedObj[this.state.selectedTeamIndex].customerName
-
+                console.log(updatedObj)
                 this.setState({ currentAccount:updatedObj,selectedTeamName:updatedTeamName,editTeamModal:false});
 
             })
 
     }
-    getDateString = (date) => {
-        // var date = new Date(epochTime)
-        var month = '' + (date.getMonth() + 1)
-        var day = '' + date.getDate()
-        var year = date.getFullYear()
-        var dateString = (day + "/" + month + "/" + year)
-        return dateString
-    }
+ 
     handleChange=(even,date)=>{
         var selectedDate=new Date(date)
         var newDate=this.getDateString(date)
-
          this.state.currentAccount[this.state.selectedTeamIndex].startDate=newDate
-
          this.setState({})
     }
     selectingTeamName=(Teams)=> {
@@ -1023,32 +1020,29 @@ class AccountDetails extends React.Component {
 		));
     }
     selectedProject = (selectedProjectIndex) => {
-
         // var currentAccount = dcopy(this.props.AccountDataArray)
-        var currentAccount=this.state.currentAccount 
-          
-        if (this.state.currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].people.length === 0 ) {           
+        var currentAccount=this.state.currentAccount       
+        if (currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].people === undefined) {           
             this.setState({noPeople:true})
         }
         else {
-            var peopleArrayOfselectedProject = this.state.currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].people
+            var peopleArrayOfselectedProject =currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].people
             this.setState({ peopleArray: peopleArrayOfselectedProject,noPeople:false })
         }
 
         if (currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].tools === undefined) {
-            var jumpstartListofTools = ["no tools are configured to this project"]
-            this.setState({ isTooldata: false })
-
+            console.log("1")
+            // var jumpstartListofTools = ["no tools are configured to this project"]
+            this.setState({ isTooldata: false,noTool:true })
         }
         else {
             var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].tools)
-            this.setState({ isTooldata: true })
+            this.setState({ isTooldata: true,noTool:false,listofToolsarray: jumpstartListofTools, })
         }
 
         this.setState({
-            selectedProjectIndex: selectedProjectIndex,
-            listofToolsarray: jumpstartListofTools,
-     
+            currentAccount:currentAccount,
+            selectedProjectIndex: selectedProjectIndex        
         })
 
     }
@@ -1056,14 +1050,9 @@ class AccountDetails extends React.Component {
         this.setState({ createProjectModel: true })
     }
 
-    addNewProject(newProjectObject) {
-    
+    addNewProject(newProjectObject) {    
          var tempAccountsArray = this.state.currentAccount;
-         console.log(tempAccountsArray)
-         console.log(tempAccountsArray[this.state.selectedTeamIndex])
-
-         tempAccountsArray[this.state.selectedTeamIndex].projects.push(newProjectObject)
-         
+         tempAccountsArray[this.state.selectedTeamIndex].projects.push(newProjectObject)         
 
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + tempAccountsArray[this.state.selectedTeamIndex]._id,
             {
@@ -1079,11 +1068,8 @@ class AccountDetails extends React.Component {
                 customerLogo: "",
                 status: 'Active'
             })
-            .then(response => {
-                    
-                var currentAccount=this.state.currentAccount
-
- 
+            .then(response => {                    
+                var currentAccount=this.state.currentAccount 
                 var noMember = 0
                 var eachProjectMembers = 0
                 var x;
@@ -1207,10 +1193,7 @@ class AccountDetails extends React.Component {
         // }
         // this.setState({ currentAccount: tempArray })
     }
-
-
     render() { 
-
           return (
             <div className="col-lg-12 col-md-12 mt-1">
                 <div className="col-lg-12 col-md-12 d-inline p-0">                    
@@ -1266,17 +1249,17 @@ class AccountDetails extends React.Component {
                                         <div className="col-md-2 col-lg-3 displayInline m-2 p-0">
                                         <div className="textAlignCenter pr-2">                                           
                                                 <ActionDateRange />
-                                                <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Start Date</Subheader>                                                                             
+                                                <Subheader className="p-1" style={{ fontSize: '12px', lineHeight: "4px" }}>Start Date</Subheader>                                                                             
                                          </div>
                                        
-                                        <div className="" style={dateOptionsStyle}>
-                                            {/* {this.state.currentAccount[this.state.selectedTeamIndex].startDate}  */}
-                                            <DatePicker
+                                        <div className="" style={{fontSize: '25px',lineHeight: "32px"}}>
+                                            {this.state.currentAccount[this.state.selectedTeamIndex].startDate} 
+                                            {/* <DatePicker
                                                 textFieldStyle={{width: '60%'}} 
                                                 hintText="Start Date"
                                                 value={this.state.newDate}
                                                 onChange={this.handleChange}
-                                            />
+                                            /> */}
                                         </div>  
                                         {/* <FloatingActionButton mini={true} secondary={true}>
                                                 <ActionDateRange />
@@ -1292,14 +1275,14 @@ class AccountDetails extends React.Component {
                                                 <ActionDateRange />
                                                 <Subheader className="p-1" style={{ fontSize: '12px', lineHeight: "4px" }}>End Date</Subheader>                                         
                                          </div>
-                                         <div className="" style={dateOptionsStyle}>
-                                         <DatePicker
+                                         <div className="" style={{fontSize: '25px', lineHeight: "32px"}}>
+                                         {/* <DatePicker
                                                 textFieldStyle={{width: '60%'}} 
                                                 hintText="Start Date"
                                                 value={this.state.newDate}
                                                 onChange={this.handleChange}
-                                            />
-                                             {/* {this.state.currentAccount[this.state.selectedTeamIndex].endDate}  */}
+                                            /> */}
+                                           {this.state.currentAccount[this.state.selectedTeamIndex].endDate}  
                                              </div>
                                         {/* <FloatingActionButton mini={true} secondary={true}>
                                                 <ActionDateRange />
@@ -1392,28 +1375,28 @@ class AccountDetails extends React.Component {
                                           No projects are assigned to this team
                                       </Subheader>
                                   </div>
-                              </Tab>
-                             <Tab label="People" style={tabsBackgroundColor}>
-                                  <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={[this.state.noPeople === false ? 'show' : 'visibility'].join(' ')}>                                      <Table>
-                                      <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                                          <TableRow >
-                                              <TableHeaderColumn>Members Name</TableHeaderColumn>
-                                              <TableHeaderColumn>Settings</TableHeaderColumn>
-                                          </TableRow>
-                                      </TableHeader>
-                                      <TableBody displayRowCheckbox={false}>
-                                          {this.state.peopleArray.map((person, index) => (
-                                              <TableRow key={index} style={{ border: '1px solid rgb(224, 224, 224)' }}>
-                                                  <TableRowColumn>{person.name}</TableRowColumn>
-                                                  <TableRowColumn>
-                                                      {/* <Button  
+                            </Tab>
+                            <Tab label="People" style={tabsBackgroundColor}>
+                                <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={[this.state.noPeople === false ? 'show' : 'visibility'].join(' ')}>                                      <Table>
+                                    <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                                        <TableRow >
+                                            <TableHeaderColumn>Members Name</TableHeaderColumn>
+                                            <TableHeaderColumn>Settings</TableHeaderColumn>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody displayRowCheckbox={false}>
+                                        {this.state.peopleArray.map((person, index) => (
+                                            <TableRow key={index} style={{ border: '1px solid rgb(224, 224, 224)' }}>
+                                                <TableRowColumn>{person.name}</TableRowColumn>
+                                                <TableRowColumn>
+                                                    {/* <Button  
                                                             mini={true} 
                                                             iconStyle={editProjectButton} 
                                                             onClick={() => this.createProject()}
                                                         >
                                                             <ContentEdit />
                                                         </Button > */}
-                                                      {/* <Button  
+                                                    {/* <Button  
                                                             mini={true} 
                                                             secondary={true} 
                                                             iconStyle={deleteProjectButton} 
@@ -1421,22 +1404,22 @@ class AccountDetails extends React.Component {
                                                         >
                                                             <DeleteIcon />
                                                         </Button > */}
-                                                  </TableRowColumn>
-                                              </TableRow>
-                                          ))}
-                                      </TableBody>
-                                  </Table>
-                                  </div>
-                                  <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={[this.state.noPeople === true ? 'show' : 'visibility'].join(' ')}>
-                                      <Subheader className="p-0 textAlignCenter" style={{ fontSize: '20px' }}>
-                                          No member is assigned to this project
-                                      </Subheader>
-                                  </div>
-                              </Tab>
-                              <Tab label="Jump Start" style={tabsBackgroundColor}>
+                                                </TableRowColumn>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                                </div>
+                                <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={[this.state.noPeople === true ? 'show' : 'visibility'].join(' ')}>
+                                    <Subheader className="p-0 textAlignCenter" style={{ fontSize: '20px' }}>
+                                        No member is assigned to this project
+                                    </Subheader>
+                                </div>
+                            </Tab>
+                              <Tab label="Jump Start" style={tabsBackgroundColor} disabled={this.state.noProject===true}>
                                   <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={["col-lg-12 d-flex", this.state.noTool === false ? 'show' : 'visibility'].join(' ')}>
                                       <div className={["col-lg-3 col-md-3 py-2", this.state.noTool === false ? 'show' : 'visibility'].join(' ')}>
-                                          <SelectableList style={{ border: '1px solid #eee' }}>
+                                          <SelectableList style={{ border: '1px solid #eee' }} >
                                               {this.state.listofToolsarray.map((item, index) => (
                                                   <ListItem
                                                       primaryText={item}
@@ -1513,11 +1496,11 @@ class AccountDetails extends React.Component {
                 </div> 
 
 
-                <Modal isOpen={this.state.editTeamModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor 2 "].join(' ')}>
+                <Dialog     open={this.state.editTeamModal} contentStyle={{"left":"70%"}} className={["col-md-6 col-lg-5 "].join(' ')}>
 
                     <div className="row">
-                        <div className="col-md-12 col-lg-12">
-                            <h2 className="marginT0">Team Details</h2>
+                        <div className="col-md-12 col-lg-12 textAlignCenter">
+                        <Subheader className="p-0" style={{ fontSize: '30px'}}>Team Details</Subheader>
                         </div>
                     </div>
 
@@ -1582,24 +1565,42 @@ class AccountDetails extends React.Component {
                         <div className="row margin0">
                             {/* <div className="col-md-5 margin10"><label>Pricing Model:</label></div> */}
                             <div className="col-md-12">
-                            <DatePicker
+                               <TextField 
+                                    fullWidth={true}
+                                    floatingLabelText="Start Date"
+                                    hintText="dd/mm/yyyy"
+                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate || ''}
+                                    name='startDate'
+                                    onChange={this.handleTeamDetails} 
+                                />
+                            {/* <DatePicker
                             textFieldStyle={{width: '100%'}} 
                             hintText="Start Date"
-                            value={this.state.newDate}
-                            onChange={this.handleTeamDetails}
-                        />
+                            name='startDate'
+                            value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate || ''}                          
+                            onChange={(e,x)=>this.handleTeamDetails(e,x,'startDate')} 
+                        /> */}
                             </div>
 
                         </div>
                         <div className="row margin0">
                             {/* <div className="col-md-5 margin10"><label>Logo:</label></div> */}
                             <div className="col-md-12">
-                            <DatePicker
+                            <TextField 
+                                    fullWidth={true}
+                                    floatingLabelText="End Date"
+                                    hintText="dd/mm/yyyy"
+                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate || ''}
+                                    name='endDate'
+                                    onChange={this.handleTeamDetails} 
+                                />
+                            {/* <DatePicker
                             textFieldStyle={{width: '100%'}} 
                             hintText="End Date"
-                            value={this.state.newDate}
-                            onChange={this.handleTeamDetails}
-                        />
+                            name='endDate'
+                            value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate || ''}    
+                            onChange={(e,x)=>this.handleTeamDetails(e,x,'endDate')} 
+                        /> */}
                             </div>
 
                         </div>
@@ -1625,12 +1626,12 @@ class AccountDetails extends React.Component {
 
                     </div>
 
-                </Modal>
-                <Modal isOpen={this.state.addTeamModal} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor 2 "].join(' ')}>
+                </Dialog>
+                <Dialog open={this.state.addTeamModal} contentStyle={{"left":"70%"}} className={["col-md-6 col-lg-5 "].join(' ')}>
 
                     <div className="row">
-                        <div className="col-md-12 col-lg-12">
-                            <h2 className="marginT0">Add Team</h2>
+                        <div className="col-md-12 col-lg-12 textAlignCenter">
+                        <Subheader className="p-0" style={{ fontSize: '30px'}}>Add Team</Subheader>
                         </div>
                     </div>
 
@@ -1694,24 +1695,40 @@ class AccountDetails extends React.Component {
                         <div className="row margin0">
                             {/* <div className="col-md-5 margin10"><label>Pricing Model:</label></div> */}
                             <div className="col-md-12">
-                            <DatePicker
+                            <TextField 
+                                    fullWidth={true}
+                                    floatingLabelText="Start Date"
+                                    hintText="dd/mm/yyyy"
+                                    value={this.state.newTeamObj.startDate || ''}
+                                    name='startDate'
+                                    onChange={this.handleAddTeamDetails} 
+                                />
+                            {/* <DatePicker
                             textFieldStyle={{width: '100%'}} 
                             hintText="Start Date"
                             value={this.state.newDate}
                             onChange={this.handleTeamDetails}
-                        />
+                        /> */}
                             </div>
 
                         </div>
                         <div className="row margin0">
                             {/* <div className="col-md-5 margin10"><label>Logo:</label></div> */}
                             <div className="col-md-12">
-                            <DatePicker
+                            <TextField 
+                                    fullWidth={true}
+                                    floatingLabelText="End Date"
+                                    hintText="dd/mm/yyyy"
+                                    value={this.state.newTeamObj.endDate || ''}
+                                    name='endDate'
+                                    onChange={this.handleAddTeamDetails} 
+                                />
+                            {/* <DatePicker
                             textFieldStyle={{width: '100%'}} 
                             hintText="End Date"
                             value={this.state.newDate}
                             onChange={this.handleTeamDetails}
-                        />
+                        /> */}
                             </div>
 
                         </div>
@@ -1737,20 +1754,31 @@ class AccountDetails extends React.Component {
 
                     </div>
 
-                </Modal>
-                <Modal isOpen={this.state.createProjectModel} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
+                </Dialog>
+                <Dialog open={this.state.createProjectModel} contentStyle={{"left":"70%"}}  className={["col-md-6 col-lg-5"].join(' ')}>
                     <div className="row">
-                        <div className="col-md-12 col-lg-12">
-                            <h1 className="marginT0">Project Details</h1>
-                        </div>
+                    <div className="col-md-12 col-lg-12 textAlignCenter">
+                    <Subheader className="p-0" style={{ fontSize: '30px'}}>Project Name</Subheader>
+                    </div>
                     </div>
 
                     <div className="textAlignLeft">
                         <div className="row margin0">
-                            <div className="col-md-5 margin10"><label>Project Name:</label></div>
+                        <div className="col-md-12">
+                                <TextField 
+                                    value={this.state.newProjectDetails.projectName || ''} 
+                                    name='projectName' 
+                                    onChange={this.newProjectDetails}      
+                                    hintText="Project Name" 
+                                    floatingLabelText="Project Name"
+                                    type="text"
+                                    fullWidth={true}
+                                />
+                            </div>
+                            {/* <div className="col-md-5 margin10"><label>Project Name:</label></div>
                             <div className="col-md-6 custId">
                                 <input value={this.state.newProjectDetails.projectName || ''} name='projectName' onChange={this.newProjectDetails} />
-                            </div>
+                            </div> */}
                         </div>
                         <div className="loginBtns">
                             <div>
@@ -1773,8 +1801,8 @@ class AccountDetails extends React.Component {
 
                     </div>
 
-                </Modal>
-                <Modal isOpen={this.state.jumpStartConfigModel} style={customStylesJumpStart} className={["col-md-6 modalMargins modalBgColor "].join(' ')}>
+                </Dialog>
+                <Dialog open={this.state.jumpStartConfigModel} contentStyle={{"left":"70%"}}  className={["col-md-6"].join(' ')}>
 
                     <div className="row">
                       
@@ -1808,8 +1836,8 @@ class AccountDetails extends React.Component {
                             </div>
                       
                     </div>
-                </Modal>
-                <Modal isOpen={this.state.configPeopleModel} style={customStylesJumpStart} className={["col-md-6 modalMargins modalBgColor "].join(' ')}>
+                </Dialog>
+                <Dialog open={this.state.configPeopleModel} contentStyle={{"left":"70%"}} className={["col-md-6"].join(' ')}>
 
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
@@ -1839,8 +1867,8 @@ class AccountDetails extends React.Component {
 
                         </div>
                     </div>
-                </Modal>
-                <Modal isOpen={this.state.createGithubProjectModel} style={customStyles} className={["col-md-6 col-lg-5 modalMargins modalBgColor "].join(' ')}>
+                </Dialog>
+                <Dialog open={this.state.createGithubProjectModel} contentStyle={{"left":"70%"}}  className={["col-md-6 col-lg-5"].join(' ')}>
                     <div className="row">
                         <div className="col-md-12 col-lg-12">
                             <h1 className="marginT0">Github Project Details</h1>
@@ -1872,7 +1900,7 @@ class AccountDetails extends React.Component {
 
                     </div>
 
-                </Modal>
+                </Dialog>
                 
             </div>
 
