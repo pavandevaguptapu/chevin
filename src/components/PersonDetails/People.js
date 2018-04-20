@@ -9,7 +9,7 @@ import PeoplesDetails from "./PeoplesDetails";
 // import { Myconsumer, MyContext } from "../../shared/AdminDatabase";
 // import AdminDatabase from "../../shared/AdminDatabase";
 
-import TextField from 'material-ui/TextField';
+import TextField from "material-ui/TextField";
 import RaisedButton from "material-ui/RaisedButton";
 import Dialog from "material-ui/Dialog";
 
@@ -41,9 +41,7 @@ class People extends Component {
       addBorder: "border p-3",
       selectePeopleDetailsObj: tempSelectePeopleDetailsObj,
       load: (
-        <PeoplesDetails
-          selectePeopleDetailsObj={tempSelectePeopleDetailsObj}
-        />
+        <PeoplesDetails selectePeopleDetailsObj={tempSelectePeopleDetailsObj} />
       )
     });
   };
@@ -56,39 +54,38 @@ class People extends Component {
     });
   };
 
-  componentDidMount() {
-    this.getAllPeople();
-  }
-
   peopleInputSearch = e => {
     this.setState({
       searchTerm: e.target.value
     });
   };
 
-  peopleSearchFilter= (searchTerm) => {
+  peopleSearchFilter = searchTerm => {
     return function(people) {
-        return people.name.toLowerCase().includes(searchTerm.toLowerCase());
-    }
-  }
-  latestObj=(latestObj)=>{
-console.log(latestObj)
-var temparray=this.state.peoples
-temparray.push(latestObj)
-this.setState({peoples:temparray})
+      return people.name.toLowerCase().includes(searchTerm.toLowerCase());
+    };
+  };
 
+  newPeopleObj = newPeopleObj => {
+    const newPeoplesArray = this.state.peoples;
+    newPeoplesArray.push(newPeopleObj);
+    this.setState({ peoples: newPeoplesArray });
+  };
 
+  componentDidMount() {
+    this.getAllPeople();
   }
+
   render() {
     return (
       <div className="d-block clearfix col-lg-11 col-md-11 p-0 m-auto">
         <div className="mb-2 col-lg-12 d-flex align-items-baseline p-0">
           <div className="col-lg-6 p-0">
             <TextField
-            type="text"
-            hintText="Search People"
-            floatingLabelText="Search People"            
-            onChange={this.peopleInputSearch}
+              type="text"
+              hintText="Search People"
+              floatingLabelText="Search People"
+              onChange={this.peopleInputSearch}
             />
           </div>
           <div className="col-lg-6 d-inline-flex justify-content-end p-0">
@@ -99,14 +96,14 @@ this.setState({peoples:temparray})
             />
           </div>
         </div>
-        <div className={`d-flex clearfix ${this.state.addBorder}`}>
+        <div className={`clearfix ${this.state.addBorder}`}>
           {/* <AdminDatabase value={this.state.peoples}> */}
           <PeoplesGridView
             peoples={this.state.peoples}
             changeView={this.state.changeView}
             changeCardLayout={this.changeCardLayout}
-            searchTerm = {this.state.searchTerm}
-            peopleSearchFilter = {this.peopleSearchFilter}
+            searchTerm={this.state.searchTerm}
+            peopleSearchFilter={this.peopleSearchFilter}
           />
           {this.state.moreDetails === true ? this.state.load : " "}
         </div>
@@ -116,7 +113,11 @@ this.setState({peoples:temparray})
           modal={true}
           open={this.state.individualModal}
         >
-          <PeoplesWorkFlow closeIndividualModal={this.closeIndividualModal} peoples={this.state.peoples} addedObj={this.latestObj} />
+          <PeoplesWorkFlow
+            closeIndividualModal={this.closeIndividualModal}
+            peoples={this.state.peoples}
+            newPeopleObj={this.newPeopleObj}
+          />
         </Dialog>
       </div>
     );

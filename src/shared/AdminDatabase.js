@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import {myConstClass} from '../constants';
+// import axios from 'axios';
+// import {myConstClass} from '../constants';
 
 const MyContext = React.createContext();
 
@@ -9,8 +9,8 @@ export const Myconsumer = MyContext.Consumer;
 
 class AdminDatabase extends Component {
   state = {
-    peoples: [],
-    clicked:0
+    // peoples: [],
+    // clicked:0
 
   };
 
