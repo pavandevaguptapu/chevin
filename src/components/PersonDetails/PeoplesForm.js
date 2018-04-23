@@ -8,15 +8,19 @@ import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
 
 class PeoplesForm extends Component {
-state = {
-    name: '',
-    email: ''
-}
+  state = {
+    name: "",
+    email: "",
+    value: 1
+  };
   updatePeople = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
-  handleChange = (event, index, values) => this.setState({ values });
-  addNewMember = newCustomerDetailsObject => {
+
+  handleChange = (event, index, value) => this.setState({ value });
+
+  addNewMember = e => {
+    e.preventDefault();
     const { name, email, designation, account, projects } = this.state;
     axios
       .post(myConstClass.peoples + `/save`, {
@@ -29,12 +33,17 @@ state = {
       })
       .then(response => {
         this.props.newPeopleObj(response.data);
+      })
+      .catch(error => {
+          if(error.response) {
+              return(error.response);
+          }
       });
   };
 
   render() {
     return (
-      <form onSubmit={this.props.addIndividual}>
+      <form>
         <div className="form-row">
           <div className="form-group col-lg-6 col-md-6">
             <TextField
@@ -73,18 +82,33 @@ state = {
             />
           </div>
           <div className="form-group col-lg-6 col-md-6">
-            <TextField
+            {/* <TextField
               fullWidth={true}
               floatingLabelText="Frequency"
               onChange={this.updatePeople}
               name="accounts"
               type="text"
-            />
+            /> */}
+            <SelectField
+              floatingLabelText="Select Teams"
+              value={this.state.value}
+              onChange={this.handleChange}
+              autoWidth={true}
+              fullWidth={true}
+              name="teams"
+              className="text-left"
+            >
+              <MenuItem value={1} primaryText="Auto width" />
+              <MenuItem value={2} primaryText="Every Night" />
+              <MenuItem value={3} primaryText="Weeknights" />
+              <MenuItem value={4} primaryText="Weekends" />
+              <MenuItem value={5} primaryText="Weekly" />
+            </SelectField>
           </div>
           <div className="form-group col-lg-6 col-md-6">
             <TextField
               fullWidth={true}
-              floatingLabelText="Frequency"
+              floatingLabelText="Select Projects"
               onChange={this.updatePeople}
               name="projects"
               type="text"
@@ -97,7 +121,7 @@ state = {
           primary={true}
           onClick={this.addNewMember}
           type="submit"
-          disabled= {!this.state.name || !this.state.email}
+          disabled={!this.state.name || !this.state.email}
         />
       </form>
     );

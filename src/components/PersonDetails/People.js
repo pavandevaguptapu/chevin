@@ -15,15 +15,13 @@ import Dialog from "material-ui/Dialog";
 
 class People extends Component {
   state = {
-    searchTerm: "",
     individualModal: false,
     changeView: "flex-row flex-wrap",
     addBorder: "",
     moreDetails: false,
     peoples: [],
     selectePeopleDetailsObj: {},
-    // filterArray:[],
-    // filterString: ''
+    filterPeople: []
   };
 
   openIndividualModal = () => {
@@ -35,7 +33,7 @@ class People extends Component {
   };
 
   changeCardLayout = index => {
-    let tempSelectePeopleDetailsObj = this.state.peoples[index];
+    let tempSelectePeopleDetailsObj = this.state.filterPeople[index];
     this.setState({
       changeView:
         "flex-column clearfix p-0 custom_flex border-right overflow-y",
@@ -51,22 +49,21 @@ class People extends Component {
   getAllPeople = () => {
     axios.get(myConstClass.peoples + "/user").then(response => {
       this.setState({
-        peoples: response.data
+        peoples: response.data,
+        filterPeople: response.data
       });
     });
   };
 
-  peopleInputSearch = e => {
-    this.setState({
-      searchTerm: e.target.value,
+  filteredList = e => {
+    var updatedList = this.state.peoples;
+    updatedList = updatedList.filter(people => {
+      return (
+        people.name.toLowerCase().search(e.target.value.toLowerCase()) !==-1
+      );
     });
+    this.setState({ filterPeople: updatedList });
   };
-
-//   peopleSearchFilter = searchTerm => {
-//     return function(people) {
-//       return people.name.toLowerCase().includes(searchTerm.toLowerCase());
-//     };
-//   };
 
   newPeopleObj = newPeopleObj => {
     const newPeoplesArray = this.state.peoples;
@@ -76,7 +73,6 @@ class People extends Component {
 
   componentDidMount() {
     this.getAllPeople();
-    
   }
 
   render() {
@@ -88,7 +84,7 @@ class People extends Component {
               type="text"
               hintText="Search People by name"
               floatingLabelText="Search People"
-              onKeyUp={this.peopleInputSearch}
+              onChange={this.filteredList}
             />
           </div>
           <div className="col-lg-6 d-inline-flex justify-content-end p-0">
@@ -102,10 +98,9 @@ class People extends Component {
         <div className={`clearfix ${this.state.addBorder}`}>
           {/* <AdminDatabase value={this.state.peoples}> */}
           <PeoplesGridView
-            peoples={this.state.peoples}
             changeView={this.state.changeView}
             changeCardLayout={this.changeCardLayout}
-            searchTerm={this.state.searchTerm}
+            filterPeople={this.state.filterPeople}
           />
           {this.state.moreDetails === true ? this.state.load : " "}
         </div>
