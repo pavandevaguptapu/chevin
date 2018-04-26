@@ -34,7 +34,7 @@ class SelectedProjectDetails extends Component {
       pwd: "",
       url: "",
       dropdownOpen: false,
-      dropDownValue: "Select Project"
+      dropDownValue: "Projects"
     };
 
     // this.projectDetailsListarray = this.projectDetailsListarray.bind(this);

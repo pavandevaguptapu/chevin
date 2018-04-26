@@ -13,7 +13,11 @@ import EpicBurdownChart from "./EpicBurnDownChart";
 
 import axios from "axios";
 import { myConstClass } from "../../constants";
+// import image from '../../spring_board_logo.png';
 
+import Avatar from "material-ui/Avatar";
+import Grid from "material-ui/svg-icons/image/grid-on";
+import Search from "material-ui/svg-icons/action/search";
 import FloatingActionButton from "material-ui/FloatingActionButton";
 import ContentAdd from "material-ui/svg-icons/content/add";
 import { Card, CardHeader } from "material-ui";
@@ -33,6 +37,7 @@ import {
 } from "reactstrap";
 import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
+import { grey600, faintBlack } from "material-ui/styles/colors";
 const navBarContainer = {
   navBarbg: {
     backgroundColor: "#ffd91d"
@@ -163,7 +168,11 @@ class TeamsBaseLayout extends Component {
   };
 
   selectedAccount = (e, i) => {
-    let indexOfSelectedAccount = this.state.accounts.map(function(e) {return e.customerName;}).indexOf(e);
+    let indexOfSelectedAccount = this.state.accounts
+      .map(function(e) {
+        return e.customerName;
+      })
+      .indexOf(e);
     //   console.log(this.state.accounts[indexOfSelectedAccount])
     this.setState({
       peoplesArray: "",
@@ -186,7 +195,7 @@ class TeamsBaseLayout extends Component {
           onSelectProject={this.selectProject}
           showLoader={this.ShowLoaderforTeamandQuality}
           errorMessage={this.displayErrorMessage}
-          displayDropDownValue= {this.displayDropDownValue}
+          displayDropDownValue={this.displayDropDownValue}
         />
       )
     });
@@ -436,7 +445,8 @@ class TeamsBaseLayout extends Component {
             className="navbar navbar-light navbar-expand-lg"
             style={navBarContainer.navBarbg}
           >
-            <a className="navbar-brand" href="#">
+            <a className="navbar-brand" >
+                <img src="../../spring_board_logo.png" width="30" height="30" className="d-inline-block align-top" alt="" />
               <span className="navbar-brand ml-1 h1">SpringBoard</span>
             </a>
             <div className="navbar-collapse">
@@ -455,66 +465,97 @@ class TeamsBaseLayout extends Component {
                     </DropdownMenu>
                   </Dropdown>
                 </div>
-                <div className="col-lg-12 displayInline">
-                  <div className="col-lg-2 textAlignCenter">
-                    {this.state.projects}
-                  </div>
-                </div>
+                <div className="">{this.state.projects}</div>
+              </div>
+            </div>
+            <div className="col-lg-2 text-right">
+              <div>
+                <Avatar
+                  src="https://www.gstatic.com/webp/gallery/4.sm.jpg"
+                  size={40}
+                />
               </div>
             </div>
           </nav>
 
-          <div className="boards p-4" style={{ backgroundColor: "#494b4f" }}>
-            <div className="col-lg-2 textAlignCenter marginL1">
+          <div className="boards p-3" style={{ backgroundColor: "#494b4f" }}>
+            <div style={{ marginLeft: "9.3rem" }}>
               {this.state.selectedProjectBoardDetails}
             </div>
+            <div> {this.state.sprintDetails} </div>
           </div>
 
-          <div className="col-lg-12 my-5">
+          <div className="col-lg-12 my-4">
             <div className="col-lg-12 text-right">
               <FloatingActionButton className="add-custom_button">
                 <ContentAdd />
               </FloatingActionButton>
             </div>
             <div className="d-flex flex-row flex-wrap widgetCard">
-              <div className="col-lg-6">
+              <div className="col-lg-4 table-responsive">
                 <Card style={navBarContainer.widgetContainer.widgetCard}>
-                  <CardHeader title="Epic Overview" />
-                  <div>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHeaderColumn>ID</TableHeaderColumn>
-                          <TableHeaderColumn>Name</TableHeaderColumn>
-                          <TableHeaderColumn>Status</TableHeaderColumn>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <TableRow>
-                          <TableRowColumn>1</TableRowColumn>
-                          <TableRowColumn>John Smith</TableRowColumn>
-                          <TableRowColumn>Employed</TableRowColumn>
-                        </TableRow>
-                        <TableRow>
-                          <TableRowColumn>2</TableRowColumn>
-                          <TableRowColumn>Randal White</TableRowColumn>
-                          <TableRowColumn>Unemployed</TableRowColumn>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
+                  <CardHeader
+                    title="Team Details"
+                    className="custom_dashboard-header"
+                  />
+                  <div className="col-lg-12 text-center">
+                    {this.state.loaderforpeople}
+                    {this.state.emptyPeoplesArray}
+                    {this.state.peoplesArray}
                   </div>
                 </Card>
               </div>
-              <div className="col-lg-6">
+              <div className="col-lg-4 table-responsive">
                 <Card style={navBarContainer.widgetContainer.widgetCard}>
-                  <CardHeader title="Quality Overview" />
+                  <CardHeader
+                    title="Epic Overview"
+                    className="custom_dashboard-header"
+                  />
+                  <div className="col-lg-12 text-center">
+                    {this.state.loaderforEpicDetails}
+                    {this.state.emptyEpicsArray}
+                    {this.state.issuesListArray}
+                  </div>
                 </Card>
               </div>
-              <div className="col-lg-6">
+              <div className="col-lg-4">
                 <Card style={navBarContainer.widgetContainer.widgetCard}>
-                  <CardHeader title="Epic Burndown Chart" />
+                  <CardHeader title="Epic Burndown Chart" className="custom_dashboard-header"/>
+                  <div className="col-lg-12 text-center">
+                    {this.state.loaderforEpicOverviewburndownchart}
+                    {this.state.emptyEpicsArray}
+                    {this.state.epicBurndownChart}
+                  </div>
                 </Card>
               </div>
+              <div className="col-lg-4">
+                <Card style={navBarContainer.widgetContainer.widgetCard}>
+                  <CardHeader title="Sprint BurnUp Chart" className="custom_dashboard-header" />
+                  <div className="col-lg-12 text-center">
+                    {this.state.loaderforsprintburndownchart}
+                    {this.state.emptySprintArray}
+                    {this.state.workHours}
+                  </div>
+                </Card>
+              </div>
+              <div className="col-lg-4">
+                <Card style={navBarContainer.widgetContainer.widgetCard}>
+                  <CardHeader title="Sprint Overview" className="custom_dashboard-header"/>
+                  <div className="col-lg-12 text-center">
+                    {this.state.loaderforsprintoverviewpiechart}
+                    {this.state.emptySprintArray}
+                    {this.state.sprintPieChart}
+                  </div>
+                </Card>
+              </div>
+              <div className="col-lg-4">
+                <Card style={navBarContainer.widgetContainer.widgetCard}>
+                  <CardHeader title="Quality Overview" className="custom_dashboard-header"/>
+                  <div className="col-lg-12 text-center">
+                    {this.state.loaderforsonar}
+                  </div>
+                </Card>
+              </div>              
             </div>
           </div>
         </div>

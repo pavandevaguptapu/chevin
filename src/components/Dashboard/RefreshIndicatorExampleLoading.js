@@ -20,9 +20,9 @@ class RefreshIndicatorExampleLoading extends Component {
     return (
       <div>
         <RefreshIndicator
-          size={40}
-          left={10}
-          top={170}
+          size={50}
+          left={5}
+          top={100}
           status={this.state.laoderStatus}
           style={style.refresh}
           loadingColor={"grey"}

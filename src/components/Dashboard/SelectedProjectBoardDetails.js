@@ -13,7 +13,8 @@ import {
 class SelectedProjectBoardDetails extends Component {
     
     state = {
-        dropdownOpen: false,
+    dropdownOpen: false,
+    dropDownValue: "Boards",        
       selectedProjectBoard: "",
       projectBoardDetailsListarray: [],
       userName: "",
@@ -26,13 +27,6 @@ class SelectedProjectBoardDetails extends Component {
         opacity: 1
       }
     };
-  
-
-  toggle = () => {
-    this.setState(prevState => ({
-      dropdownOpen: !prevState.dropdownOpen
-    }));
-  };
 
   componentWillMount() {
     this.setState({
@@ -205,11 +199,21 @@ class SelectedProjectBoardDetails extends Component {
         key={board.id}
         value={board.name}
         className="pointer"
-        onClick={(e, i) => this.selectedProjectBoard(e.target.value)}
+        onClick={(e, i) => {this.selectedProjectBoard(e.target.value), this.displayDropDownValue(e)}}
       >
         {board.name}
       </DropdownItem>
     ));
+  };
+
+  toggle = () => {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
+  };
+
+  displayDropDownValue = e => {
+    this.setState({ dropDownValue: e.currentTarget.textContent });
   };
 
   render() {
@@ -232,7 +236,7 @@ class SelectedProjectBoardDetails extends Component {
           toggle={this.toggle}
           className="custom-secondary_dropdown"
         >
-          <DropdownToggle caret>Select Board</DropdownToggle>
+          <DropdownToggle caret>{this.state.dropDownValue}</DropdownToggle>
           <DropdownMenu className="custom-dropdown-menu">
             {this.projectBoardDetailsListarray(
               this.state.projectBoardDetailsListarray
