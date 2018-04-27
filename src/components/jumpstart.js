@@ -32,116 +32,116 @@ const modelbuttonsStyle = {
 
 class Jumpstart extends Component {
 
-   
-        state = {            
-            newProcessObj: {},
-            processArray: [
-                {"name": "Project Management","processID": 4}, 
-                {"name": "Quality Management", "processID": 5 }, 
-                {"name": "Build Tool","processID":6 }
-            ],
-            newToolObj: {},
-            toolsArray: [
-                { "name": "Jira", "processID": [3,5,4]}, { "name": "SonarQube", "processID": [0,5] }, { "name": "Jenkins", "processID": [3]}
-            ],
-            selectedProcessIndex: 0,
-            editableProcessArray: [
-                {"name": "Project Management","processID": 4}, 
-                {"name": "Quality Management", "processID": 5}, 
-                {"name": "Build Tool","processID":6}
-            ],
-        
-            selectedToolIndex:0,
-            editableToolsArray: [
-                { "name": "Jira", "processID": [3,5,4]}, { "name": "SonarQube", "processID": [0,5] }, { "name": "Jenkins", "processID": [3]}
-            ],
-            headersToolsArray:[{"name":"Project Management","processID": 4},{"name":"Quality Management","processID": 5},{"name":"Build Tool","processID":6}],
-            selectedTab:"",
-            handleChangesInProcessName:false,
-            handleChangesInToolName:false
+
+    state = {
+        newProcessObj: {},
+        processArray: [
+            { "name": "Project Management", "processID": 4 },
+            { "name": "Quality Management", "processID": 5 },
+            { "name": "Build Tool", "processID": 6 }
+        ],
+        newToolObj: {},
+        toolsArray: [
+            { "name": "Jira", "processID": [3, 5, 4] }, { "name": "SonarQube", "processID": [0, 5] }, { "name": "Jenkins", "processID": [3] }
+        ],
+        selectedProcessIndex: 0,
+        editableProcessArray: [
+            { "name": "Project Management", "processID": 4 },
+            { "name": "Quality Management", "processID": 5 },
+            { "name": "Build Tool", "processID": 6 }
+        ],
+
+        selectedToolIndex: 0,
+        editableToolsArray: [
+            { "name": "Jira", "processID": [3, 5, 4] }, { "name": "SonarQube", "processID": [0, 5] }, { "name": "Jenkins", "processID": [3] }
+        ],
+        headersToolsArray: [{ "name": "Project Management", "processID": 4 }, { "name": "Quality Management", "processID": 5 }, { "name": "Build Tool", "processID": 6 }],
+        selectedTab: "",
+        handleChangesInProcessName: false,
+        handleChangesInToolName: false
 
     }
-  
 
-    componeDidMount(){
+
+    componeDidMount() {
         console.log("1")
     }
-   
+
 
 
     addProcessModal = () => {
         this.setState({ addProcessModal: true })
     }
     closeProcessModal = () => {
-        this.setState({ addProcessModal: false,newProcessObj:{}})
+        this.setState({ addProcessModal: false, newProcessObj: {} })
     }
     handlingNewProcessDetails = (e) => {
         var newProcessObj = this.state.newProcessObj
         newProcessObj[e.target.name] = e.target.value
         this.setState({ newProcessObj: newProcessObj })
     }
-    addProcess = (newProcessObj) => {       
+    addProcess = (newProcessObj) => {
         var processArray = this.state.processArray
         processArray.push(newProcessObj)
-        this.setState({ processArray: processArray, addProcessModal: false,editableProcessArray:processArray })
+        this.setState({ processArray: processArray, addProcessModal: false, editableProcessArray: processArray })
     }
     editProcess = (e, name, i) => {
-        this.setState({ editProcessModal: true, selectedProcessIndex: i ,handleChangesInProcessName:false})
-}
-    handlingEditProcessDetails = (e) => {       
-        var editableProcessArray =dcopy(this.state.editableProcessArray) 
-        editableProcessArray[this.state.selectedProcessIndex][e.target.name] = e.target.value   
-         this.setState({ editableProcessArray: editableProcessArray,handleChangesInProcessName:true })
+        this.setState({ editProcessModal: true, selectedProcessIndex: i, handleChangesInProcessName: false })
     }
-   
-    saveEditedProcess=(editedObj)=>{
-        this.setState({processArray:this.state.editableProcessArray,editProcessModal:false})
+    handlingEditProcessDetails = (e) => {
+        var editableProcessArray = dcopy(this.state.editableProcessArray)
+        editableProcessArray[this.state.selectedProcessIndex][e.target.name] = e.target.value
+        this.setState({ editableProcessArray: editableProcessArray, handleChangesInProcessName: true })
+    }
+
+    saveEditedProcess = (editedObj) => {
+        this.setState({ processArray: this.state.editableProcessArray, editProcessModal: false })
     }
     closeEditProcessModal = () => {
-        this.setState({ editProcessModal: false,editableProcessArray:this.state.processArray })
+        this.setState({ editProcessModal: false, editableProcessArray: this.state.processArray })
     }
 
     deleteProcess = (e, name, i) => {
         console.log(e, name, i)
     }
     addToolModal = () => {
-        this.setState({ addToolModal: true,newToolObj:{}})
+        this.setState({ addToolModal: true, newToolObj: {} })
     }
     closeAddToolModal = () => {
-        this.setState({ addToolModal: false,})
+        this.setState({ addToolModal: false, })
     }
-    handlingNewToolDetails=(e)=>{
+    handlingNewToolDetails = (e) => {
         var newToolObj = this.state.newToolObj
         newToolObj[e.target.name] = e.target.value
         this.setState({ newToolObj: newToolObj })
     }
-    addNewTool=(newToolObj)=>{
-         newToolObj={name:newToolObj.name,"processID":[]}
-        
-        
+    addNewTool = (newToolObj) => {
+        newToolObj = { name: newToolObj.name, "processID": [] }
+
+
         var toolsArray = this.state.toolsArray
-        toolsArray.push(newToolObj)      
-         this.setState({ toolsArray: toolsArray,addToolModal: false,editableToolsArray:toolsArray,newToolObj:{}})
+        toolsArray.push(newToolObj)
+        this.setState({ toolsArray: toolsArray, addToolModal: false, editableToolsArray: toolsArray, newToolObj: {} })
 
     }
-    editTool = (e, name, i) => {       
-         this.setState({ editToolModal: true, selectedToolIndex: i,handleChangesInToolName:false,editableToolsArray:this.state.toolsArray})
+    editTool = (e, name, i) => {
+        this.setState({ editToolModal: true, selectedToolIndex: i, handleChangesInToolName: false, editableToolsArray: this.state.toolsArray })
     }
     closeEditToolModal = () => {
         this.setState({ editToolModal: false })
     }
 
-    handlingEditToolDetails = (e) => {       
+    handlingEditToolDetails = (e) => {
         var editableToolsArray = dcopy(this.state.editableToolsArray)
-        editableToolsArray[this.state.selectedToolIndex][e.target.name] = e.target.value   
-         this.setState({ editableToolsArray: editableToolsArray,handleChangesInToolName:true })
+        editableToolsArray[this.state.selectedToolIndex][e.target.name] = e.target.value
+        this.setState({ editableToolsArray: editableToolsArray, handleChangesInToolName: true })
     }
-    saveEditedToolName=(editedObj)=>{
-        this.setState({toolsArray:this.state.editableToolsArray,editToolModal:false})
+    saveEditedToolName = (editedObj) => {
+        this.setState({ toolsArray: this.state.editableToolsArray, editToolModal: false })
     }
     deleteTool = (e, name, i) => {
         console.log(e, name, i)
-    }  
+    }
     selectedProcess = (process) => {
         return process.map((process) => (
             <MenuItem
@@ -151,16 +151,16 @@ class Jumpstart extends Component {
             />
         ));
     }
-    selectedTab=(e,selectedTab)=>{
-        if(selectedTab==="Tools"){
-            this.setState({selectedTab:selectedTab})
+    selectedTab = (e, selectedTab) => {
+        if (selectedTab === "Tools") {
+            this.setState({ selectedTab: selectedTab })
         }
-        else{
-            this.setState({selectedTab:""})
+        else {
+            this.setState({ selectedTab: "" })
         }
-        
+
     }
-    selectProcessforTool = (e, checked, index,headerToolsId) => {
+    selectProcessforTool = (e, checked, index, headerToolsId) => {
         var tempToolArray = this.state.toolsArray
         if (checked === false) {
             var ind = tempToolArray[index].processID.indexOf(headerToolsId)
@@ -172,11 +172,11 @@ class Jumpstart extends Component {
             this.setState({ toolsArray: tempToolArray })
 
         }
-   
+
     }
-    saveTools=(e,toolsArray)=>{
+    saveTools = (e, toolsArray) => {
         console.log(toolsArray)
-        this.setState({toolsArray:toolsArray})
+        this.setState({ toolsArray: toolsArray })
 
     }
     render() {
@@ -195,7 +195,7 @@ class Jumpstart extends Component {
                 <div className="mt-5">
                     <div className="col-md-6 col-lg-6">
                         <Tabs inkBarStyle={{ background: '#FF3D00' }}>}
-                            <Tab label="Process" style={tabsBackgroundColor} onActive={(e)=>this.selectedTab(e,"Process")}>
+                            <Tab label="Process" style={tabsBackgroundColor} onActive={(e) => this.selectedTab(e, "Process")}>
                                 <div style={{ border: "1px solid rgb(238, 238, 238)" }} >
                                     <Table>
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
@@ -238,7 +238,7 @@ class Jumpstart extends Component {
                                     </div>
                                 </div>
                             </Tab>
-                            <Tab label="Tools" style={tabsBackgroundColor} onActive={(e)=>this.selectedTab(e,"Tools")}>                            
+                            <Tab label="Tools" style={tabsBackgroundColor} onActive={(e) => this.selectedTab(e, "Tools")}>
                                 <div style={{ border: "1px solid rgb(238, 238, 238)" }} >
                                     <Table onCellClick={this.editProcess}>
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
@@ -264,12 +264,12 @@ class Jumpstart extends Component {
                                                 <TableRow key={index} selectable={false} >
                                                     <TableRowColumn>{tool.name}</TableRowColumn>
                                                     {this.state.headersToolsArray.map((processID, i) => (
-                                                        <TableRowColumn key={i}>                                                     
-                                                            <Checkbox 
-                                                            checked={this.state.toolsArray[index].processID.includes(this.state.headersToolsArray[i].processID)?true:false}
-                                                            onCheck={(e,checked)=>this.selectProcessforTool(e,checked,index,this.state.headersToolsArray[i].processID)}  
-                                                            />                                                  
-                                                            </TableRowColumn>
+                                                        <TableRowColumn key={i}>
+                                                            <Checkbox
+                                                                checked={this.state.toolsArray[index].processID.includes(this.state.headersToolsArray[i].processID) ? true : false}
+                                                                onCheck={(e, checked) => this.selectProcessforTool(e, checked, index, this.state.headersToolsArray[i].processID)}
+                                                            />
+                                                        </TableRowColumn>
                                                     ))}
 
                                                     <TableRowColumn style={{ paddingLeft: "0px" }}>
@@ -283,9 +283,9 @@ class Jumpstart extends Component {
                                                     <TableRowColumn></TableRowColumn>
                                                 </TableRow>
                                             ))}
-                                        </TableBody> 
+                                        </TableBody>
                                     </Table>
-                                   
+
 
                                     <div className={[this.state.toolsArray.length === 0 ? "show" : "visibility"]}>
                                         <Subheader className="p-0 textAlignCenter" style={{ fontSize: '20px' }}>
@@ -296,12 +296,12 @@ class Jumpstart extends Component {
                             </Tab>
                         </Tabs>
 
-                        <div className={["col-md-11 col-lg-12 mt-4 textAlignRight",this.state.selectedTab === "Tools" ? "show" : "visibility"].join(" ")}>6
+                        <div className={["col-md-11 col-lg-12 mt-4 textAlignRight", this.state.selectedTab === "Tools" ? "show" : "visibility"].join(" ")}>
                             <RaisedButton
                                 label="Save"
                                 primary={true}
                                 style={modelbuttonsStyle}
-                                onClick={(e) => this.saveTools(e,this.state.toolsArray)}
+                                onClick={(e) => this.saveTools(e, this.state.toolsArray)}
 
                             />
                             {/* <FloatingActionButton
@@ -348,9 +348,9 @@ class Jumpstart extends Component {
                                     label="Save"
                                     primary={true}
                                     style={modelbuttonsStyle}
-                                    disabled={this.state.newProcessObj.name===""||this.state.newProcessObj.name===undefined ?true:false}
+                                    disabled={this.state.newProcessObj.name === "" || this.state.newProcessObj.name === undefined ? true : false}
                                     onClick={() => this.addProcess(this.state.newProcessObj)}
-                                    
+
 
                                 />
                             </div>
@@ -391,7 +391,7 @@ class Jumpstart extends Component {
                                     primary={true}
                                     style={modelbuttonsStyle}
                                     onClick={() => this.saveEditedProcess(this.state.editableProcessArray)}
-                                    disabled={this.state.handleChangesInProcessName==false}
+                                    disabled={this.state.handleChangesInProcessName == false}
                                 />
                             </div>
                         </div>
@@ -418,7 +418,7 @@ class Jumpstart extends Component {
                                     fullWidth={true}
                                 />
                             </div>
-                          
+
                         </div>
                         <div className="loginBtns">
                             <div>
@@ -433,7 +433,7 @@ class Jumpstart extends Component {
                                     primary={true}
                                     style={modelbuttonsStyle}
                                     onClick={() => this.addNewTool(this.state.newToolObj)}
-                                    disabled={this.state.newToolObj.name===""||this.state.newToolObj.name===undefined ?true:false}
+                                    disabled={this.state.newToolObj.name === "" || this.state.newToolObj.name === undefined ? true : false}
 
                                 />
                             </div>
@@ -449,7 +449,7 @@ class Jumpstart extends Component {
                     </div>
                     <div className="textAlignLeft">
                         <div className="row margin0">
-                    
+
                             <div className="col-md-12">
                                 <TextField
                                     value={this.state.editableToolsArray[this.state.selectedToolIndex].name || ''}
@@ -461,7 +461,7 @@ class Jumpstart extends Component {
                                     fullWidth={true}
                                 />
                             </div>
-                          
+
                         </div>
                         <div className="loginBtns">
                             <div>
@@ -476,7 +476,7 @@ class Jumpstart extends Component {
                                     primary={true}
                                     style={modelbuttonsStyle}
                                     onClick={() => this.saveEditedToolName(this.state.newToolObj)}
-                                    disabled={this.state.handleChangesInToolName===false}
+                                    disabled={this.state.handleChangesInToolName === false}
 
                                 />
                             </div>
