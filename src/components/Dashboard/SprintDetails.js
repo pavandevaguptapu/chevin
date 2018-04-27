@@ -3,12 +3,20 @@ import React, { Component } from "react";
 import axios from "axios";
 import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
+import {
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from "reactstrap";
 
 class SprintDetails extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      dropdownOpen: false,
+      dropDownValue: "Sprints",
       values: "",
       sprintStartTime: "",
       sprintEndTime: "",
@@ -51,9 +59,9 @@ class SprintDetails extends Component {
     });
   }
 
-  componentDidMount() {
-    this.handleChange("1", "2", this.state.values);
-  }
+  //   componentDidMount() {
+  //     this.handleChange("1", "2", this.state.values);
+  //   }
 
   componentWillReceiveProps(nextProps) {
     this.state.sprintListSorted = nextProps.sprinttList.sort(function(a, b) {
@@ -68,7 +76,17 @@ class SprintDetails extends Component {
     });
     //this.state.boardID = nextProps.boardId
   }
-  handleChange = (event, index, val) => {
+  handleChange = (e, index) => {
+    //   debugger;
+    let indexOfSelectedAccount = this.state.sprintListSorted
+      .map(function(k) {
+        return k.name;
+      })
+      .indexOf(e);
+    //   console.log(indexOfSelectedAccount)
+    //   debugger;
+    let val = this.state.sprintListSorted[indexOfSelectedAccount].id;
+    //   console.log(ed)
     this.setState({
       values: val
     });
@@ -119,10 +137,10 @@ class SprintDetails extends Component {
           date1: d1,
           date2: d2
         });
-        //var currentDateObj = getDateString(response.data.startTime)
+        var currentDateObj = getDateString(response.data.startTime);
 
-        //this.setState({ currentDate: this.state.date1 })
-        // this.state.currentDate = currentDateObj;
+        this.setState({ currentDate: this.state.date1 });
+        this.state.currentDate = currentDateObj;
 
         var currentDateEpochTime = response.data.startTime;
         var changesArray = Object.keys(response.data.changes);
@@ -240,8 +258,6 @@ class SprintDetails extends Component {
           }.bind(this)
         );
 
-        //this.setState({ workHours: <Hourschart data={this.state.totalTimeSpentArray} /> })
-
         this.props.sprintBurnDownChart(this.state.totalTimeSpentArray);
       });
 
@@ -259,44 +275,45 @@ class SprintDetails extends Component {
         actionMethod: "get"
       })
       .then(response => {
-        // this.setState({
-        // 	sprintPieChart: <Piechart sprinttList={response.data} />
-        // });
-
         this.props.sprintOverviewPiechart(response.data);
       });
-    //this.setState({sonarQubeData:<SonarQubeData />})
-    //this.props.sonarQubeDetails();
   };
-  sprintItems = (sprintList) => {
+  sprintItems = sprintList => {
+    // console.log(sprintList);
     return sprintList.map(sprintList => (
-      <MenuItem
+      <DropdownItem
+        value={sprintList.name}
+        className="pointer text-truncate"
         key={sprintList.id}
-        //insetChildren={true}
-
-        value={sprintList.id}
-        primaryText={sprintList.name}
-      />
+        onClick={(e, i) => {this.handleChange(e.target.value);  this.props.displayDropDownValue(e)}}
+      >
+        {sprintList.name}
+      </DropdownItem>
     ));
-  }
+  };
+
+  toggle = () => {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
+  };
 
   render() {
     return (
       <div className="padding0">
-        {/* <div className="col-md-12 col-lg-12 textAlignCenter ">
-  
-                      <h5>Select Sprint</h5>
-                  </div> */}
         <div className="col-md-12 col-lg-12 textAlignLeft marginTop4">
-          <SelectField
-            underlineStyle={{ display: "none" }}
-            hintText="Select Sprint"
-            value={this.state.values}
-            onChange={(e, i, v) => this.handleChange(e, i, v)}
-            labelStyle={{ height: "40px" }}
+          <Dropdown
+            isOpen={this.state.dropdownOpen}
+            toggle={this.toggle}
+            className="custom-secondary_dropdown"
           >
-            {this.sprintItems(this.state.sprintListSorted)}
-          </SelectField>
+            <DropdownToggle caret className="text-truncate">
+            {this.state.dropDownValue}
+            </DropdownToggle>
+            <DropdownMenu className="custom-dropdown-menu">
+              {this.sprintItems(this.state.sprintListSorted)}
+            </DropdownMenu>
+          </Dropdown>
         </div>
 
         <div className="col-md-12 col-lg-12">{this.state.workHours}</div>

@@ -16,25 +16,20 @@ import {
 } from "recharts";
 
 class Piechart extends Component {
-  _;
-  constructor(props) {
-    super(props);
-    this.state = {
-      issuesList: [],
-      doneArrayList: [],
-      inprogressArrayList: [],
-      todoArrayList: [],
-      inqaArrayList: [],
-      doneArrayListlength: "",
-      inprogressArrayListlength: "",
-      todoArrayListlength: "",
-      inqaArrayListlength: "",
-      sonarQubeData: "",
-      piechartPercentagesArray: [],
-      piechart: []
-    };
-    // this.handleChange = this.handleChange.bind(this);
-  }
+  state = {
+    issuesList: [],
+    doneArrayList: [],
+    inprogressArrayList: [],
+    todoArrayList: [],
+    inqaArrayList: [],
+    doneArrayListlength: "",
+    inprogressArrayListlength: "",
+    todoArrayListlength: "",
+    inqaArrayListlength: "",
+    sonarQubeData: "",
+    piechartPercentagesArray: [],
+    piechart: []
+  };
 
   componentWillMount() {
     this.state.doneArrayList = this.props.sprinttList.issues.filter(function(

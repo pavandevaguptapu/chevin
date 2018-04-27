@@ -50,7 +50,7 @@ class SelectedProjectBoardDetails extends Component {
     // var boardId = this.state.projectBoardDetailsListarray[index].id;
     
     let indexOfSelectedAccount = this.state.projectBoardDetailsListarray.map(function(k) {return k.name;}).indexOf(e);
-    console.log(indexOfSelectedAccount)
+    // console.log(indexOfSelectedAccount)
     let boardId = this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id;
 
     this.state.hintStyle2 = {
@@ -198,7 +198,7 @@ class SelectedProjectBoardDetails extends Component {
       <DropdownItem
         key={board.id}
         value={board.name}
-        className="pointer"
+        className="pointer text-truncate"
         onClick={(e, i) => {this.selectedProjectBoard(e.target.value), this.displayDropDownValue(e)}}
       >
         {board.name}
@@ -219,24 +219,12 @@ class SelectedProjectBoardDetails extends Component {
   render() {
     return (
       <div>
-        {/* <SelectField
-          hintText="Select Board"
-          value={this.state.selectedProjectBoard}
-          listStyle={{ backgroundColor: "#b7b7b7" }}
-          menuItemStyle={{ color: "#fff" }}
-          hintStyle={this.state.hintStyle2}
-          labelStyle={{ color: "#fff", height: "40px" }}
-          underlineStyle={{ display: "none" }}
-          onChange={(e, i, v) => this.selectedProjectBoard(e, i, v)}
-        >
-        </SelectField> */}
-
         <Dropdown
           isOpen={this.state.dropdownOpen}
           toggle={this.toggle}
           className="custom-secondary_dropdown"
         >
-          <DropdownToggle caret>{this.state.dropDownValue}</DropdownToggle>
+          <DropdownToggle caret className="text-truncate">{this.state.dropDownValue}</DropdownToggle>
           <DropdownMenu className="custom-dropdown-menu">
             {this.projectBoardDetailsListarray(
               this.state.projectBoardDetailsListarray

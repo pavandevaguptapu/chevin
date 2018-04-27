@@ -13,7 +13,7 @@ import EpicBurdownChart from "./EpicBurnDownChart";
 
 import axios from "axios";
 import { myConstClass } from "../../constants";
-// import image from '../../spring_board_logo.png';
+import image from '../../shared/spring_board_logo.png';
 
 import Avatar from "material-ui/Avatar";
 import Grid from "material-ui/svg-icons/image/grid-on";
@@ -155,7 +155,7 @@ class TeamsBaseLayout extends Component {
     return accounts.map((account, index) => (
       <DropdownItem
         value={account.customerName}
-        className="pointer"
+        className="pointer text-truncate"
         key={account._id}
         onClick={(e, index) => {
           this.selectedAccount(e.target.value);
@@ -328,6 +328,7 @@ class TeamsBaseLayout extends Component {
             activeSprint={activeSprint}
             sprintBurnDownChart={this.sprintburndownchart}
             sprintOverviewPiechart={this.sprintoverviewpiechart}
+            displayDropDownValue= {this.displayDropDownValue}
           />
         ),
         emptySprintArray: ""
@@ -442,12 +443,12 @@ class TeamsBaseLayout extends Component {
       <div style={navBarContainer.widgetContainer}>
         <div className="container-fluid">
           <nav
-            className="navbar navbar-light navbar-expand-lg"
+            className="navbar navbar-light navbar-expand-lg align-items-end"
             style={navBarContainer.navBarbg}
           >
             <a className="navbar-brand" >
-                <img src="../../spring_board_logo.png" width="30" height="30" className="d-inline-block align-top" alt="" />
-              <span className="navbar-brand ml-1 h1">SpringBoard</span>
+                <img src={image} width="200" height="39" className="d-inline-block align-top ml-3" alt="SpringBoard" />
+              {/* <span className="navbar-brand ml-1 h1">SpringBoard</span> */}
             </a>
             <div className="navbar-collapse">
               <div className="navbar-nav">
@@ -457,7 +458,7 @@ class TeamsBaseLayout extends Component {
                     toggle={this.toggle}
                     className="custom-dropdown"
                   >
-                    <DropdownToggle caret>
+                    <DropdownToggle caret className="text-truncate">
                       {this.state.dropDownValue}
                     </DropdownToggle>
                     <DropdownMenu className="custom-dropdown-menu">
@@ -478,16 +479,16 @@ class TeamsBaseLayout extends Component {
             </div>
           </nav>
 
-          <div className="boards p-3" style={{ backgroundColor: "#494b4f" }}>
-            <div style={{ marginLeft: "9.3rem" }}>
+          <div className="boards col-lg-12 clearfix d-flex align-items-center" style={{ backgroundColor: "#494b4f", height:'3rem' }}>
+            <div className="col-lg-2">
               {this.state.selectedProjectBoardDetails}
             </div>
-            <div> {this.state.sprintDetails} </div>
+            <div className="col-lg-2"> {this.state.sprintDetails} </div>            
           </div>
 
           <div className="col-lg-12 my-4">
             <div className="col-lg-12 text-right">
-              <FloatingActionButton className="add-custom_button">
+              <FloatingActionButton mini={true} className="add-custom_button">
                 <ContentAdd />
               </FloatingActionButton>
             </div>
@@ -518,7 +519,7 @@ class TeamsBaseLayout extends Component {
                   </div>
                 </Card>
               </div>
-              <div className="col-lg-4">
+              <div className="col-lg-4  table-responsive">
                 <Card style={navBarContainer.widgetContainer.widgetCard}>
                   <CardHeader title="Epic Burndown Chart" className="custom_dashboard-header"/>
                   <div className="col-lg-12 text-center">
@@ -528,7 +529,7 @@ class TeamsBaseLayout extends Component {
                   </div>
                 </Card>
               </div>
-              <div className="col-lg-4">
+              <div className="col-lg-4  table-responsive">
                 <Card style={navBarContainer.widgetContainer.widgetCard}>
                   <CardHeader title="Sprint BurnUp Chart" className="custom_dashboard-header" />
                   <div className="col-lg-12 text-center">
@@ -538,7 +539,7 @@ class TeamsBaseLayout extends Component {
                   </div>
                 </Card>
               </div>
-              <div className="col-lg-4">
+              <div className="col-lg-4  table-responsive">
                 <Card style={navBarContainer.widgetContainer.widgetCard}>
                   <CardHeader title="Sprint Overview" className="custom_dashboard-header"/>
                   <div className="col-lg-12 text-center">
@@ -548,7 +549,7 @@ class TeamsBaseLayout extends Component {
                   </div>
                 </Card>
               </div>
-              <div className="col-lg-4">
+              <div className="col-lg-4  table-responsive">
                 <Card style={navBarContainer.widgetContainer.widgetCard}>
                   <CardHeader title="Quality Overview" className="custom_dashboard-header"/>
                   <div className="col-lg-12 text-center">
