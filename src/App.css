@@ -705,3 +705,12 @@ input[type="text"] {
 					display: flex;
 					
 					flex-direction: column-reverse; */
+.transitiondiv{
+
+  transition-delay:10s !important;
+  transition-duration: 10s !important;
+
+  transition-timing-function: linear !important
+
+
+}

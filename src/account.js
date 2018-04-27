@@ -915,7 +915,7 @@ class SelectedProjectDetails extends React.Component {
 	}
 }
 class SelectedProjectBoardDetails extends React.Component {
-	_
+	
 	constructor(props) {
 		super(props)
 		this.state = {

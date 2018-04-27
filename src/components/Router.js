@@ -5,6 +5,7 @@ import ManageCustomerTeams from '../manageCustomerTeams';
 import Dashboard from '../dashboard';
 import People from './PersonDetails/People';
 import Account from '../account';
+import jumpstart from './jumpstart';
 import App from './App'
 // import IndividualDetails from './PersonDetails/IndividualDetails';
 
@@ -22,6 +23,7 @@ const Routes = () => (
           {/* <Route path={`/app/people/:id`} component={IndividualDetails} /> */}
           <Route path="/app/dashboard" component= {Dashboard } />
           <Route path="/app/account" component={Account} />
+          <Route path="/app/jumpstart" component={jumpstart} />
           {/* <Route path="/app/individual" component={IndividualDetails} /> */}
         </App>
         <Route
