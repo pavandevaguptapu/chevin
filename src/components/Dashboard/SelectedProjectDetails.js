@@ -15,8 +15,10 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
+import TextField from 'material-ui/TextField';
 import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
+import {orange500} from "material-ui/styles/colors";
 import {
   Dropdown,
   DropdownToggle,
@@ -24,23 +26,23 @@ import {
   DropdownItem
 } from "reactstrap";
 
+const styles = {
+    underlineStyle: {
+      color: orange500
+    }
+  };
+  
 class SelectedProjectDetails extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
+    state = {
       projectDetails: "",
       selectedProject: "",
       userName: "",
       pwd: "",
       url: "",
       dropdownOpen: false,
-      dropDownValue: "Projects"
+      dropDownValue: "Projects",
+      searchTerm: ""
     };
-
-    // this.projectDetailsListarray = this.projectDetailsListarray.bind(this);
-    // this.selectProject = this.selectProject.bind(this);
-    // this.getBoard = this.getBoard.bind(this);
-  }
 
   componentWillMount() {
     this.setState({
@@ -98,11 +100,11 @@ class SelectedProjectDetails extends Component {
   };
 
   projectDetailsListarray = (projects, index, value) => {
-    return projects.map((project, index, value) => (
+    return projects.filter(this.projectSearchFilter(this.state.searchTerm)).map((project, index, value) => (
       <DropdownItem
         key={project.projectName}
         value={project.projectName}
-        className="pointer"
+        className="pointer text-truncate"
         onClick={(e, i) => {
           this.selectProject(e.target.value);
           this.displayDropDownValue(e);
@@ -188,6 +190,20 @@ class SelectedProjectDetails extends Component {
     }));
   };
 
+  projectInputSearch = e => {
+    this.setState({
+      searchTerm: e.target.value
+    });
+  };
+
+  projectSearchFilter= (searchTerm) => {
+    return function(project) {
+        return project.projectName.toLowerCase().includes(searchTerm.toLowerCase());
+    }
+  }
+
+
+
   render() {
     return (
       <div>
@@ -196,8 +212,9 @@ class SelectedProjectDetails extends Component {
           toggle={this.toggle}
           className="custom-dropdown"
         >
-          <DropdownToggle caret>{this.state.dropDownValue}</DropdownToggle>
+          <DropdownToggle caret className="text-truncate">{this.state.dropDownValue}</DropdownToggle>
           <DropdownMenu className="custom-dropdown-menu">
+          <TextField onChange={this.projectInputSearch} hintText="Custom Underline Focus Color" name="projectSearch" underlineFocusStyle={styles.underlineStyle} />
             {this.projectDetailsListarray(this.state.projectDetails.projects)}
           </DropdownMenu>
         </Dropdown>
