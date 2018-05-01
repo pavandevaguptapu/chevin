@@ -16,7 +16,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import ContentEdit from 'material-ui/svg-icons/editor/mode-edit';
-import {myConstClass} from './constants.js';
+import { myConstClass } from './constants.js';
 var dcopy = require('deep-copy')
 
 const customStyles = {
@@ -57,24 +57,24 @@ const buttonStyle = {
     marginRight: '5px'
 }
 const modelbuttonsStyle = {
-    backgroundColor:'rgb(229, 226, 226)',
+    backgroundColor: 'rgb(229, 226, 226)',
     paddingRight: '10px',
-    boxShadow:'none'
+    boxShadow: 'none'
 }
 
 const addAccountBUtton = {
     height: "20px",
     width: "20px",
-   
+
 }
-const boxShadow={
-    zDepthShadows:"0px",
-    
+const boxShadow = {
+    zDepthShadows: "0px",
+
 }
-const editbuttonStyle={
+const editbuttonStyle = {
     marginLeft: "50%"
 }
-const addProjectButtonstyle={
+const addProjectButtonstyle = {
     marginLeft: "1%"
 }
 const addAcountstyle = {
@@ -105,7 +105,7 @@ class manageCustomerTeams extends React.Component {
             newCustomerDetails: {},
             accountsArray: [],
             accountDetails: '',
-            selectedAccountIndex:''
+            selectedAccountIndex: ''
         }
         this.createAccount = this.createAccount.bind(this);
         this.openSideMenu = this.openSideMenu.bind(this);
@@ -121,12 +121,12 @@ class manageCustomerTeams extends React.Component {
     }
     handleAccountName(accountName) {
         var tempAccountsArray = this.state.accountsArray.slice();
-        tempAccountsArray[this.state.selectedAccountIndex].customerName= accountName.customerName;
+        tempAccountsArray[this.state.selectedAccountIndex].customerName = accountName.customerName;
         this.setState({
-            accountsArray:tempAccountsArray
+            accountsArray: tempAccountsArray
         })
-     // this.state.accountsArray[this.state.selectedAccountIndex].customerName=accountName.customerName
-        
+        // this.state.accountsArray[this.state.selectedAccountIndex].customerName=accountName.customerName
+
         // this.setState({accountsArray:accountName.customerName})
 
     }
@@ -137,31 +137,33 @@ class manageCustomerTeams extends React.Component {
         this.setState({
             accountsArray: tempAccountsArray
         })
-       // this.state.accountsArray[this.state.selectedAccountIndex].customerName = accountName.customerName
+        // this.state.accountsArray[this.state.selectedAccountIndex].customerName = accountName.customerName
     }
     currentAccountProfile(currentAccountDetails, index) {
-        axios.get(myConstClass.nodeAppUrl+'/accounts/'+currentAccountDetails._id)
-        .then(response => {
-        
+                this.setState({selectedItem:currentAccountDetails._id})
 
-    
-            this.setState(
-                {
-                    selectedAccountIndex: index,
-                    accountDetails: <AccountDetails selectedAccount={response.data} onSelectProject={this.handleProject} onUpdateProject={this.handleAccountName} />
-                }
-            )
 
-       
+        axios.get(myConstClass.nodeAppUrl + '/accounts/' + currentAccountDetails._id)
+            .then(response => {
 
-        })
-      
+
+
+                this.setState(
+                    {
+                        selectedAccountIndex: index,
+                        accountDetails: <AccountDetails selectedAccount={response.data} onSelectProject={this.handleProject} onUpdateProject={this.handleAccountName} />
+                    }
+                )
+
+
+
+            })
+
     }
     addNewAccount(newCustomerDetailsObject) {
+      
 
-
-
-        axios.post(myConstClass.nodeAppUrl+`/accounts`,
+        axios.post(myConstClass.nodeAppUrl + `/accounts`,
             {
                 customerName: newCustomerDetailsObject.customerName,
                 startDate: '13/12/2017',
@@ -176,7 +178,7 @@ class manageCustomerTeams extends React.Component {
                 status: 'Active'
             })
             .then(response => {
-                
+
                 this.state.accountsArray = this.state.accountsArray.concat(response.data)
                 this.setState({ createAccountModal: false, newCustomerDetails: {} });
 
@@ -184,23 +186,22 @@ class manageCustomerTeams extends React.Component {
             })
 
     }
-    handleNewCustomerChange(e) {                               
+    handleNewCustomerChange(e) {
 
         this.state.newCustomerDetails[e.target.name] = e.target.value
 
     }
-    createAccount() {
+    createAccount() {        
+            this.setState({ createAccountModal: true })
+    }
+    reset() {
 
-        this.setState({ createAccountModal: true })
+
+        var tempObj = {}
+        this.setState({ newCustomerDetails: tempObj })
     }
-    reset(){
-      
-     
-        var tempObj={} 
-        this.setState({newCustomerDetails:tempObj})
-    }
-    closeNewAccount(){
-        this.setState({createAccountModal:false})
+    closeNewAccount() {
+        this.setState({ createAccountModal: false })
         this.reset()
     }
     openSideMenu() {
@@ -221,9 +222,9 @@ class manageCustomerTeams extends React.Component {
     }
     componentWillMount() {
         Modal.setAppElement('body');
-        axios.get(myConstClass.nodeAppUrl+'/accounts')
+        axios.get(myConstClass.nodeAppUrl + '/accounts')
             .then(response => {
-             
+
                 this.setState({ accountsArray: this.state.accountsArray.concat(response.data) })
 
             })
@@ -233,9 +234,8 @@ class manageCustomerTeams extends React.Component {
         document.getElementById('customerTeams').classList.add("selectedDashboardItem");
 
     }
-
     render() {
-             return (
+        return (
             <div className="container-fluid padding0">
                 <nav className="navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
                     <div className="col-md-12 flex">
@@ -247,28 +247,28 @@ class manageCustomerTeams extends React.Component {
                             <h5 className="margin0">Manage Customer Teams</h5>
                         </div>
                         <div className="col-md-2 col-lg-2  displayInline padding0">
-                        {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
-                        <div className="marginT07">
-                            <h5 className="font fontSize17 margintT06">Administrator: </h5>
+                            {/* <h4 className="margin0 pointer verticalLine" ui-sref="dashboard"><i className="glyphicon glyphicon-home"></i></h4> */}
+                            <div className="marginT07">
+                                <h5 className="font fontSize17 margintT06">Administrator: </h5>
+                            </div>
+                            <div className="marginT07">
+                                <List style={innerDiv}>
+                                    <ListItem
+                                        disabled={true}
+                                        height={"10px"}
+                                        innerDivStyle={innerDiv}
+                                        leftAvatar={
+                                            <Avatar
+                                                style={imageStyle}
+                                                src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
+                                        }
+
+                                    />
+                                </List>
+                            </div>
+
+
                         </div>
-                        <div className="marginT07">
-                            <List style={innerDiv}>
-                                <ListItem
-                                    disabled={true}
-                                    height={"10px"}
-                                    innerDivStyle={innerDiv}
-                                    leftAvatar={
-                                        <Avatar
-                                            style={imageStyle}
-                                            src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
-                                    }
-
-                                />
-                            </List>
-                        </div>
-
-
-                    </div>
                         <div>
 
                         </div>
@@ -312,31 +312,33 @@ class manageCustomerTeams extends React.Component {
                 <div className="row mctmargintT">
                     <div className="col-md-12 col-lg-12  marginTop0 displayInline padding0">
                         <div className="col-md-3 col-lg-3  boxshadowfordata mctboxmargin borderRadius mctverticalHeight padding0">
-                                 <div className="col-md-10 col-lg-10 textAlignLeft borderBottom displayInline">
-                                     <h5 className="marginT0 font fontSize17 paddingT2">Account </h5>
-                                 </div>
-                                 <div className="col-md-2 col-lg-2 textAlignCenter borderBottom displayInline paddingT3 paddingB5 paddingL0">
-                                 <FloatingActionButton  style={boxShadow} mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createAccount()} style={addAcountstyle} >
-                                 <ContentAdd />
-                             </FloatingActionButton>
+                            <div className="col-md-10 col-lg-10 textAlignLeft borderBottom displayInline">
+                                <h5 className="marginT0 font fontSize17 paddingT2">Account </h5>
+                            </div>
+                            <div className="col-md-2 col-lg-2 textAlignCenter borderBottom displayInline paddingT3 paddingB5 paddingL0">
+                                <FloatingActionButton style={boxShadow} mini={true} secondary={true} iconStyle={addAccountBUtton} onClick={() => this.createAccount()} style={addAcountstyle} >
+                                    <ContentAdd />
+                                </FloatingActionButton>
 
-                                 </div>
-                    
+                            </div>
+
 
                             <div className="col-md-12 col-lg-12">
-                           
-                                    {this.state.accountsArray.map((item, index) => (
-                                        <div className="textAlignLeft pointer" key={item._id} onClick={() => this.currentAccountProfile(item, index)}>{item.customerName}</div>
-                                    ))}
-                             
-                            </div>
-                             </div>
 
-                       
+                                {this.state.accountsArray.map((item, index) => (
+                                    <div className={["textAlignLeft pointer", item._id==this.state.selectedItem?'dashboardHeaderBgColor':''].join(' ')} key={item._id} onClick={() => this.currentAccountProfile(item, index)}
+                                        
+                                        >{item.customerName}</div>
+                                ))}
+
+                            </div>
+                        </div>
+
+
                         <div className="col-md-9 col-lg-10 padding0 marginT2 mctaccdetailsminwidth mctaccdetailsboxmargin">
                             {this.state.accountDetails}
                         </div>
-                     
+
                     </div>
 
                 </div>
@@ -444,8 +446,8 @@ class AccountDetails extends React.Component {
             jumpStartConfigModel: false,
             configPeopleModel: false,
             peoplesArray: [],
-            createGithubProjectModel:false,
-            githubInstance:{"repoName":"","projectName":"","projectUrl":""}
+            createGithubProjectModel: false,
+            githubInstanceDetails: { "repoName": "", "projectName": "", "projectUrl": "" }
         }
 
         this.createProject = this.createProject.bind(this);
@@ -467,80 +469,178 @@ class AccountDetails extends React.Component {
         this.submitGithubDetails = this.submitGithubDetails.bind(this);
         this.handleGithubInstance = this.handleGithubInstance.bind(this);
         this.closeGithubDetails = this.closeGithubDetails.bind(this);
+        this.github = this.github.bind(this);
     }
-
-
-
-
-    autoCreate(){
-        this.setState({createGithubProjectModel:true})          
+    autoCreate() {
+     
+         this.setState({ createGithubProjectModel: true })
     }
-    closeGithubDetails(){
-        this.setState({createGithubProjectModel:false})           
+    closeGithubDetails() {
+        this.setState({ createGithubProjectModel: false })
     }
+    github(reponame,projecturl){
+        console.log(reponame)
+        console.log(projecturl)
+        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+            "resourceURL": "https://api.github.com/repos/coMakeIT-Git/"+reponame+"/import",
+            "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "put",
+            postParams:{
+                "vcs_url": "https://pavankumard@bitbucket.org/coesb/sb-code.git",
+                "vcs_username":"pavankumar.d@comakeit.com",
+                "vcs_password":"Abc@1234"
+            },
+            headersToForward: [
+                {
+                    "headerName": "Accept",
+                    "headerValue": "application/vnd.github.barred-rock-preview"
 
-    submitGithubDetails(githubObj){
+                }
+            ]      
+        }   
+        ).then(response => {
+                console.log(response)
 
+                axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+                    "resourceURL": "https://api.github.com/repos/coMakeIT-Git/"+reponame+"/hooks",
+                    "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "post",
+                    postParams: {
+                        "name": "web",
+                        "config": {"url":"http://192.168.29.25:8080/job/" + reponame + "/build"}
+                        
+                    },                              
+                    headersToForward: [
+                        {
+                            "headerName": "Accept",
+                            "headerValue": "application/json"                    
+                        }
+                    ]
+                })       
+        })              
+            
+    }
+    submitGithubDetails(githubObj) {
         console.log(githubObj)
-this.setState({githubInstance:githubObj})
+        var XMLWriter = require('xml-writer');
+        var xw = new XMLWriter;
+        xw.startDocument();
+        xw.startElement('project');        
+        xw.writeElement('description', '2');
+        xw.writeElement('keepDependencies', 'false');   
+        xw.startElement('scm');
+        xw.writeAttribute('class','hudson.plugins.scm_sync_configuration');        
+        xw.writeElement('configVersion', '2');
+        xw.startElement('userRemoteConfigs')
+        xw.startElement('hudson.plugins.git.UserRemoteConfig')
+        xw.writeElement('url','http://192.168.29.16:8081/scm/git/Spring')
+        xw.endElement()
+        xw.endElement()
+        xw.startElement('branches')
+        xw.startElement('hudson.plugins.git.BranchSpec')
+        xw.writeElement('name','*/master')
+        xw.endElement() 
+        xw.writeElement('doGenerateSubmoduleConfigurations','false') 
+        xw.endElement() 
+        xw.endElement() 
+        xw.writeElement('canRoam','true') 
+        xw.writeElement('disabled','false') 
+        xw.writeElement('blockBuildWhenDownstreamBuilding','false')        
+        xw.writeElement('blockBuildWhenUpstreamBuilding','false') 
+        xw.startElement('triggers')
+        xw.startElement('hudson.triggers.SCMTrigger')
+        xw.writeElement('spec','h/15****') 
+        xw.writeElement('ignorePostCommitHooks','false') 
+        xw.endElement() 
+        xw.endElement() 
+        xw.writeElement('concurrentBuild','false') 
+        xw.startElement('builders')
+        xw.startElement('hudson.tasks.BatchFile')
+        xw.writeElement('command','npm install')
+        xw.endElement()  
+        xw.startElement('hudson.tasks.BatchFile')
+        xw.writeElement('command','npm run build') 
+        xw.endElement()
+        xw.startElement('hudson.plugins.sonar.SonarRunnerBuilder')
+        xw.writeElement('properties','sonar.projectKey=sonarproject sonar.projectName=JavaScript :: Simple Project :: SonarQube Scanner  sonar.projectVersion=1.0 sonar.sources=src')  
+        xw.endElement()
+        xw.writeElement('jdk','(Inherit From Job)') 
+        xw.endElement()
+        xw.endElement()
+        xw.endDocument();
+     
+     var xml = xw.toString();
+        this.setState({ githubInstanceDetails: githubObj })
 
-        var repoName=githubObj.repoName
-        var projectName=githubObj.projectName
-        var projectUrl=githubObj.projecturl
-        axios.post("https://api.github.com/user/repos",
-        {            
-             "name": repoName,
-            "description": "This is your first repository" ,
-            "projectName": projectName       
-        },
-        {
-            headers:{
-                "Accept":"application/json",
-                "Authorization":"Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
-            }
-
-        }).then(response =>{           
-            var repo=response.data.name
-            var owner=response.data.owner.login
-            var projectName=JSON.parse(response.config.data).projectName
-
-            axios.post("https://api.github.com/repos/"+owner+"/"+repo+"/projects",
-            {            
-                 "name": projectName,
-                 "repo":repo,  
-                 "owner": owner           
+        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+            "resourceURL": "https://api.github.com/orgs/coMakeIT-Git/repos",
+            "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "post",
+            postParams: {
+                "name": this.state.githubInstanceDetails.repoName,
+                "description": "This is your first repository"
             },
-            {
-                headers:{
-                    "Accept":"application/vnd.github.inertia-preview+json",
-                    "Authorization":"Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
+            headersToForward: [
+                {
+                    "headerName": "Accept",
+                    "headerValue": "application/vnd.github.mercy-preview+json"
+
                 }
-            })
+            ]
+        }).then(response => {
+            var data = JSON.stringify({
+                "resourceURL": "http://192.168.29.25:8080/createItem?name=" + this.state.githubInstanceDetails.repoName,
+                "userName": "admin",
+                "password": "1ce543883f6441ee931fe0adffcacd4e",
+                "actionMethod": "post",
+                "postParams": xml,
+                "headersToForward": [
+                    {
+                        "headerName": "Accept",
+                        "headerValue": "text/xml"
+                    },
+                    {
+                        "headerName": "Content-Type",
+                        "headerValue": "text/xml"
+                    }
+                ]
+            });
 
-          axios.put("https://api.github.com/repos/"+owner+"/"+repo+"/import",
-            {            
-                 "vcs_url":this.state.githubInstance.projectUrl              
-            },
-            {
-                headers:{
-                    "Accept":"application/vnd.github.barred-rock-preview",
-                    "Authorization":"Basic cGF2YW5rdW1hci5kQGNvbWFrZWl0LmNvbTpBYmNAMTIzNA=="
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+
+            // xhr.addEventListener("readystatechange", function () {
+            //     console.log(this.readyState)
+            //     if (this.readyState === 4) {
+            //         console.log("xhr")
+                   
+            //     }
+              
+            //            this.github(this.state.githubInstanceDetails.repoName,this.state.githubInstanceDetails.projectUrl)
+                   
+               
+            
+            // }.bind(this))
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                  console.log(xhr.response);
+                  this.github(this.state.githubInstanceDetails.repoName,this.state.githubInstanceDetails.projectUrl)
                 }
-            })
+              }.bind(this)
 
-        })
-
-        // this.setState({createGithubProjectModel:false})     
-
+                xhr.open("POST", "/sbtpgateway/tp/rest/esccors/generic/");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.setRequestHeader("Cache-Control", "no-cache");
+                xhr.setRequestHeader("Postman-Token", "56a8ca1a-c164-49a5-8f97-4ce631088e8e");
+                xhr.send(data)
+            
+        })              
     }
    
 
-    handleGithubInstance(e){
-        var currentGithubInstanceObj = this.state.githubInstance;
+    handleGithubInstance(e) {
+        var currentGithubInstanceObj = this.state.githubInstanceDetails;
         currentGithubInstanceObj[e.target.name] = e.target.value
         this.setState(
             {
-                githubInstance: currentGithubInstanceObj
+                githubInstanceDetails: currentGithubInstanceObj
             }
 
         )
@@ -552,14 +652,12 @@ this.setState({githubInstance:githubObj})
             currentAccount: this.props.selectedAccount
         })
     }
-
     componentWillReceiveProps(nextProps) {
 
         this.setState({
             currentAccount: nextProps.selectedAccount
         })
     }
-
     handleNewCustomerChange(e) {
         var currentAccountObj = this.state.currentAccount;
         currentAccountObj[e.target.name] = e.target.value
@@ -572,7 +670,8 @@ this.setState({githubInstance:githubObj})
 
     }
     editAccount() {
-        this.setState({ editAccountModal: true })
+ 
+         this.setState({ editAccountModal: true })
     }
     closeEditAccountModal() {
         this.setState({ editAccountModal: false })
@@ -607,7 +706,6 @@ this.setState({githubInstance:githubObj})
     createProject() {
         this.setState({ createProjectModel: true })
     }
-
     addNewProject(newProjectObject) {
         // var newProjectObject
 
@@ -686,23 +784,24 @@ this.setState({githubInstance:githubObj})
         }
 
     }
-    toolsData(selectedObj){
+    toolsData(selectedObj) {
 
 
-       // this.setState({currentAccount:selectedObj})
-        this.setState({currentAccount:selectedObj,
+        // this.setState({currentAccount:selectedObj})
+        this.setState({
+            currentAccount: selectedObj,
             selectTool: <ToolConfigurationDetails selectedAccount={selectedObj}
                 selectedProjectIndex={this.state.selectedProjectIndex}
-             selectedJumpStartMenuName={this.state.selectedItemName} 
-                
+                selectedJumpStartMenuName={this.state.selectedItemName}
+
 
 
             />
         });
     }
     currentItem(selectedItemName, selectedItemIndex) {
-        
-        this.setState({selectedItemName:selectedItemName,selectedItemIndex:selectedItemIndex})
+
+        this.setState({ selectedItemName: selectedItemName, selectedItemIndex: selectedItemIndex })
         //this.selectedItemName = selectedItemName
         if (this.state.oldselectedItemIndex !== '' && this.state.oldselectedItemIndex !== undefined) {
             this.state.configureTools[this.state.oldselectedItemIndex].selectedJumpStartMenuItem = false
@@ -719,7 +818,7 @@ this.setState({githubInstance:githubObj})
 
         var tempArray = this.state.currentAccount
 
- 
+
         if (tempArray.projects[this.state.selectedProjectIndex].tools === undefined) {
             tempArray.projects[this.state.selectedProjectIndex].tools = {}
 
@@ -727,21 +826,21 @@ this.setState({githubInstance:githubObj})
 
 
         if (tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemName] == undefined) {
-        
+
             tempArray.projects[this.state.selectedProjectIndex].tools[selectedItemName] = { name: '', userName: '', password: '', hostedURL: '' }
             this.setState({
                 selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
                     selectedProjectIndex={this.state.selectedProjectIndex}
                     selectedJumpStartMenuName={selectedItemName}
                     onSubmitToolsData={this.toolsData}
-                    
+
                 />
             });
 
         }
 
         else {
-      
+
             this.setState({
                 selectTool: <ToolConfigurationDetails selectedAccount={this.state.currentAccount}
                     selectedProjectIndex={this.state.selectedProjectIndex}
@@ -760,12 +859,10 @@ this.setState({githubInstance:githubObj})
 
 
     }
-
     closeJumpStartModel() {
         this.setState({ jumpStartConfigModel: false, configPeopleModel: false })
     }
-
-      configPeople(currentProject, projectIndex) {
+    configPeople(currentProject, projectIndex) {
         var tempPeoplesArray = []
         var tempArray = this.state.currentAccount
 
@@ -781,7 +878,7 @@ this.setState({githubInstance:githubObj})
                 people: <PeopleConfigurationDetails selectedAccount={this.state.currentAccount}
                     selectedProjectIndex={projectIndex}
                 // onSubmitPeopleData={this.handlingPeopleList}
-                  //onUpdatePeopleData={this.updatePeopleList}  
+                //onUpdatePeopleData={this.updatePeopleList}  
                 />
             })
 
@@ -800,7 +897,7 @@ this.setState({githubInstance:githubObj})
                 people: <PeopleConfigurationDetails selectedAccount={this.state.currentAccount}
                     selectedProjectIndex={projectIndex}
                     onSubmitPeopleData={this.handlingPeopleList}
-                    
+
                 />
             })
 
@@ -808,7 +905,6 @@ this.setState({githubInstance:githubObj})
 
 
     }
-
     handlingPeopleList(latestPeopleDate) {
 
         var tempPeoplesArray = []
@@ -817,35 +913,32 @@ this.setState({githubInstance:githubObj})
         }
         this.setState({ peoplesArray: tempPeoplesArray })
     }
-    updatePeopleList(updatedPeopleData){
+    updatePeopleList(updatedPeopleData) {
         var tempPeoplesArray = []
         for (var i = 0; i < updatedPeopleData.projects[this.state.selectedProjectIndex].people.length; i++) {
             tempPeoplesArray.push(updatedPeopleData.projects[this.state.selectedProjectIndex].people[i])
         }
         this.setState({ peoplesArray: tempPeoplesArray })
     }
-    deletePeopleList(deletedPeopleList){
+    deletePeopleList(deletedPeopleList) {
         var tempPeoplesArray = []
         for (var i = 0; i < deletedPeopleList.projects[this.state.selectedProjectIndex].people.length; i++) {
             tempPeoplesArray.push(deletedPeopleList.projects[this.state.selectedProjectIndex].people[i])
         }
         this.setState({ peoplesArray: tempPeoplesArray })
     }
-
     curentSelectedIteminPeople(selectedNameObj, index) {
 
         this.setState({
             people: <PeopleConfigurationDetails selectedMemberObj={selectedNameObj}
                 isSubmitDisable='true' selectedMemberIndex={index}
                 onSubmitPeopleData={this.handlingPeopleList}
-                    onUpdatePeopleData={this.updatePeopleList}
-                    onDeletePeopleData={this.deletePeopleList}
+                onUpdatePeopleData={this.updatePeopleList}
+                onDeletePeopleData={this.deletePeopleList}
             />
         })
     }
-
     render() {
-
         return (
             <div className="col-lg-10 boxshadowfordata  borderRadius mctverticalHeight padding0">
                 <div className="col-md-12 col-lg-12 borderBottom displayInline">
@@ -853,13 +946,10 @@ this.setState({githubInstance:githubObj})
                         <h5 className="marginT0 font fontSize17 displayInline">Account Details </h5>
                     </div>
                     <div className="col-md-2 col-lg-2 textAlignCenter displayInline">
-
                         <FloatingActionButton mini={true} iconStyle={addAccountBUtton} style={editbuttonStyle} onClick={() => this.editAccount()}>
                             <ContentEdit />
                         </FloatingActionButton>
-
                     </div>
-
                 </div>
                 <div className="col-md-6 col-lg-6 marginB04 displayInline">
                     <label className="flex">Account Name:<h5 className="textAlignCenter font fontSize17 marginT0 paddingT1">{this.state.currentAccount.customerName}</h5></label>
@@ -909,11 +999,11 @@ this.setState({githubInstance:githubObj})
 
                                     </TableRowColumn>
                                     <TableRowColumn style={tableConfigBUtton}>
-                                        <RaisedButton label="configure" secondary={true} onClick={() => this.autoCreate()} />
+                                        <RaisedButton label="configure" secondary={true} onClick={() => this.configPeople(this.state.currentAccount.projects,index)} />
                                         {/*   */}
                                     </TableRowColumn>
                                     <TableRowColumn style={tableConfigBUtton}>
-                                        <RaisedButton label="configure" default={true} onClick={() => this.autoCreate()}/>
+                                        <RaisedButton label="configure" default={true} onClick={() => this.autoCreate()} />
                                         {/* onClick={() => this.configACES5(project)} ] */}
                                     </TableRowColumn>
                                     <TableRowColumn>
@@ -1042,36 +1132,36 @@ this.setState({githubInstance:githubObj})
                 <Modal isOpen={this.state.jumpStartConfigModel} style={customStylesJumpStart} className={["col-md-6 modalMargins modalBgColor "].join(' ')}>
 
                     <div className="row">
-                      
-                            <div className="col-md-12 col-lg-12">
-                                <h5 className="marginT0 font fontSize17">
-                                    Jump Start
+
+                        <div className="col-md-12 col-lg-12">
+                            <h5 className="marginT0 font fontSize17">
+                                Jump Start
                                 <FloatingActionButton mini={true} secondary={true} iconStyle={deleteProjectButton} style={addProjectButtonstyle} onClick={() => this.closeJumpStartModel()}>
 
-                                        <ContentClear />
+                                    <ContentClear />
 
 
-                                    </FloatingActionButton>
+                                </FloatingActionButton>
 
-                                </h5>
+                            </h5>
+                        </div>
+
+                        <div className="col-lg-12 displayInline marginT25">
+
+                            <div className="textAlignLeft col-md-3 col-lg-4  mctJumpstartmodalmargins boxshadowfordata borderRadius vh">
+                                {this.state.configureTools.map((item, index) => (
+                                    <div className={["pointer",
+                                        this.state.configureTools[index].selectedJumpStartMenuItem == true ? "dashboardHeaderBgColor" : ''].join(' ')}
+                                        key={item.id} onClick={() => this.currentItem(item.name, index)} >{item.name}</div>
+                                ))}
+
                             </div>
-                            
-                            <div className="col-lg-12 displayInline marginT25">
 
-                                <div className="textAlignLeft col-md-3 col-lg-4  mctJumpstartmodalmargins boxshadowfordata borderRadius vh">
-                                    {this.state.configureTools.map((item, index) => (
-                                        <div className={["pointer",
-                                            this.state.configureTools[index].selectedJumpStartMenuItem == true ? "dashboardHeaderBgColor" : ''].join(' ')} 
-                                            key={item.id} onClick={() => this.currentItem(item.name, index)} >{item.name}</div>
-                                    ))}
-
-                                </div>
-
-                                <div className="col-md-7 col-lg-7 boxshadowfordata  mctJumpstartmodalmargins borderRadius vh padding0">
-                                    {this.state.selectTool}
-                                </div>
+                            <div className="col-md-7 col-lg-7 boxshadowfordata  mctJumpstartmodalmargins borderRadius vh padding0">
+                                {this.state.selectTool}
                             </div>
-                      
+                        </div>
+
                     </div>
                 </Modal>
                 <Modal isOpen={this.state.configPeopleModel} style={customStylesJumpStart} className={["col-md-6 modalMargins modalBgColor "].join(' ')}>
@@ -1116,21 +1206,21 @@ this.setState({githubInstance:githubObj})
                         <div className="row margin0">
                             <div className="col-md-5 margin10"><label>Repositpry Name:</label></div>
                             <div className="col-md-6 custId">
-                                <input value={this.state.githubInstance.repoName} name='repoName' onChange={this.handleGithubInstance} />
+                                <input value={this.state.githubInstanceDetails.repoName} name='repoName' onChange={this.handleGithubInstance} />
                             </div>
                             <div className="col-md-5 margin10"><label>Project Name:</label></div>
                             <div className="col-md-6 custId">
-                                <input value={this.state.githubInstance.projectName} name='projectName' onChange={this.handleGithubInstance} />
+                                <input value={this.state.githubInstanceDetails.projectName} name='projectName' onChange={this.handleGithubInstance} />
                             </div>
                             <div className="col-md-5 margin10"><label>Project Url(import):</label></div>
                             <div className="col-md-6 custId">
-                                <input value={this.state.githubInstance.projectUrl} name='projectUrl' onChange={this.handleGithubInstance} />
+                                <input value={this.state.githubInstanceDetails.projectUrl} name='projectUrl' onChange={this.handleGithubInstance} />
                             </div>
                         </div>
                         <div className="loginBtns">
                             <div>
                                 <RaisedButton label="Close" secondary={true} style={modelbuttonsStyle} onClick={() => this.closeGithubDetails()} />
-                                <RaisedButton label="Done" primary={true} style={modelbuttonsStyle} onClick={() => this.submitGithubDetails(this.state.githubInstance)} />
+                                <RaisedButton label="Done" primary={true} style={modelbuttonsStyle} onClick={() => this.submitGithubDetails(this.state.githubInstanceDetails)} />
                             </div>
 
                         </div>
@@ -1146,7 +1236,7 @@ this.setState({githubInstance:githubObj})
 
 }
 
-class ToolConfigurationDetails extends React.Component { 
+class ToolConfigurationDetails extends React.Component {
     constructor(props) {
         super(props)
 
@@ -1168,100 +1258,102 @@ class ToolConfigurationDetails extends React.Component {
         this.subMenuItems = this.subMenuItems.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.submitToolsData = this.submitToolsData.bind(this);
-       
+
     }
-  
+
     componentWillMount() {
-     
- 
-        
-              var dupeAccountArray=dcopy(this.props.selectedAccount);
-                    //var tempArray=this.props.selectedAccount
-              if(dupeAccountArray.projects[this.props.selectedProjectIndex].tools===undefined){
-        
 
-                dupeAccountArray.projects[this.props.selectedProjectIndex].tools={} 
-              }
-              if(dupeAccountArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName]==undefined){
-                dupeAccountArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName]={name: '',userName: '', password: '', hostedURL: ''}
 
-                     this.setState({dupeCurrentAccountArray:dupeAccountArray,selectedProjectIndex: this.props.selectedProjectIndex,
-                        selectedItemName:this.props.selectedJumpStartMenuName})
-              }
+
+        var dupeAccountArray = dcopy(this.props.selectedAccount);
+        //var tempArray=this.props.selectedAccount
+        if (dupeAccountArray.projects[this.props.selectedProjectIndex].tools === undefined) {
+
+
+            dupeAccountArray.projects[this.props.selectedProjectIndex].tools = {}
+        }
+        if (dupeAccountArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName] == undefined) {
+            dupeAccountArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName] = { name: '', userName: '', password: '', hostedURL: '' }
+
+            this.setState({
+                dupeCurrentAccountArray: dupeAccountArray, selectedProjectIndex: this.props.selectedProjectIndex,
+                selectedItemName: this.props.selectedJumpStartMenuName
+            })
+        }
 
         if (this.props.selectedJumpStartMenuName == "Wiki") {
-      
+
             this.setState({
                 wikiList: [
-                    {"id": 1, "name": "Confluence" },
-                    {"id": 2, "name": "Slack"}
-                  
+                    { "id": 1, "name": "Confluence" },
+                    { "id": 2, "name": "Slack" }
+
                 ], dupeCurrentAccountArray: dupeAccountArray, selectedProjectIndex: this.props.selectedProjectIndex,
-                selectedItemName:this.props.selectedJumpStartMenuName
-              
-              
-           
+                selectedItemName: this.props.selectedJumpStartMenuName
+
+
+
             })
 
         }
         if (this.props.selectedJumpStartMenuName == "Issue Management") {
-      
+
             this.setState({
                 wikiList: [
                     { "id": 1, "name": "Jira" },
-                     { "id": 2, "name": "Github" },
-                    
+                    { "id": 2, "name": "Github" },
+
                 ], dupeCurrentAccountArray: dupeAccountArray, selectedProjectIndex: this.props.selectedProjectIndex,
-                selectedItemName:this.props.selectedJumpStartMenuName
-     
+                selectedItemName: this.props.selectedJumpStartMenuName
+
             })
 
         }
         if (this.props.selectedJumpStartMenuName == "Quality") {
             this.setState({
                 wikiList: [
-                    { "id": 1, "name": "SonarQube"}
+                    { "id": 1, "name": "SonarQube" }
                 ], dupeCurrentAccountArray: dupeAccountArray, selectedProjectIndex: this.props.selectedProjectIndex,
-                selectedItemName:this.props.selectedJumpStartMenuName
-           
+                selectedItemName: this.props.selectedJumpStartMenuName
+
             })
 
         }
-        
-        
-       
+
+
+
     }
 
     componentWillReceiveProps(nextProps) {
-     
-        this.setState({dupeCurrentAccountArray:[]})
-           var dupeAccountArray=dcopy(nextProps.selectedAccount);
-        
-    
+
+        this.setState({ dupeCurrentAccountArray: [] })
+        var dupeAccountArray = dcopy(nextProps.selectedAccount);
+
+
         if (nextProps.selectedJumpStartMenuName == "Wiki") {
             this.setState({
                 wikiList: [
                     { "id": 1, "name": "Confluence" },
                     { "id": 2, "name": "Slack" }
-                ],dupeCurrentAccountArray:dupeAccountArray, selectedProjectIndex:nextProps.selectedProjectIndex,
-                selectedItemName:nextProps.selectedJumpStartMenuName
-                
-                
+                ], dupeCurrentAccountArray: dupeAccountArray, selectedProjectIndex: nextProps.selectedProjectIndex,
+                selectedItemName: nextProps.selectedJumpStartMenuName
+
+
             })
 
         }
- 
+
         if (nextProps.selectedJumpStartMenuName == "Issue Management") {
-           
+
             this.setState({
                 wikiList: [
                     { "id": 1, "name": "Jira" },
                     { "id": 2, "name": "Github" },
-                    
-                ],dupeCurrentAccountArray:dupeAccountArray, selectedProjectIndex:nextProps.selectedProjectIndex,
-                selectedItemName:nextProps.selectedJumpStartMenuName
-               
-                
+
+                ], dupeCurrentAccountArray: dupeAccountArray, selectedProjectIndex: nextProps.selectedProjectIndex,
+                selectedItemName: nextProps.selectedJumpStartMenuName
+
+
             })
             //document.getElementById("create-course-form").reset();
 
@@ -1271,63 +1363,63 @@ class ToolConfigurationDetails extends React.Component {
         if (nextProps.selectedJumpStartMenuName == "Quality") {
             this.setState({
                 wikiList: [
-                  
-                    { "id": 1, "name": "SonarQube"}
-                ],dupeCurrentAccountArray:dupeAccountArray, selectedProjectIndex:nextProps.selectedProjectIndex,
-                selectedItemName:nextProps.selectedJumpStartMenuName
-               
-                
-                
+
+                    { "id": 1, "name": "SonarQube" }
+                ], dupeCurrentAccountArray: dupeAccountArray, selectedProjectIndex: nextProps.selectedProjectIndex,
+                selectedItemName: nextProps.selectedJumpStartMenuName
+
+
+
             })
 
         }
-  
-     
+
+
     }
     handleChangeInJumpStart(e, index, value) {
 
-         var tempArray = this.state.dupeCurrentAccountArray
-         var tempArray2 =dcopy(tempArray);    
-        
-         tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name = value
+        var tempArray = this.state.dupeCurrentAccountArray
+        var tempArray2 = dcopy(tempArray);
+
+        tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name = value
 
 
-         this.setState({ dupeCurrentAccountArray: tempArray })
+        this.setState({ dupeCurrentAccountArray: tempArray })
 
-         var tempArray=this.state.currentAccount
+        var tempArray = this.state.currentAccount
 
-         if(tempArray.projects[this.props.selectedProjectIndex].tools===undefined){
-            
-    
-            tempArray.projects[this.props.selectedProjectIndex].tools={} 
-                  }
-                  if(tempArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName]==undefined){
-                    tempArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName]={name: '',userName: '', password: '', hostedURL: ''}
-    
-                         this.setState({dupeCurrentAccountArray:tempArray})
-                  }
+        if (tempArray.projects[this.props.selectedProjectIndex].tools === undefined) {
 
-     if(this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name!==value){
-    
-            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName]={ name: value,userName: '', password: '', hostedURL: ''}
-         
-       
-     }
 
-     if(this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name===value){
+            tempArray.projects[this.props.selectedProjectIndex].tools = {}
+        }
+        if (tempArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName] == undefined) {
+            tempArray.projects[this.props.selectedProjectIndex].tools[this.props.selectedJumpStartMenuName] = { name: '', userName: '', password: '', hostedURL: '' }
 
-                       
-       tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL
-        tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName
-        tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password
-     }
-           
-     this.setState({ dupeCurrentAccountArray: tempArray})
-                
+            this.setState({ dupeCurrentAccountArray: tempArray })
+        }
+
+        if (this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name !== value) {
+
+            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName] = { name: value, userName: '', password: '', hostedURL: '' }
+
+
+        }
+
+        if (this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name === value) {
+
+
+            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL
+            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName
+            tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password
+        }
+
+        this.setState({ dupeCurrentAccountArray: tempArray })
+
         //  for(var i=0;i<  this.state.currentAccount.projects[this.state.selectedProjectIndex].tools.length;i++){
         //                if(value == this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[i].name){
-             
-                
+
+
         //         tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].hostedURL = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[i].hostedURL
         //         tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].userName = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[i].userName
         //         tempArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedJumpStartIndex].password = this.state.currentAccount.projects[this.state.selectedProjectIndex].tools[i].password
@@ -1373,7 +1465,7 @@ class ToolConfigurationDetails extends React.Component {
 
 
         this.setState({ dupeCurrentAccountArray: toolsList })
-       
+
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.dupeCurrentAccountArray._id,
             {
                 customerName: this.state.dupeCurrentAccountArray.customerName,
@@ -1389,12 +1481,12 @@ class ToolConfigurationDetails extends React.Component {
                 status: 'Active'
             })
             .then(response => {
-                   this.props.onSubmitToolsData(response.data)
-                  this.setState({ dupeCurrentAccountArray: response.data })
+                this.props.onSubmitToolsData(response.data)
+                this.setState({ dupeCurrentAccountArray: response.data })
 
             })
     }
- 
+
     subMenuItems(wikiList) {
         return wikiList.map((wikiList) => (
             <MenuItem
@@ -1407,53 +1499,53 @@ class ToolConfigurationDetails extends React.Component {
         ));
     }
     render() {
-    
-            return (
-            <div>                 
-                    <SelectField hintText="Select a Tool" value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name} 
-                    listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#000000 " }}  labelStyle={{ color: "#000000 ",height:"35px"}} underlineStyle={{ display: 'none' }}
+
+        return (
+            <div>
+                <SelectField hintText="Select a Tool" value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name}
+                    listStyle={{ backgroundColor: "#b7b7b7" }} menuItemStyle={{ color: "#000000 " }} labelStyle={{ color: "#000000 ", height: "35px" }} underlineStyle={{ display: 'none' }}
                     onChange={(e, i, v) => this.handleChangeInJumpStart(e, i, v)} >
-                        {this.subMenuItems(this.state.wikiList)}
-                    </SelectField>
-                 
-                    <div className="col-md-12 col-lg-12 padding0">
+                    {this.subMenuItems(this.state.wikiList)}
+                </SelectField>
 
-                        <div className="col-md-12 displayInline textAlignLeft padding0">
-                            <div className="col-md-4 "><label>Hosted Url:</label></div>
-                            <div className="col-md-6 padding0">
-                                <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL} name='hostedURL'
-                                    onChange={this.handleChange} />
-                            </div>
-                        </div>
-                        <div className="col-md-12 displayInline textAlignLeft padding0">
-                            <div className="col-md-4 "><label>userName:</label></div>
-                            <div className="col-md-6 padding0">
-                                <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName} name='userName'
-                                    onChange={this.handleChange} />
-                            </div>
-                        </div>
-                        <div className="col-md-12 displayInline textAlignLeft padding0">
-                            <div className="col-md-4 "><label>password:</label></div>
-                            <div className="col-md-6 padding0">
-                                <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password} name='password'
-                                    onChange={this.handleChange} />
-                            </div>
-                        </div>
+                <div className="col-md-12 col-lg-12 padding0">
 
+                    <div className="col-md-12 displayInline textAlignLeft padding0">
+                        <div className="col-md-4 "><label>Hosted Url:</label></div>
+                        <div className="col-md-6 padding0">
+                            <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL} name='hostedURL'
+                                onChange={this.handleChange} />
+                        </div>
                     </div>
-              
+                    <div className="col-md-12 displayInline textAlignLeft padding0">
+                        <div className="col-md-4 "><label>userName:</label></div>
+                        <div className="col-md-6 padding0">
+                            <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName} name='userName'
+                                onChange={this.handleChange} />
+                        </div>
+                    </div>
+                    <div className="col-md-12 displayInline textAlignLeft padding0">
+                        <div className="col-md-4 "><label>password:</label></div>
+                        <div className="col-md-6 padding0">
+                            <input value={this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password} name='password'
+                                onChange={this.handleChange} />
+                        </div>
+                    </div>
+
+                </div>
+
                 <div>
-                
-                    <RaisedButton label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitToolsData(this.state.dupeCurrentAccountArray)} 
-                        
+
+                    <RaisedButton label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitToolsData(this.state.dupeCurrentAccountArray)}
+
                         disabled={
-                            !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL||
+                            !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].hostedURL ||
                             !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].userName ||
                             !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].password ||
                             !this.state.dupeCurrentAccountArray.projects[this.state.selectedProjectIndex].tools[this.state.selectedItemName].name
-                            }/>
+                        } />
 
-                </div> 
+                </div>
 
             </div>
 
@@ -1464,15 +1556,15 @@ class PeopleConfigurationDetails extends React.Component {
     constructor(props) {
         super(props)
         var obj = dcopy(this.props.selectedAccount)
-      
+
         this.state = {
-            currentAccount:obj,
-            tempSelectedAccountobj:'',
-            currentProjectIndex:'',
-            currentPeopleArrayIndex:'',
-            tempObj:{name:'',role:'',emailid:''},
-            disableSubmit:false,
-            selectedPeopleIndex:''
+            currentAccount: obj,
+            tempSelectedAccountobj: '',
+            currentProjectIndex: '',
+            currentPeopleArrayIndex: '',
+            tempObj: { name: '', role: '', emailid: '' },
+            disableSubmit: false,
+            selectedPeopleIndex: ''
         }
         this.handleChangeInPeopleConfigInput = this.handleChangeInPeopleConfigInput.bind(this);
         this.submitPeopleData = this.submitPeopleData.bind(this);
@@ -1481,20 +1573,20 @@ class PeopleConfigurationDetails extends React.Component {
         this.deletePeopleData = this.deletePeopleData.bind(this);
     }
 
-    componentWillMount(){
+    componentWillMount() {
         this.setState({
-            tempSelectedAccountobj:this.props.selectedAccount,
-            currentProjectIndex:this.props.selectedProjectIndex,
-            currentPeopleArrayIndex:this.props.peopleArrayIndex,
+            tempSelectedAccountobj: this.props.selectedAccount,
+            currentProjectIndex: this.props.selectedProjectIndex,
+            currentPeopleArrayIndex: this.props.peopleArrayIndex,
             //tempObj:this.props.selectedMemberObj
-        
+
         })
 
-        if(this.props.isSubmitDisable){
-            this.setState({disableSubmit:this.props.isSubmitDisable})
+        if (this.props.isSubmitDisable) {
+            this.setState({ disableSubmit: this.props.isSubmitDisable })
         }
     }
-    
+
     componentWillReceiveProps(nextProps) {
         this.props = nextProps
 
@@ -1509,137 +1601,141 @@ class PeopleConfigurationDetails extends React.Component {
 
     handleChangeInPeopleConfigInput(e) {
 
-   
+
         var tempArray = this.state.tempObj
-        
-                if (e.target.name == 'name') {
-        
-                    tempArray.name = e.target.value
-        
-                }
-                if (e.target.name == 'role') {
-        
-                    tempArray.role = e.target.value
-        
-                }
-                if (e.target.name == 'emailid') {
-        
-                    tempArray.emailid = e.target.value
-        
-                }
-        
-        
-                this.setState({ tempObj: tempArray })
-    }
-    submitPeopleData(currentobj){
-         // this.setState({ currentAccount: currentobj })
-    
-        this.state.tempSelectedAccountobj.projects[this.state.currentProjectIndex].people=this.state.tempSelectedAccountobj.projects[this.state.currentProjectIndex].people.concat(currentobj)
 
-       
+        if (e.target.name == 'name') {
+
+            tempArray.name = e.target.value
+
+        }
+        if (e.target.name == 'role') {
+
+            tempArray.role = e.target.value
+
+        }
+        if (e.target.name == 'emailid') {
+
+            tempArray.emailid = e.target.value
+
+        }
+
+
+        this.setState({ tempObj: tempArray })
+    }
+    submitPeopleData(currentobj) {
+        // this.setState({ currentAccount: currentobj })
+
+        this.state.tempSelectedAccountobj.projects[this.state.currentProjectIndex].people = this.state.tempSelectedAccountobj.projects[this.state.currentProjectIndex].people.concat(currentobj)
+
+
 
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.tempSelectedAccountobj._id,
-        {
-            customerName: this.state.tempSelectedAccountobj.customerName,
-            startDate: '13/12/2017',
-            endDate: '13/12/2017',
-            engagementModel: this.state.tempSelectedAccountobj.engagementModel,
-            pricingModel:this.state.tempSelectedAccountobj.pricingModel,
-            seniorSupplier: 'asewr',
-            projectManager: 'jg',
-            projects: this.state.tempSelectedAccountobj.projects,
-            people: [],
-            customerLogo: this.state.tempSelectedAccountobj.customerLogo,
-            status: 'Active'
-        })
-        .then(response => {
-        
-            this.props.onSubmitPeopleData(response.data)
-            //var dummyObj=currentobj
-            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].name=''
-            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].role=''
-            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].emailid=''
-            currentobj={name:'',role:'',emailid:''}
-        this.setState({ 
-            currentAccount: response.data, tempObj:currentobj})
-         })
+            {
+                customerName: this.state.tempSelectedAccountobj.customerName,
+                startDate: '13/12/2017',
+                endDate: '13/12/2017',
+                engagementModel: this.state.tempSelectedAccountobj.engagementModel,
+                pricingModel: this.state.tempSelectedAccountobj.pricingModel,
+                seniorSupplier: 'asewr',
+                projectManager: 'jg',
+                projects: this.state.tempSelectedAccountobj.projects,
+                people: [],
+                customerLogo: this.state.tempSelectedAccountobj.customerLogo,
+                status: 'Active'
+            })
+            .then(response => {
+
+                this.props.onSubmitPeopleData(response.data)
+                //var dummyObj=currentobj
+                // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].name=''
+                // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].role=''
+                // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].emailid=''
+                currentobj = { name: '', role: '', emailid: '' }
+                this.setState({
+                    currentAccount: response.data, tempObj: currentobj
+                })
+            })
 
 
 
     }
-    updatePeopleData(updateObj){
+    updatePeopleData(updateObj) {
 
-        this.state.tempSelectedAccountobj.projects[this.state.currentProjectIndex].people[this.state.selectedPeopleIndex]=updateObj
+        this.state.tempSelectedAccountobj.projects[this.state.currentProjectIndex].people[this.state.selectedPeopleIndex] = updateObj
 
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.tempSelectedAccountobj._id,
-        {
-            customerName: this.state.tempSelectedAccountobj.customerName,
-            startDate: '13/12/2017',
-            endDate: '13/12/2017',
-            engagementModel: this.state.tempSelectedAccountobj.engagementModel,
-            pricingModel:this.state.tempSelectedAccountobj.pricingModel,
-            seniorSupplier: 'asewr',
-            projectManager: 'jg',
-            projects: this.state.tempSelectedAccountobj.projects,
-            people: [],
-            customerLogo: this.state.tempSelectedAccountobj.customerLogo,
-            status: 'Active'
-        })
-        .then(response => {
-         
-        
-            this.props.onUpdatePeopleData(response.data)
-            //var dummyObj=currentobj
-            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].name=''
-            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].role=''
-            // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].emailid=''
-            //updateObj={name:'',role:'',emailid:''}
-        this.setState({ 
-            currentAccount: response.data, tempObj:updateObj})
-         })
+            {
+                customerName: this.state.tempSelectedAccountobj.customerName,
+                startDate: '13/12/2017',
+                endDate: '13/12/2017',
+                engagementModel: this.state.tempSelectedAccountobj.engagementModel,
+                pricingModel: this.state.tempSelectedAccountobj.pricingModel,
+                seniorSupplier: 'asewr',
+                projectManager: 'jg',
+                projects: this.state.tempSelectedAccountobj.projects,
+                people: [],
+                customerLogo: this.state.tempSelectedAccountobj.customerLogo,
+                status: 'Active'
+            })
+            .then(response => {
+
+
+                this.props.onUpdatePeopleData(response.data)
+                //var dummyObj=currentobj
+                // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].name=''
+                // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].role=''
+                // dummyObj.projects[this.state.currentProjectIndex].people[this.state.currentPeopleArrayIndex].emailid=''
+                //updateObj={name:'',role:'',emailid:''}
+                this.setState({
+                    currentAccount: response.data, tempObj: updateObj
+                })
+            })
     }
 
-    addPeople(){
+    addPeople() {
 
-        this.setState({ tempObj:{name:'',role:'',emailid:''},disableSubmit:false})
+        this.setState({ tempObj: { name: '', role: '', emailid: '' }, disableSubmit: false })
     }
 
-    deletePeopleData(slectedObj){
+    deletePeopleData(slectedObj) {
 
-         slectedObj.projects[this.state.currentProjectIndex].people.splice(this.state.selectedPeopleIndex,1)
+        slectedObj.projects[this.state.currentProjectIndex].people.splice(this.state.selectedPeopleIndex, 1)
 
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + slectedObj._id,
-        {
-            customerName: slectedObj.customerName,
-            startDate: '13/12/2017',
-            endDate: '13/12/2017',
-            engagementModel: slectedObj.engagementModel,
-            pricingModel:slectedObj.pricingModel,
-            seniorSupplier: 'asewr',
-            projectManager: 'jg',
-            projects: slectedObj.projects,
-            people: [],
-            customerLogo: slectedObj.customerLogo,
-            status: 'Active'
-        })
-        .then(response => {
-                 
-            this.props.onDeletePeopleData(response.data)
-       
-        this.setState({ tempObj:{name:'',role:'',emailid:''},
-            currentAccount: response.data})
-         })
+            {
+                customerName: slectedObj.customerName,
+                startDate: '13/12/2017',
+                endDate: '13/12/2017',
+                engagementModel: slectedObj.engagementModel,
+                pricingModel: slectedObj.pricingModel,
+                seniorSupplier: 'asewr',
+                projectManager: 'jg',
+                projects: slectedObj.projects,
+                people: [],
+                customerLogo: slectedObj.customerLogo,
+                status: 'Active'
+            })
+            .then(response => {
+
+                this.props.onDeletePeopleData(response.data)
+
+                this.setState({
+                    tempObj: { name: '', role: '', emailid: '' },
+                    currentAccount: response.data
+                })
+            })
     }
     render() {
-       
+
         return (
             // <div className="col-md-6">
             <div>
                 <div className="col-md-12 col-lg-12 text textAlignRight marginB08 paddingR08">
-                 <FloatingActionButton mini={true} primary={true} iconStyle={addAccountBUtton} style={editbuttonStyle} onClick={() => this.addPeople()} >
-                                 <ContentAdd />
-                             </FloatingActionButton>
-                  </div>       
+                    <FloatingActionButton mini={true} primary={true} iconStyle={addAccountBUtton} style={editbuttonStyle} onClick={() => this.addPeople()} >
+                        <ContentAdd />
+                    </FloatingActionButton>
+                </div>
                 <div className="col-md-12 col-lg-12 padding0">
 
                     <div className="col-md-12 displayInline textAlignLeft padding0">
@@ -1664,10 +1760,10 @@ class PeopleConfigurationDetails extends React.Component {
                         </div>
                     </div>
 
-                </div>    
-            
-                                   
-                    {/* <div className="col-md-12 col-lg-12">
+                </div>
+
+
+                {/* <div className="col-md-12 col-lg-12">
           
                         <div className="col-md-5 displayInline marginB04"><label>Name:</label></div>
                         <div className="col-md-6 displayInline marginB04">
@@ -1687,17 +1783,17 @@ class PeopleConfigurationDetails extends React.Component {
 
                     </div> */}
 
-                    <div className="col-md-12 col-lg-12 displayInline">
-                        <div className="col-md-4 col-lg-4">
-                            <RaisedButton disabled={this.state.disableSubmit} label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitPeopleData(this.state.tempObj)} />
-                        </div>
-                        <div className="col-md-4 col-lg-4">
-                            <RaisedButton disabled={this.state.disableSubmit === false} label="Update" primary={true} buttonStyle={buttonStyle} onClick={() => this.updatePeopleData(this.state.tempObj)} />
-                        </div>
-                        <div className="col-md-4 col-lg-4">
-                            <RaisedButton disabled={this.state.disableSubmit === false} label="Delete" secondary={true} buttonStyle={buttonStyle} onClick={() => this.deletePeopleData(this.state.tempSelectedAccountobj)} />
-                        </div>
-                    </div> 
+                <div className="col-md-12 col-lg-12 displayInline">
+                    <div className="col-md-4 col-lg-4">
+                        <RaisedButton disabled={this.state.disableSubmit} label="Submit" primary={true} buttonStyle={buttonStyle} onClick={() => this.submitPeopleData(this.state.tempObj)} />
+                    </div>
+                    <div className="col-md-4 col-lg-4">
+                        <RaisedButton disabled={this.state.disableSubmit === false} label="Update" primary={true} buttonStyle={buttonStyle} onClick={() => this.updatePeopleData(this.state.tempObj)} />
+                    </div>
+                    <div className="col-md-4 col-lg-4">
+                        <RaisedButton disabled={this.state.disableSubmit === false} label="Delete" secondary={true} buttonStyle={buttonStyle} onClick={() => this.deletePeopleData(this.state.tempSelectedAccountobj)} />
+                    </div>
+                </div>
 
             </div>
         )
