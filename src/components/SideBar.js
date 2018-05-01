@@ -6,6 +6,8 @@ import {myConstClass} from '../constants.js';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import SocialGroup from 'material-ui/svg-icons/social/group';
 import ActionViewModule from 'material-ui/svg-icons/action/view-module';
+import ActionSettingsInputComponent from 'material-ui/svg-icons/action/settings-input-component';
+
 import Subheader from 'material-ui/Subheader';
 import axios from 'axios';
 
@@ -41,7 +43,7 @@ class SideBar extends Component {
                         <FloatingActionButton mini={true} secondary={true}>
                             <SocialGroup />
                         </FloatingActionButton>
-                        <Subheader className="p-1" style={{fontSize:'10px',lineHeight:"26px"}}>People</Subheader>
+                        <Subheader className="p-1" style={{fontSize:'12px',lineHeight:"26px"}}>People</Subheader>
                     </Link>
                 </div>
                 <div className="py-2">
@@ -49,7 +51,15 @@ class SideBar extends Component {
                         <FloatingActionButton mini={true} secondary={true} onClick={this.getAllAccounts} >
                             <ActionViewModule />                        
                         </FloatingActionButton>
-                        <Subheader className="p-1" style={{fontSize:'10px',lineHeight:"26px"}}>Teams</Subheader>
+                        <Subheader className="p-1" style={{fontSize:'12px',lineHeight:"26px"}}>Teams</Subheader>
+                    </Link>
+                </div>
+                <div className="pl-2">
+                    <Link to="/app/jumpstart" >
+                        <FloatingActionButton mini={true} secondary={true}>
+                            <ActionSettingsInputComponent />                        
+                        </FloatingActionButton>
+                        <Subheader className="p-0" style={{fontSize:'12px',lineHeight:"26px"}}>Jump Start</Subheader>
                     </Link>
                 </div>
             </div>
