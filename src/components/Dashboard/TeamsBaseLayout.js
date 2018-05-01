@@ -438,17 +438,20 @@ class TeamsBaseLayout extends Component {
     });
   }
 
+  fullscreen = () => {
+    //   alert(1);
+  }
+
   render() {
     return (
       <div style={navBarContainer.widgetContainer}>
         <div className="container-fluid">
           <nav
-            className="navbar navbar-light navbar-expand-lg align-items-end"
+            className="navbar navbar-light navbar-expand-lg align-items-end p-3"
             style={navBarContainer.navBarbg}
           >
             <a className="navbar-brand" >
-                <img src={image} width="200" height="39" className="d-inline-block align-top ml-3" alt="SpringBoard" />
-              {/* <span className="navbar-brand ml-1 h1">SpringBoard</span> */}
+                <img src={image} width="170" height="30" className="d-inline-block align-top ml-3" alt="SpringBoard" />
             </a>
             <div className="navbar-collapse">
               <div className="navbar-nav">
@@ -499,6 +502,7 @@ class TeamsBaseLayout extends Component {
                     title="Team Details"
                     className="custom_dashboard-header"
                   />
+                  {/* <button onClick={this.fullscreen}>s</button> */}
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforpeople}
                     {this.state.emptyPeoplesArray}
