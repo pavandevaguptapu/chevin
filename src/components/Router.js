@@ -8,6 +8,9 @@ import Account from '../account';
 import jumpstart from './jumpstart';
 import App from './App'
 import TeamsBaseLayout from './Dashboard/TeamsBaseLayout';
+import LoginNew from '../shared/LoginNew';
+import GriLayout from './GriLayout';
+import DashboardAdvanced from './re-dashboard/DashboardAdvanced';
 // import IndividualDetails from './PersonDetails/IndividualDetails';
 
 const Routes = () => (
@@ -16,13 +19,15 @@ const Routes = () => (
       <Switch>
         <Route exact path="/" component={Login} />
         <Route path="/dashboard" component={TeamsBaseLayout} />
+        <Route path="/login" component={LoginNew} />
+        <Route path="/grid" component={GriLayout} />
+        <Route path="/dash" component={DashboardAdvanced} />
         <App>
           <Route
             path="/app/manageCustomerTeams"
             component={ManageCustomerTeams}
           />
           <Route path="/app/people" component={People} />
-          {/* <Route path="/app/dashboard" component= {Dashboard } /> */}
           <Route path="/app/account" component={Account} />
           <Route path="/app/jumpstart" component={jumpstart} />
           {/* <Route path="/app/individual" component={IndividualDetails} /> */}

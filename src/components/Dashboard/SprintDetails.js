@@ -48,7 +48,6 @@ class SprintDetails extends Component {
     this.state.sprintListSorted = this.props.sprinttList.sort(function(a, b) {
       return parseFloat(b.id) - parseFloat(a.id);
     });
-
     this.setState({
       boardId: this.props.boardId,
 
@@ -59,9 +58,9 @@ class SprintDetails extends Component {
     });
   }
 
-  //   componentDidMount() {
-  //     this.handleChange("1", "2", this.state.values);
-  //   }
+    componentDidMount() {
+      this.handleChange("1",this.state.values);
+    }
 
   componentWillReceiveProps(nextProps) {
     this.state.sprintListSorted = nextProps.sprinttList.sort(function(a, b) {
@@ -78,7 +77,16 @@ class SprintDetails extends Component {
   }
   handleChange = (e, index) => {
     //   debugger;
-    let indexOfSelectedAccount = this.state.sprintListSorted
+    if(index!==undefined){
+        console.log(index)
+        let val = index
+        this.displayDropDownValue("dfgfd")
+        this.setState({
+            values: index
+          });
+    }
+    else{
+        let indexOfSelectedAccount = this.state.sprintListSorted
       .map(function(k) {
         return k.name;
       })
@@ -90,6 +98,8 @@ class SprintDetails extends Component {
     this.setState({
       values: val
     });
+    }
+    
 
     axios
       .post(`sbtpgateway/tp/rest/esccors/generic/`, {
@@ -98,7 +108,7 @@ class SprintDetails extends Component {
           "/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId=" +
           this.state.boardId +
           "&sprintId=" +
-          val,
+          this.state.values,
         userName: this.state.userName,
         password: this.state.pwd,
         actionMethod: "get"
@@ -268,7 +278,7 @@ class SprintDetails extends Component {
           "/rest/agile/1.0/board/" +
           this.state.boardId +
           "/sprint/" +
-          val +
+          this.state.values +
           "/issue?maxResults=100",
         userName: this.state.userName,
         password: this.state.pwd,
@@ -284,14 +294,22 @@ class SprintDetails extends Component {
       <DropdownItem
         value={sprintList.name}
         className="pointer text-truncate"
-        key={sprintList.id}
-        onClick={(e, i) => {this.handleChange(e.target.value);  this.props.displayDropDownValue(e)}}
+        key={this.state.values}
+        onClick={(e, i) => {this.handleChange(e.target.value);  this.displayDropDownValue(e)}}
       >
         {sprintList.name}
       </DropdownItem>
     ));
   };
-
+  displayDropDownValue = e => {
+      if(typeof e === "string"){
+        this.setState({ dropDownValue: e});
+      }
+      else{
+        this.setState({ dropDownValue: e.currentTarget.textContent });
+      }
+    
+  };
   toggle = () => {
     this.setState(prevState => ({
       dropdownOpen: !prevState.dropdownOpen

@@ -72,6 +72,7 @@ class SelectedProjectBoardDetails extends Component {
         actionMethod: "get"
       })
       .then(response => {
+          console.log(response);
         this.props.onSelectBoard(
           response.data.values,
           this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id,
@@ -199,7 +200,7 @@ class SelectedProjectBoardDetails extends Component {
         key={board.id}
         value={board.name}
         className="pointer text-truncate"
-        onClick={(e, i) => {this.selectedProjectBoard(e.target.value), this.displayDropDownValue(e)}}
+        onClick={(e, i) => {this.selectedProjectBoard(e.target.value); this.displayDropDownValue(e)}}
       >
         {board.name}
       </DropdownItem>

@@ -19,6 +19,8 @@ import {
   ResponsiveContainer
 } from "recharts";
 
+import RefreshIndicator from '../re-dashboard/RefreshIndicator';
+
 class EpicBurdownChart extends Component {
   constructor(props) {
     super(props);

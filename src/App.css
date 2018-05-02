@@ -770,3 +770,19 @@ input[type="text"] {
   color: #44403f !important;
   font-weight: 400;
 }
+
+/* For Dashaboard Nav bar and login */
+.navBarContainer .navBarbg {
+    background-color: #ffd91d !important;
+}
+
+#myDiv.fullscreen{
+    z-index: 9999; 
+    width: 100%; 
+    height: 100%; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+ }
+
+#myDiv{background:#cc0000; width:500px; height:400px;}
