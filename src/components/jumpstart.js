@@ -193,7 +193,7 @@ class Jumpstart extends Component {
                     </nav>
                 </div>
                 <div className="mt-5">
-                    <div className="col-md-6 col-lg-6">
+                    <div className="col-md-12 col-lg-12">
                         <Tabs inkBarStyle={{ background: '#FF3D00' }}>}
                             <Tab label="Process" style={tabsBackgroundColor} onActive={(e) => this.selectedTab(e, "Process")}>
                                 <div style={{ border: "1px solid rgb(238, 238, 238)" }} >
@@ -201,6 +201,7 @@ class Jumpstart extends Component {
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                                             <TableRow>
                                                 <TableHeaderColumn>Process Name</TableHeaderColumn>
+                                                <TableHeaderColumn>Process Id</TableHeaderColumn>
                                                 <TableHeaderColumn>Settings</TableHeaderColumn>
                                                 <TableHeaderColumn>
                                                     <FloatingActionButton
@@ -218,6 +219,7 @@ class Jumpstart extends Component {
                                             {this.state.processArray.map((process, index) => (
                                                 <TableRow key={index} selectable={false} >
                                                     <TableRowColumn>{process.name}</TableRowColumn>
+                                                    <TableRowColumn>{process.processID}</TableRowColumn>
                                                     <TableRowColumn style={{ paddingLeft: "0px" }} >
                                                         <IconButton tooltip="edit" touch={true} tooltipPosition="top-left" onClick={(e) => this.editProcess(e, "edit", index)}>
                                                             <ContentEdit />

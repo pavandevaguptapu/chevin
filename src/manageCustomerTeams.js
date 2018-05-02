@@ -28,7 +28,7 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import ContentClear from 'material-ui/svg-icons/content/clear';
 import ContentEdit from 'material-ui/svg-icons/editor/mode-edit';
 import { myConstClass } from './constants.js';
-import { Step, Stepper, StepLabel } from 'material-ui/Stepper';
+import { Step, Stepper, StepLabel,StepButton } from 'material-ui/Stepper';
 import ArrowForwardIcon from 'material-ui/svg-icons/navigation/arrow-forward';
 
 var dcopy = require('deep-copy')
@@ -774,15 +774,21 @@ class AccountDetails extends React.Component {
             />
         })
     }
-    // getDateString = (date) => {
-    //     console.log(date)
-    //     // var date = new Date(epochTime)
-    //     var month = '' + (date.getMonth() + 1)
-    //     var day = '' + date.getDate()
-    //     var year = date.getFullYear()
-    //     var dateString = (day + "/" + month + "/" + year)
-    //     return dateString
-    // }
+    getDateString = (date) => {
+
+
+        var date= new Date(date)
+        // var date = new Date(epochTime)
+        var month = '' + (date.getMonth() + 1)
+        var day = '' + date.getDate()
+        var year = date.getFullYear()
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+        var dateString = (day + "/" + month + "/" + year)
+        return dateString
+    
+      
+    }
     componentWillMount() {
         console.log(this.props.AccountDataArray)
 
@@ -790,6 +796,12 @@ class AccountDetails extends React.Component {
         var latestTeam = currentAccountArray[currentAccountArray.length - 1].customerName
         var lastitemIndex = currentAccountArray.length - 1
 
+        // console.log(currentAccountArray[lastitemIndex].startDate)
+        // var startDate=new.Date(currentAccountArray[lastitemIndex].startDate)
+        // var endDate=this.getDateString(currentAccountArray[lastitemIndex].endDate)
+
+        // console.log(startDate,endDate)
+    
         // var startDate=this.getDateString(currentAccountArray[currentAccountArray.length - 1].startDate)
         // var endDate=this.getDateString(currentAccountArray[currentAccountArray.length - 1].endDate)
         // console.log(currentAccountArray)
@@ -937,82 +949,134 @@ class AccountDetails extends React.Component {
     }
 
     addTeamModal = () => {
-        this.setState({ addTeamModal: true })
+        this.setState({ addTeamModal: true,newTeamObj:{}})
     }
-    handleAddTeamDetails = (e) => {
-        var newPeopleObj = this.state.newPeopleObj
-        newPeopleObj[e.target.name] = e.target.value;
+    handleAddTeamDetails = (e,selectedDate,string) => {   
+               
+        var newAccountInputs = this.state.newTeamObj
+        if(e!==null){
+           
+            newAccountInputs[e.target.name] = e.target.value;
+        }
+      
+        if(e===null && string==='startDate'){                  
+            // var newAccountInputs = this.state.newTeamObj
+                        //  newAccountInputs = this.state.newTeamObj.startDate;
+                        newAccountInputs[string]=selectedDate
+                    }
+                    if(e===null && string==='endDate'){     
+                        // var newAccountInputs = this.state.newTeamObj             
+                        // var newAccountInputs = this.state.newTeamObj.endDate;
+                        newAccountInputs[string]=selectedDate
+                    }
 
-        this.setState(
+                    this.setState(
             {
-                newPeopleObj: newPeopleObj
+                newTeamObj:  newAccountInputs
             }
 
         )
 
     }
+    formatDate=(date)=>{
+    
+        // var date =(date.getMonth() + 1)+"/"+date.getFullYear() + "/" + date.getDate();
+     
+    }
     addTeam = (newTeamObj) => {
+
+        if(newTeamObj.startDate===undefined){
+            var startDate=new Date().toString()
+            var endDate=new Date().toString()
+        }
+        else{
+            var startDate=newTeamObj.startDate.toString()
+            var endDate=newTeamObj.endDate.toString()
+         
+        }
+       
         axios.post(myConstClass.nodeAppUrl + `/accounts`,
             {
-                customerName: newTeamObj.customerName,
-                startDate: newTeamObj.startDate,
-                endDate: newTeamObj.endDate,
-                engagementModel: newTeamObj.engagementModel,
+                customerName:newTeamObj.customerName,
+                startDate:startDate,
+                endDate:endDate,
+                engagementModel:newTeamObj.engagementModel,
                 pricingModel: 0,
-                seniorSupplier: 'siva',
-                projectManager: 'siva',
-                projects: [],
-                people: [],
-                customerLogo: '',
-                status: 'Active'
+                seniorSupplier:'siva',
+                projectManager:'siva',
+                projects:[],
+                people:[],
+                customerLogo:'',
+                status:'Active'
             })
-            .then(response => {
-                var addedObj = this.state.currentAccount.concat(response.data)
+             .then(response => {
+                    console.log(response.data)
+                var addedObj = this.state.currentAccount.concat(response.data)                
                 this.setState({ currentAccount: addedObj, addTeamModal: false });
                 this.selectTeam("event", this.state.currentAccount.length - 1, this.state.currentAccount[this.state.currentAccount.length - 1].customerName)
                 if (this.state.currentAccount[this.state.currentAccount.length - 1].people.length === 0) {
                     this.setState({ existingMemberRadioButton: false, existingMemberArray: false })
 
                 }
-            })
+             })
     }
     closeAddTeamModal = () => {
         this.setState({ addTeamModal: false })
     }
     editTeam = () => {
+        console.log(this.state.currentAccount)
         var tempArray = dcopy(this.state.currentAccount)
+        
+       var startDate = new Date(tempArray[this.state.selectedTeamIndex].startDate)
+       var endDate=new Date(tempArray[this.state.selectedTeamIndex].endDate)
+       tempArray[this.state.selectedTeamIndex].startDate= startDate
+       tempArray[this.state.selectedTeamIndex].endDate= endDate
+
         this.setState({ editTeamModal: true, TeamDetailsArrayForEditing: tempArray })
     }
-    handleTeamEditDetails = (e) => {
+    handleTeamEditDetails = (e,selectedDate,string) => {
+        console.log(this.state.TeamDetailsArrayForEditing)
+        var EditedAccountObj = this.state.TeamDetailsArrayForEditing;
+        if(e!==null){
 
-        // if(e!==null){
-        var EditedAccountObj = this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex];
+        EditedAccountObj[this.state.selectedTeamIndex][e.target.name] = e.target.value;
+    
+        }     
 
-        EditedAccountObj[e.target.name] = e.target.value;
-        // }     
-        //         if(e===null && string==='startDate'){                  
-        //             var EditedAccountObj = this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex];
-        //             EditedAccountObj.startDate=x
-        //         }
-        //         if(e===null && string==='endDate'){                  
-        //             var EditedAccountObj = this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex];
-        //             EditedAccountObj.endDate=x
-        //         }
+                else if(e===null && string==='startDate'){                  
+                    // var EditedAccountObj= this.state.TeamDetailsArrayForEditing;
+                    EditedAccountObj[this.state.selectedTeamIndex] [string] =selectedDate
+                }
+                else if(e===null && string==='endDate'){                  
+                    // var EditedAccountObj = this.state.TeamDetailsArrayForEditing
+                    EditedAccountObj[this.state.selectedTeamIndex] [string]=selectedDate
+                }
+
 
         this.setState(
             {
-
+                TeamDetailsArrayForEditing:EditedAccountObj
             }
 
         )
 
     }
     updateTeam(modifiedTeamObj) {
+      
+        if (modifiedTeamObj.startDate === undefined) {
+            var startDate = new Date().toString()
+            var endDate = new Date().toString()
+        }
+        else {
+            var startDate = modifiedTeamObj.startDate.toString()
+            var endDate = modifiedTeamObj.endDate.toString()
+
+        }
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + modifiedTeamObj._id,
             {
                 customerName: modifiedTeamObj.customerName,
-                startDate: modifiedTeamObj.startDate,
-                endDate: modifiedTeamObj.endDate,
+                startDate: startDate,
+                endDate: endDate,
                 engagementModel: modifiedTeamObj.engagementModel,
                 pricingModel: modifiedTeamObj.pricingModel,
                 seniorSupplier: 'asewr',
@@ -1023,7 +1087,7 @@ class AccountDetails extends React.Component {
                 status: 'Active'
             })
             .then(response => {
-
+                    console.log(response.data)
                 var updatedObj = this.state.currentAccount
                 updatedObj.splice(this.state.selectedTeamIndex, 1)
                 updatedObj.splice(this.state.selectedTeamIndex, 0, response.data)
@@ -1050,9 +1114,23 @@ class AccountDetails extends React.Component {
         ));
     }
     selectedProject = (selectedProjectIndex) => {
-
+           console.log(selectedProjectIndex)
         // var currentAccount = dcopy(this.props.AccountDataArray)
         var currentAccount = this.state.currentAccount
+
+        console.log(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName)
+        var selectedProjectName=currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
+        this. selectedProjectfromDropDown("event", selectedProjectIndex,selectedProjectName)
+
+        if (currentAccount[this.state.selectedTeamIndex].projects.length === 0) {
+            this.setState({ noProject: true, noPeople: true, noTool: true })
+        }
+        else {
+            var ProjectsArray = currentAccount[this.state.selectedTeamIndex].projects
+            var selectedProjectName = currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
+            this.setState({ projectsArray: ProjectsArray, noProject: false, noPeople: false, noTool: false, selectedProjectName: selectedProjectName })
+        }
+
         if (currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].people === undefined) {
             this.setState({ noPeople: true })
         }
@@ -1066,12 +1144,13 @@ class AccountDetails extends React.Component {
             this.setState({ isTooldata: false, noTool: true })
         }
         else {
-            var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].tools)
-            this.setState({ isTooldata: true, noTool: false, listofToolsarray: jumpstartListofTools, })
+            // var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].tools)
+            // this.setState({ isTooldata: true, noTool: false, listofToolsarray: jumpstartListofTools, })
         }
+        console.log(currentAccount)
         this.setState({
             currentAccount: currentAccount,
-            selectedProjectIndex: selectedProjectIndex
+            selectedProjectIndex: selectedProjectIndex,
         })
 
     }
@@ -1091,8 +1170,8 @@ class AccountDetails extends React.Component {
             this.setState({ isTooldata: false, noTool: true })
         }
         else {
-            var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndexfromDropDown].tools)
-            this.setState({ isTooldata: true, noTool: false, listofToolsarray: jumpstartListofTools, })
+            // var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndexfromDropDown].tools)
+            // this.setState({ isTooldata: true, noTool: false, listofToolsarray: jumpstartListofTools, })
         }
         this.setState({
             currentAccount: currentAccount,
@@ -1105,19 +1184,18 @@ class AccountDetails extends React.Component {
 
     }
     createProject() {
-        this.setState({ createProjectModel: true })
+        this.setState({ createProjectModel: true,newProjectDetails:{}})
     }
 
     addNewProject = (newProjectObject) => {
-        console.log(newProjectObject)
         var tempAccountsArray = this.state.currentAccount;
         tempAccountsArray[this.state.selectedTeamIndex].projects.push(newProjectObject)
 
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + tempAccountsArray[this.state.selectedTeamIndex]._id,
             {
                 customerName: tempAccountsArray[this.state.selectedTeamIndex].customerName,
-                startDate: '13/12/2017',
-                endDate: '13/12/2017',
+                startDate: tempAccountsArray[this.state.selectedTeamIndex].startDate,
+                endDate: tempAccountsArray[this.state.selectedTeamIndex].endDate,
                 engagementModel: tempAccountsArray[this.state.selectedTeamIndex].engagementModel,
                 pricingModel: tempAccountsArray[this.state.selectedTeamIndex].pricingModel,
                 seniorSupplier: 'asewr',
@@ -1128,71 +1206,13 @@ class AccountDetails extends React.Component {
                 status: 'Active'
             })
             .then(response => {
-
-                var currentAccount = this.state.currentAccount
-                var noMember = 0
-                var eachProjectMembers = 0
-                var x;
-                var allMembersinProject = 0
-                // for empty projects
-
-                if (currentAccount[this.state.selectedTeamIndex].projects.length === 0) {
-                    this.setState({ noProject: true, noPeople: true, noTool: true })
-                }
-                else {
-                    var ProjectsArray = currentAccount[this.state.selectedTeamIndex].projects
-                    var selectedProjectName = currentAccount[this.state.selectedTeamIndex].projects[0].projectName
-                    this.setState({ projectsArray: ProjectsArray, noProject: false, noPeople: false, noTool: false, selectedProjectName: selectedProjectName })
-                }
-
-                // for displaying(in card) total members in a team
-                for (var i = 0; i < currentAccount[this.state.selectedTeamIndex].projects.length; i++) {
-                    x = eachProjectMembers
-                    if (currentAccount[this.state.selectedTeamIndex].projects[i].people == undefined) {
-                        noMember = 0
-                        allMembersinProject = noMember + x
-                        this.setState({ totalMembers: allMembersinProject })
-                    }
-                    else {
-                        eachProjectMembers = currentAccount[this.state.selectedTeamIndex].projects[i].people.length
-                        allMembersinProject = x + eachProjectMembers
-                        this.setState({ totalMembers: allMembersinProject })
-                    }
-                }
-
-                var emptyPeopleArray
-                if (currentAccount[this.state.selectedTeamIndex].projects.length !== 0) {
-                    // if projects array not equal to undefined and people array is udefined
-                    if (currentAccount[this.state.selectedTeamIndex].projects[0].people === undefined) {
-                        this.setState({ noPeople: true })
-                    }
-                    else {
-                        var peopleArrayOfselectedProject = currentAccount[this.state.selectedTeamIndex].projects[0].people
-                        this.setState({ peopleArray: peopleArrayOfselectedProject, noPeople: false })
-                    }
-
-                    if (currentAccount[this.state.selectedTeamIndex].projects[0].tools === undefined) {
-                        // var jumpstartListofTools = ["no tools are configured to this project"]
-                        this.setState({ isTooldata: false, noTool: true })
-                    }
-                    else {
-                        var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[0].tools)
-                        this.selectedTool(jumpstartListofTools[0], this.state.selectedTeamIndex, 0, 0)
-                        this.setState({ isTooldata: true, selectedProjectIndex: 0, listofToolsarray: jumpstartListofTools, noTool: false })
-                    }
-                }
-                var currentAccountArray1 = dcopy(currentAccount)
-
-                this.setState({
-                    currentAccount: currentAccount,
-                    selectedTeamName: currentAccount[this.state.selectedTeamIndex].customerName,
-                    selectedTeamIndex: this.state.selectedTeamIndex,
-                    selectedProjectIndex: 0,
-                    TeamDetailsArrayForEditing: currentAccountArray1,
-                    createProjectModel: false
-
-                })
-
+                var updatedObj = this.state.currentAccount
+                var oldObj = this.state.currentAccount[this.state.selectedTeamIndex]
+                updatedObj.splice(oldObj, 1)
+                updatedObj.splice(oldObj, 0, response.data)
+                var updatedTeamName = updatedObj[this.state.selectedTeamIndex].customerName
+                this.setState({ currentAccount: updatedObj, selectedTeamName: updatedTeamName, createProjectModel: false, newProjectDetails: {} });
+                this.selectedProject(updatedObj[this.state.selectedTeamIndex].projects.length - 1)
             })
     }
     addPeopleModal = () => {
@@ -1202,35 +1222,71 @@ class AccountDetails extends React.Component {
         this.setState({ addPeopleModal: false })
     }
     handleAddPeopleDetails=(e)=>{
-        var newAccountInputs = this.state.newPeopleObj
-        newAccountInputs[e.target.name] = e.target.value;
+        var newPeopleObj = this.state.newPeopleObj
+        newPeopleObj[e.target.name] = e.target.value;
 
         this.setState(
             {
-                newPeopleObj: newAccountInputs
+                newPeopleObj: newPeopleObj
             }
 
         )
     }
+    selectedPeople = () => {
+       
+        // var currentAccount = dcopy(this.props.AccountDataArray)
+        var currentAccount = this.state.currentAccount
 
-    addPeople=(newPeopleObj)=>{
-        console.log(newPeopleObj)
-        // console.log(newProjectObject)
-        var tempAccountsArray = this.state.currentAccount;
-        if(tempAccountsArray[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].people===undefined){
-            tempAccountsArray[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].people=[]
+        //  console.log(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName)
+        //  var selectedProjectName=currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
+        //  this. selectedProjectfromDropDown("event", selectedProjectIndex,selectedProjectName)
+
+        //  if (currentAccount[this.state.selectedTeamIndex].projects.length === 0) {
+        //      this.setState({ noProject: true, noPeople: true, noTool: true })
+        //  }
+        //  else {
+        //      var ProjectsArray = currentAccount[this.state.selectedTeamIndex].projects
+        //      var selectedProjectName = currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
+        //      this.setState({ projectsArray: ProjectsArray, noProject: false, noPeople: false, noTool: false, selectedProjectName: selectedProjectName })
+        //  }
+
+        if (currentAccount[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].people === undefined) {
+            this.setState({ noPeople: true })
+        }
+        else {
+            var peopleArrayOfselectedProject = currentAccount[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].people
+            this.setState({ peopleArray: peopleArrayOfselectedProject, noPeople: false })
+        }
+
+        //  if (currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].tools === undefined) {
+        //      // var jumpstartListofTools = ["no tools are configured to this project"]
+        //      this.setState({ isTooldata: false, noTool: true })
+        //  }
+        //  else {
+        //      // var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].tools)
+        //      // this.setState({ isTooldata: true, noTool: false, listofToolsarray: jumpstartListofTools, })
+        //  }
+
+        this.setState({
+            currentAccount: currentAccount,
+
+        })
+
+ }
+    addPeople = (newPeopleObj) => {
+        var tempAccountsArray = dcopy(this.state.currentAccount)
+        if (tempAccountsArray[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].people === undefined) {
+            tempAccountsArray[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].people = []
             tempAccountsArray[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].people.push(newPeopleObj)
         }
-        else{
+        else {
             tempAccountsArray[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].people.push(newPeopleObj)
         }
-        
-
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + tempAccountsArray[this.state.selectedTeamIndex]._id,
             {
                 customerName: tempAccountsArray[this.state.selectedTeamIndex].customerName,
-                startDate: '13/12/2017',
-                endDate: '13/12/2017',
+                startDate: tempAccountsArray[this.state.selectedTeamIndex].startDate,
+                endDate: tempAccountsArray[this.state.selectedTeamIndex].endDate,
                 engagementModel: tempAccountsArray[this.state.selectedTeamIndex].engagementModel,
                 pricingModel: tempAccountsArray[this.state.selectedTeamIndex].pricingModel,
                 seniorSupplier: 'asewr',
@@ -1241,70 +1297,13 @@ class AccountDetails extends React.Component {
                 status: 'Active'
             })
             .then(response => {
-                var currentAccount = this.state.currentAccount
-                var noMember = 0
-                var eachProjectMembers = 0
-                var x;
-                var allMembersinProject = 0
-                // for empty projects
-
-                if (currentAccount[this.state.selectedTeamIndex].projects.length === 0) {
-                    this.setState({ noProject: true, noPeople: true, noTool: true })
-                }
-                else {
-                    var ProjectsArray = currentAccount[this.state.selectedTeamIndex].projects
-                    var selectedProjectName = currentAccount[this.state.selectedTeamIndex].projects[0].projectName
-                    this.setState({ projectsArray: ProjectsArray, noProject: false, noPeople: false, noTool: false, selectedProjectName: selectedProjectName })
-                }
-
-                // for displaying(in card) total members in a team
-                for (var i = 0; i < currentAccount[this.state.selectedTeamIndex].projects.length; i++) {
-                    x = eachProjectMembers
-                    if (currentAccount[this.state.selectedTeamIndex].projects[i].people == undefined) {
-                        noMember = 0
-                        allMembersinProject = noMember + x
-                        this.setState({ totalMembers: allMembersinProject })
-                    }
-                    else {
-                        eachProjectMembers = currentAccount[this.state.selectedTeamIndex].projects[i].people.length
-                        allMembersinProject = x + eachProjectMembers
-                        this.setState({ totalMembers: allMembersinProject })
-                    }
-                }
-
-                var emptyPeopleArray
-                if (currentAccount[this.state.selectedTeamIndex].projects.length !== 0) {
-                    // if projects array not equal to undefined and people array is udefined
-                    if (currentAccount[this.state.selectedTeamIndex].projects[0].people === undefined) {
-                        this.setState({ noPeople: true })
-                    }
-                    else {
-                        var peopleArrayOfselectedProject = currentAccount[this.state.selectedTeamIndex].projects[0].people
-                        this.setState({ peopleArray: peopleArrayOfselectedProject, noPeople: false })
-                    }
-
-                    if (currentAccount[this.state.selectedTeamIndex].projects[0].tools === undefined) {
-                        // var jumpstartListofTools = ["no tools are configured to this project"]
-                        this.setState({ isTooldata: false, noTool: true })
-                    }
-                    else {
-                        // var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[0].tools)
-                        // this.selectedTool(jumpstartListofTools[0], this.state.selectedTeamIndex, 0, 0)
-                        // this.setState({ isTooldata: true, selectedProjectIndex: 0, listofToolsarray: jumpstartListofTools, noTool: false })
-                    }
-                }
-                var currentAccountArray1 = dcopy(currentAccount)
-
-                this.setState({
-                    currentAccount: currentAccount,
-                    selectedTeamName: currentAccount[this.state.selectedTeamIndex].customerName,
-                    selectedTeamIndex: this.state.selectedTeamIndex,
-                    selectedProjectIndex: 0,
-                    TeamDetailsArrayForEditing: currentAccountArray1,
-                    createProjectModel: false
-
-                })
-
+                var updatedObj = this.state.currentAccount
+                var oldObj = this.state.currentAccount.indexOf(this.state.currentAccount[this.state.selectedTeamIndex])
+                updatedObj.splice(oldObj, 1)
+                updatedObj.splice(oldObj, 0, response.data)
+                var updatedTeamName = updatedObj[this.state.selectedTeamIndex].customerName
+                this.setState({ currentAccount: updatedObj, selectedTeamName: updatedTeamName, addPeopleModal: false ,newPeopleObj:{}});
+                this.selectedPeople()
             })
 
     }
@@ -1343,31 +1342,48 @@ class AccountDetails extends React.Component {
     jumpstartConfiguration = () => {
         //jumpStartObj:[{"processName":"","tools":[{"toolName":"","username":"","password":"","url":""}]}],
 
-        var selectedToolName=this.state.jumpStartObj
-        selectedToolName[this.state.stepIndex].processName=this.state.editableProcessArray[this.state.stepIndex].name
-        selectedToolName[this.state.stepIndex].tools[this.state.selectedToolIndex].toolName= this.state.editableProcessArray[this.state.stepIndex].tools[this.state.selectedToolIndex].name 
-         this.setState({ jumpstartModal: true, jumpStartObj:selectedToolName,})
+       // var selectedToolName=dcopy(this.state.jumpStartObj)
+        // selectedToolName[this.state.stepIndex].processName=this.state.editableProcessArray[this.state.stepIndex].name
+        // selectedToolName[this.state.stepIndex].tools[this.state.selectedToolIndex].toolName= this.state.editableProcessArray[this.state.stepIndex].tools[this.state.selectedToolIndex].name 
+        //jumpStartObj:selectedToolName,stepIndex:0
+        this.setState({ jumpstartModal: true,toolsInfo:false})
         
     }
     closejumpstartConfiguration = () => {
-        this.setState({ jumpstartModal: false })
+        var selectedToolName = [{"processName":"","tools":[{"toolName":"","username":"","password":"","url":""}]}]        
+        this.setState({ jumpstartModal: false,jumpStartObj:selectedToolName})
     }
-    handleNext = () => {
-        var selectedToolName = dcopy(this.state.jumpStartObj)
-        if (selectedToolName[this.state.stepIndex + 1] === undefined) {
-            selectedToolName.push({ "processName": "", "tools": [{ "toolName": "", "username": "", "password": "", "url": "" }] })
-            selectedToolName[this.state.stepIndex + 1].processName = this.state.editableProcessArray[this.state.stepIndex + 1].name
-            selectedToolName[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].toolName = this.state.editableProcessArray[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].name
-        }
-        else {
-            selectedToolName[this.state.stepIndex + 1].processName = this.state.jumpStartObj[this.state.stepIndex + 1].name
-            selectedToolName[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].toolName = this.state.jumpStartObj[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].toolName
-        }
+    selectedProcess=(e,selectedProcessIndex)=>{ 
+        
 
-        this.setState((state) => ({ stepIndex: this.state.stepIndex + 1, jumpStartObj: selectedToolName }));
-        if (this.state.stepIndex + 1 === this.state.editableProcessArray.length - 1) {
-            this.setState({ lastItem: true })
-        }
+        var selectedToolName = [{"processName":"","tools":[{"toolName":"","username":"","password":"","url":""}]}]        
+        selectedToolName[0].processName = this.state.editableProcessArray[selectedProcessIndex].name
+        selectedToolName[0].tools[0].toolName= this.state.editableProcessArray[selectedProcessIndex].tools[0].name   
+
+        console.log(selectedToolName)
+         this.setState({stepIndex:selectedProcessIndex,toolsInfo:true,jumpStartObj:selectedToolName})
+
+    }
+    handleNext = (e,ind) => {
+      
+       // var selectedToolName = dcopy(this.state.jumpStartObj)
+
+        // if (selectedToolName[this.state.stepIndex + 1] === undefined) {
+
+        //     selectedToolName.push({ "processName": "", "tools": [{ "toolName": "", "username": "", "password": "", "url": "" }] })
+        //     selectedToolName[this.state.stepIndex + 1].processName = this.state.editableProcessArray[this.state.stepIndex + 1].name
+        //     selectedToolName[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].toolName = this.state.editableProcessArray[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].name
+        // }
+        // else {
+        //     selectedToolName[this.state.stepIndex + 1].processName = this.state.jumpStartObj[this.state.stepIndex + 1].name
+        //     selectedToolName[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].toolName = this.state.jumpStartObj[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].toolName
+        // }
+
+        // this.setState((state) => ({ stepIndex: this.state.stepIndex + 1, jumpStartObj: selectedToolName }));
+
+        // if (this.state.stepIndex + 1 === this.state.editableProcessArray.length - 1) {
+        //     this.setState({ lastItem: true })
+        // }
 
     }
 
@@ -1401,10 +1417,10 @@ class AccountDetails extends React.Component {
             />
         ));
     }
-    handlingToolList = (e, i, value) => {
+    handlingToolList = (e, i, value) => {    
        
         var tempJumpstartObj=dcopy(this.state.jumpStartObj)      
-        tempJumpstartObj[this.state.stepIndex].tools[this.state.selectedToolIndex].toolName=value
+        tempJumpstartObj[0].tools[0].toolName=value
        
         this.setState({jumpStartObj:tempJumpstartObj })
     }
@@ -1412,13 +1428,15 @@ class AccountDetails extends React.Component {
 
         var tempJumpstartObj=this.state.jumpStartObj
 
-        tempJumpstartObj[this.state.stepIndex].tools[this.state.selectedToolIndex][e.target.name]=e.target.value
+        tempJumpstartObj[0].tools[0][e.target.name]=e.target.value
         this.setState({jumpStartObj:tempJumpstartObj})
     }
     saveJumpstartData=(e,obj)=>{
         console.log(obj)
-        this.setState({listofToolsarray:obj,jumpstartModal:false,noTool:false})
+        
+        
         this.selectedTool(obj,this.state.selectedTeamIndex, this.state.selectedProjectIndex,0)
+        this.setState({listofToolsarray:obj,jumpstartModal:false,noTool:false})
     }
     render() {
         return (
@@ -1498,7 +1516,7 @@ class AccountDetails extends React.Component {
                                             </div>
 
                                             <div className="" style={{ fontSize: '25px', lineHeight: "32px", fontWeight: "lighter" }}>
-                                                {this.state.currentAccount[this.state.selectedTeamIndex].startDate}
+                                                {this.getDateString(this.state.currentAccount[this.state.selectedTeamIndex].startDate) }
                                                 {/* <DatePicker
                                                 textFieldStyle={{width: '60%'}} 
                                                 hintText="Start Date"
@@ -1527,7 +1545,7 @@ class AccountDetails extends React.Component {
                                                 value={this.state.newDate}
                                                 onChange={this.handleChange}
                                             /> */}
-                                                {this.state.currentAccount[this.state.selectedTeamIndex].endDate}
+                                                {this.getDateString(this.state.currentAccount[this.state.selectedTeamIndex].endDate)}
                                             </div>
                                             {/* <FloatingActionButton mini={true} secondary={true}>
                                                 <ActionDateRange />
@@ -1579,7 +1597,7 @@ class AccountDetails extends React.Component {
                                                     <FloatingActionButton
                                                         secondary={true}
                                                         mini={true}
-                                                        onClick={() => this.createProject()}
+                                                        onClick={this.createProject}
                                                         className="float-right"
                                                     >
                                                         <ContentAdd />
@@ -1828,11 +1846,11 @@ class AccountDetails extends React.Component {
                             <div className="col-md-12">
                                 <TextField
                                     fullWidth={true}
-                                    floatingLabelText="status"
-                                    hintText="status"
+                                    floatingLabelText="Status"
+                                    hintText="Status"
                                     value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].status || ''}
                                     name='status'
-                                    onChange={this.handleChange}
+                                    onChange={this.handleTeamEditDetails}
                                 />
                             </div>
 
@@ -1854,42 +1872,44 @@ class AccountDetails extends React.Component {
                         <div className="row margin0">
                             {/* <div className="col-md-5 margin10"><label>Pricing Model:</label></div> */}
                             <div className="col-md-12">
-                                <TextField
+                                {/* <TextField
                                     fullWidth={true}
                                     floatingLabelText="Start Date"
                                     hintText="dd/mm/yyyy"
                                     value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate || ''}
                                     name='startDate'
                                     onChange={this.handleTeamEditDetails}
-                                />
-                                {/* <DatePicker
+                                /> */}
+                                <DatePicker
                             textFieldStyle={{width: '100%'}} 
                             hintText="Start Date"
                             name='startDate'
+                            floatingLabelText="Start Date"
                             value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate || ''}                          
                             onChange={(e,x)=>this.handleTeamEditDetails(e,x,'startDate')} 
-                        /> */}
+                        />
                             </div>
 
                         </div>
                         <div className="row margin0">
                             {/* <div className="col-md-5 margin10"><label>Logo:</label></div> */}
                             <div className="col-md-12">
-                                <TextField
+                                {/* <TextField
                                     fullWidth={true}
                                     floatingLabelText="End Date"
                                     hintText="dd/mm/yyyy"
                                     value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate || ''}
                                     name='endDate'
                                     onChange={this.handleTeamEditDetails}
-                                />
-                                {/* <DatePicker
+                                /> */}
+                                <DatePicker
                             textFieldStyle={{width: '100%'}} 
                             hintText="End Date"
                             name='endDate'
+                            floatingLabelText="End Date"
                             value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate || ''}    
                             onChange={(e,x)=>this.handleTeamEditDetails(e,x,'endDate')} 
-                        /> */}
+                        />
                             </div>
 
                         </div>
@@ -1958,8 +1978,8 @@ class AccountDetails extends React.Component {
                             <div className="col-md-12">
                                 <TextField
                                     fullWidth={true}
-                                    floatingLabelText="status"
-                                    hintText="status"
+                                    floatingLabelText="Status"
+                                    hintText="Status"
                                     value={this.state.newTeamObj.status || ''}
                                     name='status'
                                     onChange={this.handleAddTeamDetails}
@@ -1984,40 +2004,46 @@ class AccountDetails extends React.Component {
                         <div className="row margin0">
                             {/* <div className="col-md-5 margin10"><label>Pricing Model:</label></div> */}
                             <div className="col-md-12">
-                                <TextField
+                                {/* <TextField
                                     fullWidth={true}
                                     floatingLabelText="Start Date"
                                     hintText="dd/mm/yyyy"
                                     value={this.state.newTeamObj.startDate || ''}
                                     name='startDate'
                                     onChange={this.handleAddTeamDetails}
-                                />
-                                {/* <DatePicker
+                                /> */}
+                                <DatePicker
                             textFieldStyle={{width: '100%'}} 
                             hintText="Start Date"
-                            value={this.state.newDate}
-                            onChange={this.handleTeamEditDetails}
-                        /> */}
+                            value={this.state.newTeamObj.startDate || ''}                          
+                            onChange={(e,x)=>this.handleAddTeamDetails(e,x,'startDate')}
+                            minDate={new Date()} 
+                               
+                            floatingLabelText="Start Date"         
+          
+                        />
                             </div>
 
                         </div>
                         <div className="row margin0">
                             {/* <div className="col-md-5 margin10"><label>Logo:</label></div> */}
                             <div className="col-md-12">
-                                <TextField
+                                {/* <TextField
                                     fullWidth={true}
                                     floatingLabelText="End Date"
                                     hintText="dd/mm/yyyy"
                                     value={this.state.newTeamObj.endDate || ''}
                                     name='endDate'
                                     onChange={this.handleAddTeamDetails}
-                                />
-                                {/* <DatePicker
+                                /> */}
+                                <DatePicker
                             textFieldStyle={{width: '100%'}} 
                             hintText="End Date"
-                            value={this.state.newDate}
-                            onChange={this.handleTeamEditDetails}
-                        /> */}
+                            value={this.state.newTeamObj.endDate || ''}                          
+                            onChange={(e,x)=>this.handleAddTeamDetails(e,x,'endDate')}  
+                            minDate={this.state.newTeamObj.startDate }   
+                            floatingLabelText="End Date"
+                        />
                             </div>
 
                         </div>
@@ -2271,29 +2297,28 @@ class AccountDetails extends React.Component {
 
                     <div className="row">
                         <div className="col-md-12 col-lg-12 textAlignCenter">
-                            <Subheader className="p-0" style={{ fontSize: '30px', fontWeight: "lighter" }}>Add process and tools</Subheader>
+                            <Subheader className="p-0" style={{ fontSize: '30px', fontWeight: "lighter" }}>click on the Process to Add Tool</Subheader>
                         </div>
 
                     </div>
                     <div className="row">
                         <div className="col-md-12 col-lg-12 p-1">
-                            <Stepper activeStep={this.state.stepIndex}>
+                            <Stepper >
                                 {this.state.processArray.map((process, index) => (
                                     <Step>
-                                        <StepLabel>{process.name}</StepLabel>
+                                        <StepButton onClick={(e)=>this.selectedProcess(e,index)} >{process.name}</StepButton>
                                     </Step>
                                 ))}
                             </Stepper>
                         </div>
                     </div>
-                    <div className="row">
-                        {/* style={{ border: "1px solid rgb(238, 238, 238)" }}  */}
+                    <div className={["row",this.state.toolsInfo === true ? 'show' : 'visibility'].join(' ')}>                       
                         <div className={["col-lg-12 d-flex p-0"]}>
                             <div className={["col-lg-12 col-md-12 displayInline pt-2 pr-0 pl-0"]}>
                                 <div className="col-md-6 col-lg-6 pl-0">
                                     <div className={["col-md-12 custId"]}>
                                         <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>SelecteTool:</Subheader>
-                                        <SelectField hintText="Select Project" value={this.state.jumpStartObj[this.state.stepIndex].tools[this.state.selectedToolIndex].toolName}
+                                        <SelectField hintText="Select Project" value={this.state.jumpStartObj[0].tools[0].toolName}
                                             labelStyle={{ height: "37px", fontSize: "14px" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.handlingToolList(e, i, v)}>
                                             {this.toolsList(this.state.editableProcessArray[this.state.stepIndex].tools)}
                                         </SelectField>
@@ -2304,7 +2329,7 @@ class AccountDetails extends React.Component {
                                         <TextField
                                             hintText="user name"
                                             name='username'
-                                            value={this.state.jumpStartObj[this.state.stepIndex].tools[this.state.selectedToolIndex].username||''}
+                                            value={this.state.jumpStartObj[0].tools[0].username||''}
                                             onChange={this.handleJumpstartChange}
                                         />
                                       
@@ -2315,7 +2340,7 @@ class AccountDetails extends React.Component {
                                         <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>Password:</Subheader>
                                         <TextField
                                             hintText="password"
-                                            value={this.state.jumpStartObj[this.state.stepIndex].tools[this.state.selectedToolIndex].password||''}
+                                            value={this.state.jumpStartObj[0].tools[0].password||''}
                                             name='password'
                                             onChange={this.handleJumpstartChange}
                                         />
@@ -2325,7 +2350,7 @@ class AccountDetails extends React.Component {
                                         <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>URL:</Subheader>
                                         <TextField
                                             hintText="url"
-                                            value={this.state.jumpStartObj[this.state.stepIndex].tools[this.state.selectedToolIndex].url||''}
+                                            value={this.state.jumpStartObj[0].tools[0].url||''}
                                             name='url'
                                             onChange={this.handleJumpstartChange}
                                         />
@@ -2334,24 +2359,24 @@ class AccountDetails extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="row m-4">
-                        <div className="col-md-12 col-lg-12 displayInline">
-                        <div className="col-md-3 col-lg-3">
+                    <div className={["row m-4",this.state.toolsInfo === true ? 'show' : 'visibility'].join(' ')}>
+                        <div className="col-md-12 col-lg-12 displayInline textAlignCenter">
+                        <div className="col-md-6 col-lg-6">
                                 <RaisedButton
                                     label="cancel"
-                                    default={true}
+                                    secondary={true}
                                     onClick={this.closejumpstartConfiguration}
                                 />
                             </div>
-                            <div className="col-md-3 col-lg-3">
+                            {/* <div className="col-md-3 col-lg-3">
                                 <RaisedButton
                                     label="back"
                                     secondary={true}
                                     onClick={this.handleBack}
                                     disabled={this.state.stepIndex === 0}
                                 />
-                            </div>
-                            <div className="col-md-3 col-lg-3">
+                            </div> */}
+                            {/* <div className="col-md-3 col-lg-3">
                                 <RaisedButton
                                     label={this.state.stepIndex === this.state.processArray.length - 1 ? 'Finish' : 'Next'}
                                     primary={true}
@@ -2359,16 +2384,17 @@ class AccountDetails extends React.Component {
                                     disabled={this.state.lastItem === true}
                                 />
 
-                            </div>
-                            <div className="col-md-3 col-lg-3">
+                            </div> */}
+                            <div className="col-md-6 col-lg-6">
                                 <RaisedButton
                                     label="save"
-                                    default={true}
+                                    primary={true}
                                     onClick={(e)=>this.saveJumpstartData(e,this.state.jumpStartObj)}
+                                    disabled={this.state.jumpStartObj[0].tools[0].password===''|| this.state.jumpStartObj[0].tools[0].username===''|| this.state.jumpStartObj[0].tools[0].url===''}
                                 />
                             </div>
                         </div>
-                    </div>
+                    </div> 
 
                 </Dialog>
                 {/* <Dialog open={this.state.jumpStartConfigModel} contentStyle={{"left":"70%"}}  className={["col-md-6"].join(' ')}>
@@ -2874,8 +2900,8 @@ class PeopleConfigurationDetails extends React.Component {
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.tempSelectedAccountobj._id,
             {
                 customerName: this.state.tempSelectedAccountobj.customerName,
-                startDate: '13/12/2017',
-                endDate: '13/12/2017',
+                startDate: this.state.tempSelectedAccountobj.startDate,
+                endDate: this.state.tempSelectedAccountobj.endDate,
                 engagementModel: this.state.tempSelectedAccountobj.engagementModel,
                 pricingModel: this.state.tempSelectedAccountobj.pricingModel,
                 seniorSupplier: 'asewr',
@@ -2908,8 +2934,8 @@ class PeopleConfigurationDetails extends React.Component {
         axios.put(myConstClass.nodeAppUrl + `/accounts/` + this.state.tempSelectedAccountobj._id,
             {
                 customerName: this.state.tempSelectedAccountobj.customerName,
-                startDate: '13/12/2017',
-                endDate: '13/12/2017',
+                startDate: this.state.tempSelectedAccountobj.startDate,
+                endDate: this.state.tempSelectedAccountobj.endDate,
                 engagementModel: this.state.tempSelectedAccountobj.engagementModel,
                 pricingModel: this.state.tempSelectedAccountobj.pricingModel,
                 seniorSupplier: 'asewr',
