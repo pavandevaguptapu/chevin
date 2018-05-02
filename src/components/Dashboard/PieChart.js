@@ -176,7 +176,7 @@ class Piechart extends Component {
                   </div> */}
         <div
           className="col-lg-12 padding0  displayInline"
-          style={{ height: "35vh" }}
+          style={{height:'16rem'}}
         >
           <div className="col-md-8 col-lg-9 justify padding0">
             <ResponsiveContainer>
@@ -185,8 +185,8 @@ class Piechart extends Component {
                   //nameKey='name'
                   dataKey="value"
                   data={data}
-                  //cx={100}
-                  //cy={50}
+                  cx={150}
+                  cy={150}
                   //labelLine={true}
                   label={renderCustomizedLabel}
                   outerRadius={100}

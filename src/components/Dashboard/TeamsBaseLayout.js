@@ -1,5 +1,10 @@
 import React, { Component } from "react";
 
+import GridLayout from "react-grid-layout";
+import { WidthProvider, Responsive } from "react-grid-layout";
+import css from "../../../node_modules/react-grid-layout/css/styles.css";
+import css1 from "../../../node_modules/react-resizable/css/styles.css";
+
 import SelectedProjectDetails from "./SelectedProjectDetails";
 import SelectedProjectBoardDetails from "./SelectedProjectBoardDetails";
 import PeoplesList from "./PeoplesList";
@@ -13,7 +18,7 @@ import EpicBurdownChart from "./EpicBurnDownChart";
 
 import axios from "axios";
 import { myConstClass } from "../../constants";
-import image from '../../shared/spring_board_logo.png';
+import image from "../../shared/spring_board_logo.png";
 
 import Avatar from "material-ui/Avatar";
 import Grid from "material-ui/svg-icons/image/grid-on";
@@ -44,7 +49,7 @@ const navBarContainer = {
   },
   widgetContainer: {
     backgroundColor: "#3d393a",
-    height: "100vh",
+    height: "100%",
     widgetCard: {
       height: "20rem",
       margin: "5px",
@@ -52,6 +57,7 @@ const navBarContainer = {
     }
   }
 };
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 class TeamsBaseLayout extends Component {
   state = {
@@ -309,11 +315,13 @@ class TeamsBaseLayout extends Component {
   };
 
   selectedBoardforSprintData = (sprintList, boardId, url, username, pwd) => {
+    console.log(sprintList);
     if (sprintList !== undefined) {
       var sprintListArray = sprintList;
       for (var i = 0; i < sprintListArray.length; i++) {
         if (sprintListArray[i].state === "active") {
           var activeSprint = sprintListArray[i].id;
+          var activeSprintName = sprintListArray[i].name;
         }
       }
       this.setState({
@@ -328,7 +336,7 @@ class TeamsBaseLayout extends Component {
             activeSprint={activeSprint}
             sprintBurnDownChart={this.sprintburndownchart}
             sprintOverviewPiechart={this.sprintoverviewpiechart}
-            displayDropDownValue= {this.displayDropDownValue}
+            displayDropDownValue={this.displayDropDownValue}
           />
         ),
         emptySprintArray: ""
@@ -440,7 +448,7 @@ class TeamsBaseLayout extends Component {
 
   fullscreen = () => {
     //   alert(1);
-  }
+  };
 
   render() {
     return (
@@ -450,8 +458,14 @@ class TeamsBaseLayout extends Component {
             className="navbar navbar-light navbar-expand-lg align-items-end p-3"
             style={navBarContainer.navBarbg}
           >
-            <a className="navbar-brand" >
-                <img src={image} width="170" height="30" className="d-inline-block align-top ml-3" alt="SpringBoard" />
+            <a className="navbar-brand">
+              <img
+                src={image}
+                width="170"
+                height="30"
+                className="d-inline-block align-top ml-3"
+                alt="SpringBoard"
+              />
             </a>
             <div className="navbar-collapse">
               <div className="navbar-nav">
@@ -482,11 +496,14 @@ class TeamsBaseLayout extends Component {
             </div>
           </nav>
 
-          <div className="boards col-lg-12 clearfix d-flex align-items-center" style={{ backgroundColor: "#494b4f", height:'3rem' }}>
+          <div
+            className="boards col-lg-12 clearfix d-flex align-items-center"
+            style={{ backgroundColor: "#494b4f", height: "3rem" }}
+          >
             <div className="col-lg-2">
               {this.state.selectedProjectBoardDetails}
             </div>
-            <div className="col-lg-2"> {this.state.sprintDetails} </div>            
+            <div className="col-lg-2"> {this.state.sprintDetails} </div>
           </div>
 
           <div className="col-lg-12 my-4">
@@ -495,9 +512,18 @@ class TeamsBaseLayout extends Component {
                 <ContentAdd />
               </FloatingActionButton>
             </div>
-            <div className="d-flex flex-row flex-wrap widgetCard">
-              <div className="col-lg-4 table-responsive">
-                <Card style={navBarContainer.widgetContainer.widgetCard}>
+            <div className="widgetCard clearfix">
+              <ResponsiveReactGridLayout
+                className="layout clearfix"
+                cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                rowHeight={30}
+                width={1200}
+              >
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
+                  key="1"
+                  data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                >
                   <CardHeader
                     title="Team Details"
                     className="custom_dashboard-header"
@@ -509,9 +535,11 @@ class TeamsBaseLayout extends Component {
                     {this.state.peoplesArray}
                   </div>
                 </Card>
-              </div>
-              <div className="col-lg-4 table-responsive">
-                <Card style={navBarContainer.widgetContainer.widgetCard}>
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
+                  key="2"
+                  data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                >
                   <CardHeader
                     title="Epic Overview"
                     className="custom_dashboard-header"
@@ -522,45 +550,61 @@ class TeamsBaseLayout extends Component {
                     {this.state.issuesListArray}
                   </div>
                 </Card>
-              </div>
-              <div className="col-lg-4  table-responsive">
-                <Card style={navBarContainer.widgetContainer.widgetCard}>
-                  <CardHeader title="Epic Burndown Chart" className="custom_dashboard-header"/>
+                <Card style={navBarContainer.widgetContainer.widgetCard}
+                  key="4"
+                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                >
+                  <CardHeader
+                    title="Epic Burndown Chart"
+                    className="custom_dashboard-header"
+                  />
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforEpicOverviewburndownchart}
                     {this.state.emptyEpicsArray}
                     {this.state.epicBurndownChart}
                   </div>
                 </Card>
-              </div>
-              <div className="col-lg-4  table-responsive">
-                <Card style={navBarContainer.widgetContainer.widgetCard}>
-                  <CardHeader title="Sprint BurnUp Chart" className="custom_dashboard-header" />
+                <Card style={navBarContainer.widgetContainer.widgetCard}
+                  key="5"
+                  data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                >
+                  <CardHeader
+                    title="Sprint BurnUp Chart"
+                    className="custom_dashboard-header"
+                  />
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsprintburndownchart}
                     {this.state.emptySprintArray}
                     {this.state.workHours}
                   </div>
                 </Card>
-              </div>
-              <div className="col-lg-4  table-responsive">
-                <Card style={navBarContainer.widgetContainer.widgetCard}>
-                  <CardHeader title="Sprint Overview" className="custom_dashboard-header"/>
+                <Card style={navBarContainer.widgetContainer.widgetCard}
+                  key="6"
+                  data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                >
+                  <CardHeader
+                    title="Sprint Overview"
+                    className="custom_dashboard-header"
+                  />
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsprintoverviewpiechart}
                     {this.state.emptySprintArray}
                     {this.state.sprintPieChart}
                   </div>
                 </Card>
-              </div>
-              <div className="col-lg-4  table-responsive">
-                <Card style={navBarContainer.widgetContainer.widgetCard}>
-                  <CardHeader title="Quality Overview" className="custom_dashboard-header"/>
+                <Card style={navBarContainer.widgetContainer.widgetCard}
+                  key="7"
+                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                >
+                  <CardHeader
+                    title="Quality Overview"
+                    className="custom_dashboard-header"
+                  />
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsonar}
                   </div>
                 </Card>
-              </div>              
+              </ResponsiveReactGridLayout>
             </div>
           </div>
         </div>

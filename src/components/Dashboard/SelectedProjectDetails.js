@@ -214,7 +214,7 @@ class SelectedProjectDetails extends Component {
         >
           <DropdownToggle caret className="text-truncate">{this.state.dropDownValue}</DropdownToggle>
           <DropdownMenu className="custom-dropdown-menu">
-          <TextField onChange={this.projectInputSearch} hintText="Custom Underline Focus Color" name="projectSearch" underlineFocusStyle={styles.underlineStyle} />
+          <TextField onChange={this.projectInputSearch} hintText="Seach Projects" name="projectSearch" underlineFocusStyle={styles.underlineStyle} />
             {this.projectDetailsListarray(this.state.projectDetails.projects)}
           </DropdownMenu>
         </Dropdown>
