@@ -23,6 +23,7 @@ import image from "../../shared/spring_board_logo.png";
 import Avatar from "material-ui/Avatar";
 import Grid from "material-ui/svg-icons/image/grid-on";
 import Search from "material-ui/svg-icons/action/search";
+import Fullscreen from "material-ui/svg-icons/navigation/fullscreen";
 import FloatingActionButton from "material-ui/FloatingActionButton";
 import ContentAdd from "material-ui/svg-icons/content/add";
 import { Card, CardHeader } from "material-ui";
@@ -61,6 +62,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 class TeamsBaseLayout extends Component {
   state = {
+    newClass: "some",
     dropdownOpen: false,
     dropDownValue: "Select Team",
     accounts: [],
@@ -315,13 +317,13 @@ class TeamsBaseLayout extends Component {
   };
 
   selectedBoardforSprintData = (sprintList, boardId, url, username, pwd) => {
-    console.log(sprintList);
     if (sprintList !== undefined) {
       var sprintListArray = sprintList;
       for (var i = 0; i < sprintListArray.length; i++) {
         if (sprintListArray[i].state === "active") {
           var activeSprint = sprintListArray[i].id;
           var activeSprintName = sprintListArray[i].name;
+          console.log(activeSprintName, "balayya");
         }
       }
       this.setState({
@@ -332,7 +334,7 @@ class TeamsBaseLayout extends Component {
             selectedUrl={url}
             selectedUserName={username}
             selectedUserPwd={pwd}
-            //sonarQubeDetails={this.sonarQubeData}
+            activeSprintName={activeSprintName}
             activeSprint={activeSprint}
             sprintBurnDownChart={this.sprintburndownchart}
             sprintOverviewPiechart={this.sprintoverviewpiechart}
@@ -447,7 +449,8 @@ class TeamsBaseLayout extends Component {
   }
 
   fullscreen = () => {
-    //   alert(1);
+    const currentState = this.state.newClass;
+    this.setState({ newClass: !currentState });
   };
 
   render() {
@@ -523,12 +526,18 @@ class TeamsBaseLayout extends Component {
                   style={navBarContainer.widgetContainer.widgetCard}
                   key="1"
                   data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                  id="myDiv"
+                  className={this.state.newClass ? "minScreen" : "fullscreen"}
                 >
                   <CardHeader
                     title="Team Details"
                     className="custom_dashboard-header"
-                  />
-                  {/* <button onClick={this.fullscreen}>s</button> */}
+                  >
+                    <Fullscreen
+                      onClick={this.fullscreen}
+                      className="float-right"
+                    />
+                  </CardHeader>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforpeople}
                     {this.state.emptyPeoplesArray}
@@ -550,9 +559,10 @@ class TeamsBaseLayout extends Component {
                     {this.state.issuesListArray}
                   </div>
                 </Card>
-                <Card style={navBarContainer.widgetContainer.widgetCard}
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
                   key="4"
-                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
                   <CardHeader
                     title="Epic Burndown Chart"
@@ -564,9 +574,10 @@ class TeamsBaseLayout extends Component {
                     {this.state.epicBurndownChart}
                   </div>
                 </Card>
-                <Card style={navBarContainer.widgetContainer.widgetCard}
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
                   key="5"
-                  data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                  data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
                   <CardHeader
                     title="Sprint BurnUp Chart"
@@ -578,9 +589,10 @@ class TeamsBaseLayout extends Component {
                     {this.state.workHours}
                   </div>
                 </Card>
-                <Card style={navBarContainer.widgetContainer.widgetCard}
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
                   key="6"
-                  data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                  data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
                   <CardHeader
                     title="Sprint Overview"
@@ -592,9 +604,10 @@ class TeamsBaseLayout extends Component {
                     {this.state.sprintPieChart}
                   </div>
                 </Card>
-                <Card style={navBarContainer.widgetContainer.widgetCard}
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
                   key="7"
-                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
                   <CardHeader
                     title="Quality Overview"

@@ -73,14 +73,11 @@ class SprintDetails extends Component {
       pwd: nextProps.selectedUserPwd,
       values: nextProps.activeSprint
     });
-    //this.state.boardID = nextProps.boardId
   }
   handleChange = (e, index) => {
-    //   debugger;
     if(index!==undefined){
-        console.log(index)
         let val = index
-        this.displayDropDownValue("dfgfd")
+        this.displayDropDownValue(this.props.activeSprintName)
         this.setState({
             values: index
           });
@@ -91,15 +88,11 @@ class SprintDetails extends Component {
         return k.name;
       })
       .indexOf(e);
-    //   console.log(indexOfSelectedAccount)
-    //   debugger;
     let val = this.state.sprintListSorted[indexOfSelectedAccount].id;
-    //   console.log(ed)
     this.setState({
       values: val
     });
     }
-    
 
     axios
       .post(`sbtpgateway/tp/rest/esccors/generic/`, {
@@ -294,7 +287,7 @@ class SprintDetails extends Component {
       <DropdownItem
         value={sprintList.name}
         className="pointer text-truncate"
-        key={this.state.values}
+        key={sprintList.id}
         onClick={(e, i) => {this.handleChange(e.target.value);  this.displayDropDownValue(e)}}
       >
         {sprintList.name}

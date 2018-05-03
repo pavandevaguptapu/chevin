@@ -72,7 +72,6 @@ class SelectedProjectBoardDetails extends Component {
         actionMethod: "get"
       })
       .then(response => {
-          console.log(response);
         this.props.onSelectBoard(
           response.data.values,
           this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id,
