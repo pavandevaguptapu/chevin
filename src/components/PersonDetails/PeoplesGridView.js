@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import LoaderHOC from '../HOC/LoaderHOC';
 
 import { Card, CardTitle, CardText } from "material-ui/Card";
 import Avatar from "material-ui/Avatar";
@@ -38,7 +39,7 @@ class PeoplesGridView extends Component {
                 anchorOrigin={{ horizontal: "left", vertical: "top" }}
                 targetOrigin={{ horizontal: "left", vertical: "top" }}
               >
-                <MenuItem primaryText="Edit" />
+                <MenuItem primaryText="Edit" onClick={this.props.open}/>
                 {/* <MenuItem primaryText="Delete" /> */}
               </IconMenu>
             </div>
@@ -58,7 +59,7 @@ class PeoplesGridView extends Component {
                   title={people.name}
                   subtitle={people.designation}
                 >
-                  <CardText className="p-0" subtitle="asdasd">
+                  <CardText className="p-0" subtitle={people.email}>
                     {people.email}
                   </CardText>
                 </CardTitle>
@@ -71,4 +72,4 @@ class PeoplesGridView extends Component {
   }
 }
 
-export default PeoplesGridView;
+export default LoaderHOC(PeoplesGridView);

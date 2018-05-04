@@ -98,7 +98,7 @@ class People extends Component {
         <div className={`clearfix ${this.state.addBorder}`}>
           {/* <AdminDatabase value={this.state.peoples}> */}
           <PeoplesGridView
-            peoples={this.state.peoples}
+            open={this.openIndividualModal}
             changeView={this.state.changeView}
             changeCardLayout={this.changeCardLayout}
             filterPeople={this.state.filterPeople}
