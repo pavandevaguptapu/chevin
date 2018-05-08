@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import LoaderHOC from '../HOC/LoaderHOC';
-
+import ErrorHOC from '../HOC/ErrorHOC';
 import { Card, CardTitle, CardText } from "material-ui/Card";
 import Avatar from "material-ui/Avatar";
 import IconMenu from "material-ui/IconMenu";
@@ -72,4 +72,4 @@ class PeoplesGridView extends Component {
   }
 }
 
-export default LoaderHOC(PeoplesGridView);
+export default LoaderHOC('filterPeople')(PeoplesGridView);

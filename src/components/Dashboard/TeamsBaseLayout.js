@@ -50,7 +50,7 @@ const navBarContainer = {
   },
   widgetContainer: {
     backgroundColor: "#3d393a",
-    height: "100%",
+    minHeight: "100vh",
     widgetCard: {
       height: "20rem",
       margin: "5px",
@@ -323,7 +323,6 @@ class TeamsBaseLayout extends Component {
         if (sprintListArray[i].state === "active") {
           var activeSprint = sprintListArray[i].id;
           var activeSprintName = sprintListArray[i].name;
-          console.log(activeSprintName, "balayya");
         }
       }
       this.setState({
@@ -476,9 +475,9 @@ class TeamsBaseLayout extends Component {
                   <Dropdown
                     isOpen={this.state.dropdownOpen}
                     toggle={this.toggle}
-                    className="custom-dropdown"
+                    className="custom-dropdown clearfix"
                   >
-                    <DropdownToggle caret className="text-truncate">
+                    <DropdownToggle caret className="text-truncate d-flex justify-content-between">
                       {this.state.dropDownValue}
                     </DropdownToggle>
                     <DropdownMenu className="custom-dropdown-menu">
@@ -529,15 +528,12 @@ class TeamsBaseLayout extends Component {
                   id="myDiv"
                   className={this.state.newClass ? "minScreen" : "fullscreen"}
                 >
-                  <CardHeader
-                    title="Team Details"
-                    className="custom_dashboard-header"
-                  >
-                    <Fullscreen
-                      onClick={this.fullscreen}
-                      className="float-right"
-                    />
-                  </CardHeader>
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Team Details" className="p-0" />
+                    <div>
+                      <Fullscreen onClick={this.fullscreen} />
+                    </div>
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforpeople}
                     {this.state.emptyPeoplesArray}
@@ -549,10 +545,9 @@ class TeamsBaseLayout extends Component {
                   key="2"
                   data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Epic Overview"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Epic Overview" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforEpicDetails}
                     {this.state.emptyEpicsArray}
@@ -564,10 +559,9 @@ class TeamsBaseLayout extends Component {
                   key="4"
                   data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Epic Burndown Chart"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Epic Burndown Chart" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforEpicOverviewburndownchart}
                     {this.state.emptyEpicsArray}
@@ -579,10 +573,9 @@ class TeamsBaseLayout extends Component {
                   key="5"
                   data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Sprint BurnUp Chart"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Sprint BurnUp Chart" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsprintburndownchart}
                     {this.state.emptySprintArray}
@@ -594,10 +587,9 @@ class TeamsBaseLayout extends Component {
                   key="6"
                   data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Sprint Overview"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Sprint Overview" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsprintoverviewpiechart}
                     {this.state.emptySprintArray}
@@ -609,10 +601,9 @@ class TeamsBaseLayout extends Component {
                   key="7"
                   data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Quality Overview"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Quality Overview" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsonar}
                   </div>

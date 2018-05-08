@@ -30,7 +30,7 @@ const styles = {
     borderColor: "rgb(255, 217, 29)"
   },
   floatingLabelStyle: {
-      color:"rgb(255, 217, 29)"
+    color: "rgb(255, 217, 29)"
   }
 };
 
@@ -214,23 +214,27 @@ class SelectedProjectDetails extends Component {
         <Dropdown
           isOpen={this.state.dropdownOpen}
           toggle={this.toggle}
-          className="custom-dropdown"
+          className="custom-dropdown clearfix"
         >
-          <DropdownToggle caret className="text-truncate">
+          <DropdownToggle
+            caret
+            className="text-truncate d-flex justify-content-between"
+          >
             {this.state.dropDownValue}
           </DropdownToggle>
-          <DropdownMenu className="custom-dropdown-menu">
+          <DropdownMenu className="custom-dropdown-menu ">
             <TextField
               onChange={this.projectInputSearch}
               floatingLabelText="Projects"
               name="projectSearch"
+              style={{fontSize:'13px'}}
               underlineFocusStyle={styles.underlineStyle}
               underlineStyle={styles.underlineStyle}
               floatingLabelStyle={styles.floatingLabelStyle}
               floatingLabelFocusStyle={styles.floatingLabelStyle}
-              styles={{width: '50px'}} 
+              fullWidth={true}
             />
-            {this.projectDetailsListarray(this.state.projectDetails.projects)}
+              {this.projectDetailsListarray(this.state.projectDetails.projects)}
           </DropdownMenu>
         </Dropdown>
       </div>

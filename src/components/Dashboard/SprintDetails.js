@@ -311,22 +311,21 @@ class SprintDetails extends Component {
 
   render() {
     return (
-      <div className="padding0">
-        <div className="col-md-12 col-lg-12 textAlignLeft marginTop4">
+      <div className="">
           <Dropdown
             isOpen={this.state.dropdownOpen}
             toggle={this.toggle}
-            className="custom-secondary_dropdown"
+            className="custom-secondary_dropdown clearfix"
           >
-            <DropdownToggle caret className="text-truncate">
+            <DropdownToggle caret className="text-truncate d-flex justify-content-between">
             {this.state.dropDownValue}
             </DropdownToggle>
             <DropdownMenu className="custom-dropdown-menu">
+            <div className="custom-dropdown-menu-items clearfix">
               {this.sprintItems(this.state.sprintListSorted)}
+            </div>              
             </DropdownMenu>
           </Dropdown>
-        </div>
-
         <div className="col-md-12 col-lg-12">{this.state.workHours}</div>
         <div className="col-md-12 col-lg-12 padding0">
           {this.state.sprintPieChart}
