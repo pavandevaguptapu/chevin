@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
-const LoaderHOC = loadingProp => WrappedComponent => {
-  return class LoaderHOC extends Component {
+const LoaderHOC = loadingProp => WrappedComponent => class  extends Component {
     isEmpty = prop =>
       prop === null ||
       prop === undefined ||
@@ -16,6 +15,5 @@ const LoaderHOC = loadingProp => WrappedComponent => {
       );
     }
   };
-};
 
 export default LoaderHOC;

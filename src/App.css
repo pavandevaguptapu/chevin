@@ -786,7 +786,7 @@ input[type="text"] {
 #myDiv.fullscreen{
     z-index: 9999 !important;
     width: 100% !important;
-    height: 100% !important;
+    height: 66% !important;
     top: 0 !important;
     left: 0em !important;
     margin: 0 auto !important;
