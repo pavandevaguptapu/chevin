@@ -75,32 +75,26 @@ class SprintDetails extends Component {
       pwd: nextProps.selectedUserPwd,
       values: nextProps.activeSprint
     });
-    //this.state.boardID = nextProps.boardId
   }
   handleChange = (e, index) => {
-    //   debugger;
-    if (index !== undefined) {
-      console.log(index)
-      let val = index
-      this.displayDropDownValue("dfgfd")
-      this.setState({
-        values: index
-      });
+    if(index!==undefined){
+        let val = index
+        this.displayDropDownValue(this.props.activeSprintName)
+        this.setState({
+            values: index
+          });
     }
-    else {
-      let indexOfSelectedAccount = this.state.sprintListSorted
-        .map(function (k) {
-          return k.name;
-        }) .indexOf(e);
-      //   console.log(indexOfSelectedAccount)
-      //   debugger;
-      var val = this.state.sprintListSorted[indexOfSelectedAccount].id;
-         console.log(val)
-      this.setState({
-        values: val
-      });
+    else{
+        let indexOfSelectedAccount = this.state.sprintListSorted
+      .map(function(k) {
+        return k.name;
+      })
+      .indexOf(e);
+    let val = this.state.sprintListSorted[indexOfSelectedAccount].id;
+    this.setState({
+      values: val
+    });
     }
-
 
     axios
       .post(`sbtpgateway/tp/rest/esccors/generic/`, {
@@ -393,8 +387,8 @@ class SprintDetails extends Component {
       <DropdownItem
         value={sprintList.name}
         className="pointer text-truncate"
-
-        onClick={(e, i) => { this.handleChange(e.target.value); this.displayDropDownValue(e) }}
+        key={sprintList.id}
+        onClick={(e, i) => {this.handleChange(e.target.value);  this.displayDropDownValue(e)}}
       >
         {sprintList.name}
       </DropdownItem>
@@ -417,22 +411,21 @@ class SprintDetails extends Component {
 
   render() {
     return (
-      <div className="padding0">
-        <div className="col-md-12 col-lg-12 textAlignLeft marginTop4">
+      <div className="">
           <Dropdown
             isOpen={this.state.dropdownOpen}
             toggle={this.toggle}
-            className="custom-secondary_dropdown"
+            className="custom-secondary_dropdown clearfix"
           >
-            <DropdownToggle caret className="text-truncate">
-              {this.state.dropDownValue}
+            <DropdownToggle caret className="text-truncate d-flex justify-content-between">
+            {this.state.dropDownValue}
             </DropdownToggle>
             <DropdownMenu className="custom-dropdown-menu">
+            <div className="custom-dropdown-menu-items clearfix">
               {this.sprintItems(this.state.sprintListSorted)}
+            </div>              
             </DropdownMenu>
           </Dropdown>
-        </div>
-
         <div className="col-md-12 col-lg-12">{this.state.workHours}</div>
         <div className="col-md-12 col-lg-12 padding0">
           {this.state.sprintPieChart}

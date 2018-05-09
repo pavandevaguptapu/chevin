@@ -27,8 +27,8 @@ class PeoplesForm extends Component {
         name: name,
         designation: designation,
         email: email,
-        account: account,
-        projects: projects,
+        account: "account",
+        projects: "projects",
         role: "newCustomerDetailsObject.role"
       })
       .then(response => {

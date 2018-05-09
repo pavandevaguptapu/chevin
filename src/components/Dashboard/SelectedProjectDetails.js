@@ -15,10 +15,9 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
-import TextField from 'material-ui/TextField';
+import TextField from "material-ui/TextField";
 import SelectField from "material-ui/SelectField";
 import MenuItem from "material-ui/MenuItem";
-import {orange500} from "material-ui/styles/colors";
 import {
   Dropdown,
   DropdownToggle,
@@ -27,22 +26,25 @@ import {
 } from "reactstrap";
 
 const styles = {
-    underlineStyle: {
-      color: orange500
-    }
-  };
-  
+  underlineStyle: {
+    borderColor: "rgb(255, 217, 29)"
+  },
+  floatingLabelStyle: {
+    color: "rgb(255, 217, 29)"
+  }
+};
+
 class SelectedProjectDetails extends Component {
-    state = {
-      projectDetails: "",
-      selectedProject: "",
-      userName: "",
-      pwd: "",
-      url: "",
-      dropdownOpen: false,
-      dropDownValue: "Projects",
-      searchTerm: ""
-    };
+  state = {
+    projectDetails: "",
+    selectedProject: "",
+    userName: "",
+    pwd: "",
+    url: "",
+    dropdownOpen: false,
+    dropDownValue: "Projects",
+    searchTerm: ""
+  };
 
   componentWillMount() {
     this.setState({
@@ -101,19 +103,21 @@ class SelectedProjectDetails extends Component {
   };
 
   projectDetailsListarray = (projects, index, value) => {
-    return projects.filter(this.projectSearchFilter(this.state.searchTerm)).map((project, index, value) => (
-      <DropdownItem
-        key={project.projectName}
-        value={project.projectName}
-        className="pointer text-truncate"
-        onClick={(e, i) => {
-          this.selectProject(e.target.value);
-          this.displayDropDownValue(e);
-        }}
-      >
-        {project.projectName}
-      </DropdownItem>
-    ));
+    return projects
+      .filter(this.projectSearchFilter(this.state.searchTerm))
+      .map((project, index, value) => (
+        <DropdownItem
+          key={project.projectName}
+          value={project.projectName}
+          className="pointer text-truncate"
+          onClick={(e, i) => {
+            this.selectProject(e.target.value);
+            this.displayDropDownValue(e);
+          }}
+        >
+          {project.projectName}
+        </DropdownItem>
+      ));
   };
 
   selectProject = (e, ind) => {
@@ -197,13 +201,13 @@ class SelectedProjectDetails extends Component {
     });
   };
 
-  projectSearchFilter= (searchTerm) => {
+  projectSearchFilter = searchTerm => {
     return function(project) {
-        return project.projectName.toLowerCase().includes(searchTerm.toLowerCase());
-    }
-  }
-
-
+      return project.projectName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+    };
+  };
 
   render() {
     return (
@@ -211,12 +215,27 @@ class SelectedProjectDetails extends Component {
         <Dropdown
           isOpen={this.state.dropdownOpen}
           toggle={this.toggle}
-          className="custom-dropdown"
+          className="custom-dropdown clearfix"
         >
-          <DropdownToggle caret className="text-truncate">{this.state.dropDownValue}</DropdownToggle>
-          <DropdownMenu className="custom-dropdown-menu">
-          <TextField onChange={this.projectInputSearch} hintText="Seach Projects" name="projectSearch" underlineFocusStyle={styles.underlineStyle} />
-            {this.projectDetailsListarray(this.state.projectDetails.projects)}
+          <DropdownToggle
+            caret
+            className="text-truncate d-flex justify-content-between"
+          >
+            {this.state.dropDownValue}
+          </DropdownToggle>
+          <DropdownMenu className="custom-dropdown-menu ">
+            <TextField
+              onChange={this.projectInputSearch}
+              floatingLabelText="Projects"
+              name="projectSearch"
+              style={{fontSize:'13px'}}
+              underlineFocusStyle={styles.underlineStyle}
+              underlineStyle={styles.underlineStyle}
+              floatingLabelStyle={styles.floatingLabelStyle}
+              floatingLabelFocusStyle={styles.floatingLabelStyle}
+              fullWidth={true}
+            />
+              {this.projectDetailsListarray(this.state.projectDetails.projects)}
           </DropdownMenu>
         </Dropdown>
       </div>

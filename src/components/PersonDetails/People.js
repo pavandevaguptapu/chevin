@@ -47,7 +47,7 @@ class People extends Component {
   };
 
   getAllPeople = () => {
-    axios.get(myConstClass.peoples + "/user").then(response => {
+    axios.get(myConstClass.peoples + "/usersList").then(response => {
       this.setState({
         peoples: response.data,
         filterPeople: response.data
@@ -68,7 +68,7 @@ class People extends Component {
   newPeopleObj = newPeopleObj => {
     const newPeoplesArray = this.state.peoples;
     newPeoplesArray.push(newPeopleObj);
-    this.setState({ peoples: newPeoplesArray });
+    this.setState({ peoples: newPeoplesArray});
   };
 
   componentDidMount() {
@@ -98,6 +98,7 @@ class People extends Component {
         <div className={`clearfix ${this.state.addBorder}`}>
           {/* <AdminDatabase value={this.state.peoples}> */}
           <PeoplesGridView
+            open={this.openIndividualModal}
             changeView={this.state.changeView}
             changeCardLayout={this.changeCardLayout}
             filterPeople={this.state.filterPeople}

@@ -11,22 +11,21 @@ import {
 } from "reactstrap";
 
 class SelectedProjectBoardDetails extends Component {
-    
-    state = {
+  state = {
     dropdownOpen: false,
-    dropDownValue: "Boards",        
-      selectedProjectBoard: "",
-      projectBoardDetailsListarray: [],
-      userName: "",
-      pwd: "",
-      url: "",
-      selectedBoardSprintsArray: [],
-      epicArray: [],
-      issuesList: "",
-      hintStyle2: {
-        opacity: 1
-      }
-    };
+    dropDownValue: "Boards",
+    selectedProjectBoard: "",
+    projectBoardDetailsListarray: [],
+    userName: "",
+    pwd: "",
+    url: "",
+    selectedBoardSprintsArray: [],
+    epicArray: [],
+    issuesList: "",
+    hintStyle2: {
+      opacity: 1
+    }
+  };
 
   componentWillMount() {
     this.setState({
@@ -48,10 +47,16 @@ class SelectedProjectBoardDetails extends Component {
 
   selectedProjectBoard = (e, index) => {
     // var boardId = this.state.projectBoardDetailsListarray[index].id;
-    
-    let indexOfSelectedAccount = this.state.projectBoardDetailsListarray.map(function(k) {return k.name;}).indexOf(e);
+
+    let indexOfSelectedAccount = this.state.projectBoardDetailsListarray
+      .map(function(k) {
+        return k.name;
+      })
+      .indexOf(e);
     // console.log(indexOfSelectedAccount)
-    let boardId = this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id;
+    let boardId = this.state.projectBoardDetailsListarray[
+      indexOfSelectedAccount
+    ].id;
 
     this.state.hintStyle2 = {
       opacity: 0
@@ -72,7 +77,6 @@ class SelectedProjectBoardDetails extends Component {
         actionMethod: "get"
       })
       .then(response => {
-          console.log(response);
         this.props.onSelectBoard(
           response.data.values,
           this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id,
@@ -200,7 +204,10 @@ class SelectedProjectBoardDetails extends Component {
         key={board.id}
         value={board.name}
         className="pointer text-truncate"
-        onClick={(e, i) => {this.selectedProjectBoard(e.target.value); this.displayDropDownValue(e)}}
+        onClick={(e, i) => {
+          this.selectedProjectBoard(e.target.value);
+          this.displayDropDownValue(e);
+        }}
       >
         {board.name}
       </DropdownItem>
@@ -223,13 +230,18 @@ class SelectedProjectBoardDetails extends Component {
         <Dropdown
           isOpen={this.state.dropdownOpen}
           toggle={this.toggle}
-          className="custom-secondary_dropdown"
+          className="custom-secondary_dropdown clearfix"
         >
-          <DropdownToggle caret className="text-truncate">{this.state.dropDownValue}</DropdownToggle>
+          <DropdownToggle
+            caret
+            className="text-truncate d-flex justify-content-between"
+          >
+            {this.state.dropDownValue}
+          </DropdownToggle>
           <DropdownMenu className="custom-dropdown-menu">
-            {this.projectBoardDetailsListarray(
-              this.state.projectBoardDetailsListarray
-            )}
+              {this.projectBoardDetailsListarray(
+                this.state.projectBoardDetailsListarray
+              )}
           </DropdownMenu>
         </Dropdown>
       </div>

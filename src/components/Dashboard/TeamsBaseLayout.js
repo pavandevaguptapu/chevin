@@ -24,6 +24,7 @@ import image from "../../shared/spring_board_logo.png";
 import Avatar from "material-ui/Avatar";
 import Grid from "material-ui/svg-icons/image/grid-on";
 import Search from "material-ui/svg-icons/action/search";
+import Fullscreen from "material-ui/svg-icons/navigation/fullscreen";
 import FloatingActionButton from "material-ui/FloatingActionButton";
 import ContentAdd from "material-ui/svg-icons/content/add";
 import { Card, CardHeader } from "material-ui";
@@ -50,7 +51,7 @@ const navBarContainer = {
   },
   widgetContainer: {
     backgroundColor: "#3d393a",
-    height: "100%",
+    minHeight: "100vh",
     widgetCard: {
       height: "20rem",
       margin: "5px",
@@ -62,6 +63,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 class TeamsBaseLayout extends Component {
   state = {
+    newClass: "some",
     dropdownOpen: false,
     dropDownValue: "Select Team",
     accounts: [],
@@ -318,7 +320,6 @@ class TeamsBaseLayout extends Component {
   };
 
   selectedBoardforSprintData = (sprintList, boardId, url, username, pwd) => {
-    console.log(sprintList);
     if (sprintList !== undefined) {
       var sprintListArray = sprintList;
       for (var i = 0; i < sprintListArray.length; i++) {
@@ -335,7 +336,7 @@ class TeamsBaseLayout extends Component {
             selectedUrl={url}
             selectedUserName={username}
             selectedUserPwd={pwd}
-            //sonarQubeDetails={this.sonarQubeData}
+            activeSprintName={activeSprintName}
             activeSprint={activeSprint}
             sprintBurnDownChart={this.sprintburndownchart}
             sprintOverviewPiechart={this.sprintoverviewpiechart}
@@ -450,7 +451,8 @@ class TeamsBaseLayout extends Component {
   }
 
   fullscreen = () => {
-    //   alert(1);
+    const currentState = this.state.newClass;
+    this.setState({ newClass: !currentState });
   };
 
   render() {
@@ -476,9 +478,9 @@ class TeamsBaseLayout extends Component {
                   <Dropdown
                     isOpen={this.state.dropdownOpen}
                     toggle={this.toggle}
-                    className="custom-dropdown"
+                    className="custom-dropdown clearfix"
                   >
-                    <DropdownToggle caret className="text-truncate">
+                    <DropdownToggle caret className="text-truncate d-flex justify-content-between">
                       {this.state.dropDownValue}
                     </DropdownToggle>
                     <DropdownMenu className="custom-dropdown-menu">
@@ -526,12 +528,15 @@ class TeamsBaseLayout extends Component {
                   style={navBarContainer.widgetContainer.widgetCard}
                   key="1"
                   data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                  id="myDiv"
+                  className={this.state.newClass ? "minScreen" : "fullscreen"}
                 >
-                  <CardHeader
-                    title="Team Details"
-                    className="custom_dashboard-header"
-                  />
-                  {/* <button onClick={this.fullscreen}>s</button> */}
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Team Details" className="p-0" />
+                    <div>
+                      <Fullscreen onClick={this.fullscreen} />
+                    </div>
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforpeople}
                     {this.state.emptyPeoplesArray}
@@ -543,66 +548,65 @@ class TeamsBaseLayout extends Component {
                   key="2"
                   data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Epic Overview"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Epic Overview" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforEpicDetails}
                     {this.state.emptyEpicsArray}
                     {this.state.issuesListArray}
                   </div>
                 </Card>
-                <Card style={navBarContainer.widgetContainer.widgetCard}
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
                   key="4"
-                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Epic Burndown Chart"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Epic Burndown Chart" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforEpicOverviewburndownchart}
                     {this.state.emptyEpicsArray}
                     {this.state.epicBurndownChart}
                   </div>
                 </Card>
-                <Card style={navBarContainer.widgetContainer.widgetCard}
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
                   key="5"
-                  data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                  data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Sprint BurnUp Chart"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Sprint BurnUp Chart" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsprintburndownchart}
                     {this.state.emptySprintArray}
                     {this.state.workHours}
                   </div>
                 </Card>
-                <Card style={navBarContainer.widgetContainer.widgetCard}
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
                   key="6"
-                  data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                  data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Sprint Overview"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Sprint Overview" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsprintoverviewpiechart}
                     {this.state.emptySprintArray}
                     {this.state.sprintPieChart}
                   </div>
                 </Card>
-                <Card style={navBarContainer.widgetContainer.widgetCard}
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
                   key="7"
-                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Quality Overview"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Quality Overview" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsonar}
                     {this.state.sonarQubedata}

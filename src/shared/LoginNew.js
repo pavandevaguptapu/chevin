@@ -12,28 +12,40 @@ const navBarContainer = {
     backgroundColor: "#ffd91d"
   },
   loginCardContainer: {
-      backgroundColor: 'rgb(0,0,0,0.8)',
-      loginCard: {
-            borderRadius: '5px',
-            height: '20rem',
-            width: '35rem',
-            backgroundColor: 'rgb(0,0,0,0.2)'
-      },
+    backgroundColor: "rgb(0,0,0,0.8)",
+    loginCard: {
+      borderRadius: "5px",
+      height: "20rem",
+      width: "35rem",
+      backgroundColor: "rgb(0,0,0,0.2)"
+    },
     loginCardTitle: {
-        color: "#ffd91d",
-        fontSize:'24px'
+      color: "#ffd91d",
+      fontSize: "24px"
     },
     loginCardSubTitle: {
-        fontSize:'11px',
-        color: '#fff'
+      fontSize: "11px",
+      color: "#fff"
     }
+  },
+  floatingLabelStyle: {
+    color: "#fff"
+  },
+  underlineStyle: {
+    borderColor: "#fff"
   }
 };
 
 class BaseLayout extends Component {
   render() {
     return (
-      <div style={{height:'100vh', overflow:'hidden' , backgroundImage: `url(${Background})`}}>
+      <div
+        style={{
+          height: "100vh",
+          overflow: "hidden",
+          backgroundImage: `url(${Background})`
+        }}
+      >
         <nav
           className="navbar navbar-light navbar-expand-lg align-items-end p-3"
           style={navBarContainer.navBarbg}
@@ -48,14 +60,24 @@ class BaseLayout extends Component {
             />
           </a>
         </nav>
-        <div className="d-flex h-100" style={navBarContainer.loginCardContainer}>
+        <div
+          className="d-flex h-100"
+          style={navBarContainer.loginCardContainer}
+        >
           <Card
             className="m-auto px-5 py-3"
             style={navBarContainer.loginCardContainer.loginCard}
           >
             <div>
-                <span style={navBarContainer.loginCardContainer.loginCardTitle}>Login</span><br/>
-                <span style={navBarContainer.loginCardContainer.loginCardSubTitle}>With your email ID</span>
+              <span style={navBarContainer.loginCardContainer.loginCardTitle}>
+                Login
+              </span>
+              <br />
+              <span
+                style={navBarContainer.loginCardContainer.loginCardSubTitle}
+              >
+                With your email ID
+              </span>
             </div>
             <form>
               <div className="col-lg-12">
@@ -64,15 +86,25 @@ class BaseLayout extends Component {
                   name="userName"
                   fullWidth={true}
                   floatingLabelText="E-mail"
+                  floatingLabelStyle={navBarContainer.floatingLabelStyle}
+                  underlineStyle={navBarContainer.underlineStyle}
+                  underlineFocusStyle={navBarContainer.underlineStyle}
                 />
-                <TextField hintText="password" floatingLabelText="Password" fullWidth={true} />
+                <TextField
+                  hintText="password"
+                  floatingLabelText="Password"
+                  fullWidth={true}
+                  floatingLabelStyle={navBarContainer.floatingLabelStyle}
+                  underlineStyle={navBarContainer.underlineStyle}
+                  underlineFocusStyle={navBarContainer.underlineStyle}
+                />
               </div>
 
               <div className="text-center">
                 <RaisedButton
                   label="Login"
                   primary={true}
-                  style={{marginRight:'5px'}}
+                  style={{ marginRight: "5px" }}
                 />
                 <RaisedButton label="Cancel" secondary={true} />
               </div>

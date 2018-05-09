@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "./App.css";
 import TextField from "material-ui/TextField";
 import RaisedButton from "material-ui/RaisedButton";
-import { RadioButton, RadioButtonGroup } from "material-ui/RadioButton";
 
 const style = {
   marginRight: 12
@@ -23,12 +22,6 @@ class Login extends Component {
   handleChange(e) {
     this.setState({ [e.target.name]: e.target.value });
   }
-  getCheckedValue = (e) => {
-      this.setState({
-          [e.target.name]: e.target.value
-      })
-      console.log(e.target.value)
-  }
 
   handleClick(username) {
     this.props.history.push({
@@ -44,18 +37,6 @@ class Login extends Component {
           <div className="row">
             <div className="col-md-12 loginHeader">
               <h1>Login</h1>
-              <div onChange={this.getCheckedValue}> 
-              <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
-                <RadioButton
-                  value="0"
-                  label="Admin"
-                />
-                <RadioButton
-                  value="1"
-                  label="DashBoard"
-                />                
-              </RadioButtonGroup>
-              </div>
             </div>
           </div>
           <div className="row">

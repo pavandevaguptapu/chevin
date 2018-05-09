@@ -718,14 +718,14 @@ input[type="text"] {
   background: none !important;
   border: none !important;
   box-shadow: none !important;
-  font-size: 15px;
+  font-size: 14px;
 }
 .custom-dropdown .dropdown-toggle::after,
 .custom-secondary_dropdown .dropdown-toggle::after {
   margin-top: 0.3em !important;
   font-size: 20px;
   color: #6f6f6f !important;
-  float: right;
+  /* float: right; */
 }
 .custom-secondary_dropdown .dropdown-toggle::after,
 .custom-dropdown-menu {
@@ -733,8 +733,14 @@ input[type="text"] {
 }
 .custom-dropdown-menu {
   background-color: #3d3e44 !important;
-  transform: translate3d(0, 34px, 0px) !important;
+  /* transform: translate3d(0, 34px, 0px) !important; */
 }
+.custom-dropdown-menu-items {
+    height: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .custom-dropdown-menu::before {
   bottom: 100%;
   right: 6%;
@@ -768,21 +774,20 @@ input[type="text"] {
 .custom_dashboard-header span {
   font-size: 21px !important;
   color: #44403f !important;
-  font-weight: 400;
+  font-weight: 300;
+  text-transform: capitalize;
 }
 
 /* For Dashaboard Nav bar and login */
 .navBarContainer .navBarbg {
-    background-color: #ffd91d !important;
+  background-color: #ffd91d !important;
 }
 
 #myDiv.fullscreen{
-    z-index: 9999; 
-    width: 100%; 
-    height: 100%; 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
+    z-index: 9999 !important;
+    width: 100% !important;
+    height: 100% !important;
+    top: 0 !important;
+    left: 0em !important;
+    margin: 0 auto !important;
  }
-
-#myDiv{background:#cc0000; width:500px; height:400px;}
