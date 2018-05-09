@@ -535,7 +535,7 @@ class TeamsBaseLayout extends Component {
                   className={this.state.newClass ? "minScreen" : "fullscreen"}                  
                 >
                   <div className="d-flex custom_dashboard-header justify-content-between">
-                    <CardHeader title="Sprint BurnUp Chart" className="p-0" />
+                    <CardHeader title="Sprint Burn Chart" className="p-0" />
                     <div>
                       <Fullscreen onClick={this.fullscreen} />
                     </div>
