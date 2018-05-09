@@ -265,9 +265,9 @@ class TeamsBaseLayout extends Component {
         ),
         peoplesArray: <PeoplesList peoplesList={peopleList} />,
         loaderforpeople: "",
-        sonarQubedata: <SonarQubeData/>,
+        sonarQubedata: <SonarQubeData />,
         loaderforsonar: "",
-         jenkinsData:<Jenkins/>
+        jenkinsData: <Jenkins />
       });
     } else if (
       peopleList == undefined ||
@@ -293,7 +293,7 @@ class TeamsBaseLayout extends Component {
         loaderforsonar: "",
         //peoplesArray:"",
         emptyPeoplesArray: "No members to dispaly",
-         jenkinsData:<Jenkins/>
+        jenkinsData: <Jenkins />
       });
     }
   };
@@ -302,7 +302,7 @@ class TeamsBaseLayout extends Component {
     this.setState({ sonarQubeData: <SonarQubeData /> });
   };
 
-  sprintburndownchart = (timespentArray) => {
+  sprintburndownchart = timespentArray => {
     this.setState({
       workHours: <Hourschart data={timespentArray} />,
       loaderforsprintburndownchart: "",
@@ -480,7 +480,10 @@ class TeamsBaseLayout extends Component {
                     toggle={this.toggle}
                     className="custom-dropdown clearfix"
                   >
-                    <DropdownToggle caret className="text-truncate d-flex justify-content-between">
+                    <DropdownToggle
+                      caret
+                      className="text-truncate d-flex justify-content-between"
+                    >
                       {this.state.dropDownValue}
                     </DropdownToggle>
                     <DropdownMenu className="custom-dropdown-menu">
@@ -526,58 +529,16 @@ class TeamsBaseLayout extends Component {
               >
                 <Card
                   style={navBarContainer.widgetContainer.widgetCard}
-                  key="1"
-                  data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
-                  id="myDiv"
-                  className={this.state.newClass ? "minScreen" : "fullscreen"}
-                >
-                  <div className="d-flex custom_dashboard-header justify-content-between">
-                    <CardHeader title="Team Details" className="p-0" />
-                    <div>
-                      <Fullscreen onClick={this.fullscreen} />
-                    </div>
-                  </div>
-                  <div className="col-lg-12 text-center">
-                    {this.state.loaderforpeople}
-                    {this.state.emptyPeoplesArray}
-                    {this.state.peoplesArray}
-                  </div>
-                </Card>
-                <Card
-                  style={navBarContainer.widgetContainer.widgetCard}
-                  key="2"
-                  data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
-                >
-                  <div className="d-flex custom_dashboard-header justify-content-between">
-                    <CardHeader title="Epic Overview" className="p-0" />
-                  </div>
-                  <div className="col-lg-12 text-center">
-                    {this.state.loaderforEpicDetails}
-                    {this.state.emptyEpicsArray}
-                    {this.state.issuesListArray}
-                  </div>
-                </Card>
-                <Card
-                  style={navBarContainer.widgetContainer.widgetCard}
-                  key="4"
-                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
-                >
-                  <div className="d-flex custom_dashboard-header justify-content-between">
-                    <CardHeader title="Epic Burndown Chart" className="p-0" />
-                  </div>
-                  <div className="col-lg-12 text-center">
-                    {this.state.loaderforEpicOverviewburndownchart}
-                    {this.state.emptyEpicsArray}
-                    {this.state.epicBurndownChart}
-                  </div>
-                </Card>
-                <Card
-                  style={navBarContainer.widgetContainer.widgetCard}
                   key="5"
                   data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                  id="myDiv"
+                  className={this.state.newClass ? "minScreen" : "fullscreen"}                  
                 >
                   <div className="d-flex custom_dashboard-header justify-content-between">
                     <CardHeader title="Sprint BurnUp Chart" className="p-0" />
+                    <div>
+                      <Fullscreen onClick={this.fullscreen} />
+                    </div>
                   </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsprintburndownchart}
@@ -599,6 +560,7 @@ class TeamsBaseLayout extends Component {
                     {this.state.sprintPieChart}
                   </div>
                 </Card>
+
                 <Card
                   style={navBarContainer.widgetContainer.widgetCard}
                   key="7"
@@ -607,19 +569,91 @@ class TeamsBaseLayout extends Component {
                   <div className="d-flex custom_dashboard-header justify-content-between">
                     <CardHeader title="Quality Overview" className="p-0" />
                   </div>
+                  <div style={{ padding: "0.5rem" }}>
+                    <Card
+                      style={{
+                        padding: "0.7rem",
+                        fontSize: "14px",
+                        fontWeight: "300"
+                      }}
+                    >
+                      <div className="d-flex justify-content-between">
+                        <span>Quality Gate</span>
+                        <span>
+                          Java Profile{" "}
+                          <span
+                            className="text-danger"
+                            style={{
+                              border: "1px solid",
+                              padding: "3px 20px",
+                              borderRadius: "11px"
+                            }}
+                          >
+                            Failed
+                          </span>
+                        </span>
+                      </div>
+                    </Card>
+                  </div>
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsonar}
                     {this.state.sonarQubedata}
                   </div>
                 </Card>
-                <Card style={navBarContainer.widgetContainer.widgetCard}
-                  key="8"
-                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
+                  key="4"
+                  data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <CardHeader
-                    title="Jenkins Build Status"
-                    className="custom_dashboard-header"
-                  />
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Epic Burndown Chart" className="p-0" />
+                  </div>
+                  <div className="col-lg-12 text-center">
+                    {this.state.loaderforEpicOverviewburndownchart}
+                    {this.state.emptyEpicsArray}
+                    {this.state.epicBurndownChart}
+                  </div>
+                </Card>
+
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
+                  key="2"
+                  data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                >
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Epic Overview" className="p-0" />
+                  </div>
+                  <div className="col-lg-12 text-center">
+                    {this.state.loaderforEpicDetails}
+                    {this.state.emptyEpicsArray}
+                    {this.state.issuesListArray}
+                  </div>
+                </Card>
+
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
+                  key="1"
+                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                >
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Team Details" className="p-0" />
+                  </div>
+                  <div className="col-lg-12 text-center">
+                    {this.state.loaderforpeople}
+                    {this.state.emptyPeoplesArray}
+                    {this.state.peoplesArray}
+                  </div>
+                </Card>
+
+                <Card
+                  style={navBarContainer.widgetContainer.widgetCard}
+                  key="8"
+                  data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                >
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Jenkins Build Status" className="p-0" />
+                  </div>
                   <div className="col-lg-12 text-center">
                     {/* {this.state.loaderforsonar} */}
                      {this.state.jenkinsData} 

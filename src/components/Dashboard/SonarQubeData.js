@@ -1,9 +1,26 @@
 import React, { Component } from "react";
-
+import { Card, CardHeader } from "material-ui";
+import { kFormatter } from '../../shared/Helpers';
 import axios from "axios";
 
+const qualityContainerCards = {
+    qualityCardDetails:{
+        width:'7rem', 
+        height:'6rem', 
+        fontWeight:'300',
+        margin: '4px 0',
+        qualityCardBugNum : {
+            fontSize:'3em', 
+            color:'#2a769c', 
+            borderBottom:'1px solid #2a769c',
+        },
+        qualityCardText:{
+            fontSize:'13px'
+        }        
+    }
+}
+
 class SonarQubeData extends Component {
-  _;
   constructor(props) {
     super(props);
     this.state = {
@@ -79,75 +96,60 @@ class SonarQubeData extends Component {
         });
 
         //  this.props.sonarQubeDetails(this.state.sonarQubeData);
-      });
+      });   
   }
 
   render() {
     return (
-      <div className="col-md-12 padding0">
-        {/* <div className="col-md-12 col-lg-12 marginB08 textAlignCenter ">
-                      <h5>Quality Overview</h5>
-                  </div> */}
-
-        <div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
-          <div className="col-md-3 col-lg-4 textAlignCenter">
-            Bugs
-            <div className="textAlignCenter">
-              {this.state.sonarQubeData.bugs}
-            </div>
-          </div>
-          <div className="col-md-4 col-lg-4 textAlignCenter">
-            {" "}
-            Vulnerabilities
-            <div className="textAlignCenter">
-              {this.state.sonarQubeData.vulnerabilities}
-            </div>
-          </div>
-          <div className="col-md-5 col-lg-4 textAlignCenter">
-            Code Smells
-            <div className="textAlignCenter">
-              {this.state.sonarQubeData.codesmells}
-            </div>
-          </div>
+      <div className="d-flex justify-content-between flex-row flex-wrap">
+        <div>
+            <Card style={qualityContainerCards.qualityCardDetails}  className="d-flex justify-content-center align-items-center">
+                <span className="text-danger" style={qualityContainerCards.qualityCardDetails.qualityCardBugNum}>{kFormatter(this.state.sonarQubeData.bugs)}</span>
+                <div style={qualityContainerCards.qualityCardDetails.qualityCardText}>Bugs</div>
+            </Card>
         </div>
-
-        <div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
-          <div className="col-md-3 col-lg-4 textAlignCenter">
-            {" "}
-            Debt
-            <div className="textAlignCenter">{}</div>
-          </div>
-          <div className="col-md-4 col-lg-4 textAlignCenter">
-            Duplications
-            <div className="textAlignCenter">
-              {this.state.sonarQubeData.duplications}
-            </div>
-          </div>
-          <div className="col-md-5 col-lg-4 textAlignCenter">
-            {" "}
-            Duplicated Blocks
-            <div className="textAlignCenter">
-              {this.state.sonarQubeData.duplicatedBlocks}
-            </div>
-          </div>
+        <div>
+            <Card style={qualityContainerCards.qualityCardDetails}  className="d-flex justify-content-center align-items-center">
+                <span style={qualityContainerCards.qualityCardDetails.qualityCardBugNum}>{kFormatter(this.state.sonarQubeData.vulnerabilities)}</span>
+                <div style={qualityContainerCards.qualityCardDetails.qualityCardText}>Vulnerabilities</div>
+            </Card>
+        </div>   
+        <div>
+            <Card style={qualityContainerCards.qualityCardDetails}  className="d-flex justify-content-center align-items-center">
+                <span style={qualityContainerCards.qualityCardDetails.qualityCardBugNum}>{kFormatter(this.state.sonarQubeData.codesmells)}</span>
+                <div style={qualityContainerCards.qualityCardDetails.qualityCardText}>Code Smells</div>
+            </Card>
         </div>
-
-        <div className="col-md-12 col-lg-12 displayInline  marginB08 borderRadius">
-          <div className="col-md-3 col-lg-4 textAlignCenter">
-            {" "}
-            Lines of Code
-            <div className="textAlignCenter">
-              {this.state.sonarQubeData.linesofcode}
-            </div>
-          </div>
-
-          <div className="col-md-4 col-lg-4 textAlignCenter wordwrap">
-            Script Lines
-            <div className="textAlignCenter">
-              {this.state.sonarQubeData.script}
-            </div>
-          </div>
-        </div>
+        <div>
+            <Card style={qualityContainerCards.qualityCardDetails}  className="d-flex justify-content-center align-items-center">
+                <span style={qualityContainerCards.qualityCardDetails.qualityCardBugNum}>{kFormatter(this.state.sonarQubeData.codesmells)}</span>
+                <div style={qualityContainerCards.qualityCardDetails.qualityCardText}>Debt</div>
+            </Card>
+        </div>   
+        <div>
+            <Card style={qualityContainerCards.qualityCardDetails}  className="d-flex justify-content-center align-items-center">
+                <span style={qualityContainerCards.qualityCardDetails.qualityCardBugNum}>{kFormatter(this.state.sonarQubeData.duplications)}</span>
+                <div style={qualityContainerCards.qualityCardDetails.qualityCardText}>Duplications</div>
+            </Card>
+        </div>   
+        <div>
+            <Card style={qualityContainerCards.qualityCardDetails}  className="d-flex justify-content-center align-items-center">
+                <span style={qualityContainerCards.qualityCardDetails.qualityCardBugNum}>{kFormatter(this.state.sonarQubeData.duplicatedBlocks)}</span>
+                <div style={qualityContainerCards.qualityCardDetails.qualityCardText}>Duplicated Blocks</div>
+            </Card>
+        </div>   
+        <div>
+            <Card style={qualityContainerCards.qualityCardDetails}  className="d-flex justify-content-center align-items-center">
+                <span style={qualityContainerCards.qualityCardDetails.qualityCardBugNum}>{kFormatter(this.state.sonarQubeData.linesofcode)}</span>
+                <div style={qualityContainerCards.qualityCardDetails.qualityCardText}>Lines of Code</div>
+            </Card>
+        </div> 
+        {/* <div className="text-truncate">
+            <Card style={qualityContainerCards.qualityCardDetails}  className="d-flex justify-content-center align-items-center">
+                <span  style={qualityContainerCards.qualityCardDetails.qualityCardBugNum}>{kFormatter(this.state.sonarQubeData.script)}</span>
+                <div style={qualityContainerCards.qualityCardDetails.qualityCardText}>Script Lines</div>
+            </Card>
+        </div> */}
       </div>
     );
   }
