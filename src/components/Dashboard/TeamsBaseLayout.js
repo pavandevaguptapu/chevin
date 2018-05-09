@@ -636,7 +636,7 @@ class TeamsBaseLayout extends Component {
                   key="1"
                   data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <div className="d-flex custom_dashboard-header justify-content-between">
+                  <div className="d-flex custom_dashboard-header justify-content-between ">
                     <CardHeader title="Team Details" className="p-0" />
                   </div>
                   <div className="col-lg-12 text-center">
