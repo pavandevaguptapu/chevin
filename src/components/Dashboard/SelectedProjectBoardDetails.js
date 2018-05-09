@@ -92,21 +92,21 @@ class SelectedProjectBoardDetails extends Component {
 
     axios
       .post(
-        `sbtpgateway/tp/rest/esccors/generic/`,
-        {
-          resourceURL:
-            this.state.url +
-            "/rest/agile/1.0/board/" +
-            this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id +
-            "/epic",
-          userName: this.state.userName,
-          password: this.state.pwd,
-          actionMethod: "get"
-        },
-        {
-          boardId: this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id,
-          hostedUrl: hostedURL
-        }
+      `sbtpgateway/tp/rest/esccors/generic/`,
+      {
+        resourceURL:
+        this.state.url +
+        "/rest/agile/1.0/board/" +
+        this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id +
+        "/epic",
+        userName: this.state.userName,
+        password: this.state.pwd,
+        actionMethod: "get"
+      },
+      {
+        boardId: this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id,
+        hostedUrl: hostedURL
+      }
       )
       .then(response => {
         if (JSON.stringify(response.data.values) == JSON.stringify([])) {
@@ -125,7 +125,7 @@ class SelectedProjectBoardDetails extends Component {
           );
         } else {
           setTimeout(
-            function() {
+            function () {
               var listOfEpics = response.data.values;
               var boardId = response.config.boardId;
               var resourceURL = response.config.hostedUrl;
@@ -147,25 +147,25 @@ class SelectedProjectBoardDetails extends Component {
                 var hostedURL = this.state.url;
                 axios
                   .post(
-                    `sbtpgateway/tp/rest/esccors/generic/`,
-                    {
-                      resourceURL:
-                        this.state.url +
-                        "/rest/agile/1.0/board/" +
-                        this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id +
-                        "/epic/" +
-                        response.data.values[i].id +
-                        "/issue",
-                      userName: this.state.userName,
-                      password: this.state.pwd,
-                      actionMethod: "get"
-                    },
-                    {
-                      epicName: response.data.values[i].name,
-                      index: i,
-                      length: response.data.values.length,
-                      hostedUrl: hostedURL
-                    }
+                  `sbtpgateway/tp/rest/esccors/generic/`,
+                  {
+                    resourceURL:
+                    this.state.url +
+                    "/rest/agile/1.0/board/" +
+                    this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id +
+                    "/epic/" +
+                    response.data.values[i].id +
+                    "/issue",
+                    userName: this.state.userName,
+                    password: this.state.pwd,
+                    actionMethod: "get"
+                  },
+                  {
+                    epicName: response.data.values[i].name,
+                    index: i,
+                    length: response.data.values.length,
+                    hostedUrl: hostedURL
+                  }
                   )
                   .then(response => {
                     var resourceURL = response.config.hostedUrl;

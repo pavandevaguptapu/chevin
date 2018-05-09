@@ -221,10 +221,10 @@ class Jumpstart extends Component {
                                                     <TableRowColumn>{process.name}</TableRowColumn>
                                                     <TableRowColumn>{process.processID}</TableRowColumn>
                                                     <TableRowColumn style={{ paddingLeft: "0px" }} >
-                                                        <IconButton tooltip="edit" touch={true} tooltipPosition="top-left" onClick={(e) => this.editProcess(e, "edit", index)}>
+                                                        <IconButton  touch={true} onClick={(e) => this.editProcess(e, "edit", index)}>
                                                             <ContentEdit />
                                                         </IconButton>
-                                                        <IconButton tooltip="delete" touch={true} tooltipPosition="bottom-right" onClick={(e) => this.deleteProcess(e, "disable", index)}>
+                                                        <IconButton  touch={true}  onClick={(e) => this.deleteProcess(e, "disable", index)}>
                                                             <ContentClear />
                                                         </IconButton>
                                                     </TableRowColumn>

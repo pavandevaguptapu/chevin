@@ -26,8 +26,9 @@ class Hourschart extends Component {
               <YAxis />
               <CartesianGrid strokeDasharray="1 1" />
               <Legend />
-              <Line type="stepAfter" dataKey="hr" stroke="#82ca9d" />
-              <Line type="monotone" dataKey="y" stroke="#82ca9d" />
+              <Line type="stepAfter" dataKey="hr" stroke="green" />
+              <Line type="stepAfter" dataKey="hr1" stroke="red" />
+              {/* <Line type="monotone" dataKey="y" stroke="#82ca9d" /> */}
             </LineChart>
           </ResponsiveContainer>
         </div>

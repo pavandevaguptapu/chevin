@@ -30,6 +30,7 @@ import ContentEdit from 'material-ui/svg-icons/editor/mode-edit';
 import { myConstClass } from './constants.js';
 import { Step, Stepper, StepLabel,StepButton } from 'material-ui/Stepper';
 import ArrowForwardIcon from 'material-ui/svg-icons/navigation/arrow-forward';
+import IconButton from 'material-ui/IconButton';
 
 var dcopy = require('deep-copy')
 
@@ -468,6 +469,7 @@ class AccountDetails extends React.Component {
             projectsArray: [],
             selectedProjectName: '',
             newPeopleObj:{},
+            editProjectDetails:{},
             processArray: [
                 { "name": "Project Management", "processID": 4, "tools": [{ "name": "jira" }] },
                 { "name": "Quality Management", "processID": 5, "tools": [{ "name": "SonarQube" }, { "name": "jira" }] },
@@ -602,7 +604,7 @@ class AccountDetails extends React.Component {
     }
 
     createProject = () => {
-        this.setState({ createProjectModel: true })
+        this.setState({ createProjectModal: true })
     }
 
     addProject(newProjectObject) {
@@ -632,7 +634,7 @@ class AccountDetails extends React.Component {
             .then(response => {
 
                 this.props.onSelectProject(response.data);
-                this.setState({ currentAccount: response.data, createProjectModel: false, newProjectDetails: {} })
+                this.setState({ currentAccount: response.data, createProjectModal: false, newProjectDetails: {} })
                 // this.state.accountsArray = this.state.accountsArray.concat(response.data)
                 // this.setState({ createAccountModal: false, newCustomerDetails: {} });
 
@@ -642,8 +644,8 @@ class AccountDetails extends React.Component {
 
     }
 
-    closeCreateProjectModel() {
-        this.setState({ createProjectModel: false, newCustomerDetails: {} })
+    closecreateProjectModal() {
+        this.setState({ createProjectModal: false, newCustomerDetails: {} })
     }
 
     configJumpStart(projectIndex) {
@@ -789,6 +791,7 @@ class AccountDetails extends React.Component {
     
       
     }
+   
     componentWillMount() {
         console.log(this.props.AccountDataArray)
 
@@ -879,7 +882,6 @@ class AccountDetails extends React.Component {
 
     }
 
-
     selectTeam = (event, selectedTeamIndex, value) => {
 
         // for empty projects
@@ -940,9 +942,7 @@ class AccountDetails extends React.Component {
             selectedTeamName: value,
             selectedTeamIndex: selectedTeamIndex,
             selectedProjectIndex: 0,
-            TeamDetailsArrayForEditing: currentAccountArray1,
-
-
+            TeamDetailsArrayForEditing: currentAccountArray1
         })
         this.selectingMember("event", "existingMember")
 
@@ -1114,11 +1114,11 @@ class AccountDetails extends React.Component {
         ));
     }
     selectedProject = (selectedProjectIndex) => {
-           console.log(selectedProjectIndex)
+     
         // var currentAccount = dcopy(this.props.AccountDataArray)
         var currentAccount = this.state.currentAccount
 
-        console.log(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName)
+        
         var selectedProjectName=currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
         this. selectedProjectfromDropDown("event", selectedProjectIndex,selectedProjectName)
 
@@ -1147,7 +1147,7 @@ class AccountDetails extends React.Component {
             // var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].tools)
             // this.setState({ isTooldata: true, noTool: false, listofToolsarray: jumpstartListofTools, })
         }
-        console.log(currentAccount)
+
         this.setState({
             currentAccount: currentAccount,
             selectedProjectIndex: selectedProjectIndex,
@@ -1184,7 +1184,7 @@ class AccountDetails extends React.Component {
 
     }
     createProject() {
-        this.setState({ createProjectModel: true,newProjectDetails:{}})
+        this.setState({ createProjectModal: true,newProjectDetails:{}})
     }
 
     addNewProject = (newProjectObject) => {
@@ -1211,7 +1211,7 @@ class AccountDetails extends React.Component {
                 updatedObj.splice(oldObj, 1)
                 updatedObj.splice(oldObj, 0, response.data)
                 var updatedTeamName = updatedObj[this.state.selectedTeamIndex].customerName
-                this.setState({ currentAccount: updatedObj, selectedTeamName: updatedTeamName, createProjectModel: false, newProjectDetails: {} });
+                this.setState({ currentAccount: updatedObj, selectedTeamName: updatedTeamName, createProjectModal: false, newProjectDetails: {} });
                 this.selectedProject(updatedObj[this.state.selectedTeamIndex].projects.length - 1)
             })
     }
@@ -1231,6 +1231,54 @@ class AccountDetails extends React.Component {
             }
 
         )
+    }
+
+    editProjectModal=(e,actionType,projectIndex)=>{  
+        var tempArray = dcopy(this.state.editProjectDetails)
+         tempArray.projectName=this.state.currentAccount[this.state.selectedTeamIndex].projects[projectIndex].projectName
+
+        this.setState({editProjectModal:true,editProjectDetails:tempArray,selectedProjectIndex:projectIndex})
+    }
+    closeEditProjectModal=()=>{
+        this.setState({editProjectModal:false})
+    }
+    editProjectDetails=(e)=>{
+        var tempArray=this.state.editProjectDetails
+        tempArray[e.target.name]=e.target.value
+        this.setState({editProjectDetails:tempArray})
+    }
+    updateProjectDetails=(updatedProjectObj)=>{
+        var updatedProjectName=updatedProjectObj.projectName
+        var updatedProjectObj=this.state.currentAccount
+        updatedProjectObj[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].projectName=updatedProjectName
+       
+         var updatedObj =updatedProjectObj[this.state.selectedTeamIndex]
+
+        axios.put(myConstClass.nodeAppUrl + `/accounts/` + updatedObj._id,
+        {
+            customerName: updatedObj.customerName,
+            startDate:updatedObj.startDate,
+            endDate:updatedObj.endDate,
+            engagementModel: updatedObj.engagementModel,
+            pricingModel: updatedObj.pricingModel,
+            seniorSupplier: 'asewr',
+            projectManager: 'jg',
+            projects: updatedObj.projects,
+            people: [],
+            customerLogo: updatedObj.customerLogo,
+            status: 'Active'
+        })
+        .then(response => {        
+                console.log(response.data)
+                var updatedObj = this.state.currentAccount
+                var oldObj = this.state.currentAccount[this.state.selectedTeamIndex]
+                updatedObj.splice(oldObj, 1)
+                updatedObj.splice(oldObj, 0, response.data)
+                var updatedTeamName = updatedObj[this.state.selectedTeamIndex].customerName
+                 this.setState({selectedTeamName: updatedTeamName, editProjectModal: false});
+                this.selectedProject(this.state.selectedProjectIndex)
+                    })
+
     }
     selectedPeople = () => {
        
@@ -1272,7 +1320,7 @@ class AccountDetails extends React.Component {
 
         })
 
- }
+        }
     addPeople = (newPeopleObj) => {
         var tempAccountsArray = dcopy(this.state.currentAccount)
         if (tempAccountsArray[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].people === undefined) {
@@ -1361,7 +1409,7 @@ class AccountDetails extends React.Component {
         selectedToolName[0].tools[0].toolName= this.state.editableProcessArray[selectedProcessIndex].tools[0].name   
 
         console.log(selectedToolName)
-         this.setState({stepIndex:selectedProcessIndex,toolsInfo:true,jumpStartObj:selectedToolName})
+         this.setState({stepIndex:selectedProcessIndex,toolsInfo:true,jumpStartObj:selectedToolName,selectedProcess:selectedProcessIndex})
 
     }
     handleNext = (e,ind) => {
@@ -1509,7 +1557,7 @@ class AccountDetails extends React.Component {
                                             </div> */}
 
                                         </div>
-                                        <div className="col-md-2 col-lg-2 displayInline m-2 p-0">
+                                        <div className="col-md-3 col-lg-3 displayInline m-2 p-0">
                                             <div className="textAlignCenter pr-2">
                                                 <ActionDateRange />
                                                 <Subheader className="p-1" style={{ fontSize: '12px', lineHeight: "4px" }}>Start Date</Subheader>
@@ -1533,7 +1581,7 @@ class AccountDetails extends React.Component {
                                                 {this.props.AccountDataArray[this.props.AccountDataArray.length - 1].startDate}
                                             </div> */}
                                         </div>
-                                        <div className="col-md-2 col-lg-2 displayInline m-2 p-0">
+                                        <div className="col-md-3 col-lg-3 displayInline m-2 p-0">
                                             <div className="textAlignCenter pr-2">
                                                 <ActionDateRange />
                                                 <Subheader className="p-1" style={{ fontSize: '12px', lineHeight: "4px" }}>End Date</Subheader>
@@ -1590,7 +1638,7 @@ class AccountDetails extends React.Component {
                                 <div style={{ border: "1px solid rgb(238, 238, 238)" }} >
                                     <Table onCellClick={this.selectedProject}>
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
-                                            <TableRow >
+                                            <TableRow>
                                                 <TableHeaderColumn>Project Name</TableHeaderColumn>
                                                 <TableHeaderColumn>Settings</TableHeaderColumn>
                                                 <TableHeaderColumn>
@@ -1602,7 +1650,6 @@ class AccountDetails extends React.Component {
                                                     >
                                                         <ContentAdd />
                                                     </FloatingActionButton>
-
                                                 </TableHeaderColumn>
                                             </TableRow>
                                         </TableHeader>
@@ -1611,23 +1658,15 @@ class AccountDetails extends React.Component {
                                             {this.state.projectsArray.map((project, index) => (
                                                 <TableRow className={[index === this.state.selectedProjectIndex ? 'selectedItem' : ''].join(' ')} key={index} style={{ border: '1px solid rgb(224, 224, 224)' }}>
                                                     <TableRowColumn>{project.projectName}</TableRowColumn>
-                                                    <TableRowColumn>
-                                                        {/* <Button  
-                                                            mini={true} 
-                                                            iconStyle={editProjectButton} 
-                                                            onClick={() => this.createProject()}
-                                                        >
+                                                    <TableRowColumn style={{ paddingLeft: "0px" }}>                                                   
+                                                        <IconButton  touch={true}  onClick={(e) => this.editProjectModal(e, "edit", index)}>
                                                             <ContentEdit />
-                                                        </Button > */}
-                                                        {/* <Button  
-                                                            mini={true} 
-                                                            secondary={true} 
-                                                            iconStyle={deleteProjectButton} 
-                                                            onClick={() => this.createProject()}
-                                                        >
-                                                            <DeleteIcon />
-                                                        </Button > */}
+                                                        </IconButton>
+                                                        {/* <IconButton  touch={true}  onClick={(e) => this.deleteProcess(e, "disable", index)}>
+                                                            <ContentClear />
+                                                        </IconButton> */}
                                                     </TableRowColumn>
+                                                    <TableRowColumn></TableRowColumn>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
@@ -1673,8 +1712,8 @@ class AccountDetails extends React.Component {
                                         <TableBody displayRowCheckbox={false} className={[this.state.noPeople === false ? 'show' : 'visibility'].join(' ')}>
                                             {this.state.peopleArray.map((person, index) => (
                                                 <TableRow key={index} style={{ border: '1px solid rgb(224, 224, 224)' }}>
-                                                    <TableRowColumn>{person.memberName}</TableRowColumn>
-                                                    <TableRowColumn>
+                                                    <TableRowColumn >{person.memberName}</TableRowColumn>
+                                                    <TableRowColumn style={{ paddingLeft: "0px" }}>
                                                         {/* <Button  
                                                             mini={true} 
                                                             iconStyle={editProjectButton} 
@@ -1690,7 +1729,14 @@ class AccountDetails extends React.Component {
                                                         >
                                                             <DeleteIcon />
                                                         </Button > */}
+                                                        {/* <IconButton>
+                                                            <ContentEdit />
+                                                        </IconButton>
+                                                        <IconButton>
+                                                            <ContentClear />
+                                                        </IconButton>                                                         */}
                                                     </TableRowColumn>
+                                                    <TableRowColumn ></TableRowColumn>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
@@ -2070,7 +2116,7 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </Dialog>
-                <Dialog open={this.state.createProjectModel} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5"].join(' ')}>
+                <Dialog open={this.state.createProjectModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5"].join(' ')}>
                     <div className="row">
                         <div className="col-md-12 col-lg-12 textAlignCenter">
                             <Subheader className="p-0" style={{ fontSize: '30px' }}>Project Name</Subheader>
@@ -2101,7 +2147,7 @@ class AccountDetails extends React.Component {
                                     label="Close"
                                     secondary={true}
                                     style={modelbuttonsStyle}
-                                    onClick={() => this.closeCreateProjectModel()}
+                                    onClick={() => this.closecreateProjectModal()}
                                 />
                                 <RaisedButton
                                     label="Done"
@@ -2109,6 +2155,53 @@ class AccountDetails extends React.Component {
                                     style={modelbuttonsStyle}
                                     onClick={() => this.addNewProject(this.state.newProjectDetails)}
                                     disabled={!this.state.newProjectDetails.projectName}
+                                />
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </Dialog>
+                <Dialog open={this.state.editProjectModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5"].join(' ')}>
+                    <div className="row">
+                        <div className="col-md-12 col-lg-12 textAlignCenter">
+                            <Subheader className="p-0" style={{fontSize:'30px'}}>Edit Project Details</Subheader>
+                        </div>
+                    </div>
+
+                    <div className="textAlignLeft">
+                        <div className="row margin0">
+                            <div className="col-md-12">
+                                <TextField
+                                    value={this.state.editProjectDetails.projectName || ''}
+                                    name='projectName'
+                                    onChange={this.editProjectDetails}
+                                    hintText="Project Name"
+                                    floatingLabelText="Project Name"
+                                    type="text"
+                                    fullWidth={true}
+                                />
+                            </div>
+                            {/* <div className="col-md-5 margin10"><label>Project Name:</label></div>
+                            <div className="col-md-6 custId">
+                                <input value={this.state.newProjectDetails.projectName || ''} name='projectName' onChange={this.newProjectDetails} />
+                            </div> */}
+                        </div>
+                        <div className="loginBtns">
+                            <div>
+                                <RaisedButton
+                                    label="Close"
+                                    secondary={true}
+                                    style={modelbuttonsStyle}
+                                    onClick={() => this.closeEditProjectModal()}
+                                />
+                                <RaisedButton
+                                    label="Done"
+                                    primary={true}
+                                    style={modelbuttonsStyle}
+                                    onClick={() => this.updateProjectDetails(this.state.editProjectDetails)}
+                                    //disabled={!this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].projectName}
                                 />
                             </div>
 
@@ -2305,8 +2398,9 @@ class AccountDetails extends React.Component {
                         <div className="col-md-12 col-lg-12 p-1">
                             <Stepper >
                                 {this.state.processArray.map((process, index) => (
-                                    <Step>
-                                        <StepButton onClick={(e)=>this.selectedProcess(e,index)} >{process.name}</StepButton>
+                                    <Step className={[index===this.state.selectedProcess?'selectedItem':''].join('')}>
+                                        <StepButton icon={"1"}
+                                        onClick={(e)=>this.selectedProcess(e,index)}>{process.name}</StepButton>
                                     </Step>
                                 ))}
                             </Stepper>

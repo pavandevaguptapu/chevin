@@ -74,12 +74,13 @@ class SelectedProjectDetails extends Component {
   getBoard = (url, username, password, people) => {
     axios
       .post(`sbtpgateway/tp/rest/esccors/generic/`, {
-        resourceURL: url + "/rest/agile/1.0/board",
+        resourceURL: url + "rest/agile/1.0/board",
         userName: username,
         password: password,
         actionMethod: "get"
       })
       .then(response => {
+        console.log(response)
         var boardDetails = response.data.values;
         var userName = username;
         var Password = password;

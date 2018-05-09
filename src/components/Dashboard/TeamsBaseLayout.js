@@ -9,6 +9,7 @@ import SelectedProjectDetails from "./SelectedProjectDetails";
 import SelectedProjectBoardDetails from "./SelectedProjectBoardDetails";
 import PeoplesList from "./PeoplesList";
 import SonarQubeData from "./SonarQubeData";
+import Jenkins from "./Jenkins";
 import RefreshIndicatorExampleLoading from "./RefreshIndicatorExampleLoading";
 import Hourschart from "./HoursChart";
 import Piechart from "./PieChart";
@@ -262,8 +263,9 @@ class TeamsBaseLayout extends Component {
         ),
         peoplesArray: <PeoplesList peoplesList={peopleList} />,
         loaderforpeople: "",
-        sonarQubedata: <SonarQubeData sonarQubeDetails={this.sonarQubeData} />,
-        loaderforsonar: ""
+        sonarQubedata: <SonarQubeData/>,
+        loaderforsonar: "",
+        jenkinsData:<Jenkins/>
       });
     } else if (
       peopleList == undefined ||
@@ -285,10 +287,11 @@ class TeamsBaseLayout extends Component {
         ),
         //peoplesArray: <PeoplesList peoplesList={peopleList} />,
         loaderforpeople: "",
-        sonarQubedata: <SonarQubeData sonarQubeDetails={this.sonarQubeData} />,
+        sonarQubedata: <SonarQubeData />,
         loaderforsonar: "",
         //peoplesArray:"",
-        emptyPeoplesArray: "No members to dispaly"
+        emptyPeoplesArray: "No members to dispaly",
+        jenkinsData:<Jenkins/>
       });
     }
   };
@@ -297,7 +300,7 @@ class TeamsBaseLayout extends Component {
     this.setState({ sonarQubeData: <SonarQubeData /> });
   };
 
-  sprintburndownchart = timespentArray => {
+  sprintburndownchart = (timespentArray) => {
     this.setState({
       workHours: <Hourschart data={timespentArray} />,
       loaderforsprintburndownchart: "",
@@ -602,6 +605,20 @@ class TeamsBaseLayout extends Component {
                   />
                   <div className="col-lg-12 text-center">
                     {this.state.loaderforsonar}
+                    {this.state.sonarQubedata}
+                  </div>
+                </Card>
+                <Card style={navBarContainer.widgetContainer.widgetCard}
+                  key="8"
+                  data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}                
+                >
+                  <CardHeader
+                    title="Jenkins Build Status"
+                    className="custom_dashboard-header"
+                  />
+                  <div className="col-lg-12 text-center">
+                    {/* {this.state.loaderforsonar} */}
+                    {this.state.jenkinsData}
                   </div>
                 </Card>
               </ResponsiveReactGridLayout>
