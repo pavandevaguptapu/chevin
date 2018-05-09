@@ -128,8 +128,7 @@ class SelectedProjectBoardDetails extends Component {
             password
           );
         } else {
-          setTimeout(
-            function () {
+
               var listOfEpics = response.data.values;
               var boardId = response.config.boardId;
               var resourceURL = response.config.hostedUrl;
@@ -146,7 +145,7 @@ class SelectedProjectBoardDetails extends Component {
 
               var epicArray = [];
               var counter = 0;
-              for (var i = 0; i < response.data.values.length; i++) {
+              for (var i = 0; i <6; i++) {
                 var epicName = response.data.values[i].name;
                 var hostedURL = this.state.url;
                 axios
@@ -167,11 +166,11 @@ class SelectedProjectBoardDetails extends Component {
                   {
                     epicName: response.data.values[i].name,
                     index: i,
-                    length: response.data.values.length,
+                    length: 6,
                     hostedUrl: hostedURL
                   }
                   )
-                  .then(response => {
+                  .then(response => {                      
                     var resourceURL = response.config.hostedUrl;
                     var userName = JSON.parse(response.config.data).userName;
                     var password = JSON.parse(response.config.data).password;
@@ -191,9 +190,7 @@ class SelectedProjectBoardDetails extends Component {
                     }
                   });
               }
-            }.bind(this),
-            1000
-          );
+         
         }
       });
   };
