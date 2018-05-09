@@ -38,24 +38,27 @@ class Jumpstart extends Component {
         processArray: [
             { "name": "Project Management", "processID": 4 },
             { "name": "Quality Management", "processID": 5 },
-            { "name": "Build Tool", "processID": 6 }
+            { "name": "Build Tool", "processID": 6 },
+            { "name": "Source Control", "processID": 7 }
         ],
         newToolObj: {},
         toolsArray: [
-            { "name": "Jira", "processID": [3, 5, 4] }, { "name": "SonarQube", "processID": [0, 5] }, { "name": "Jenkins", "processID": [3] }
+            { "name": "Jira", "processID": [3, 5, 4] }, { "name": "SonarQube", "processID": [0, 5] }, { "name": "Jenkins", "processID": [3]},
+            { "name": "Git", "processID": [7]}
         ],
         selectedProcessIndex: 0,
         editableProcessArray: [
             { "name": "Project Management", "processID": 4 },
             { "name": "Quality Management", "processID": 5 },
-            { "name": "Build Tool", "processID": 6 }
+            { "name": "Build Tool", "processID": 6 },
+            { "name": "Source Control", "processID": 7 }
         ],
 
         selectedToolIndex: 0,
         editableToolsArray: [
-            { "name": "Jira", "processID": [3, 5, 4] }, { "name": "SonarQube", "processID": [0, 5] }, { "name": "Jenkins", "processID": [3] }
+            { "name": "Jira", "processID": [3, 5, 4] }, { "name": "SonarQube", "processID": [0, 5] }, { "name": "Jenkins", "processID": [3] },{ "name": "Git", "processID": [7]}
         ],
-        headersToolsArray: [{ "name": "Project Management", "processID": 4 }, { "name": "Quality Management", "processID": 5 }, { "name": "Build Tool", "processID": 6 }],
+        headersToolsArray: [{ "name": "Project Management", "processID": 4 }, { "name": "Quality Management", "processID": 5 }, { "name": "Build Tool", "processID": 6 },{ "name": "Source Control", "processID": 7 }],
         selectedTab: "",
         handleChangesInProcessName: false,
         handleChangesInToolName: false
@@ -195,7 +198,7 @@ class Jumpstart extends Component {
                 <div className="mt-5">
                     <div className="col-md-12 col-lg-12">
                         <Tabs inkBarStyle={{ background: '#FF3D00' }}>}
-                            <Tab label="Process" style={tabsBackgroundColor} onActive={(e) => this.selectedTab(e, "Process")}>
+                            {/* <Tab label="Process" style={tabsBackgroundColor} onActive={(e) => this.selectedTab(e, "Process")}>
                                 <div style={{ border: "1px solid rgb(238, 238, 238)" }} >
                                     <Table>
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
@@ -239,18 +242,18 @@ class Jumpstart extends Component {
                                       </Subheader>
                                     </div>
                                 </div>
-                            </Tab>
+                            </Tab> */}
                             <Tab label="Tools" style={tabsBackgroundColor} onActive={(e) => this.selectedTab(e, "Tools")}>
                                 <div style={{ border: "1px solid rgb(238, 238, 238)" }} >
                                     <Table onCellClick={this.editProcess}>
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                                             <TableRow>
-                                                <TableHeaderColumn>Tool Name</TableHeaderColumn>
+                                                <TableHeaderColumn style={{"paddingLeft":"10px"}}>Tool Name</TableHeaderColumn>
                                                 {this.state.headersToolsArray.map(row => (
-                                                    <TableHeaderColumn>{row.name}</TableHeaderColumn>
+                                                    <TableHeaderColumn style={{"paddingLeft":"0px"}}>{row.name}</TableHeaderColumn>
                                                 ))}
-                                                <TableHeaderColumn>Settings</TableHeaderColumn>
-                                                <TableHeaderColumn>
+                                                {/* <TableHeaderColumn>Settings</TableHeaderColumn> */}
+                                                {/* <TableHeaderColumn>
                                                     <FloatingActionButton
                                                         secondary={true}
                                                         mini={true}
@@ -258,12 +261,12 @@ class Jumpstart extends Component {
                                                     >
                                                         <ContentAdd />
                                                     </FloatingActionButton>
-                                                </TableHeaderColumn>
+                                                </TableHeaderColumn> */}
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody displayRowCheckbox={false} className={[this.state.toolsArray.length !== 0 ? "show" : "visibility"]}>
                                             {this.state.toolsArray.map((tool, index) => (
-                                                <TableRow key={index} selectable={false} >
+                                                <TableRow key={index} selectable={false}>
                                                     <TableRowColumn>{tool.name}</TableRowColumn>
                                                     {this.state.headersToolsArray.map((processID, i) => (
                                                         <TableRowColumn key={i}>
@@ -274,15 +277,15 @@ class Jumpstart extends Component {
                                                         </TableRowColumn>
                                                     ))}
 
-                                                    <TableRowColumn style={{ paddingLeft: "0px" }}>
+                                                    {/* <TableRowColumn style={{ paddingLeft: "0px" }}>
                                                         <IconButton tooltip="edit" touch={true} tooltipPosition="top-left" onClick={(e) => this.editTool(e, "edit", index)}>
                                                             <ContentEdit />
                                                         </IconButton>
                                                         <IconButton tooltip="delete" touch={true} tooltipPosition="bottom-right" onClick={(e) => this.deleteTool(e, "disable", index)}>
                                                             <ContentClear />
                                                         </IconButton>
-                                                    </TableRowColumn>
-                                                    <TableRowColumn></TableRowColumn>
+                                                    </TableRowColumn> */}
+                                                    {/* <TableRowColumn></TableRowColumn> */}
                                                 </TableRow>
                                             ))}
                                         </TableBody>
@@ -299,13 +302,13 @@ class Jumpstart extends Component {
                         </Tabs>
 
                         <div className={["col-md-11 col-lg-12 mt-4 textAlignRight", this.state.selectedTab === "Tools" ? "show" : "visibility"].join(" ")}>
-                            <RaisedButton
+                            {/* <RaisedButton
                                 label="Save"
                                 primary={true}
                                 style={modelbuttonsStyle}
                                 onClick={(e) => this.saveTools(e, this.state.toolsArray)}
 
-                            />
+                            /> */}
                             {/* <FloatingActionButton
                                 primary={true}
                                 mini={true}

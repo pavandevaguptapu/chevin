@@ -31,6 +31,7 @@ import { myConstClass } from './constants.js';
 import { Step, Stepper, StepLabel,StepButton } from 'material-ui/Stepper';
 import ArrowForwardIcon from 'material-ui/svg-icons/navigation/arrow-forward';
 import IconButton from 'material-ui/IconButton';
+import Checkbox from 'material-ui/Checkbox';
 
 var dcopy = require('deep-copy')
 
@@ -485,7 +486,11 @@ class AccountDetails extends React.Component {
             stepIndex: 0,
             selectedToolIndex:0,
             jumpStartObj:[{"processName":"","tools":[{"toolName":"","username":"","password":"","url":""}]}],
-            
+            headersToolsArray: [{ "name": "Project Management", "processID": 4 }, { "name": "Quality Management", "processID": 5 }, { "name": "Build Tool", "processID": 6 },{ "name": "Source Control", "processID": 7 }],
+            toolsArray: [
+                { "name": "Jira", "processID": [3, 5, 4] }, { "name": "SonarQube", "processID": [0, 5] }, { "name": "Jenkins", "processID": [3]},
+                { "name": "Git", "processID": [7]}
+            ]
 
         }
 
@@ -1486,6 +1491,20 @@ class AccountDetails extends React.Component {
         this.selectedTool(obj,this.state.selectedTeamIndex, this.state.selectedProjectIndex,0)
         this.setState({listofToolsarray:obj,jumpstartModal:false,noTool:false})
     }
+    selectProcessforTool = (e, checked, index, headerToolsId) => {
+        var tempToolArray = this.state.toolsArray
+        if (checked === false) {
+            var ind = tempToolArray[index].processID.indexOf(headerToolsId)
+            tempToolArray[index].processID.splice(ind, 1)
+            this.setState({ toolsArray: tempToolArray })
+        }
+        if (checked === true) {
+            tempToolArray[index].processID.push(headerToolsId)
+            this.setState({ toolsArray: tempToolArray })
+
+        }
+
+    }
     render() {
         return (
             <div className="col-lg-12 col-md-12 mt-1">
@@ -1749,7 +1768,87 @@ class AccountDetails extends React.Component {
                                 </div>
                             </Tab>
                             <Tab label="Jump Start" style={tabsBackgroundColor} disabled={this.state.noProject === true}>
-                                <div className={["col-md-12 col-lg-12 displayInline", this.state.noProject === true ? 'visibility' : 'show'].join(" ")}>
+                            {/* <div className="col-md-10 col-lg-10">
+                                        <SelectField hintText="Select Project" value={this.state.selectedProjectName}
+                                            labelStyle={{ height: "37px", fontSize: "14px" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedProjectfromDropDown(e, i, v)}>
+                                            {this.displayingProjects(this.state.projectsArray)}
+                                        </SelectField>
+                                    </div> */}
+                                    <div className={["col-md-12 col-lg-12 displayInline", this.state.noProject === true ? 'visibility' : 'show'].join(" ")}>
+                                    <div className="col-md-10 col-lg-9 textAlignRight">
+                                        <Subheader className="p-0" style={{ fontSize: '14px' }}>Select Project</Subheader>
+                                    </div>
+                                    <div className="col-md-10 col-lg-2">
+                                        <SelectField hintText="Select Project" value={this.state.selectedProjectName}
+                                            labelStyle={{ height: "37px", fontSize: "14px" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedProjectfromDropDown(e, i, v)}>
+                                            {this.displayingProjects(this.state.projectsArray)}
+                                        </SelectField>
+                                    </div>
+                                    {/* <div className="col-md-1 col-lg-1 textAlignLeft">
+                                        <FloatingActionButton
+                                            secondary={true}
+                                            mini={true}
+                                            onClick={this.jumpstartConfiguration}
+                                        >
+                                            <ContentAdd />
+                                        </FloatingActionButton>
+                                    </div> */}
+                                </div>
+                            <div style={{ border: "1px solid rgb(238, 238, 238)" }} >
+                                    <Table>
+                                        <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                                            <TableRow>
+                                                <TableHeaderColumn style={{"paddingLeft":"10px"}}>Tool Name</TableHeaderColumn>
+                                                {this.state.headersToolsArray.map(row => (
+                                                    <TableHeaderColumn style={{"paddingLeft":"0px"}}>{row.name}</TableHeaderColumn>
+                                                ))}
+                                                {/* <TableHeaderColumn>Settings</TableHeaderColumn> */}
+                                                {/* <TableHeaderColumn>
+                                                    <FloatingActionButton
+                                                        secondary={true}
+                                                        mini={true}
+                                                        onClick={this.addToolModal}
+                                                    >
+                                                        <ContentAdd />
+                                                    </FloatingActionButton>
+                                                </TableHeaderColumn> */}
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody displayRowCheckbox={false} className={[this.state.toolsArray.length !== 0 ? "show" : "visibility"]}>
+                                            {this.state.toolsArray.map((tool, index) => (
+                                                <TableRow key={index} selectable={false}>
+                                                    <TableRowColumn>{tool.name}</TableRowColumn>
+                                                    {this.state.headersToolsArray.map((processID, i) => (
+                                                        <TableRowColumn key={i}>
+                                                            <Checkbox
+                                                                checked={this.state.toolsArray[index].processID.includes(this.state.headersToolsArray[i].processID) ? true : false}
+                                                                onCheck={(e, checked) => this.selectProcessforTool(e, checked, index, this.state.headersToolsArray[i].processID)}
+                                                            />
+                                                        </TableRowColumn>
+                                                    ))}
+
+                                                    {/* <TableRowColumn style={{ paddingLeft: "0px" }}>
+                                                        <IconButton tooltip="edit" touch={true} tooltipPosition="top-left" onClick={(e) => this.editTool(e, "edit", index)}>
+                                                            <ContentEdit />
+                                                        </IconButton>
+                                                        <IconButton tooltip="delete" touch={true} tooltipPosition="bottom-right" onClick={(e) => this.deleteTool(e, "disable", index)}>
+                                                            <ContentClear />
+                                                        </IconButton>
+                                                    </TableRowColumn> */}
+                                                    {/* <TableRowColumn></TableRowColumn> */}
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+
+
+                                    <div className={[this.state.toolsArray.length === 0 ? "show" : "visibility"]}>
+                                        <Subheader className="p-0 textAlignCenter" style={{ fontSize: '20px' }}>
+                                            No tool is assigned
+                                      </Subheader>
+                                    </div>
+                                </div>
+                                {/* <div className={["col-md-12 col-lg-12 displayInline", this.state.noProject === true ? 'visibility' : 'show'].join(" ")}>
                                     <div className="col-md-10 col-lg-9 textAlignRight">
                                         <Subheader className="p-0" style={{ fontSize: '14px' }}>Select Project</Subheader>
                                     </div>
@@ -1832,7 +1931,7 @@ class AccountDetails extends React.Component {
                                     <Subheader className="p-0 textAlignCenter" style={{ fontSize: '20px' }}>
                                         No tools is configured to this project
                                       </Subheader>
-                                </div>
+                                </div> */}
                             </Tab>
 
                             {/* <Tab label="ACE5" style={tabsBackgroundColor}>

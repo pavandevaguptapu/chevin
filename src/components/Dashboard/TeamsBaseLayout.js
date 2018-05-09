@@ -267,7 +267,7 @@ class TeamsBaseLayout extends Component {
         loaderforpeople: "",
         sonarQubedata: <SonarQubeData/>,
         loaderforsonar: "",
-        jenkinsData:<Jenkins/>
+         jenkinsData:<Jenkins/>
       });
     } else if (
       peopleList == undefined ||
@@ -293,7 +293,7 @@ class TeamsBaseLayout extends Component {
         loaderforsonar: "",
         //peoplesArray:"",
         emptyPeoplesArray: "No members to dispaly",
-        jenkinsData:<Jenkins/>
+         jenkinsData:<Jenkins/>
       });
     }
   };
@@ -622,7 +622,7 @@ class TeamsBaseLayout extends Component {
                   />
                   <div className="col-lg-12 text-center">
                     {/* {this.state.loaderforsonar} */}
-                    {this.state.jenkinsData}
+                     {this.state.jenkinsData} 
                   </div>
                 </Card>
               </ResponsiveReactGridLayout>
