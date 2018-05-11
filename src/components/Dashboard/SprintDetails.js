@@ -13,7 +13,6 @@ import {
 class SprintDetails extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       dropdownOpen: false,
       dropDownValue: "Sprints",
@@ -24,26 +23,21 @@ class SprintDetails extends Component {
       eachTimeSpentArray: [],
       totalTimeSpentArray: [],
       currentDate: "",
-      currentSpentTime: 0,
-      sprintId: this.props.value,
-      workHours: "",
+      currentSpentTime: 0,   
       date1: "",
       date2: "",
       timeSpent: "",
       sprintListSorted: "",
-      numbers: [1, 2, 4, 3],
-      numbersSorted: "",
       remainingTimeEstimate: "",
       eachRemainingTimeChangeArray: [],
       totalRemainingTimeChangeArray: [],
       boardId: "",
-      sonarQubeData: "",
-      userNme: "",
+      userName:'',
       pwd: "",
       url: "",
       activeSprint: ""
     };
-    this.handleChange = this.handleChange.bind(this);
+
   }
 
   componentWillMount() {
@@ -119,7 +113,7 @@ class SprintDetails extends Component {
           currentDate: "",
 
 
-          workHours: "",
+
           date1: "",
           date2: "",
 
@@ -425,11 +419,7 @@ class SprintDetails extends Component {
               {this.sprintItems(this.state.sprintListSorted)}
             </div>              
             </DropdownMenu>
-          </Dropdown>
-        <div className="col-md-12 col-lg-12">{this.state.workHours}</div>
-        <div className="col-md-12 col-lg-12 padding0">
-          {this.state.sprintPieChart}
-        </div>
+          </Dropdown>    
       </div>
     );
   }

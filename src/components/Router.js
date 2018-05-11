@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Login from '../login';
-import ManageCustomerTeams from '../manageCustomerTeams';
+import ManageCustomerTeams from './Admin/ConfigureTeams/manageCustomerTeams';
 import Dashboard from '../dashboard';
 import People from './PersonDetails/People';
 import Account from '../account';
-import jumpstart from './jumpstart';
+import jumpstart from './Admin/ConfigureJumpstart/jumpstart';
 import App from './App'
 import TeamsBaseLayout from './Dashboard/TeamsBaseLayout';
 import LoginNew from '../shared/LoginNew';

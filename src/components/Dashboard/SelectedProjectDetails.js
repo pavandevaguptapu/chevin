@@ -48,11 +48,7 @@ class SelectedProjectDetails extends Component {
 
   componentWillMount() {
     this.setState({
-      projectDetails: this.props.projectDetails
-      // userName: this.props.selectedUserName,
-      // pwd: this.props.selectedUserPwd,
-      // url: this.props.selectedUrl
-      //loader:<RefreshIndicatorExampleLoading status={""}/>
+      projectDetails: this.props.projectDetails  
     });
   }
 
@@ -66,10 +62,7 @@ class SelectedProjectDetails extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      projectDetails: nextProps.projectDetails
-      // userName: nextProps.selectedUserName,
-      // pwd: nextProps.selectedUserPwd,
-      // url: nextProps.selectedUrl
+      projectDetails: nextProps.projectDetails  
     });
   }
 

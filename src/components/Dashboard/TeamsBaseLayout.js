@@ -68,48 +68,17 @@ class TeamsBaseLayout extends Component {
     dropDownValue: "Select Team",
     accounts: [],
     accountName: "",
-    isModalOpen: false,
     projectName: "",
     teamName: "",
     projectDetails: { projects: [] },
-    selectedTab1: true,
-    selectedTab2: false,
-    selectedTab3: false,
-    selectedTab4: false,
-    selectedTab5: false,
     projects: "",
     listofepics: [],
-    selecteditem: "",
-    issueTracking: "",
-    developmentlist: [],
     sprintDetails: "",
-    sourcelist: [],
-    source: "",
-    issuesList: [],
-    doneArrayList: [],
-    inprogressArrayList: [],
-    todoArrayList: [],
-    inqaArrayList: [],
-    checkbox: "",
-    doneArrayListlength: "",
-    inprogressArrayListlength: "",
-    todoArrayListlength: "",
-    inqaArrayListlength: "",
     workHours: [],
-    totalHours: [],
-    issuesPieChart: "",
-    datesArrayList: [],
-    isAddProjectModal: false,
-    projectTitle: "",
-    selectedProjectIndex: 0,
-    selectedProjectDetails: "",
     selectedProjectBoardDetails: "",
     sonarQubeData: "",
     issuesListArray: [],
-    issuesArray: [],
     peoplesArray: [],
-    hintStyle2: { opacity: 1 },
-    renderChild: true,
     activeSprint: "",
     epicBurdownChart: "",
     loaderforpeople: "",
@@ -121,8 +90,9 @@ class TeamsBaseLayout extends Component {
     sprintPieChart: "",
     overlay: false,
     emptyAccountsObj: false,
-    emptyProjectsObj: false,
-    emptyToolsandPeopleObj: false
+    emptyToolsandPeopleObj: false,
+    jenkinsDataArray: [],
+    jenkinsData: ''
   };
 
   toggle = () => {
@@ -130,32 +100,6 @@ class TeamsBaseLayout extends Component {
       dropdownOpen: !prevState.dropdownOpen
     }));
   };
-
-  addProjectModal = () => {
-    this.setState({ isAddProjectModal: true });
-  };
-
-  addProject = (account, projectTitle) => {
-    axios
-      .put(myConstClass.nodeAppUrl + "/accounts/" + account._id, {
-        projects: [{ name: projectTitle, tools: [] }]
-      })
-      .then(response => {});
-    this.setState({ isAddProjectModal: false });
-  };
-
-  openModal = () => {
-    this.setState({ isModalOpen: true });
-  };
-
-  cancelModal = () => {
-    this.setState({ isModalOpen: false, emptyAccountsObj: false });
-  };
-
-  onDrop = data => {
-    this.setState({ isModalOpen: true });
-  };
-
   displayDropDownValue = e => {
     this.setState({ dropDownValue: e.currentTarget.textContent });
   };
@@ -178,11 +122,11 @@ class TeamsBaseLayout extends Component {
 
   selectedAccount = (e, i) => {
     let indexOfSelectedAccount = this.state.accounts
-      .map(function(e) {
+      .map(function (e) {
         return e.customerName;
       })
       .indexOf(e);
-    //   console.log(this.state.accounts[indexOfSelectedAccount])
+
     this.setState({
       peoplesArray: "",
       sonarQubedata: "",
@@ -211,7 +155,7 @@ class TeamsBaseLayout extends Component {
   };
 
   displayErrorMessage = () => {
-    // if(projectDetails.projects.tools == undefined && projectDetails.projects.people==undefined)
+
     this.setState({ emptyToolsandPeopleObj: true });
   };
 
@@ -247,46 +191,45 @@ class TeamsBaseLayout extends Component {
     });
   };
 
+ 
   selectProject = (boardDetails, userName, password, hostedUrl, peopleList) => {
     if (peopleList != undefined) {
       this.setState({
-        selectedProjectBoardDetails: (
-          <SelectedProjectBoardDetails
-            selectedProjectBoardDetails={boardDetails}
-            selectedUserName={userName}
-            selectedUserPwd={password}
-            selectedUrl={hostedUrl}
-            onSelectBoard={this.selectedBoardforSprintData}
-            currentBoard={this.selectedBoardforIssues}
-            listOfEpics={this.epicBurdownChart}
-            showLoaderforEpicData={this.ShowLoaderforEpicData}
-            showLoaderforSprintData={this.ShowLoaderforSprintData}
-          />
-        ),
+        selectedProjectBoardDetails:
+        <SelectedProjectBoardDetails
+          selectedProjectBoardDetails={boardDetails}
+          selectedUserName={userName}
+          selectedUserPwd={password}
+          selectedUrl={hostedUrl}
+          onSelectBoard={this.selectedBoardforSprintData}
+          currentBoard={this.selectedBoardforIssues}
+          listOfEpics={this.epicBurdownChart}
+          showLoaderforEpicData={this.ShowLoaderforEpicData}
+          showLoaderforSprintData={this.ShowLoaderforSprintData}
+        />
+        ,
         peoplesArray: <PeoplesList peoplesList={peopleList} />,
         loaderforpeople: "",
         sonarQubedata: <SonarQubeData />,
         loaderforsonar: "",
-        jenkinsData: <Jenkins />
+        jenkinsData: <Jenkins/>
       });
-    } else if (
-      peopleList == undefined ||
-      JSON.stringify(peopleList) === JSON.stringify([])
-    ) {
+    }
+    else if (peopleList == undefined || JSON.stringify(peopleList) === JSON.stringify([])) {
       this.setState({
-        selectedProjectBoardDetails: (
-          <SelectedProjectBoardDetails
-            selectedProjectBoardDetails={boardDetails}
-            selectedUserName={userName}
-            selectedUserPwd={password}
-            selectedUrl={hostedUrl}
-            onSelectBoard={this.selectedBoardforSprintData}
-            currentBoard={this.selectedBoardforIssues}
-            listOfEpics={this.epicBurdownChart}
-            showLoaderforEpicData={this.ShowLoaderforEpicData}
-            showLoaderforSprintData={this.ShowLoaderforSprintData}
-          />
-        ),
+        selectedProjectBoardDetails:
+        <SelectedProjectBoardDetails
+          selectedProjectBoardDetails={boardDetails}
+          selectedUserName={userName}
+          selectedUserPwd={password}
+          selectedUrl={hostedUrl}
+          onSelectBoard={this.selectedBoardforSprintData}
+          currentBoard={this.selectedBoardforIssues}
+          listOfEpics={this.epicBurdownChart}
+          showLoaderforEpicData={this.ShowLoaderforEpicData}
+          showLoaderforSprintData={this.ShowLoaderforSprintData}
+        />
+        ,
         //peoplesArray: <PeoplesList peoplesList={peopleList} />,
         loaderforpeople: "",
         sonarQubedata: <SonarQubeData />,
@@ -368,11 +311,11 @@ class TeamsBaseLayout extends Component {
       })
       .then(response => {
         var statusArray = [];
-        response.data.forEach(function(eachStatus) {
+        response.data.forEach(function (eachStatus) {
           statusArray.push(eachStatus.name);
         });
         var issuesDataArray = [];
-        epicsArray.forEach(function(eachEpicDetails) {
+        epicsArray.forEach(function (eachEpicDetails) {
           var issuesObj = {};
           issuesObj.epicName = eachEpicDetails.name;
           for (var i = 0; i < statusArray.length; i++) {
@@ -380,7 +323,7 @@ class TeamsBaseLayout extends Component {
             if (eachEpicDetails.issues.length == 0) {
               issuesObj[statusArray[i]] = 0;
             } else {
-              eachEpicDetails.issues.forEach(function(issue) {
+              eachEpicDetails.issues.forEach(function (issue) {
                 if (statusArray[i] == issue.fields.status.name) {
                   currentStatusIssuesArray.push(issue);
                 }
@@ -450,12 +393,13 @@ class TeamsBaseLayout extends Component {
     });
   }
 
-  fullscreen = () => {
+  fullscreen = () => { 
     const currentState = this.state.newClass;
     this.setState({ newClass: !currentState });
   };
 
   render() {
+
     return (
       <div style={navBarContainer.widgetContainer}>
         <div className="container-fluid">
@@ -532,7 +476,7 @@ class TeamsBaseLayout extends Component {
                   key="5"
                   data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                   id="myDiv"
-                  className={this.state.newClass ? "minScreen" : "fullscreen"}                  
+                  className={this.state.newClass ? "minScreen" : "fullscreen"}
                 >
                   <div className="d-flex custom_dashboard-header justify-content-between">
                     <CardHeader title="Sprint Burn Chart" className="p-0" />
@@ -651,12 +595,11 @@ class TeamsBaseLayout extends Component {
                   key="8"
                   data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <div className="d-flex custom_dashboard-header justify-content-between">
-                    <CardHeader title="Jenkins Build Status" className="p-0" />
+                  <div className="col-md-12 col-lg-12 d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Jenkins Build Status" className="p-0" />                   
                   </div>
-                  <div className="col-lg-12 text-center">
-                    {/* {this.state.loaderforsonar} */}
-                     {this.state.jenkinsData} 
+                  <div>
+                    {this.state.jenkinsData}
                   </div>
                 </Card>
               </ResponsiveReactGridLayout>

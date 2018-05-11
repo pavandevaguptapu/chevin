@@ -17,7 +17,6 @@ import {
 
 class Piechart extends Component {
   state = {
-    issuesList: [],
     doneArrayList: [],
     inprogressArrayList: [],
     todoArrayList: [],
@@ -25,11 +24,8 @@ class Piechart extends Component {
     doneArrayListlength: "",
     inprogressArrayListlength: "",
     todoArrayListlength: "",
-    inqaArrayListlength: "",
-    sonarQubeData: "",
-    piechartPercentagesArray: [],
-    piechart: []
-  };
+    inqaArrayListlength: ""
+    };
 
   componentWillMount() {
     this.state.doneArrayList = this.props.sprinttList.issues.filter(function(
@@ -110,7 +106,7 @@ class Piechart extends Component {
   }
 
   render() {
-    //this.state.piechartPercentagesArray=[]
+
     const todoArrayPercentage = Math.round(
       this.state.todoArrayListlength /
         (this.state.todoArrayListlength +

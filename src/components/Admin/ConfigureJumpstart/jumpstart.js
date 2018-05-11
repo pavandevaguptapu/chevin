@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import '../App.css';
+import '../../../App.css';
 
-import { myConstClass } from '../constants.js';
+import { myConstClass } from '../../../constants.js';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import axios from 'axios';
 import { Tabs, Tab } from 'material-ui/Tabs';

@@ -10,7 +10,6 @@ import {
 } from "material-ui/Table";
 
 class PeoplesList extends Component {
-  _;
   constructor(props) {
     super(props);
 

@@ -19,12 +19,7 @@ class SelectedProjectBoardDetails extends Component {
     userName: "",
     pwd: "",
     url: "",
-    selectedBoardSprintsArray: [],
-    epicArray: [],
-    issuesList: "",
-    hintStyle2: {
-      opacity: 1
-    }
+ 
   };
 
   componentWillMount() {
@@ -57,10 +52,7 @@ class SelectedProjectBoardDetails extends Component {
     let boardId = this.state.projectBoardDetailsListarray[
       indexOfSelectedAccount
     ].id;
-
-    this.state.hintStyle2 = {
-      opacity: 0
-    };
+ 
     this.props.showLoaderforSprintData();
     this.props.showLoaderforEpicData();
     this.setState({ selectedProjectBoard: indexOfSelectedAccount });
@@ -128,8 +120,8 @@ class SelectedProjectBoardDetails extends Component {
             password
           );
         } else {
-          setTimeout(
-            function () {
+      
+         
               var listOfEpics = response.data.values;
               var boardId = response.config.boardId;
               var resourceURL = response.config.hostedUrl;
@@ -146,7 +138,7 @@ class SelectedProjectBoardDetails extends Component {
 
               var epicArray = [];
               var counter = 0;
-              for (var i = 0; i < response.data.values.length; i++) {
+              for (var i = 0; i < 6; i++) {
                 var epicName = response.data.values[i].name;
                 var hostedURL = this.state.url;
                 axios
@@ -167,7 +159,7 @@ class SelectedProjectBoardDetails extends Component {
                   {
                     epicName: response.data.values[i].name,
                     index: i,
-                    length: response.data.values.length,
+                    length: 6,
                     hostedUrl: hostedURL
                   }
                   )
@@ -191,9 +183,8 @@ class SelectedProjectBoardDetails extends Component {
                     }
                   });
               }
-            }.bind(this),
-            1000
-          );
+            
+   
         }
       });
   };

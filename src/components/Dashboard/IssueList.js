@@ -3,11 +3,8 @@ import React, { Component } from "react";
 class IssuesList extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      epicsArray: [],
+    this.state = {     
       issuesArray: [],
-      height: "300px",
-      showCheckboxes: false,
       issuesHeaderItems: []
     };
   }
