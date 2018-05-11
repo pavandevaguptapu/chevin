@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { myConstClass } from "../../constants";
+import { myConstClass } from "../../../constants";
 
 import TextField from "material-ui/TextField";
 import FlatButton from "material-ui/FlatButton";

@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
-import '../App.css';
 
 import {myConstClass} from '../constants.js';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
@@ -15,13 +14,6 @@ class SideBar extends Component {
     state = {
         accountsArray:[]
     }
-    // componentWillMount() {
-    //     axios.get(myConstClass.nodeAppUrl+'/accounts')
-    //         .then(response => {               
-    //             this.setState({ accountsArray: this.state.accountsArray.concat(response.data) })
-    //             // this.currentAccountProfile(this.state.accountsArray[0], 0);
-    //         })    
-    // }
 
     getAllAccounts = () => {
         axios.get(myConstClass.nodeAppUrl+'/accounts')
@@ -29,13 +21,10 @@ class SideBar extends Component {
             this.setState({ 
                 accountsArray: response.data
             })
-            // this.props.AccountsData
-            // this.currentAccountProfile(this.state.accountsArray[0], 0);
         }) 
     }
 
     render() {
-        // console.log(this.state.accountsArray, "tata")
         return(
             <div className="d-flex flex-column align-items-center" >
                 <div className="py-2">

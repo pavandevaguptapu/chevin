@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import axios from "axios";
-import { myConstClass } from "../../constants";
+import { myConstClass } from "../../../constants";
 
 import PeoplesGridView from "../PersonDetails/PeoplesGridView";
 import PeoplesForm from "./PeoplesForm";
