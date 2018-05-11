@@ -162,7 +162,8 @@ class TeamsBaseLayout extends Component {
   ShowLoaderforTeamandQuality = () => {
     this.setState({
       loaderforpeople: <RefreshIndicatorExampleLoading status={"loading"} />,
-      loaderforsonar: <RefreshIndicatorExampleLoading status={"loading"} />
+      loaderforsonar: <RefreshIndicatorExampleLoading status={"loading"} />,
+      loaderforJenkins: <RefreshIndicatorExampleLoading status={"loading"} />
     });
   };
 
@@ -212,7 +213,8 @@ class TeamsBaseLayout extends Component {
         loaderforpeople: "",
         sonarQubedata: <SonarQubeData />,
         loaderforsonar: "",
-        jenkinsData: <Jenkins/>
+        jenkinsData: <Jenkins />,
+        loaderforJenkins:""
       });
     }
     else if (peopleList == undefined || JSON.stringify(peopleList) === JSON.stringify([])) {
@@ -236,7 +238,8 @@ class TeamsBaseLayout extends Component {
         loaderforsonar: "",
         //peoplesArray:"",
         emptyPeoplesArray: "No members to dispaly",
-        jenkinsData: <Jenkins />
+        jenkinsData: <Jenkins />,
+        loaderforJenkins:""
       });
     }
   };
@@ -268,6 +271,11 @@ class TeamsBaseLayout extends Component {
       for (var i = 0; i < sprintListArray.length; i++) {
         if (sprintListArray[i].state === "active") {
           var activeSprint = sprintListArray[i].id;
+          var activeSprintName = sprintListArray[i].name;
+          break
+        }
+        else{
+            var activeSprint = sprintListArray[i].id;
           var activeSprintName = sprintListArray[i].name;
         }
       }
@@ -562,16 +570,15 @@ class TeamsBaseLayout extends Component {
 
                 <Card
                   style={navBarContainer.widgetContainer.widgetCard}
-                  key="2"
+                  key="8"
                   data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
                   <div className="d-flex custom_dashboard-header justify-content-between">
-                    <CardHeader title="Epic Overview" className="p-0" />
+                    <CardHeader title="Jenkins Build Status" className="p-0" />
                   </div>
                   <div className="col-lg-12 text-center">
-                    {this.state.loaderforEpicDetails}
-                    {this.state.emptyEpicsArray}
-                    {this.state.issuesListArray}
+                     {this.state.loaderforJenkins} 
+                     {this.state.jenkinsData} 
                   </div>
                 </Card>
 
@@ -589,19 +596,21 @@ class TeamsBaseLayout extends Component {
                     {this.state.peoplesArray}
                   </div>
                 </Card>
-
                 <Card
                   style={navBarContainer.widgetContainer.widgetCard}
-                  key="8"
+                  key="2"
                   data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                 >
-                  <div className="col-md-12 col-lg-12 d-flex custom_dashboard-header justify-content-between">
-                    <CardHeader title="Jenkins Build Status" className="p-0" />                   
+                  <div className="d-flex custom_dashboard-header justify-content-between">
+                    <CardHeader title="Epic Overview" className="p-0" />
                   </div>
-                  <div>
-                    {this.state.jenkinsData}
+                  <div className="col-lg-12 text-center">
+                    {this.state.loaderforEpicDetails}
+                    {this.state.emptyEpicsArray}
+                    {this.state.issuesListArray}
                   </div>
                 </Card>
+
               </ResponsiveReactGridLayout>
             </div>
           </div>

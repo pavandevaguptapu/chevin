@@ -19,7 +19,7 @@ class SelectedProjectBoardDetails extends Component {
     userName: "",
     pwd: "",
     url: "",
- 
+
   };
 
   componentWillMount() {
@@ -44,7 +44,7 @@ class SelectedProjectBoardDetails extends Component {
     // var boardId = this.state.projectBoardDetailsListarray[index].id;
 
     let indexOfSelectedAccount = this.state.projectBoardDetailsListarray
-      .map(function(k) {
+      .map(function (k) {
         return k.name;
       })
       .indexOf(e);
@@ -52,7 +52,7 @@ class SelectedProjectBoardDetails extends Component {
     let boardId = this.state.projectBoardDetailsListarray[
       indexOfSelectedAccount
     ].id;
- 
+
     this.props.showLoaderforSprintData();
     this.props.showLoaderforEpicData();
     this.setState({ selectedProjectBoard: indexOfSelectedAccount });
@@ -60,10 +60,10 @@ class SelectedProjectBoardDetails extends Component {
     axios
       .post(`sbtpgateway/tp/rest/esccors/generic/`, {
         resourceURL:
-          this.state.url +
-          "/rest/agile/1.0/board/" +
-          this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id +
-          "/sprint",
+        this.state.url +
+        "/rest/agile/1.0/board/" +
+        this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id +
+        "/sprint",
         userName: this.state.userName,
         password: this.state.pwd,
         actionMethod: "get"
@@ -120,71 +120,68 @@ class SelectedProjectBoardDetails extends Component {
             password
           );
         } else {
-      
-         
-              var listOfEpics = response.data.values;
-              var boardId = response.config.boardId;
-              var resourceURL = response.config.hostedUrl;
-              var userName = JSON.parse(response.config.data).userName;
-              var password = JSON.parse(response.config.data).password;
+          var listOfEpics = response.data.values;
+          var boardId = response.config.boardId;
+          var resourceURL = response.config.hostedUrl;
+          var userName = JSON.parse(response.config.data).userName;
+          var password = JSON.parse(response.config.data).password;
 
-              this.props.listOfEpics(
-                listOfEpics,
-                boardId,
-                resourceURL,
-                userName,
-                password
-              );
+          this.props.listOfEpics(
+            listOfEpics,
+            boardId,
+            resourceURL,
+            userName,
+            password
+          );
 
-              var epicArray = [];
-              var counter = 0;
-              for (var i = 0; i < 6; i++) {
-                var epicName = response.data.values[i].name;
-                var hostedURL = this.state.url;
-                axios
-                  .post(
-                  `sbtpgateway/tp/rest/esccors/generic/`,
-                  {
-                    resourceURL:
-                    this.state.url +
-                    "/rest/agile/1.0/board/" +
-                    this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id +
-                    "/epic/" +
-                    response.data.values[i].id +
-                    "/issue",
-                    userName: this.state.userName,
-                    password: this.state.pwd,
-                    actionMethod: "get"
-                  },
-                  {
-                    epicName: response.data.values[i].name,
-                    index: i,
-                    length: 6,
-                    hostedUrl: hostedURL
-                  }
-                  )
-                  .then(response => {
-                    var resourceURL = response.config.hostedUrl;
-                    var userName = JSON.parse(response.config.data).userName;
-                    var password = JSON.parse(response.config.data).password;
-
-                    epicArray.push({
-                      name: response.config.epicName,
-                      issues: response.data.issues
-                    });
-
-                    if (response.config.index == response.config.length - 1) {
-                      this.props.currentBoard(
-                        epicArray,
-                        resourceURL,
-                        userName,
-                        password
-                      );
-                    }
-                  });
+          var epicArray = [];
+          var counter = 0;
+          for (var i = 0; i < 6; i++) {
+            var epicName = response.data.values[i].name;
+            var hostedURL = this.state.url;
+            axios
+              .post(
+              `sbtpgateway/tp/rest/esccors/generic/`,
+              {
+                resourceURL:
+                this.state.url +
+                "/rest/agile/1.0/board/" +
+                this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id +
+                "/epic/" +
+                response.data.values[i].id +
+                "/issue",
+                userName: this.state.userName,
+                password: this.state.pwd,
+                actionMethod: "get"
+              },
+              {
+                epicName: response.data.values[i].name,
+                index: i,
+                length: 6,
+                hostedUrl: hostedURL
               }
-            
-   
+              )
+              .then(response => {
+                var resourceURL = response.config.hostedUrl;
+                var userName = JSON.parse(response.config.data).userName;
+                var password = JSON.parse(response.config.data).password;
+
+                epicArray.push({
+                  name: response.config.epicName,
+                  issues: response.data.issues
+                });
+
+                if (response.config.index == response.config.length - 1) {
+                  this.props.currentBoard(
+                    epicArray,
+                    resourceURL,
+                    userName,
+                    password
+                  );
+                }
+              });
+          }
+
         }
       });
   };
@@ -230,9 +227,9 @@ class SelectedProjectBoardDetails extends Component {
             {this.state.dropDownValue}
           </DropdownToggle>
           <DropdownMenu className="custom-dropdown-menu">
-              {this.projectBoardDetailsListarray(
-                this.state.projectBoardDetailsListarray
-              )}
+            {this.projectBoardDetailsListarray(
+              this.state.projectBoardDetailsListarray
+            )}
           </DropdownMenu>
         </Dropdown>
       </div>
