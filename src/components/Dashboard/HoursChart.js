@@ -1,4 +1,8 @@
 import React, { Component } from "react";
+
+import {connect  } from 'react-redux';
+import { setSelectedTeam } from '../../actions/index';
+
 import {
   PieChart,
   Pie,
@@ -15,10 +19,17 @@ import {
   ResponsiveContainer
 } from "recharts";
 
+const mapStateToProps = state => {
+    return {
+        selectedTeamId:state.teamDetails.selectedTeamId
+    };
+}
+
 class Hourschart extends Component {
   render() {
     return (
       <div>
+          {/* {this.props.selectedTeamId} */}
         <div className="col-md-12 col-lg-12 justify padding0">
           <ResponsiveContainer width="100%" aspect={5.0 / 2.8}>
             <LineChart data={this.props.data}>
@@ -37,4 +48,5 @@ class Hourschart extends Component {
   }
 }
 
-export default Hourschart;
+const test2 = connect(mapStateToProps)(Hourschart)
+export default test2;
