@@ -214,7 +214,6 @@ class TeamsBaseLayout extends Component {
 
 
     selectProject = (boardDetails, userName, password, hostedUrl, peopleList) => {
-        debugger;
         this.setState({
             selectedProjectBoardDetails:
                 <SelectedProjectBoardDetails

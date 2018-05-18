@@ -142,7 +142,7 @@ class SelectedProjectDetails extends Component {
                 let toolsNew = response.data.content.tools;
                 tools = toolsNew.filter(tool => {
                     return tool.toolName === "Jira";
-                })
+                });
 
                 this.getBoard(
                     tools[0].hostedURL,
