@@ -521,32 +521,6 @@ class TeamsBaseLayout extends Component {
                                     <div className="d-flex custom_dashboard-header justify-content-between">
                                         <CardHeader title="Quality Overview" className="p-0" />
                                     </div>
-                                    <div style={{ padding: "0.5rem" }}>
-                                        <Card
-                                            style={{
-                                                padding: "0.7rem",
-                                                fontSize: "14px",
-                                                fontWeight: "300"
-                                            }}
-                                        >
-                                            <div className="d-flex justify-content-between">
-                                                <span>Quality Gate</span>
-                                                <span>
-                                                    Java Profile{" "}
-                                                    <span
-                                                        className="text-danger"
-                                                        style={{
-                                                            border: "1px solid",
-                                                            padding: "3px 20px",
-                                                            borderRadius: "11px"
-                                                        }}
-                                                    >
-                                                        Failed
-                          </span>
-                                                </span>
-                                            </div>
-                                        </Card>
-                                    </div>
                                     <div className="col-lg-12 text-center">
                                         {this.state.loaderforsonar}
                                         {this.state.sonarQubedata}
