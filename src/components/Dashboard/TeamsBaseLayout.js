@@ -214,54 +214,33 @@ class TeamsBaseLayout extends Component {
 
 
     selectProject = (boardDetails, userName, password, hostedUrl, peopleList) => {
+        debugger;
+        this.setState({
+            selectedProjectBoardDetails:
+                <SelectedProjectBoardDetails
+                    selectedProjectBoardDetails={boardDetails}
+                    selectedUserName={userName}
+                    selectedUserPwd={password}
+                    selectedUrl={hostedUrl}
+                    onSelectBoard={this.selectedBoardforSprintData}
+                    currentBoard={this.selectedBoardforIssues}
+                    listOfEpics={this.epicBurdownChart}
+                    showLoaderforEpicData={this.ShowLoaderforEpicData}
+                    showLoaderforSprintData={this.ShowLoaderforSprintData}
+                />
+            ,
+            loaderforpeople: "",
+            sonarQubedata: <SonarQubeData />,
+            loaderforsonar: "",
+            jenkinsData: <Jenkins />,
+            loaderforJenkins: ""
+        });
         if (peopleList != undefined) {
-            this.setState({
-                selectedProjectBoardDetails:
-                    <SelectedProjectBoardDetails
-                        selectedProjectBoardDetails={boardDetails}
-                        selectedUserName={userName}
-                        selectedUserPwd={password}
-                        selectedUrl={hostedUrl}
-                        onSelectBoard={this.selectedBoardforSprintData}
-                        currentBoard={this.selectedBoardforIssues}
-                        listOfEpics={this.epicBurdownChart}
-                        showLoaderforEpicData={this.ShowLoaderforEpicData}
-                        showLoaderforSprintData={this.ShowLoaderforSprintData}
-                    />
-                ,
-                peoplesArray: <PeoplesList peoplesList={peopleList} />,
-                loaderforpeople: "",
-                sonarQubedata: <SonarQubeData />,
-                loaderforsonar: "",
-                jenkinsData: <Jenkins />,
-                loaderforJenkins: ""
-            });
+           this.setState({
+            peoplesArray: <PeoplesList peoplesList={peopleList} />,
+           })
         }
-        else if (peopleList == undefined || JSON.stringify(peopleList) === JSON.stringify([])) {
-            this.setState({
-                selectedProjectBoardDetails:
-                    <SelectedProjectBoardDetails
-                        selectedProjectBoardDetails={boardDetails}
-                        selectedUserName={userName}
-                        selectedUserPwd={password}
-                        selectedUrl={hostedUrl}
-                        onSelectBoard={this.selectedBoardforSprintData}
-                        currentBoard={this.selectedBoardforIssues}
-                        listOfEpics={this.epicBurdownChart}
-                        showLoaderforEpicData={this.ShowLoaderforEpicData}
-                        showLoaderforSprintData={this.ShowLoaderforSprintData}
-                    />
-                ,
-                //peoplesArray: <PeoplesList peoplesList={peopleList} />,
-                loaderforpeople: "",
-                sonarQubedata: <SonarQubeData />,
-                loaderforsonar: "",
-                //peoplesArray:"",
-                emptyPeoplesArray: "No members to dispaly",
-                jenkinsData: <Jenkins />,
-                loaderforJenkins: ""
-            });
-        }
+        
     };
 
     sonarQubeData = () => {

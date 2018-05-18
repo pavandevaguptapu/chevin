@@ -76,7 +76,7 @@ class SelectedProjectDetails extends Component {
                 actionMethod: "get"
             })
             .then(response => {
-                console.log(response)
+                // console.log(response)
                 var boardDetails = response.data.values;
                 var userName = username;
                 var Password = password;
@@ -128,8 +128,7 @@ class SelectedProjectDetails extends Component {
             teamId: this.props.teamId
         })
             .then(response => {
-                console.log(response.data.content)
-                debugger;
+                console.log(response.data.content.tools, "asdas")
                 this.setState({ selectedProjectIndex: projectId });
 
                 this.state.hintStyle2 = {
@@ -138,12 +137,20 @@ class SelectedProjectDetails extends Component {
                 this.props.showLoader();
                 var jumpStartMenuNameArray = [];
                 const IM = "Issue Management";
+
+                let tools = [];
+                let toolsNew = response.data.content.tools;
+                tools = toolsNew.filter(tool => {
+                    return tool.toolName === "Jira";
+                })
+
                 this.getBoard(
-                    response.data.content.tools[0].hostedURL,
-                    response.data.content.tools[0].userName,
-                    response.data.content.tools[0].password,
-                    response.data.content.tools[0].people
+                    tools[0].hostedURL,
+                    tools[0].userName,
+                    tools[0].password,
+                    tools[0].people
                 );
+
                 // if (
                 //     this.state.projectDetails.projects[projectId].tools ==
                 //     undefined &&
