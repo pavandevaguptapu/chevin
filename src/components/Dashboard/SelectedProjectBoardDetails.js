@@ -219,7 +219,7 @@ class SelectedProjectBoardDetails extends Component {
           isOpen={this.state.dropdownOpen}
           toggle={this.toggle}
           className="custom-secondary_dropdown clearfix"
-        >
+        > 
           <DropdownToggle
             caret
             className="text-truncate d-flex justify-content-between"

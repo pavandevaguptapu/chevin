@@ -30,6 +30,8 @@ import { Step, Stepper, StepLabel, StepButton } from 'material-ui/Stepper';
 import ArrowForwardIcon from 'material-ui/svg-icons/navigation/arrow-forward';
 import IconButton from 'material-ui/IconButton';
 import Checkbox from 'material-ui/Checkbox';
+import IconMenu from 'material-ui/IconMenu';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 
 var dcopy = require('deep-copy')
 
@@ -54,20 +56,38 @@ const tabsBackgroundColor = {
     backgroundColor: "rgb(156, 156, 156)"
 }
 
+const styles = {
+
+    largeIcon: {
+        width: 10,
+        height: 10,
+        padding: 0
+    },
+
+};
 
 class ManageCustomerTeams extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            accountDetails: ''
+            allTeamsDataArray: ''
         }
     }
     componentWillMount() {
-        axios.get(myConstClass.nodeAppUrl + '/accounts')
+        axios.get("http://172.16.25.50:8585/springhibernate/newspringboardapi/getTeams")
             .then(response => {
-                this.setState({
-                    accountDetails: <AccountDetails AccountDataArray={response.data} />
-                })
+
+                if (response.data.content.length === 0) {
+                    this.setState({
+                        accountDetails: <AccountDetails addTeamString={true} />
+                    })
+                } else {
+                    this.setState({
+                        accountDetails: <AccountDetails allTeamsDataArray={response.data.content} addTeamString={false} />
+                    })
+                }
+            }, (error) => {
+                console.log(error)
             })
     }
     render() {
@@ -92,9 +112,14 @@ class AccountDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            listOfTeams: [],
+            showTeamLevelDetails: false,
+            TeamDetailsArrayForEditing: [],
+
+
+
             newProjectDetails: {},
             projectList: [],
-            currentAccount: this.props.AccountDataArray,
             selectedTeamName: '',
             selectedTeamIndex: '',
             selectedProjectIndex: '',
@@ -111,34 +136,32 @@ class AccountDetails extends React.Component {
             selectedProjectName: '',
             newPeopleObj: {},
             editProjectDetails: {},
-            processArray: [
-                { "name": "Project Management", "processID": 4, "tools": [{ "name": "jira" }] },
-                { "name": "Quality Management", "processID": 5, "tools": [{ "name": "SonarQube" }, { "name": "jira" }] },
-                { "name": "Build Tool", "processID": 6, "tools": [{ "name": "Gradle" }, { "name": "SonarQube" }] }
+            toolsConfig: {},
+            toolName: {},
+            processName: {}
+            // processArray: [
+            //     { "name": "Project Management", "processID": 4, "tools": [{ "name": "jira" }] },
+            //     { "name": "Quality Management", "processID": 5, "tools": [{ "name": "SonarQube" }, { "name": "jira" }] },
+            //     { "name": "Build Tool", "processID": 6, "tools": [{ "name": "Gradle" }, { "name": "SonarQube" }] }
 
-            ],
-            editableProcessArray: [
-                { "name": "Project Management", "processID": 4, "tools": [{ "name": "jira" }] },
-                { "name": "Quality Management", "processID": 5, "tools": [{ "name": "SonarQube" }, { "name": "jira" }] },
-                { "name": "Build Tool", "processID": 6, "tools": [{ "name": "Gradle" }, { "name": "SonarQube" }] },
+            // ],
+            // editableProcessArray: [
+            //     { "name": "Project Management", "processID": 4, "tools": [{ "name": "jira" }] },
+            //     { "name": "Quality Management", "processID": 5, "tools": [{ "name": "SonarQube" }, { "name": "jira" }] },
+            //     { "name": "Build Tool", "processID": 6, "tools": [{ "name": "Gradle" }, { "name": "SonarQube" }] },
 
-            ],
-            stepIndex: 0,
-            jumpStartObj: [{ "processName": "", "tools": [{ "toolName": "", "username": "", "password": "", "url": "" }] }],
-            headersToolsArray: [{ "name": "Project Management", "processID": 4 }, { "name": "Quality Management", "processID": 5 }, { "name": "Build Tool", "processID": 6 }, { "name": "Source Control", "processID": 7 }],
-            toolsArray: [
-                { "name": "Jira", "processID": [3, 5, 4] }, { "name": "SonarQube", "processID": [0, 5] }, { "name": "Jenkins", "processID": [3] },
-                { "name": "Git", "processID": [7] }
-            ]
+            // ],
+            //stepIndex: 0,
+            // jumpStartObj: [{ "processName": "", "tools": [{ "toolName": "", "username": "", "password": "", "url": "" }] }],
+            // headersToolsArray: [{ "name": "Project Management", "processID": 4 }, { "name": "Quality Management", "processID": 5 }, { "name": "Build Tool", "processID": 6 }, { "name": "Source Control", "processID": 7 }],
+            // toolsArray: [
+            //     { "name": "Jira", "processID": [3, 5, 4] }, { "name": "SonarQube", "processID": [0, 5] }, { "name": "Jenkins", "processID": [3] },
+            //     { "name": "Git", "processID": [7] }
+            // ]
 
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        this.setState({
-            currentAccount: nextProps.AccountDataArray
-        })
-    }
     getDateString = (date) => {
 
 
@@ -149,150 +172,72 @@ class AccountDetails extends React.Component {
         var year = date.getFullYear()
         if (month.length < 2) month = '0' + month;
         if (day.length < 2) day = '0' + day;
-        var dateString = (day + "/" + month + "/" + year)
+        var dateString = (year + "-" + month + "-" + day)
         return dateString
 
 
     }
     componentWillMount() {
-        var currentAccountArray = dcopy(this.props.AccountDataArray)
-        var latestTeam = currentAccountArray[currentAccountArray.length - 1].customerName
-        var lastitemIndex = currentAccountArray.length - 1
-        if (currentAccountArray[currentAccountArray.length - 1].people.length === 0) {
-            this.setState({ existingMemberRadioButton: false })
+        axios.get("http://172.16.25.50:8585/springhibernate/newspringboardapi/getMasterToolsAndProcesses")
+            .then(response => {
 
-        }
+                var toolsArray = []
+                var processArray = []
+                toolsArray = response.data.content.tools
+                processArray = response.data.content.processes
+                this.setState({ toolsArray: toolsArray, processArray: processArray })
+            }, (error) => {
+                console.log(error)
+            })
 
-        var noMember = 0
-        var eachProjectMembers = 0
-        var x;
-        var allMembersinProject = 0
-        // for empty projects
-        if (currentAccountArray[lastitemIndex].projects.length === 0) {
-            this.setState({ noProject: true, noPeople: true, noTool: true, totalMembers: 0 })
+        if (this.props.addTeamString === true) {
+            this.setState({ addTeamString: true })
         }
         else {
-            var ProjectsArray = currentAccountArray[lastitemIndex].projects
-            var selectedProjectName = currentAccountArray[lastitemIndex].projects[0].projectName
-
-            this.setState({ projectsArray: ProjectsArray, noProject: false, noPeople: false, noTool: false, selectedProjectName: selectedProjectName })
+            var listOfTeams = this.props.allTeamsDataArray
+            var lastTeamIndex = listOfTeams.length - 1
+            if (listOfTeams[lastTeamIndex].projects === undefined && listOfTeams[lastTeamIndex].people === undefined) {
+                listOfTeams[lastTeamIndex].projects = []
+                listOfTeams[lastTeamIndex].people = []
+            }
+            this.setState({ listOfTeams: listOfTeams, selectedTeamIndex: lastTeamIndex })
         }
-        // for displaying(in card) total members in a team            
-        for (var i = 0; i < currentAccountArray[lastitemIndex].projects.length; i++) {
-            x = eachProjectMembers
-            if (currentAccountArray[lastitemIndex].projects[i].people == undefined) {
-                noMember = 0
-                allMembersinProject = noMember + x
-                this.setState({ totalMembers: allMembersinProject })
-            }
-            else {
-                eachProjectMembers = currentAccountArray[lastitemIndex].projects[i].people.length
-                allMembersinProject = x + eachProjectMembers
-                this.setState({ totalMembers: allMembersinProject })
-            }
-        }
-        var emptyPeopleArray
-        // if projects are available
-        if (currentAccountArray[lastitemIndex].projects.length !== 0) {            // if projects array not equal to undefined and people array is udefined
-            if (currentAccountArray[currentAccountArray.length - 1].projects[0].people === undefined) {
-                // emptyPeopleArray = currentAccountArray[currentAccountArray.length - 1].projects[0].people = [{ "name": "no member is assigned to this project" }]
-                this.setState({ noPeople: true })
-            }
-            else {
-                var peopleArrayOfselectedProject = currentAccountArray[currentAccountArray.length - 1].projects[0].people
-                this.setState({ peopleArray: peopleArrayOfselectedProject, noPeople: false })
-            }
-
-            // if projects array not equal to undefined and tools object is udefined
-            if (currentAccountArray[currentAccountArray.length - 1].projects[0].tools === undefined) {
-                // var jumpstartListofTools = ["no tools are configured to this project"]
-                this.setState({ isTooldata: false, noTool: true })
-
-            }
-            else {
-                // var jumpstartListofTools = Object.keys(currentAccountArray[currentAccountArray.length - 1].projects[0].tools)
-                // //parameters passing to selectedTool function(selectedToolName, selectedITeamIndex,selectedProjectIndex,selectedToolIndex) to get tool details
-                // this.selectedTool(jumpstartListofTools[0], lastitemIndex, 0, 0)
-                // this.setState({ isTooldata: true, listofToolsarray: jumpstartListofTools, noTool: false })
-
-            }
-        }
-
-        var TeamDetailsArrayForEditing = dcopy(currentAccountArray)
-
-        this.setState({
-            currentAccount: currentAccountArray,
-            TeamDetailsArrayForEditing: TeamDetailsArrayForEditing,
-            selectedTeamName: latestTeam,
-            selectedTeamIndex: lastitemIndex,
-            selectedProjectIndex: 0,
-            selectedToolIndex: 0,
-        })
-
     }
-    selectTeam = (event, selectedTeamIndex, value) => {
-
-        // for empty projects
-        var currentAccount = this.state.currentAccount
-        var noMember = 0
-        var eachProjectMembers = 0
-        var x;
-        var allMembersinProject = 0
-        if (currentAccount[selectedTeamIndex].projects.length === 0) {
-            this.setState({ noProject: true, noPeople: true, noTool: true })
+    componentDidMount() {
+        if (this.props.addTeamString === false) {
+            this.selectedTeam("e", this.state.selectedTeamIndex)
         }
-        else {
-            var ProjectsArray = currentAccount[selectedTeamIndex].projects
-            var selectedProjectName = currentAccount[selectedTeamIndex].projects[0].projectName
-            this.setState({ projectsArray: ProjectsArray, noProject: false, noPeople: false, noTool: false, selectedProjectName: selectedProjectName })
-        }
-
-        // for displaying(in card) total members in a team
-        for (var i = 0; i < currentAccount[selectedTeamIndex].projects.length; i++) {
-            x = eachProjectMembers
-            if (currentAccount[selectedTeamIndex].projects[i].people == undefined) {
-                noMember = 0
-                allMembersinProject = noMember + x
-                this.setState({ totalMembers: allMembersinProject })
+    }
+    selectedTeam = (event, selectedTeamIndex) => {
+        var tempListOfTeams = this.state.listOfTeams
+        var selectedTeam = tempListOfTeams[selectedTeamIndex].teamName
+        var selectedTeamId = tempListOfTeams[selectedTeamIndex].teamId
+        this.setState({ selectedTeamName: selectedTeam })
+        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/getTeamDetails",
+            {
+                teamId: selectedTeamId
+            }
+        ).then(response => {
+            var tempListOfTeamsArray = this.state.listOfTeams
+            var selectedObj = this.state.listOfTeams[selectedTeamIndex]
+            response.data.content["teamName"] = this.state.listOfTeams[selectedTeamIndex].teamName
+            response.data.content["status"] = this.state.listOfTeams[selectedTeamIndex].status
+            response.data.content["teamId"] = this.state.listOfTeams[selectedTeamIndex].teamId
+            tempListOfTeamsArray.splice(selectedTeamIndex, 1)
+            tempListOfTeamsArray.splice(selectedTeamIndex, 0, response.data.content)
+            if (tempListOfTeamsArray[selectedTeamIndex].projects.length === 0 && tempListOfTeamsArray[selectedTeamIndex].people.length === 0) {
+                this.setState({ listOfTeams: tempListOfTeamsArray, noProject: true, noPeople: true, noTool: true, selectedTeamIndex: selectedTeamIndex })
             }
             else {
-                eachProjectMembers = currentAccount[selectedTeamIndex].projects[i].people.length
-                allMembersinProject = x + eachProjectMembers
-                this.setState({ totalMembers: allMembersinProject })
-            }
-        }
-
-        var emptyPeopleArray
-        if (currentAccount[selectedTeamIndex].projects.length !== 0) {
-            // if projects array not equal to undefined and people array is udefined
-            if (currentAccount[selectedTeamIndex].projects[0].people === undefined) {
-                this.setState({ noPeople: true })
-            }
-            else {
-                var peopleArrayOfselectedProject = currentAccount[selectedTeamIndex].projects[0].people
-                this.setState({ peopleArray: peopleArrayOfselectedProject, noPeople: false })
+                var ProjectsArray = tempListOfTeamsArray[selectedTeamIndex].projects
+                var selectedProjectName = tempListOfTeamsArray[selectedTeamIndex].projects[0].projectName
+                this.setState({ listOfTeams: tempListOfTeamsArray, projectsArray: ProjectsArray, noProject: false, noPeople: false, noTool: false, selectedTeamIndex: selectedTeamIndex })
+                this.getProjects(selectedTeamId, this.state.selectedTeamName)
             }
 
-            if (currentAccount[selectedTeamIndex].projects[0].tools === undefined) {
-                // var jumpstartListofTools = ["no tools are configured to this project"]
-                this.setState({ isTooldata: false, noTool: true })
-            }
-            else {
-                // var jumpstartListofTools = Object.keys(currentAccount[selectedTeamIndex].projects[0].tools)
-                // this.selectedTool(jumpstartListofTools[0], selectedTeamIndex, 0, 0)
-                // this.setState({ isTooldata: true, selectedProjectIndex: 0, listofToolsarray: jumpstartListofTools, noTool: false })
-            }
-        }
-        var currentAccountArray1 = dcopy(currentAccount)
-
-        this.setState({
-            currentAccount: currentAccount,
-            selectedTeamName: value,
-            selectedTeamIndex: selectedTeamIndex,
-            selectedProjectIndex: 0,
-            TeamDetailsArrayForEditing: currentAccountArray1
+        }, (error) => {
+            console.log(error)
         })
-        this.selectingMember("event", "existingMember")
 
     }
     addTeamModal = () => {
@@ -328,45 +273,35 @@ class AccountDetails extends React.Component {
         )
 
     }
-    formatDate = (date) => {
-
-        // var date =(date.getMonth() + 1)+"/"+date.getFullYear() + "/" + date.getDate();
-
-    }
     addTeam = (newTeamObj) => {
-
         if (newTeamObj.startDate === undefined) {
-            var startDate = new Date().toString()
-            var endDate = new Date().toString()
+            var startDate = this.getDateString(new Date())
+            var endDate = this.getDateString(new Date())
         }
         else {
-            var startDate = newTeamObj.startDate.toString()
-            var endDate = newTeamObj.endDate.toString()
-
+            var startDate = this.getDateString(newTeamObj.startDate)
+            var endDate = this.getDateString(newTeamObj.endDate)
         }
-
-        axios.post(myConstClass.nodeAppUrl + `/accounts`,
+        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/addTeam",
             {
-                customerName: newTeamObj.customerName,
+                teamName: newTeamObj.teamName,
                 startDate: startDate,
                 endDate: endDate,
-                engagementModel: newTeamObj.engagementModel,
-                pricingModel: 0,
-                seniorSupplier: 'siva',
-                projectManager: 'siva',
-                projects: [],
-                people: [],
-                customerLogo: '',
-                status: 'Active'
+                status: "1"
             })
             .then(response => {
-                console.log(response.data)
-                var addedObj = this.state.currentAccount.concat(response.data)
-                this.setState({ currentAccount: addedObj, addTeamModal: false });
-                this.selectTeam("event", this.state.currentAccount.length - 1, this.state.currentAccount[this.state.currentAccount.length - 1].customerName)
-                if (this.state.currentAccount[this.state.currentAccount.length - 1].people.length === 0) {
-                    this.setState({ existingMemberRadioButton: false, existingMemberArray: false })
-
+                var addedObj
+                if (this.state.listOfTeams !== undefined) {
+                    addedObj = this.state.listOfTeams
+                    addedObj.push(response.data.content)
+                    this.setState({ listOfTeams: addedObj, addTeamModal: false, addTeamString: false, noTool: true });
+                    this.selectedTeam("event", this.state.listOfTeams.length - 1)
+                }
+                else if (this.state.listOfTeams === undefined) {
+                    var addedObj = []
+                    addedObj.push(response.data.content)
+                    this.setState({ listOfTeams: addedObj, addTeamModal: false, addTeamString: false, noTool: true });
+                    this.selectedTeam("event", this.state.listOfTeams.length - 1)
                 }
             })
     }
@@ -374,200 +309,217 @@ class AccountDetails extends React.Component {
         this.setState({ addTeamModal: false })
     }
     editTeam = () => {
-        console.log(this.state.currentAccount)
-        var tempArray = dcopy(this.state.currentAccount)
+        var tempArray = dcopy(this.state.listOfTeams)
 
         var startDate = new Date(tempArray[this.state.selectedTeamIndex].startDate)
         var endDate = new Date(tempArray[this.state.selectedTeamIndex].endDate)
         tempArray[this.state.selectedTeamIndex].startDate = startDate
         tempArray[this.state.selectedTeamIndex].endDate = endDate
+        var selectedTeamName = tempArray[this.state.selectedTeamIndex].teamName
 
-        this.setState({ editTeamModal: true, TeamDetailsArrayForEditing: tempArray })
+        this.setState({ editTeamModal: true, TeamDetailsArrayForEditing: tempArray, selectedTeamName: selectedTeamName })
     }
     handleTeamEditDetails = (e, selectedDate, string) => {
-        console.log(this.state.TeamDetailsArrayForEditing)
         var EditedAccountObj = this.state.TeamDetailsArrayForEditing;
         if (e !== null) {
-
             EditedAccountObj[this.state.selectedTeamIndex][e.target.name] = e.target.value;
-
         }
-
         else if (e === null && string === 'startDate') {
-            // var EditedAccountObj= this.state.TeamDetailsArrayForEditing;
             EditedAccountObj[this.state.selectedTeamIndex][string] = selectedDate
         }
         else if (e === null && string === 'endDate') {
-            // var EditedAccountObj = this.state.TeamDetailsArrayForEditing
             EditedAccountObj[this.state.selectedTeamIndex][string] = selectedDate
         }
-
-
         this.setState(
             {
                 TeamDetailsArrayForEditing: EditedAccountObj
             }
-
         )
-
     }
     updateTeam(modifiedTeamObj) {
-
-        if (modifiedTeamObj.startDate === undefined) {
-            var startDate = new Date().toString()
-            var endDate = new Date().toString()
-        }
-        else {
-            var startDate = modifiedTeamObj.startDate.toString()
-            var endDate = modifiedTeamObj.endDate.toString()
-
-        }
-        axios.put(myConstClass.nodeAppUrl + `/accounts/` + modifiedTeamObj._id,
+        var startDate = this.getDateString(modifiedTeamObj.startDate)
+        var endDate = this.getDateString(modifiedTeamObj.endDate)
+        var selectedTeamId = this.state.listOfTeams[this.state.selectedTeamIndex].teamId
+        var selectedTeamName = this.state.listOfTeams[this.state.selectedTeamIndex].teamName
+        var teamInfo = {}
+        teamInfo["teamName"] = modifiedTeamObj.teamName
+        teamInfo["status"] = modifiedTeamObj.status
+        teamInfo["startDate"] = modifiedTeamObj.startDate
+        teamInfo["endDate"] = modifiedTeamObj.endDate
+        axios.put("http://172.16.25.50:8585/springhibernate/newspringboardapi/editTeam",
             {
-                customerName: modifiedTeamObj.customerName,
-                startDate: startDate,
-                endDate: endDate,
-                engagementModel: modifiedTeamObj.engagementModel,
-                pricingModel: modifiedTeamObj.pricingModel,
-                seniorSupplier: 'asewr',
-                projectManager: 'jg',
-                projects: modifiedTeamObj.projects,
-                people: [],
-                customerLogo: modifiedTeamObj.customerLogo,
-                status: 'Active'
-            })
-            .then(response => {
-                console.log(response.data)
-                var updatedObj = this.state.currentAccount
-                updatedObj.splice(this.state.selectedTeamIndex, 1)
-                updatedObj.splice(this.state.selectedTeamIndex, 0, response.data)
-                var updatedTeamName = updatedObj[this.state.selectedTeamIndex].customerName
-                this.setState({ currentAccount: updatedObj, selectedTeamName: updatedTeamName, editTeamModal: false });
-
-            })
-
-    }
-    handleChange = (even, date) => {
-        var selectedDate = new Date(date)
-        var newDate = this.getDateString(date)
-        this.state.currentAccount[this.state.selectedTeamIndex].startDate = newDate
-        this.setState({})
+                teamId: selectedTeamId,
+                teamInfo: teamInfo
+            }
+        ).then(response => {
+            var tempListOfTeamsArray = this.state.listOfTeams
+            var editedObj = this.state.listOfTeams[this.state.selectedTeamIndex]
+            editedObj["teamName"] = response.data.content.teamInfo.teamName
+            editedObj["status"] = response.data.content.teamInfo.status
+            editedObj["teamId"] = response.data.content.teamId
+            editedObj["startDate"] = response.data.content.teamInfo.startDate
+            editedObj["endDate"] = response.data.content.teamInfo.endDate
+            tempListOfTeamsArray.splice(this.state.selectedTeamIndex, 1)
+            tempListOfTeamsArray.splice(this.state.selectedTeamIndex, 0, editedObj)
+            this.setState({ listOfTeams: tempListOfTeamsArray, editTeamModal: false, selectedTeamName: editedObj.teamName, selectedTeamIndex: this.state.selectedTeamIndex });
+        }, (error) => {
+            console.log(error)
+        })
     }
     selectingTeamName = (Teams) => {
-        return Teams.map((team) => (
-            <MenuItem
-                key={team.customerName}
-                value={team.customerName}
-                primaryText={team.customerName}
-            />
-        ));
+        if (this.props.addTeamString === false || Teams !== undefined) {
+            return Teams.map((team) => (
+                <MenuItem
+                    key={team.teamId}
+                    value={team.teamName}
+                    primaryText={team.teamName}
+                />
+            ));
+        }
+
     }
     selectedProject = (selectedProjectIndex) => {
+        var selectedTeamId = this.state.listOfTeams[this.state.selectedTeamIndex].teamId
+        var selectedProjectId = this.state.listOfTeams[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectId
+        var selectedProjectName = this.state.listOfTeams[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
+        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/getProjectDetails",
+            {
+                teamId: selectedTeamId,
+                projectId: selectedProjectId
+            }
+        ).then(response => {
+            var toolsConfig = {}
+            for (var k = 0; k < response.data.content.tools.length; k++) {
+                toolsConfig[response.data.content.tools[k].toolName + '-' + response.data.content.tools[k].processName] = {
+                    "userName": response.data.content.tools[k].userName,
+                    "password": response.data.content.tools[k].password,
+                    "hostedURL": response.data.content.tools[k].hostedURL,
+                    "toolName": response.data.content.tools[k].toolName,
+                    "toolId": response.data.content.tools[k].toolId,
+                    "processName": response.data.content.tools[k].processName
+                }
+            }
+            this.setState({ toolsConfig: toolsConfig })
+            var tempListOfTeamsArray = dcopy(this.state.listOfTeams)
+            var projectId = tempListOfTeamsArray[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectId
+            var ProjectName = tempListOfTeamsArray[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
+            tempListOfTeamsArray[this.state.selectedTeamIndex].projects[selectedProjectIndex] = response.data.content
+            tempListOfTeamsArray[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectId = projectId
+            tempListOfTeamsArray[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName = ProjectName
 
-        // var currentAccount = dcopy(this.props.AccountDataArray)
-        var currentAccount = this.state.currentAccount
-
-
-        var selectedProjectName = currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
-        this.selectedProjectfromDropDown("event", selectedProjectIndex, selectedProjectName)
-
-        if (currentAccount[this.state.selectedTeamIndex].projects.length === 0) {
-            this.setState({ noProject: true, noPeople: true, noTool: true })
-        }
-        else {
-            var ProjectsArray = currentAccount[this.state.selectedTeamIndex].projects
-            var selectedProjectName = currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
-            this.setState({ projectsArray: ProjectsArray, noProject: false, noPeople: false, noTool: false, selectedProjectName: selectedProjectName })
-        }
-
-        if (currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].people === undefined) {
-            this.setState({ noPeople: true })
-        }
-        else {
-            var peopleArrayOfselectedProject = currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].people
-            this.setState({ peopleArray: peopleArrayOfselectedProject, noPeople: false })
-        }
-
-        if (currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].tools === undefined) {
-            // var jumpstartListofTools = ["no tools are configured to this project"]
-            this.setState({ isTooldata: false, noTool: true })
-        }
-        else {
-            // var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].tools)
-            // this.setState({ isTooldata: true, noTool: false, listofToolsarray: jumpstartListofTools, })
-        }
-
-        this.setState({
-            currentAccount: currentAccount,
-            selectedProjectIndex: selectedProjectIndex,
+            this.setState({
+                listOfTeams: tempListOfTeamsArray,
+                selectedTeamIndex: this.state.selectedTeamIndex,
+                selectedProjectIndex: selectedProjectIndex,
+                selectedProjectName: selectedProjectName
+            });
+            this.selectedProjectfromDropDown("e", this.state.selectedProjectIndex, this.state.selectedProjectName)
+        }, (error) => {
+            console.log(error)
         })
-
     }
-    selectedProjectfromDropDown = (event, selectedProjectIndexfromDropDown, value) => {
+    selectedProjectfromDropDown = (event, selectedProjectIndex, value) => {
+        this.setState({ selectedProjectName: value, selectedProjectIndex: selectedProjectIndex })
+        var selectedTeamId = this.state.listOfTeams[this.state.selectedTeamIndex].teamId
+        var selectedProjectId = this.state.listOfTeams[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectId
+        var selectedProjectName = this.state.listOfTeams[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
+        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/getProjectDetails",
+            {
+                teamId: selectedTeamId,
+                projectId: selectedProjectId
+            }
+        ).then(response => {
+            var toolsConfig = {}
+            for (var k = 0; k < response.data.content.tools.length; k++) {
+                toolsConfig[response.data.content.tools[k].toolName + '-' + response.data.content.tools[k].processName] = {
+                    "userName": response.data.content.tools[k].userName,
+                    "password": response.data.content.tools[k].password,
+                    "hostedURL": response.data.content.tools[k].hostedURL,
+                    "toolName": response.data.content.tools[k].toolName,
+                    "toolId": response.data.content.tools[k].toolId,
+                    "processName": response.data.content.tools[k].processName
+                }
+            }
+            this.setState({ toolsConfig: toolsConfig })
+            var tempListOfTeamsArray = dcopy(this.state.listOfTeams)
+            var projectId = tempListOfTeamsArray[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectId
+            var ProjectName = tempListOfTeamsArray[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
+            tempListOfTeamsArray[this.state.selectedTeamIndex].projects[selectedProjectIndex] = response.data.content
+            tempListOfTeamsArray[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectId = projectId
+            tempListOfTeamsArray[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName = ProjectName
 
-        var currentAccount = this.state.currentAccount
-        if (currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndexfromDropDown].people === undefined) {
-            this.setState({ noPeople: true })
-        }
-        else {
-            var peopleArrayOfselectedProject = currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndexfromDropDown].people
-            this.setState({ peopleArray: peopleArrayOfselectedProject, noPeople: false })
-        }
-
-        if (currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndexfromDropDown].tools === undefined) {
-            // var jumpstartListofTools = ["no tools are configured to this project"]
-            this.setState({ isTooldata: false, noTool: true })
-        }
-        else {
-            // var jumpstartListofTools = Object.keys(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndexfromDropDown].tools)
-            // this.setState({ isTooldata: true, noTool: false, listofToolsarray: jumpstartListofTools, })
-        }
-        this.setState({
-            currentAccount: currentAccount,
-            selectedProjectIndex: selectedProjectIndexfromDropDown,
-            selectedProjectName: value
+            this.setState({
+                listOfTeams: tempListOfTeamsArray,
+                selectedTeamIndex: this.state.selectedTeamIndex,
+                selectedProjectIndex: selectedProjectIndex,
+                selectedProjectName: selectedProjectName
+            });
         })
-
-
-
-
     }
-    createProject = () => {
-        this.setState({ createProjectModal: true, newProjectDetails: {} })
+    addProjectModal = () => {
+        this.setState({ addProjectModal: true, newProjectDetails: {} })
     }
     closeAddProjectModal = () => {
-        this.setState({ createProjectModal: false })
+        this.setState({ addProjectModal: false })
     }
     addNewProject = (newProjectObject) => {
-        var tempAccountsArray = this.state.currentAccount;
-        tempAccountsArray[this.state.selectedTeamIndex].projects.push(newProjectObject)
 
-        axios.put(myConstClass.nodeAppUrl + `/accounts/` + tempAccountsArray[this.state.selectedTeamIndex]._id,
+        var projectName = newProjectObject.projectName
+        var TeamId = this.state.listOfTeams[this.state.selectedTeamIndex].teamId
+
+        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/addProject",
             {
-                customerName: tempAccountsArray[this.state.selectedTeamIndex].customerName,
-                startDate: tempAccountsArray[this.state.selectedTeamIndex].startDate,
-                endDate: tempAccountsArray[this.state.selectedTeamIndex].endDate,
-                engagementModel: tempAccountsArray[this.state.selectedTeamIndex].engagementModel,
-                pricingModel: tempAccountsArray[this.state.selectedTeamIndex].pricingModel,
-                seniorSupplier: 'asewr',
-                projectManager: 'jg',
-                projects: tempAccountsArray[this.state.selectedTeamIndex].projects,
-                people: [],
-                customerLogo: "",
-                status: 'Active'
+                projectName: projectName,
+                teamId: TeamId
             })
             .then(response => {
-                var updatedObj = this.state.currentAccount
-                var oldObj = this.state.currentAccount[this.state.selectedTeamIndex]
-                updatedObj.splice(oldObj, 1)
-                updatedObj.splice(oldObj, 0, response.data)
-                var updatedTeamName = updatedObj[this.state.selectedTeamIndex].customerName
-                this.setState({ currentAccount: updatedObj, selectedTeamName: updatedTeamName, createProjectModal: false, newProjectDetails: {} });
-                this.selectedProject(updatedObj[this.state.selectedTeamIndex].projects.length - 1)
+                var newProjectObj = this.state.listOfTeams
+                newProjectObj[this.state.selectedTeamIndex].projects.push(response.data.content)
+                this.setState({
+                    listOfTeams: newProjectObj,
+                    addProjectModal: false,
+                    newProjectDetails: {},
+                    selectedTeamIndex: this.state.selectedTeamIndex,
+                    selectedProjectIndex: this.state.listOfTeams[this.state.selectedTeamIndex].projects.length - 1,
+                    projectsArray: this.state.listOfTeams[this.state.selectedTeamIndex].projects,
+                    noProject: false
+                });
+                this.selectedProject(this.state.listOfTeams[this.state.selectedTeamIndex].projects.length - 1)
             })
     }
+    getProjects = (TeamId, selectedTeamName) => {
+
+        this.setState({
+            selectedTeamName: selectedTeamName
+        });
+        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/getTeamDetails",
+            {
+                teamId: TeamId
+            })
+            .then(response => {
+                var newProjectObj = this.state.listOfTeams
+                var slectedTeam = this.state.listOfTeams[this.state.selectedTeamIndex]
+                response.data.content["teamName"] = this.state.listOfTeams[this.state.selectedTeamIndex].teamName
+                response.data.content["status"] = this.state.listOfTeams[this.state.selectedTeamIndex].status
+                response.data.content["teamId"] = this.state.listOfTeams[this.state.selectedTeamIndex].teamId
+
+                newProjectObj.splice(this.state.selectedTeamIndex, 1)
+                newProjectObj.splice(this.state.selectedTeamIndex, 0, response.data.content)
+
+                this.setState({
+                    listOfTeams: newProjectObj,
+                    selectedTeamIndex: this.state.selectedTeamIndex,
+                    selectedProjectIndex: 0,
+                    projectsArray: this.state.listOfTeams[this.state.selectedTeamIndex].projects,
+                    noProject: false,
+                    selectedTeamName: selectedTeamName
+                });
+                this.selectedProject(0)
+            })
+
+    }
     newProjectDetails = (e) => {
-        const updatedProjectDetails = { ...this.state.newProjectDetails }
+        const updatedProjectDetails = {}
         updatedProjectDetails[e.target.name] = e.target.value
         this.setState({ newProjectDetails: updatedProjectDetails })
     }
@@ -588,7 +540,6 @@ class AccountDetails extends React.Component {
 
         )
     }
-
     editProjectModal = (e, actionType, projectIndex) => {
         var tempArray = dcopy(this.state.editProjectDetails)
         tempArray.projectName = this.state.currentAccount[this.state.selectedTeamIndex].projects[projectIndex].projectName
@@ -625,7 +576,6 @@ class AccountDetails extends React.Component {
                 status: 'Active'
             })
             .then(response => {
-                console.log(response.data)
                 var updatedObj = this.state.currentAccount
                 var oldObj = this.state.currentAccount[this.state.selectedTeamIndex]
                 updatedObj.splice(oldObj, 1)
@@ -641,7 +591,7 @@ class AccountDetails extends React.Component {
         // var currentAccount = dcopy(this.props.AccountDataArray)
         var currentAccount = this.state.currentAccount
 
-        //  console.log(currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName)
+
         //  var selectedProjectName=currentAccount[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
         //  this. selectedProjectfromDropDown("event", selectedProjectIndex,selectedProjectName)
 
@@ -711,18 +661,17 @@ class AccountDetails extends React.Component {
             })
 
     }
-
     selectingMember = (event, value) => {
         if (value === "existingMember") {
             this.setState({ existingMemberArray: true })
         }
         else if (value = "newMember") {
-            console.log("1")
+
             this.setState({ existingMemberArray: false })
         }
     }
     selectedTool = (toolsArray, selectedITeamIndex, selectedProjectIndex, selectedprocessIndex) => {
-        console.log(toolsArray, selectedITeamIndex, selectedProjectIndex, selectedprocessIndex)
+
 
         var selectedToolDetails = toolsArray[selectedprocessIndex].tools[0]
 
@@ -743,8 +692,6 @@ class AccountDetails extends React.Component {
         // }
 
     }
-
-
     selectedProcess = (e, selectedProcessIndex) => {
 
 
@@ -778,7 +725,6 @@ class AccountDetails extends React.Component {
         // }
 
     }
-
     handleBack = () => {
         var selectedToolName = dcopy(this.state.jumpStartObj)
 
@@ -824,78 +770,99 @@ class AccountDetails extends React.Component {
         this.setState({ jumpStartObj: tempJumpstartObj })
     }
     saveJumpstartData = (e, obj) => {
-        console.log(obj)
+
 
 
         this.selectedTool(obj, this.state.selectedTeamIndex, this.state.selectedProjectIndex, 0)
         this.setState({ listofToolsarray: obj, jumpstartModal: false, noTool: false })
     }
-    selectProcessforTool = (e, checked, index, headerToolsId) => {
-        var tempToolArray = this.state.toolsArray
-        if (checked === false) {
-            var ind = tempToolArray[index].processID.indexOf(headerToolsId)
-            tempToolArray[index].processID.splice(ind, 1)
-            this.setState({ toolsArray: tempToolArray })
-        }
+    selectProcessforTool = (e, checked, index, processName, toolName, toolId) => {
+        var toolsConfig = this.state.toolsConfig
+        var tempToolsConfigKeys = Object.keys(toolsConfig)
         if (checked === true) {
-            tempToolArray[index].processID.push(headerToolsId)
-            this.setState({ toolsArray: tempToolArray })
+            for (var i = 0; i < tempToolsConfigKeys.length; i++) {
+                if (tempToolsConfigKeys[i].includes(processName) == true) {
+                    delete toolsConfig[tempToolsConfigKeys[i]]
+                    break
+                }
+            }
+            toolsConfig[toolName + '-' + processName] = { "userName": '', "password": '', "hostedURL": '', "toolName": toolName, "toolId": toolId, "processName": processName }
 
+            this.setState({ toolsConfig: toolsConfig })
         }
+
+
 
     }
+    saveTools = (toolsData) => {
+
+        var toolsList = []
+        for (var key in toolsData) {
+            toolsList.push(toolsData[key])
+        }
+
+
+
+        var tataArray = this.state.listOfTeams
+        var selectedTeamId = tataArray[this.state.selectedTeamIndex].teamId
+        var selectedProjectId = tataArray[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].projectId
+
+
+
+        axios.put("http://172.16.25.50:8585/springhibernate/newspringboardapi/editToolsConfig",
+            {
+                teamId: selectedTeamId,
+                projectId: selectedProjectId,
+                tools: toolsList
+            }
+        ).then(response => {
+
+            var toolsData = response.data.content.tools
+            var tempListOfTeams = this.state.listOfTeams
+
+            tempListOfTeams[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].tools = toolsData;
+            this.setState({ listOfTeams: tempListOfTeams })
+        }, (error) => {
+            console.log(error)
+        })
+    }
+    handleToolDetails = (e, selectedToolConfigKey, toolName, processName) => {
+        var tempArray = this.state.toolsConfig
+        tempArray[selectedToolConfigKey][e.target.name] = e.target.value
+        this.setState({ toolsConfig: tempArray })
+    }
+
     render() {
         return (
             <div className="col-lg-12 col-md-12 mt-1">
                 <div className="col-lg-12 col-md-12 d-inline p-0">
                     <Card>
                         <div className="displayInline col-lg-12 col-md-12 p-1">
-                            <div className="col-md-2 col-lg-2 p-0">
+                            <div className={["col-md-2 col-lg-2 p-0", this.state.addTeamString === true ? "visibility" : "show"].join(' ')}>
                                 <div className="d-flex col-md-12 col-lg-12 pl-0 pb-2 pt-1">
                                     <div className={"project_details pt-0 pl-2 pr-0 d-inline-flex"}>
                                         <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
                                     </div>
                                     <div>
                                         <SelectField hintText="Select Project" value={this.state.selectedTeamName}
-                                            labelStyle={{ height: "37px" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectTeam(e, i, v)}>
-                                            {this.selectingTeamName(this.state.currentAccount)}
+                                            labelStyle={{ height: "37px" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedTeam(e, i, v)}>
+                                            {this.selectingTeamName(this.state.listOfTeams)}
                                         </SelectField>
                                         <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>Active</Subheader>
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-md-9 col-lg-9 p-0">
-                                {/* <p style={{ color: 'rgba(0, 0, 0, 0.54)', font: '12px' }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In lobortis hendrerit metus, id laoreet nulla iaculis sit amet. Duis ac purus sit
-                                        amet arcu mattis hendrerit.
-                             </p> */}
+                            <div className={["col-md-9 col-lg-9 p-0", this.state.addTeamString === true ? "visibility" : "show"].join(' ')}>
                                 <div className="col-md-12 padding0 m-3">
                                     <div className="col-md-12 col-lg-12 displayInline p-0">
-                                        {/* <div className="col-md-2 col-lg-3 p-0 m-2 displayInline"> */}
-                                        {/* <div className="textAlignCenter pr-2">
-                                                <ActionList />
-                                                <Subheader className="p-1" style={{ fontSize: '13px', lineHeight: "4px" }}>List of Projects</Subheader>
-                                            </div> */}
-                                        {/* <div className="font" style={{ lineHeight: "38px",fontWeight: "lighter" }}>{this.state.currentAccount[this.state.selectedTeamIndex].projects.length} </div> */}
-                                        {/* <div className={["font",this.state.noProject===false?"show":"visibility"]} style={{ lineHeight: "38px",fontWeight: "lighter" }}>
-                                            <SelectField hintText="Select Project" value={this.state.selectedProjectName}
-                                              labelStyle={{ height: "37px" }} style={{ width: '100%' }} underlineStyle={{ display: 'none' }} onChange={this.selectedProject}>
-                                              {this.displayingProjects(this.state.projectsArray)}
-                                          </SelectField>                                      
-                                                 </div> */}
-                                        {/* <div className={[this.state.noProject===true?"show":"visibility"]}>
-                                              0 projects to display
-                                              </div> */}
-
-
-                                        {/* </div> */}
                                         <div className="col-md-2 col-lg-2 p-0 m-2 displayInline">
                                             <div className="textAlignCenter pr-2">
                                                 <ActionGroupWork />
                                                 <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Projects</Subheader>
                                             </div>
-                                            <div className="font" style={{ lineHeight: "38px", fontWeight: "lighter" }}>{this.state.currentAccount[this.state.selectedTeamIndex].projects.length} </div>
-
-
+                                            <div className="font" style={{ lineHeight: "38px", fontWeight: "lighter" }}>
+                                                {this.state.listOfTeams[this.state.selectedTeamIndex] !== undefined ? this.state.listOfTeams[this.state.selectedTeamIndex].projects.length : ""}
+                                            </div>
                                         </div>
                                         <div className="col-md-2 col-lg-2 m-2 displayInline p-0">
                                             <div className="textAlignCenter pr-2">
@@ -903,18 +870,11 @@ class AccountDetails extends React.Component {
                                                 <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Members</Subheader>
                                             </div>
 
-                                            <div className="font" style={{ lineHeight: "38px", fontWeight: "lighter" }}>{this.state.totalMembers}</div>
-                                            {/* <FloatingActionButton mini={true} secondary={true}>
-                                                <SocialPeopleOutline />
-                                            </FloatingActionButton>
-                                            <Subheader className="p-1" style={{ fontSize: '1px', lineHeight: "26px" }}>No.of Members</Subheader> */}
-                                            {/* <label className="marginB0" style={{ color: 'rgba(0, 0, 0, 0.54)' }}>No.of Members</label> */}
+                                            <div className="font" style={{ lineHeight: "38px", fontWeight: "lighter" }}></div>
 
-                                            {/* <div className="textAlignCenter">
-                                                {10}
-                                            </div> */}
 
                                         </div>
+
                                         <div className="col-md-3 col-lg-3 displayInline m-2 p-0">
                                             <div className="textAlignCenter pr-2">
                                                 <ActionDateRange />
@@ -922,22 +882,10 @@ class AccountDetails extends React.Component {
                                             </div>
 
                                             <div className="" style={{ fontSize: '25px', lineHeight: "32px", fontWeight: "lighter" }}>
-                                                {this.getDateString(this.state.currentAccount[this.state.selectedTeamIndex].startDate)}
-                                                {/* <DatePicker
-                                                textFieldStyle={{width: '60%'}} 
-                                                hintText="Start Date"
-                                                value={this.state.newDate}
-                                                onChange={this.handleChange}
-                                            /> */}
+                                                {this.state.listOfTeams[this.state.selectedTeamIndex] !== undefined ? this.state.listOfTeams[this.state.selectedTeamIndex].startDate : ""}
+
                                             </div>
-                                            {/* <FloatingActionButton mini={true} secondary={true}>
-                                                <ActionDateRange />
-                                            </FloatingActionButton>
-                                            <Subheader className="p-1" style={{ fontSize: '10px', lineHeight: "26px" }}>Start Date</Subheader> */}
-                                            {/* <label className="marginB0" style={{ color: 'rgba(0, 0, 0, 0.54)' }}>Start Date</label>
-                                            <div className="textAlignCenter">
-                                                {this.props.AccountDataArray[this.props.AccountDataArray.length - 1].startDate}
-                                            </div> */}
+
                                         </div>
                                         <div className="col-md-3 col-lg-3 displayInline m-2 p-0">
                                             <div className="textAlignCenter pr-2">
@@ -945,28 +893,19 @@ class AccountDetails extends React.Component {
                                                 <Subheader className="p-1" style={{ fontSize: '12px', lineHeight: "4px" }}>End Date</Subheader>
                                             </div>
                                             <div className="" style={{ fontSize: '25px', lineHeight: "32px", fontWeight: "lighter" }}>
-                                                {/* <DatePicker
-                                                textFieldStyle={{width: '60%'}} 
-                                                hintText="Start Date"
-                                                value={this.state.newDate}
-                                                onChange={this.handleChange}
-                                            /> */}
-                                                {this.getDateString(this.state.currentAccount[this.state.selectedTeamIndex].endDate)}
+
+                                                {this.state.listOfTeams[this.state.selectedTeamIndex] !== undefined ? this.state.listOfTeams[this.state.selectedTeamIndex].endDate : ""}
                                             </div>
-                                            {/* <FloatingActionButton mini={true} secondary={true}>
-                                                <ActionDateRange />
-                                            </FloatingActionButton>
-                                            <Subheader className="p-1" style={{ fontSize: '10px', lineHeight: "26px" }}>End Date</Subheader> */}
-                                            {/* <label className="marginB0" style={{ color: 'rgba(0, 0, 0, 0.54)' }}>End Date</label>
-                                            <div className="textAlignCenter">
-                                                {this.props.AccountDataArray[this.props.AccountDataArray.length - 1].endDate}
-                                            </div> */}
+
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            <div className={["col-md-10 col-lg-10 p-0", this.state.addTeamString === true ? "show" : "visibility"].join(' ')}>
+                                <Subheader className="p-0" style={{ fontSize: '30px' }}>Add Team</Subheader>
+                            </div>
                             <div className="col-md-1 col-lg-1" style={{ display: "grid" }}>
-                                <div>
+                                <div className={[this.state.addTeamString === true ? "visibility" : "show"].join(' ')}>
                                     <FloatingActionButton
                                         mini={true}
                                         onClick={() => this.editTeam()}
@@ -986,10 +925,11 @@ class AccountDetails extends React.Component {
                                     </FloatingActionButton>
                                 </div>
                             </div>
+
                         </div>
                     </Card>
                 </div>
-                <div className="col-md-12 col-lg-12 padding0">
+                <div className={["col-md-12 col-lg-12 padding0", this.state.addTeamString === true ? "visibility" : "show"].join(' ')} >
                     <div className="my-4">
                         <Tabs inkBarStyle={{ background: '#FF3D00' }}>}
                             <Tab label="Projects" style={tabsBackgroundColor}>
@@ -1003,7 +943,7 @@ class AccountDetails extends React.Component {
                                                     <FloatingActionButton
                                                         secondary={true}
                                                         mini={true}
-                                                        onClick={this.createProject}
+                                                        onClick={this.addProjectModal}
                                                         className="float-right"
                                                     >
                                                         <ContentAdd />
@@ -1011,19 +951,15 @@ class AccountDetails extends React.Component {
                                                 </TableHeaderColumn>
                                             </TableRow>
                                         </TableHeader>
-
                                         <TableBody displayRowCheckbox={false} className={[this.state.noProject === false ? 'show' : 'visibility'].join(' ')}>
                                             {this.state.projectsArray.map((project, index) => (
                                                 <TableRow className={[index === this.state.selectedProjectIndex ? 'selectedItem' : ''].join(' ')} key={index} style={{ border: '1px solid rgb(224, 224, 224)' }}>
                                                     <TableRowColumn>{project.projectName}</TableRowColumn>
-                                                    <TableRowColumn style={{ paddingLeft: "0px" }}>
+                                                    {/* <TableRowColumn style={{ paddingLeft: "0px" }}>
                                                         <IconButton touch={true} onClick={(e) => this.editProjectModal(e, "edit", index)}>
                                                             <ContentEdit />
                                                         </IconButton>
-                                                        {/* <IconButton  touch={true}  onClick={(e) => this.deleteProcess(e, "disable", index)}>
-                                                            <ContentClear />
-                                                        </IconButton> */}
-                                                    </TableRowColumn>
+                                                    </TableRowColumn> */}
                                                     <TableRowColumn></TableRowColumn>
                                                 </TableRow>
                                             ))}
@@ -1036,7 +972,7 @@ class AccountDetails extends React.Component {
                                       </Subheader>
                                 </div>
                             </Tab>
-                            <Tab label="People" style={tabsBackgroundColor}>
+                            {/* <Tab label="People" style={tabsBackgroundColor}>
                                 <div className={["col-md-12 col-lg-12 displayInline", this.state.noProject === true ? 'visibility' : 'show'].join(" ")}>
                                     <div className="col-md-3 col-lg-6 textAlignRight">
                                         <Subheader className="p-0" style={{ fontSize: '14px' }}>Select Project</Subheader>
@@ -1072,27 +1008,6 @@ class AccountDetails extends React.Component {
                                                 <TableRow key={index} style={{ border: '1px solid rgb(224, 224, 224)' }}>
                                                     <TableRowColumn >{person.memberName}</TableRowColumn>
                                                     <TableRowColumn style={{ paddingLeft: "0px" }}>
-                                                        {/* <Button  
-                                                            mini={true} 
-                                                            iconStyle={editProjectButton} 
-                                                            onClick={() => this.createProject()}
-                                                        >
-                                                            <ContentEdit />
-                                                        </Button > */}
-                                                        {/* <Button  
-                                                            mini={true} 
-                                                            secondary={true} 
-                                                            iconStyle={deleteProjectButton} 
-                                                            onClick={() => this.createProject()}
-                                                        >
-                                                            <DeleteIcon />
-                                                        </Button > */}
-                                                        {/* <IconButton>
-                                                            <ContentEdit />
-                                                        </IconButton>
-                                                        <IconButton>
-                                                            <ContentClear />
-                                                        </IconButton>                                                         */}
                                                     </TableRowColumn>
                                                     <TableRowColumn ></TableRowColumn>
                                                 </TableRow>
@@ -1105,14 +1020,8 @@ class AccountDetails extends React.Component {
                                         No member is assigned to this project
                                     </Subheader>
                                 </div>
-                            </Tab>
+                            </Tab> */}
                             <Tab label="Jump Start" style={tabsBackgroundColor} disabled={this.state.noProject === true}>
-                                {/* <div className="col-md-10 col-lg-10">
-                                        <SelectField hintText="Select Project" value={this.state.selectedProjectName}
-                                            labelStyle={{ height: "37px", fontSize: "14px" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedProjectfromDropDown(e, i, v)}>
-                                            {this.displayingProjects(this.state.projectsArray)}
-                                        </SelectField>
-                                    </div> */}
                                 <div className={["col-md-12 col-lg-12 displayInline", this.state.noProject === true ? 'visibility' : 'show'].join(" ")}>
                                     <div className="col-md-10 col-lg-9 textAlignRight">
                                         <Subheader className="p-0" style={{ fontSize: '14px' }}>Select Project</Subheader>
@@ -1123,340 +1032,119 @@ class AccountDetails extends React.Component {
                                             {this.displayingProjects(this.state.projectsArray)}
                                         </SelectField>
                                     </div>
-                                    {/* <div className="col-md-1 col-lg-1 textAlignLeft">
-                                        <FloatingActionButton
-                                            secondary={true}
-                                            mini={true}
-                                            onClick={this.jumpstartConfiguration}
-                                        >
-                                            <ContentAdd />
-                                        </FloatingActionButton>
-                                    </div> */}
+
                                 </div>
                                 <div style={{ border: "1px solid rgb(238, 238, 238)" }} >
                                     <Table>
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                                             <TableRow>
                                                 <TableHeaderColumn style={{ "paddingLeft": "10px" }}>Tool Name</TableHeaderColumn>
-                                                {this.state.headersToolsArray.map(row => (
-                                                    <TableHeaderColumn style={{ "paddingLeft": "0px" }}>{row.name}</TableHeaderColumn>
-                                                ))}
-                                                {/* <TableHeaderColumn>Settings</TableHeaderColumn> */}
-                                                {/* <TableHeaderColumn>
-                                                    <FloatingActionButton
-                                                        secondary={true}
-                                                        mini={true}
-                                                        onClick={this.addToolModal}
-                                                    >
-                                                        <ContentAdd />
-                                                    </FloatingActionButton>
-                                                </TableHeaderColumn> */}
+                                                {this.state.processArray !== undefined ?
+                                                    this.state.processArray.map(row => (
+                                                        <TableHeaderColumn style={{ "paddingLeft": "0px" }}>{row.processName}</TableHeaderColumn>
+                                                    )) : ''}
                                             </TableRow>
                                         </TableHeader>
-                                        <TableBody displayRowCheckbox={false} className={[this.state.toolsArray.length !== 0 ? "show" : "visibility"]}>
-                                            {this.state.toolsArray.map((tool, index) => (
-                                                <TableRow key={index} selectable={false}>
-                                                    <TableRowColumn>{tool.name}</TableRowColumn>
-                                                    {this.state.headersToolsArray.map((processID, i) => (
-                                                        <TableRowColumn key={i}>
-                                                            <Checkbox
-                                                                checked={this.state.toolsArray[index].processID.includes(this.state.headersToolsArray[i].processID) ? true : false}
-                                                                onCheck={(e, checked) => this.selectProcessforTool(e, checked, index, this.state.headersToolsArray[i].processID)}
-                                                            />
-                                                        </TableRowColumn>
-                                                    ))}
+                                        <TableBody displayRowCheckbox={false} className={[this.state.toolsArray !== undefined ? this.state.toolsArray.length !== 0 ? "show" : "visibility" : '']}>
+                                            {this.state.toolsArray !== undefined ?
+                                                this.state.toolsArray.map((tool, toolIndex) => (
+                                                    <TableRow key={toolIndex} selectable={false} >
+                                                        <TableRowColumn>{tool.toolName}</TableRowColumn>
+                                                        {(this.state.processArray !== undefined ?
+                                                            this.state.processArray.map((process, i) => (
+                                                                <TableRowColumn key={i}>
+                                                                    <div className="displayInline">
+                                                                        <Checkbox
+                                                                            checked={tool.toolName + '-' + process.processName in this.state.toolsConfig ? true : false}
+                                                                            onCheck={(e, checked) => this.selectProcessforTool(e, checked, toolIndex, process.processName, tool.toolName, tool.toolId)}
+                                                                        />
+                                                                        <div className={[tool.toolName + '-' + process.processName in this.state.toolsConfig ? "show" : "visibility"]}>
+                                                                            <IconMenu
+                                                                                iconButtonElement={<IconButton className="padding0" style={{ height: "28px", width: "28px" }}><MoreVertIcon /></IconButton>}
+                                                                                anchorOrigin={{ horizontal: 'left', vertical: 'top' }}
+                                                                                targetOrigin={{ horizontal: 'left', vertical: 'top' }}
+                                                                                useLayerForClickAway={true}
+                                                                            >
+                                                                                <div className="col-md-12">
+                                                                                    <TextField
+                                                                                        value={tool.toolName + '-' + process.processName in this.state.toolsConfig ? this.state.toolsConfig[tool.toolName + '-' + process.processName].userName : '' || ''}
+                                                                                        floatingLabelText="UserName"
+                                                                                        hintText="userName"
+                                                                                        name='userName'
+                                                                                        onChange={(e) => this.handleToolDetails(e, tool.toolName + '-' + process.processName)}
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="col-md-12">
+                                                                                    <TextField
+                                                                                        value={tool.toolName + '-' + process.processName in this.state.toolsConfig ? this.state.toolsConfig[tool.toolName + '-' + process.processName].password : '' || ''}
+                                                                                        floatingLabelText="Password"
+                                                                                        hintText="password"
+                                                                                        name='password'
+                                                                                        onChange={(e) => this.handleToolDetails(e, tool.toolName + '-' + process.processName)}
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="col-md-12">
+                                                                                    <TextField
+                                                                                        value={tool.toolName + '-' + process.processName in this.state.toolsConfig ? this.state.toolsConfig[tool.toolName + '-' + process.processName].hostedURL : '' || ''}
+                                                                                        floatingLabelText="URL"
+                                                                                        hintText="url"
+                                                                                        name='hostedURL'
+                                                                                        onChange={(e) => this.handleToolDetails(e, tool.toolName + '-' + process.processName)}
+                                                                                    />
+                                                                                </div>
+                                                                            </IconMenu>
+                                                                        </div>
+                                                                    </div>
+                                                                </TableRowColumn>
+                                                            )) : '') || ''}
 
-                                                    {/* <TableRowColumn style={{ paddingLeft: "0px" }}>
-                                                        <IconButton tooltip="edit" touch={true} tooltipPosition="top-left" onClick={(e) => this.editTool(e, "edit", index)}>
-                                                            <ContentEdit />
-                                                        </IconButton>
-                                                        <IconButton tooltip="delete" touch={true} tooltipPosition="bottom-right" onClick={(e) => this.deleteTool(e, "disable", index)}>
-                                                            <ContentClear />
-                                                        </IconButton>
-                                                    </TableRowColumn> */}
-                                                    {/* <TableRowColumn></TableRowColumn> */}
-                                                </TableRow>
-                                            ))}
+                                                    </TableRow>
+                                                )) : ''}
                                         </TableBody>
                                     </Table>
+                                    <div>
+                                        <RaisedButton
+                                            primary={true}
+                                            onClick={() => this.saveTools(this.state.toolsConfig)}
+                                        >SAVE
+
+                                                </RaisedButton>
+                                    </div>
 
 
-                                    <div className={[this.state.toolsArray.length === 0 ? "show" : "visibility"]}>
+                                    {/* <div className={[this.state.toolsArray!==undefined?this.state.toolsArray.length === 0 ? "show" : "visibility":'']}>
                                         <Subheader className="p-0 textAlignCenter" style={{ fontSize: '20px' }}>
                                             No tool is assigned
                                       </Subheader>
-                                    </div>
+                                    </div> */}
                                 </div>
-                                {/* <div className={["col-md-12 col-lg-12 displayInline", this.state.noProject === true ? 'visibility' : 'show'].join(" ")}>
-                                    <div className="col-md-10 col-lg-9 textAlignRight">
-                                        <Subheader className="p-0" style={{ fontSize: '14px' }}>Select Project</Subheader>
-                                    </div>
-                                    <div className="col-md-10 col-lg-2">
-                                        <SelectField hintText="Select Project" value={this.state.selectedProjectName}
-                                            labelStyle={{ height: "37px", fontSize: "14px" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedProjectfromDropDown(e, i, v)}>
-                                            {this.displayingProjects(this.state.projectsArray)}
-                                        </SelectField>
-                                    </div>
-                                    <div className="col-md-1 col-lg-1 textAlignLeft">
-                                        <FloatingActionButton
-                                            secondary={true}
-                                            mini={true}
-                                            onClick={this.jumpstartConfiguration}
-                                        >
-                                            <ContentAdd />
-                                        </FloatingActionButton>
-                                    </div>
-                                </div>
-                                <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={["col-lg-12 d-flex", this.state.noTool === false ? 'show' : 'visibility'].join(' ')}>
-                                    <div className={["col-lg-3 col-md-3 py-2", this.state.noTool === false ? 'show' : 'visibility'].join(' ')}>
-                                        <SelectableList style={{ border: '1px solid #eee' }} >
-                                            {this.state.listofToolsarray.map((item, index) => (
-                                                <ListItem
-                                                    primaryText={item.processName}
-                                                    value={index}
-                                                    key={item.processName}
-                                                    onClick={() => this.selectedTool(this.state.listofToolsarray, this.state.selectedTeamIndex, this.state.selectedProjectIndex, index)}
-                                                    className={[index === this.state.selectedprocessIndex ? 'selectedItem' : ''].join(' ')}
-                                                />
-                                            ))}
-                                        </SelectableList>
-                                    </div>
-                                    <div className={["col-lg-9 col-md-9 displayInline p-4", this.state.noTool === false ? 'show' : 'visibility'].join(' ')}>
-                                        <div className="col-md-6 col-lg-6">
-                                       
-                                            <div className={["col-md-12 custId", this.state.isTooldata === true ? 'show' : 'visibility'].join(' ')}>
-                                                <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>Selected Tool:</Subheader>
-                                                <TextField
-                                                    hintText="tool name"
-                                                    value={this.state.selectedToolDetails.toolName}
-                                                    name='tool name'
-                                                    onChange={this.handleNewCustomerChange}
-                                                />
-                                            </div>
-                                            <div className={["col-md-12 custId", this.state.isTooldata === true ? 'show' : 'visibility'].join(' ')}>
-                                                <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>UserName:</Subheader>
-                                                <TextField
-                                                    hintText="user name"
-                                                    value={this.state.selectedToolDetails.username}
-                                                    name='user name'
-                                                    onChange={this.handleNewCustomerChange}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6 col-lg-6">
-                                            <div className={["col-md-12 custId", this.state.isTooldata === true ? 'show' : 'visibility'].join(' ')}>
-                                                <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>Password:</Subheader>
-                                                <TextField
-                                                    hintText="password"
-                                                    value={this.state.selectedToolDetails.password}
-                                                    name='password'
-                                                    onChange={this.handleNewCustomerChange}
-                                                />
-                                            </div>
 
-                                            <div className={["col-md-12 custId", this.state.isTooldata === true ? 'show' : 'visibility'].join(' ')}>
-                                                <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "2px" }}>URL:</Subheader>
-                                                <TextField
-                                                    hintText="url"
-                                                    value={this.state.selectedToolDetails.url}
-                                                    name='url'
-                                                    onChange={this.handleNewCustomerChange}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={[this.state.noTool === true ? 'show' : 'visibility'].join(' ')}>
-                                    <Subheader className="p-0 textAlignCenter" style={{ fontSize: '20px' }}>
-                                        No tools is configured to this project
-                                      </Subheader>
-                                </div> */}
                             </Tab>
 
-                            {/* <Tab label="ACE5" style={tabsBackgroundColor}>
-                                <div style={{border:"1px solid rgb(238, 238, 238)"}}>
-                                    <h2 >Tab fOUR</h2>
-                                    <p>
-                                    This is a third example tab.
-                                    </p>
-                                </div>
-                            </Tab>                         */}
                         </Tabs>
                     </div>
                 </div>
-
-                <Dialog open={this.state.editTeamModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5 "].join(' ')}>
-
-                    <div className="row">
-                        <div className="col-md-12 col-lg-12 textAlignCenter">
-                            <Subheader className="p-0" style={{ fontSize: '30px' }}>Team Details</Subheader>
-                        </div>
-                    </div>
-
-                    <div className="textAlignLeft">
-                        <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>CustomerID:</label></div> */}
-                            <div className="col-md-12 custId">
-                                <TextField
-                                    hintText="Customer ID"
-                                    floatingLabelText="Customer ID"
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex]._id}
-                                    name='_id'
-                                    onChange={this.handleTeamEditDetails}
-                                    disabled={true}
-                                    fullWidth={true}
-                                />
-                            </div>
-                        </div>
-                        <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Customer Name:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].customerName || ''}
-                                    name='customerName'
-                                    onChange={this.handleTeamEditDetails}
-                                    hintText="Customer Name"
-                                    floatingLabelText="Customer Name"
-                                    type="text"
-                                    fullWidth={true}
-                                />
-                            </div>
-
-                        </div>
-                        <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Status:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField
-                                    fullWidth={true}
-                                    floatingLabelText="Status"
-                                    hintText="Status"
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].status || ''}
-                                    name='status'
-                                    onChange={this.handleTeamEditDetails}
-                                />
-                            </div>
-
-                        </div>
-                        <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Engagement Model:</label></div> */}
-                            <div className="col-md-12">
-                                <TextField
-                                    fullWidth={true}
-                                    floatingLabelText="Engagement Model"
-                                    hintText="Engagement Model"
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].engagementModel || ''}
-                                    name='engagementModel'
-                                    onChange={this.handleTeamEditDetails}
-                                />
-                            </div>
-
-                        </div>
-                        <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Pricing Model:</label></div> */}
-                            <div className="col-md-12">
-                                {/* <TextField
-                                    fullWidth={true}
-                                    floatingLabelText="Start Date"
-                                    hintText="dd/mm/yyyy"
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate || ''}
-                                    name='startDate'
-                                    onChange={this.handleTeamEditDetails}
-                                /> */}
-                                <DatePicker
-                                    textFieldStyle={{ width: '100%' }}
-                                    hintText="Start Date"
-                                    name='startDate'
-                                    floatingLabelText="Start Date"
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate || ''}
-                                    onChange={(e, x) => this.handleTeamEditDetails(e, x, 'startDate')}
-                                />
-                            </div>
-
-                        </div>
-                        <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Logo:</label></div> */}
-                            <div className="col-md-12">
-                                {/* <TextField
-                                    fullWidth={true}
-                                    floatingLabelText="End Date"
-                                    hintText="dd/mm/yyyy"
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate || ''}
-                                    name='endDate'
-                                    onChange={this.handleTeamEditDetails}
-                                /> */}
-                                <DatePicker
-                                    textFieldStyle={{ width: '100%' }}
-                                    hintText="End Date"
-                                    name='endDate'
-                                    floatingLabelText="End Date"
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate || ''}
-                                    onChange={(e, x) => this.handleTeamEditDetails(e, x, 'endDate')}
-                                />
-                            </div>
-
-                        </div>
-
-
-                        <div className="loginBtns" style={{}}>
-                            <div>
-                                <RaisedButton
-                                    label="Close"
-                                    secondary={true}
-                                    style={modelbuttonsStyle}
-                                    onClick={() => this.closeTeamModal()}
-                                />
-                                <RaisedButton
-                                    label="Done"
-                                    primary={true}
-                                    style={modelbuttonsStyle}
-                                    onClick={() => this.updateTeam(this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex])}
-                                    disabled={!this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].customerName}
-                                />
-                            </div>
-                        </div>
-
-                    </div>
-
-                </Dialog>
                 <Dialog open={this.state.addTeamModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5 "].join(' ')}>
-
                     <div className="row">
                         <div className="col-md-12 col-lg-12 textAlignCenter">
                             <Subheader className="p-0" style={{ fontSize: '30px' }}>Add Team</Subheader>
                         </div>
                     </div>
-
                     <div className="textAlignLeft">
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>CustomerID:</label></div> */}
-                            <div className="col-md-12 custId">
-                                <TextField
-                                    hintText="Customer ID"
-                                    floatingLabelText="Customer ID"
-                                    value={this.state.newTeamObj._id || ''}
-                                    name='_id'
-                                    onChange={this.handleAddTeamDetails}
-                                    fullWidth={true}
-                                />
-                            </div>
-                        </div>
-                        <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Customer Name:</label></div> */}
                             <div className="col-md-12">
                                 <TextField
-                                    value={this.state.newTeamObj.customerName || ''}
-                                    name='customerName'
+                                    value={this.state.newTeamObj.teamName || ''}
+                                    name='teamName'
                                     onChange={this.handleAddTeamDetails}
-                                    hintText="Customer Name"
-                                    floatingLabelText="Customer Name"
+                                    hintText="Team Name"
+                                    floatingLabelText="Team Name"
                                     type="text"
                                     fullWidth={true}
                                 />
                             </div>
-
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Status:</label></div> */}
                             <div className="col-md-12">
                                 <TextField
                                     fullWidth={true}
@@ -1465,72 +1153,37 @@ class AccountDetails extends React.Component {
                                     value={this.state.newTeamObj.status || ''}
                                     name='status'
                                     onChange={this.handleAddTeamDetails}
+                                    autoOk={true}
                                 />
                             </div>
-
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Engagement Model:</label></div> */}
                             <div className="col-md-12">
-                                <TextField
-                                    fullWidth={true}
-                                    floatingLabelText="Engagement Model"
-                                    hintText="Engagement Model"
-                                    value={this.state.newTeamObj.engagementModel || ''}
-                                    name='engagementModel'
-                                    onChange={this.handleAddTeamDetails}
-                                />
-                            </div>
-
-                        </div>
-                        <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Pricing Model:</label></div> */}
-                            <div className="col-md-12">
-                                {/* <TextField
-                                    fullWidth={true}
-                                    floatingLabelText="Start Date"
-                                    hintText="dd/mm/yyyy"
-                                    value={this.state.newTeamObj.startDate || ''}
-                                    name='startDate'
-                                    onChange={this.handleAddTeamDetails}
-                                /> */}
                                 <DatePicker
                                     textFieldStyle={{ width: '100%' }}
                                     hintText="Start Date"
                                     value={this.state.newTeamObj.startDate || ''}
                                     onChange={(e, x) => this.handleAddTeamDetails(e, x, 'startDate')}
                                     minDate={new Date()}
-
                                     floatingLabelText="Start Date"
-
+                                    autoOk={true}
                                 />
                             </div>
-
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Logo:</label></div> */}
                             <div className="col-md-12">
-                                {/* <TextField
-                                    fullWidth={true}
-                                    floatingLabelText="End Date"
-                                    hintText="dd/mm/yyyy"
-                                    value={this.state.newTeamObj.endDate || ''}
-                                    name='endDate'
-                                    onChange={this.handleAddTeamDetails}
-                                /> */}
                                 <DatePicker
                                     textFieldStyle={{ width: '100%' }}
                                     hintText="End Date"
                                     value={this.state.newTeamObj.endDate || ''}
                                     onChange={(e, x) => this.handleAddTeamDetails(e, x, 'endDate')}
                                     minDate={this.state.newTeamObj.startDate}
+                                    disabled={!this.state.newTeamObj.startDate}
                                     floatingLabelText="End Date"
+                                    autoOk={true}
                                 />
                             </div>
-
                         </div>
-
-
                         <div className="loginBtns" style={{}}>
                             <div>
                                 <RaisedButton
@@ -1544,7 +1197,7 @@ class AccountDetails extends React.Component {
                                     primary={true}
                                     style={modelbuttonsStyle}
                                     onClick={() => this.addTeam(this.state.newTeamObj)}
-                                    disabled={!this.state.newTeamObj.customerName}
+                                    disabled={!this.state.newTeamObj.teamName}
                                 />
                             </div>
                         </div>
@@ -1552,7 +1205,91 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </Dialog>
-                <Dialog open={this.state.createProjectModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5"].join(' ')}>
+                <Dialog open={this.state.editTeamModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5 "].join(' ')}>
+                    <div className="row">
+                        <div className="col-md-12 col-lg-12 textAlignCenter">
+                            <Subheader className="p-0" style={{ fontSize: '30px' }}>Team Details</Subheader>
+                        </div>
+                    </div>
+
+                    <div className="textAlignLeft">
+                        <div className="row margin0">
+                            <div className="col-md-12">
+
+                                <TextField
+                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex] !== undefined ? this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].teamName : ''}
+                                    name='teamName'
+                                    onChange={this.handleTeamEditDetails}
+                                    hintText="Team Name"
+                                    floatingLabelText="Team Name"
+                                    type="text"
+                                    fullWidth={true}
+                                />
+                            </div>
+
+                        </div>
+                        <div className="row margin0">
+                            <div className="col-md-12">
+                                <TextField
+                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex] !== undefined ? this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].status : ''}
+                                    fullWidth={true}
+                                    floatingLabelText="Status"
+                                    hintText="Status"
+                                    name='status'
+                                    onChange={this.handleTeamEditDetails}
+                                />
+                            </div>
+
+                        </div>
+                        <div className="row margin0">
+                            <div className="col-md-12">
+                                <DatePicker
+                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex] !== undefined ? this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate : ''}
+                                    textFieldStyle={{ width: '100%' }}
+                                    hintText="Start Date"
+                                    name='startDate'
+                                    floatingLabelText="Start Date"
+                                    onChange={(e, x) => this.handleTeamEditDetails(e, x, 'startDate')}
+                                    autoOk={true}
+                                />
+                            </div>
+
+                        </div>
+                        <div className="row margin0">
+                            <div className="col-md-12">
+                                <DatePicker
+                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex] !== undefined ? this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate : ''}
+                                    textFieldStyle={{ width: '100%' }}
+                                    hintText="End Date"
+                                    name='endDate'
+                                    floatingLabelText="End Date"
+                                    onChange={(e, x) => this.handleTeamEditDetails(e, x, 'endDate')}
+                                    minDate={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex] !== undefined ? this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate : ''}
+                                    autoOk={true}
+                                />
+                            </div>
+
+                        </div>
+                        <div className="loginBtns" style={{}}>
+                            <div>
+                                <RaisedButton
+                                    label="Close"
+                                    secondary={true}
+                                    style={modelbuttonsStyle}
+                                    onClick={() => this.closeTeamModal()}
+                                />
+                                <RaisedButton
+                                    label="Done"
+                                    primary={true}
+                                    style={modelbuttonsStyle}
+                                    onClick={() => this.updateTeam(this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex])}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                </Dialog>
+                <Dialog open={this.state.addProjectModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5"].join(' ')}>
                     <div className="row">
                         <div className="col-md-12 col-lg-12 textAlignCenter">
                             <Subheader className="p-0" style={{ fontSize: '30px' }}>Project Name</Subheader>
@@ -1563,7 +1300,7 @@ class AccountDetails extends React.Component {
                         <div className="row margin0">
                             <div className="col-md-12">
                                 <TextField
-                                    value={this.state.newProjectDetails.projectName || ''}
+                                    value={(this.state.newProjectDetails !== undefined ? this.state.newProjectDetails.projectName : '') || ''}
                                     name='projectName'
                                     onChange={this.newProjectDetails}
                                     hintText="Project Name"
@@ -1572,10 +1309,7 @@ class AccountDetails extends React.Component {
                                     fullWidth={true}
                                 />
                             </div>
-                            {/* <div className="col-md-5 margin10"><label>Project Name:</label></div>
-                            <div className="col-md-6 custId">
-                                <input value={this.state.newProjectDetails.projectName || ''} name='projectName' onChange={this.newProjectDetails} />
-                            </div> */}
+
                         </div>
                         <div className="loginBtns">
                             <div>
@@ -1599,7 +1333,7 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </Dialog>
-                <Dialog open={this.state.editProjectModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5"].join(' ')}>
+                {/* <Dialog open={this.state.editProjectModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5"].join(' ')}>
                     <div className="row">
                         <div className="col-md-12 col-lg-12 textAlignCenter">
                             <Subheader className="p-0" style={{ fontSize: '30px' }}>Edit Project Details</Subheader>
@@ -1619,10 +1353,7 @@ class AccountDetails extends React.Component {
                                     fullWidth={true}
                                 />
                             </div>
-                            {/* <div className="col-md-5 margin10"><label>Project Name:</label></div>
-                            <div className="col-md-6 custId">
-                                <input value={this.state.newProjectDetails.projectName || ''} name='projectName' onChange={this.newProjectDetails} />
-                            </div> */}
+                  
                         </div>
                         <div className="loginBtns">
                             <div>
@@ -1637,7 +1368,7 @@ class AccountDetails extends React.Component {
                                     primary={true}
                                     style={modelbuttonsStyle}
                                     onClick={() => this.updateProjectDetails(this.state.editProjectDetails)}
-                                //disabled={!this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].projectName}
+                               
                                 />
                             </div>
 
@@ -1645,7 +1376,7 @@ class AccountDetails extends React.Component {
 
                     </div>
 
-                </Dialog>
+                </Dialog> 
                 <Dialog open={this.state.addPeopleModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5 "].join(' ')}>
 
                     <div className="row">
@@ -1675,7 +1406,7 @@ class AccountDetails extends React.Component {
 
                     <div className="textAlignLeft">
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>CustomerID:</label></div> */}
+                    
                             <div className={["col-md-12 custId", this.state.existingMemberArray === true ? 'show' : 'visibility'].join(' ')}>
                                 <SelectField hintText="existing members list"
                                     labelStyle={{ height: "37px" }} style={{ width: '100%' }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectTeam(e, i, v)}>
@@ -1685,7 +1416,7 @@ class AccountDetails extends React.Component {
                             </div>
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>CustomerID:</label></div> */}
+                          
                             <div className="col-md-12 custId">
                                 <TextField
                                     hintText="member id"
@@ -1698,7 +1429,7 @@ class AccountDetails extends React.Component {
                             </div>
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Customer Name:</label></div> */}
+                         
                             <div className="col-md-12">
                                 <TextField
                                     value={this.state.newPeopleObj.memberName || ''}
@@ -1713,7 +1444,7 @@ class AccountDetails extends React.Component {
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Status:</label></div> */}
+              
                             <div className="col-md-12">
                                 <TextField
                                     fullWidth={true}
@@ -1727,7 +1458,7 @@ class AccountDetails extends React.Component {
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Engagement Model:</label></div> */}
+                         
                             <div className="col-md-12">
                                 <TextField
                                     fullWidth={true}
@@ -1741,7 +1472,7 @@ class AccountDetails extends React.Component {
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Pricing Model:</label></div> */}
+                  
                             <div className="col-md-12">
                                 <TextField
                                     fullWidth={true}
@@ -1751,17 +1482,12 @@ class AccountDetails extends React.Component {
                                     name='role'
                                     onChange={this.handleAddPeopleDetails}
                                 />
-                                {/* <DatePicker
-                            textFieldStyle={{width: '100%'}} 
-                            hintText="Start Date"
-                            value={this.state.newDate}
-                            onChange={this.handleTeamEditDetails}
-                        /> */}
+                    
                             </div>
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Logo:</label></div> */}
+                
                             <div className="col-md-12">
                                 <TextField
                                     fullWidth={true}
@@ -1771,17 +1497,12 @@ class AccountDetails extends React.Component {
                                     name='accountId'
                                     onChange={this.handleAddPeopleDetails}
                                 />
-                                {/* <DatePicker
-                            textFieldStyle={{width: '100%'}} 
-                            hintText="End Date"
-                            value={this.state.newDate}
-                            onChange={this.handleTeamEditDetails}
-                        /> */}
+                     
                             </div>
 
                         </div>
                         <div className="row margin0">
-                            {/* <div className="col-md-5 margin10"><label>Logo:</label></div> */}
+       
                             <div className="col-md-12">
                                 <TextField
                                     fullWidth={true}
@@ -1791,12 +1512,7 @@ class AccountDetails extends React.Component {
                                     name='projectId'
                                     onChange={this.handleAddPeopleDetails}
                                 />
-                                {/* <DatePicker
-                            textFieldStyle={{width: '100%'}} 
-                            hintText="End Date"
-                            value={this.state.newDate}
-                            onChange={this.handleTeamEditDetails}
-                        /> */}
+                         
                             </div>
 
                         </div>
@@ -1821,7 +1537,7 @@ class AccountDetails extends React.Component {
 
                     </div>
 
-                </Dialog>
+                </Dialog> 
                 <Dialog open={this.state.jumpstartModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5 "].join(' ')}>
 
                     <div className="row">
@@ -1898,23 +1614,7 @@ class AccountDetails extends React.Component {
                                     onClick={this.closejumpstartConfiguration}
                                 />
                             </div>
-                            {/* <div className="col-md-3 col-lg-3">
-                                <RaisedButton
-                                    label="back"
-                                    secondary={true}
-                                    onClick={this.handleBack}
-                                    disabled={this.state.stepIndex === 0}
-                                />
-                            </div> */}
-                            {/* <div className="col-md-3 col-lg-3">
-                                <RaisedButton
-                                    label={this.state.stepIndex === this.state.processArray.length - 1 ? 'Finish' : 'Next'}
-                                    primary={true}
-                                    onClick={this.handleNext}
-                                    disabled={this.state.lastItem === true}
-                                />
-
-                            </div> */}
+              
                             <div className="col-md-6 col-lg-6">
                                 <RaisedButton
                                     label="save"
@@ -1926,7 +1626,7 @@ class AccountDetails extends React.Component {
                         </div>
                     </div>
 
-                </Dialog>
+                </Dialog>  */}
 
 
             </div>
