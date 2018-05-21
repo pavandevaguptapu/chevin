@@ -181,8 +181,8 @@ class Piechart extends Component {
                   //nameKey='name'
                   dataKey="value"
                   data={data}
-                  cx={150}
-                  cy={150}
+                //   cx={150}
+                //   cy={150}
                   //labelLine={true}
                   label={renderCustomizedLabel}
                   outerRadius={100}

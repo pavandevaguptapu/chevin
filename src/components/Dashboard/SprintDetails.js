@@ -103,7 +103,7 @@ class SprintDetails extends Component {
         actionMethod: "get"
       })
       .then(response => {
-        console.log(response)
+        // console.log(response)
         this.setState({
           sprintStartTime: "",
           sprintEndTime: "",
@@ -202,7 +202,7 @@ class SprintDetails extends Component {
               }
             })
             var dateString = getDateString(eachDate);
-            console.log('foo bnar', dateString, totalRemainingTimeEstimate / 3600)
+            // console.log('foo bnar', dateString, totalRemainingTimeEstimate / 3600)
           }
         })
 
@@ -292,7 +292,7 @@ class SprintDetails extends Component {
                       currentDateEpochTime = eachDate;
                     }
 
-                    console.log('timeSpent', dateString, estimationDiff / 3600, Number(item.timeC.timeSpent / 3600), this.state.currentRemainingTime / 3600)
+                    // console.log('timeSpent', dateString, estimationDiff / 3600, Number(item.timeC.timeSpent / 3600), this.state.currentRemainingTime / 3600)
 
                   }
 
@@ -310,7 +310,7 @@ class SprintDetails extends Component {
                       })
 
                     currentDateEpochTime = eachDate;
-                    console.log('Rte', dateString, estimationDiff / 3600, 'null', this.state.currentRemainingTime / 3600)
+                    // console.log('Rte', dateString, estimationDiff / 3600, 'null', this.state.currentRemainingTime / 3600)
 
                   }
                 }
@@ -354,7 +354,7 @@ class SprintDetails extends Component {
           }
         }.bind(this)
         );
-        console.log(this.state.totalTimeSpentArray)
+        // console.log(this.state.totalTimeSpentArray)
         this.props.sprintBurnDownChart(this.state.totalTimeSpentArray);
       });
 

@@ -139,8 +139,7 @@ class SelectedProjectDetails extends Component {
                 const IM = "Issue Management";
 
                 let tools = [];
-                let toolsNew = response.data.content.tools;
-                tools = toolsNew.filter(tool => {
+                tools = response.data.content.tools.filter(tool => {
                     return tool.toolName === "Jira";
                 });
 
