@@ -386,7 +386,7 @@ class TeamsBaseLayout extends Component {
 
     componentWillMount() {
         axios.get(myConstClass.new + "/getTeams").then(response => {
-            console.log(response.data.content)
+            // console.log(response.data.content)
             if (
                 JSON.stringify(response.data.content) !== undefined &&
                 JSON.stringify(response.data.content) != JSON.stringify([])
@@ -555,7 +555,7 @@ class TeamsBaseLayout extends Component {
                                     </div>
                                 </Card>
 
-                                <Card
+                                {/* <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
                                     key="1"
                                     data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
@@ -568,11 +568,11 @@ class TeamsBaseLayout extends Component {
                                         {this.state.emptyPeoplesArray}
                                         {this.state.peoplesArray}
                                     </div>
-                                </Card>
+                                </Card> */}
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
                                     key="2"
-                                    data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                                    data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                                 >
                                     <div className="d-flex custom_dashboard-header justify-content-between">
                                         <CardHeader title="Epic Overview" className="p-0" />
@@ -593,5 +593,4 @@ class TeamsBaseLayout extends Component {
     }
 }
 
-const test = connect(null, mapDispatchToProps)(TeamsBaseLayout)
-export default test;
+export default  connect(null, mapDispatchToProps)(TeamsBaseLayout)

@@ -139,16 +139,32 @@ class SelectedProjectDetails extends Component {
                 const IM = "Issue Management";
 
                 let tools = [];
-                tools = response.data.content.tools.filter(tool => {
-                    return tool.toolName === "Jira";
-                });
+                // tools = response.data.content.tools.filter(tool => {
+                //     return tool.toolName === "Jira";
+                // });
+                // console.log(tools)
 
-                this.getBoard(
+                // this.getBoard(
+                //     tools[0].hostedURL,
+                //     tools[0].userName,
+                //     tools[0].password,
+                //     tools[0].people
+                // );
+
+               for(var i=0;i<response.data.content.tools.length;i++){
+                   if(response.data.content.tools[i].toolName==="Jira"){
+                    tools.push(response.data.content.tools[i])
+                    this.getBoard(
                     tools[0].hostedURL,
                     tools[0].userName,
                     tools[0].password,
                     tools[0].people
                 );
+                   }
+                   else{
+                        console.log("Error Occured")
+                   }
+               } 
 
                 // if (
                 //     this.state.projectDetails.projects[projectId].tools ==
