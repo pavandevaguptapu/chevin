@@ -115,6 +115,8 @@ class AccountDetails extends React.Component {
             listOfTeams: [],
             showTeamLevelDetails: false,
             TeamDetailsArrayForEditing: [],
+            toolsArray:[],
+            processArray:[],
 
 
 
@@ -138,27 +140,7 @@ class AccountDetails extends React.Component {
             editProjectDetails: {},
             toolsConfig: {},
             toolName: {},
-            processName: {}
-            // processArray: [
-            //     { "name": "Project Management", "processID": 4, "tools": [{ "name": "jira" }] },
-            //     { "name": "Quality Management", "processID": 5, "tools": [{ "name": "SonarQube" }, { "name": "jira" }] },
-            //     { "name": "Build Tool", "processID": 6, "tools": [{ "name": "Gradle" }, { "name": "SonarQube" }] }
-
-            // ],
-            // editableProcessArray: [
-            //     { "name": "Project Management", "processID": 4, "tools": [{ "name": "jira" }] },
-            //     { "name": "Quality Management", "processID": 5, "tools": [{ "name": "SonarQube" }, { "name": "jira" }] },
-            //     { "name": "Build Tool", "processID": 6, "tools": [{ "name": "Gradle" }, { "name": "SonarQube" }] },
-
-            // ],
-            //stepIndex: 0,
-            // jumpStartObj: [{ "processName": "", "tools": [{ "toolName": "", "username": "", "password": "", "url": "" }] }],
-            // headersToolsArray: [{ "name": "Project Management", "processID": 4 }, { "name": "Quality Management", "processID": 5 }, { "name": "Build Tool", "processID": 6 }, { "name": "Source Control", "processID": 7 }],
-            // toolsArray: [
-            //     { "name": "Jira", "processID": [3, 5, 4] }, { "name": "SonarQube", "processID": [0, 5] }, { "name": "Jenkins", "processID": [3] },
-            //     { "name": "Git", "processID": [7] }
-            // ]
-
+            processName: {}    
         }
     }
 
@@ -541,47 +523,37 @@ class AccountDetails extends React.Component {
         )
     }
     editProjectModal = (e, actionType, projectIndex) => {
-        var tempArray = dcopy(this.state.editProjectDetails)
-        tempArray.projectName = this.state.currentAccount[this.state.selectedTeamIndex].projects[projectIndex].projectName
+        var editProjectDetails={}
+        var tempArray = dcopy(this.state.listOfTeams)
+       editProjectDetails.projectName= tempArray[this.state.selectedTeamIndex].projects[projectIndex].projectName
 
-        this.setState({ editProjectModal: true, editProjectDetails: tempArray, selectedProjectIndex: projectIndex })
+        this.setState({ editProjectModal: true, editProjectDetails: editProjectDetails, selectedProjectIndex: projectIndex })
     }
     closeEditProjectModal = () => {
         this.setState({ editProjectModal: false })
     }
-    editProjectDetails = (e) => {
-        var tempArray = this.state.editProjectDetails
+    handleEditProjectDetails = (e) => {
+        var tempArray = dcopy(this.state.editProjectDetails)
+        console.log(tempArray)
         tempArray[e.target.name] = e.target.value
         this.setState({ editProjectDetails: tempArray })
     }
     updateProjectDetails = (updatedProjectObj) => {
-        var updatedProjectName = updatedProjectObj.projectName
-        var updatedProjectObj = this.state.currentAccount
-        updatedProjectObj[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].projectName = updatedProjectName
+console.log(updatedProjectObj)
+        var projectId=this.state.listOfTeams[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].projectId
+        var updatedProjectName=updatedProjectObj.projectName       
 
-        var updatedObj = updatedProjectObj[this.state.selectedTeamIndex]
-
-        axios.put(myConstClass.nodeAppUrl + `/accounts/` + updatedObj._id,
+        axios.put("http://172.16.25.50:8585/springhibernate/newspringboardapi/editProject",
             {
-                customerName: updatedObj.customerName,
-                startDate: updatedObj.startDate,
-                endDate: updatedObj.endDate,
-                engagementModel: updatedObj.engagementModel,
-                pricingModel: updatedObj.pricingModel,
-                seniorSupplier: 'asewr',
-                projectManager: 'jg',
-                projects: updatedObj.projects,
-                people: [],
-                customerLogo: updatedObj.customerLogo,
-                status: 'Active'
+            "projectId":projectId,
+            "projectName":updatedProjectName
             })
             .then(response => {
-                var updatedObj = this.state.currentAccount
-                var oldObj = this.state.currentAccount[this.state.selectedTeamIndex]
-                updatedObj.splice(oldObj, 1)
-                updatedObj.splice(oldObj, 0, response.data)
-                var updatedTeamName = updatedObj[this.state.selectedTeamIndex].customerName
-                this.setState({ selectedTeamName: updatedTeamName, editProjectModal: false });
+                console.log(response)
+                var updatedObj = this.state.listOfTeams
+               updatedObj[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].projectName=response.data.content.projectName         
+               var ProjectsArray=updatedObj[this.state.selectedTeamIndex].projects
+                this.setState({ listOfTeams:updatedObj, editProjectModal: false,projectsArray:ProjectsArray});
                 this.selectedProject(this.state.selectedProjectIndex)
             })
 
@@ -670,72 +642,7 @@ class AccountDetails extends React.Component {
             this.setState({ existingMemberArray: false })
         }
     }
-    selectedTool = (toolsArray, selectedITeamIndex, selectedProjectIndex, selectedprocessIndex) => {
-
-
-        var selectedToolDetails = toolsArray[selectedprocessIndex].tools[0]
-
-        this.setState({ selectedToolDetails: selectedToolDetails, selectedprocessIndex: selectedprocessIndex, noTool: false, isTooldata: true })
-
-
-        //  var currentAccount = this.state.currentAccount
-
-        //  if (currentAccount[selectedITeamIndex].projects[selectedProjectIndex].tools === undefined) {
-        //      currentAccount[selectedITeamIndex].projects[selectedProjectIndex].tools = []
-        //      var selectedToolDetailsObj = currentAccount[selectedITeamIndex].projects[selectedProjectIndex].tools[selectedprocessIndex] = selectedToolName
-
-        //  this.setState({ selectedToolDetails: selectedToolDetailsObj, selectedprocessIndex: selectedprocessIndex, noTool: false, isTooldata: true })
-        //  }
-        //  else{
-        //     console.log(currentAccount)   
-        //  this.setState({ selectedToolDetails: selectedToolDetailsObj, selectedprocessIndex: selectedprocessIndex,noTool:false,isTooldata:true })
-        // }
-
-    }
-    selectedProcess = (e, selectedProcessIndex) => {
-
-
-        var selectedToolName = [{ "processName": "", "tools": [{ "toolName": "", "username": "", "password": "", "url": "" }] }]
-        selectedToolName[0].processName = this.state.editableProcessArray[selectedProcessIndex].name
-        selectedToolName[0].tools[0].toolName = this.state.editableProcessArray[selectedProcessIndex].tools[0].name
-
-        console.log(selectedToolName)
-        this.setState({ stepIndex: selectedProcessIndex, toolsInfo: true, jumpStartObj: selectedToolName, selectedProcess: selectedProcessIndex })
-
-    }
-    handleNext = (e, ind) => {
-
-        // var selectedToolName = dcopy(this.state.jumpStartObj)
-
-        // if (selectedToolName[this.state.stepIndex + 1] === undefined) {
-
-        //     selectedToolName.push({ "processName": "", "tools": [{ "toolName": "", "username": "", "password": "", "url": "" }] })
-        //     selectedToolName[this.state.stepIndex + 1].processName = this.state.editableProcessArray[this.state.stepIndex + 1].name
-        //     selectedToolName[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].toolName = this.state.editableProcessArray[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].name
-        // }
-        // else {
-        //     selectedToolName[this.state.stepIndex + 1].processName = this.state.jumpStartObj[this.state.stepIndex + 1].name
-        //     selectedToolName[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].toolName = this.state.jumpStartObj[this.state.stepIndex + 1].tools[this.state.selectedToolIndex].toolName
-        // }
-
-        // this.setState((state) => ({ stepIndex: this.state.stepIndex + 1, jumpStartObj: selectedToolName }));
-
-        // if (this.state.stepIndex + 1 === this.state.editableProcessArray.length - 1) {
-        //     this.setState({ lastItem: true })
-        // }
-
-    }
-    handleBack = () => {
-        var selectedToolName = dcopy(this.state.jumpStartObj)
-
-        selectedToolName[this.state.stepIndex - 1].processName = this.state.jumpStartObj[this.state.stepIndex - 1].name
-        selectedToolName[this.state.stepIndex - 1].tools[this.state.selectedToolIndex].toolName = this.state.jumpStartObj[this.state.stepIndex - 1].tools[this.state.selectedToolIndex].toolName
-        this.setState({ stepIndex: this.state.stepIndex - 1, jumpStartObj: selectedToolName })
-
-        if (this.state.stepIndex !== this.state.processArray.length) {
-            this.setState({ lastItem: false })
-        }
-    }
+ 
     displayingProjects = (projects) => {
         return projects.map((project) => (
             <MenuItem
@@ -744,38 +651,7 @@ class AccountDetails extends React.Component {
                 primaryText={project.projectName}
             />
         ));
-    }
-    toolsList = (tools) => {
-
-        return tools.map((tool) => (
-            <MenuItem
-                key={tool.name}
-                value={tool.name}
-                primaryText={tool.name}
-            />
-        ));
-    }
-    handlingToolList = (e, i, value) => {
-
-        var tempJumpstartObj = dcopy(this.state.jumpStartObj)
-        tempJumpstartObj[0].tools[0].toolName = value
-
-        this.setState({ jumpStartObj: tempJumpstartObj })
-    }
-    handleJumpstartChange = (e, obj) => {
-
-        var tempJumpstartObj = this.state.jumpStartObj
-
-        tempJumpstartObj[0].tools[0][e.target.name] = e.target.value
-        this.setState({ jumpStartObj: tempJumpstartObj })
-    }
-    saveJumpstartData = (e, obj) => {
-
-
-
-        this.selectedTool(obj, this.state.selectedTeamIndex, this.state.selectedProjectIndex, 0)
-        this.setState({ listofToolsarray: obj, jumpstartModal: false, noTool: false })
-    }
+    }  
     selectProcessforTool = (e, checked, index, processName, toolName, toolId) => {
         var toolsConfig = this.state.toolsConfig
         var tempToolsConfigKeys = Object.keys(toolsConfig)
@@ -955,11 +831,11 @@ class AccountDetails extends React.Component {
                                             {this.state.projectsArray.map((project, index) => (
                                                 <TableRow className={[index === this.state.selectedProjectIndex ? 'selectedItem' : ''].join(' ')} key={index} style={{ border: '1px solid rgb(224, 224, 224)' }}>
                                                     <TableRowColumn>{project.projectName}</TableRowColumn>
-                                                    {/* <TableRowColumn style={{ paddingLeft: "0px" }}>
+                                                    <TableRowColumn style={{ paddingLeft: "0px" }}>
                                                         <IconButton touch={true} onClick={(e) => this.editProjectModal(e, "edit", index)}>
                                                             <ContentEdit />
                                                         </IconButton>
-                                                    </TableRowColumn> */}
+                                                    </TableRowColumn>
                                                     <TableRowColumn></TableRowColumn>
                                                 </TableRow>
                                             ))}
@@ -1045,13 +921,11 @@ class AccountDetails extends React.Component {
                                                     )) : ''}
                                             </TableRow>
                                         </TableHeader>
-                                        <TableBody displayRowCheckbox={false} className={[this.state.toolsArray !== undefined ? this.state.toolsArray.length !== 0 ? "show" : "visibility" : '']}>
-                                            {this.state.toolsArray !== undefined ?
-                                                this.state.toolsArray.map((tool, toolIndex) => (
+                                        <TableBody displayRowCheckbox={false} className={[this.state.toolsArray.length !== 0 ? "show" : "visibility"]}>
+                                            {  this.state.toolsArray.map((tool, toolIndex) => (
                                                     <TableRow key={toolIndex} selectable={false} >
                                                         <TableRowColumn>{tool.toolName}</TableRowColumn>
-                                                        {(this.state.processArray !== undefined ?
-                                                            this.state.processArray.map((process, i) => (
+                                                        { this.state.processArray.map((process, i) => (
                                                                 <TableRowColumn key={i}>
                                                                     <div className="displayInline">
                                                                         <Checkbox
@@ -1096,10 +970,10 @@ class AccountDetails extends React.Component {
                                                                         </div>
                                                                     </div>
                                                                 </TableRowColumn>
-                                                            )) : '') || ''}
+                                                            ))}
 
                                                     </TableRow>
-                                                )) : ''}
+                                                ))}
                                         </TableBody>
                                     </Table>
                                     <div>
@@ -1333,7 +1207,7 @@ class AccountDetails extends React.Component {
                     </div>
 
                 </Dialog>
-                {/* <Dialog open={this.state.editProjectModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5"].join(' ')}>
+                 <Dialog open={this.state.editProjectModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5"].join(' ')}>
                     <div className="row">
                         <div className="col-md-12 col-lg-12 textAlignCenter">
                             <Subheader className="p-0" style={{ fontSize: '30px' }}>Edit Project Details</Subheader>
@@ -1346,7 +1220,7 @@ class AccountDetails extends React.Component {
                                 <TextField
                                     value={this.state.editProjectDetails.projectName || ''}
                                     name='projectName'
-                                    onChange={this.editProjectDetails}
+                                    onChange={this.handleEditProjectDetails}
                                     hintText="Project Name"
                                     floatingLabelText="Project Name"
                                     type="text"
@@ -1371,13 +1245,10 @@ class AccountDetails extends React.Component {
                                
                                 />
                             </div>
-
                         </div>
-
                     </div>
-
                 </Dialog> 
-                <Dialog open={this.state.addPeopleModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5 "].join(' ')}>
+                {/* <Dialog open={this.state.addPeopleModal} contentStyle={{ "left": "70%" }} className={["col-md-6 col-lg-5 "].join(' ')}>
 
                     <div className="row">
                         <div className="col-md-12 col-lg-12 textAlignCenter">
