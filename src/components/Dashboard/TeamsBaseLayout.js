@@ -165,8 +165,11 @@ class TeamsBaseLayout extends Component {
                                 errorMessage={this.displayErrorMessage}
                                 displayDropDownValue={this.displayDropDownValue}
                                 teamId = {this.teamId}
+                                getSonarDetails={this.getSonarDetails}
                             />
+                      
                         )
+               
                     });
                 // });
             })
@@ -211,9 +214,22 @@ class TeamsBaseLayout extends Component {
             )
         });
     };
-
+      getSonarDetails=(userName, password, hostedUrl)=>{
+        console.log(userName, password, hostedUrl)
+          this.setState({
+            sonarQubedata: <SonarQubeData 
+            
+                          selectedUserName={userName}
+                          selectedUserPwd={password}
+                          selectedUrl={hostedUrl}
+                        
+                        />,
+                        loaderforsonar: ""
+          })
+      }
 
     selectProject = (boardDetails, userName, password, hostedUrl, peopleList) => {
+      console.log(boardDetails, userName, password, hostedUrl, peopleList)
         this.setState({
             selectedProjectBoardDetails:
                 <SelectedProjectBoardDetails
@@ -226,11 +242,11 @@ class TeamsBaseLayout extends Component {
                     listOfEpics={this.epicBurdownChart}
                     showLoaderforEpicData={this.ShowLoaderforEpicData}
                     showLoaderforSprintData={this.ShowLoaderforSprintData}
+
                 />
             ,
             loaderforpeople: "",
-            sonarQubedata: <SonarQubeData />,
-            loaderforsonar: "",
+         
             jenkinsData: <Jenkins />,
             loaderforJenkins: ""
         });

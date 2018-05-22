@@ -9,7 +9,7 @@ import TeamsBaseLayout from './Dashboard/TeamsBaseLayout';
 import LoginNew from '../shared/LoginNew';
 
 const Routes = () => (
-   <Router>
+   <Router basename={process.env.PUBLIC_URL}>
     <div>
       <Switch>
         <Route exact path="/" component={Login} />

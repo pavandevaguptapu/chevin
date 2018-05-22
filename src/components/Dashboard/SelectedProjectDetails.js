@@ -128,16 +128,12 @@ class SelectedProjectDetails extends Component {
             teamId: this.props.teamId
         })
             .then(response => {
-                console.log(response.data.content.tools, "asdas")
-                this.setState({ selectedProjectIndex: projectId });
-
-                this.state.hintStyle2 = {
-                    opacity: 0
-                };
+                console.log(response.data.content.tools, "selectedProjectDetails")
+                this.setState({ selectedProjectIndex: projectId });              
                 this.props.showLoader();
                 var jumpStartMenuNameArray = [];
-                const IM = "Issue Management";
-
+                const PM = "Process Management";
+                const QM="Quality Management"
                 let tools = [];
                 // tools = response.data.content.tools.filter(tool => {
                 //     return tool.toolName === "Jira";
@@ -152,17 +148,25 @@ class SelectedProjectDetails extends Component {
                 // );
 
                for(var i=0;i<response.data.content.tools.length;i++){
-                   if(response.data.content.tools[i].toolName==="Jira"){
+                   if(response.data.content.tools[i].processName==="Process Management"){
                     tools.push(response.data.content.tools[i])
                     this.getBoard(
                     tools[0].hostedURL,
                     tools[0].userName,
                     tools[0].password,
                     tools[0].people
-                );
-                   }
-                   else{
-                        console.log("Error Occured")
+                )
+                   }                   
+                   else if(response.data.content.tools[i].processName==="Quality Management"){
+                    var tool=[]
+                    console.log(response.data.content.tools[i])
+                        tool.push(response.data.content.tools[i])
+                        this.props.getSonarDetails(                         
+                          tool[0].userName,
+                          tool[0].password,
+                          tool[0].hostedURL,                      
+                     
+                      );
                    }
                } 
 

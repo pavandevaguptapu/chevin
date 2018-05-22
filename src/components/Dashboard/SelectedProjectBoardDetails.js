@@ -187,19 +187,23 @@ class SelectedProjectBoardDetails extends Component {
   };
 
   projectBoardDetailsListarray = board => {
-    return board.map(board => (
-      <DropdownItem
-        key={board.id}
-        value={board.name}
-        className="pointer text-truncate"
-        onClick={(e, i) => {
-          this.selectedProjectBoard(e.target.value);
-          this.displayDropDownValue(e);
-        }}
-      >
-        {board.name}
-      </DropdownItem>
-    ));
+    console.log(board)
+    if(board.length!==0|| board!==undefined){
+      return board.map(board => (
+        <DropdownItem
+          key={board.id}
+          value={board.name}
+          className="pointer text-truncate"
+          onClick={(e, i) => {
+            this.selectedProjectBoard(e.target.value);
+            this.displayDropDownValue(e);
+          }}
+        >
+          {board.name}
+        </DropdownItem>
+      ));
+    }
+   
   };
 
   toggle = () => {

@@ -37,15 +37,16 @@ class SonarQubeData extends Component {
     }
 
     componentWillMount() {
+        console.log(this.props)
         axios
             .post(`sbtpgateway/tp/rest/esccors/generic/`, {
-                resourceURL:
-                    "http://172.16.25.50:9000/api/measures/component?additionalFields=metrics,periods&componentKey=FIC&metricKeys=alert_status,quality_gate_details,bugs,new_bugs,reliability_rating,vulnerabilities,new_vulnerabilities,security_rating,code_smells,new_code_smells,sqale_rating,sqale_index,new_technical_debt,overall_coverage,new_overall_coverage,coverage,new_coverage,it_coverage,new_it_coverage,new_lines_to_cover,new_it_lines_to_cover,new_overall_lines_to_cover,tests,duplicated_lines_density,duplicated_blocks,ncloc,ncloc_language_distribution",
-                userName: "admin",
-                password: "admin",
+                resourceURL:this.props.selectedUrl,                   
+                userName: this.props.selectedUserName,
+                password: this.props.selectedUserPwd,
                 actionMethod: "get"
             })
             .then(response => {
+                console.log(response)
                 var i;
                 // 	this.state.closedIssues=[]
                 // 	this.state.openIssues=[]

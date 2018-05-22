@@ -806,7 +806,7 @@ class AccountDetails extends React.Component {
         var tataArray = this.state.listOfTeams
         var selectedTeamId = tataArray[this.state.selectedTeamIndex].teamId
         var selectedProjectId = tataArray[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].projectId
-
+        console.log(toolsList)
 
 
         axios.put("http://172.16.25.50:8585/springhibernate/newspringboardapi/editToolsConfig",
