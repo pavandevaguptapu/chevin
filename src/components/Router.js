@@ -7,6 +7,7 @@ import jumpstart from './Admin/ConfigureJumpstart/jumpstart';
 import App from './App'
 import TeamsBaseLayout from './Dashboard/TeamsBaseLayout';
 import LoginNew from '../shared/LoginNew';
+import Refactor from './some/Refactor';
 
 const Routes = () => (
    <Router basename={process.env.PUBLIC_URL}>
@@ -15,6 +16,7 @@ const Routes = () => (
         <Route exact path="/" component={Login} />
         <Route path="/dashboard" component={TeamsBaseLayout} />
         <Route path="/login" component={LoginNew} />
+        <Route path="/refa" component={Refactor} />
         <App>
           <Route
             path="/app/manageCustomerTeams"

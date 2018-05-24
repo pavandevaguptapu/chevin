@@ -25,7 +25,7 @@ class RefreshIndicatorExampleLoading extends Component {
           top={100}
           status={this.state.laoderStatus}
           style={style.refresh}
-          loadingColor={"grey"}
+          loadingColor={"red"}
         />
       </div>
     );

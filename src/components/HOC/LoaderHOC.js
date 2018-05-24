@@ -8,10 +8,14 @@ const LoaderHOC = loadingProp => WrappedComponent => class  extends Component {
       (prop.constructor === Object && Object.keys(prop).length === 0);
 
     render() {
+        debugger;
       return this.isEmpty(this.props[loadingProp]) ? (
+          <div>
         <h1>Loading...</h1>
+        <WrappedComponent {...this.props} {...this.state}/>
+        </div>
       ) : (
-        <WrappedComponent {...this.props} />
+        <WrappedComponent {...this.props} {...this.state}/>
       );
     }
   };
