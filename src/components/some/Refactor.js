@@ -5,7 +5,9 @@ import { WidthProvider, Responsive } from "react-grid-layout";
 import css from "../../../node_modules/react-grid-layout/css/styles.css";
 import css1 from "../../../node_modules/react-resizable/css/styles.css";
 
+import Y from './Y';
 import Z from './Z';
+
 import LoaderHOC from '../HOC/LoaderHOC';
 
 const navBarContainer = {
@@ -82,7 +84,8 @@ class Refactor extends Component {
                                 <CardHeader title={widget.name} className="p-0" />
                             </div>
                             <div className="col-lg-12 text-center">
-                                <Z widgets ={this.state.widgets} E={[]}/>
+                            <Y />
+                              
                             </div>
                         </Card>
                     ))}

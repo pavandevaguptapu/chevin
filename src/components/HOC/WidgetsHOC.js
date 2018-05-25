@@ -15,19 +15,17 @@ class ErrorBoundary extends Component {
       hasError: false
     };
   }
-  componentDidCatch(error, info) {
+  componentDidCatch(error, errorInfo) {
     this.setState({
       hasError: true
     });
+    console.log(error, errorInfo, "asds")
   }
   render() {
     if(this.state.hasError) {
       return (
         <Card style={style}>
-          <CardMedia
-            aspectRatio="wide"
-            image="https://cdn.dribbble.com/users/1078347/screenshots/2799566/oops.png"
-          />
+
           <CardTitle
             title="Sorry Something went wrong!!!"
             subtitle="Error catched by error boundary of react 16"
@@ -40,3 +38,4 @@ class ErrorBoundary extends Component {
 }
 
 export default ErrorBoundary;
+

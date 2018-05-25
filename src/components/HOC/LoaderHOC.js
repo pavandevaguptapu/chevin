@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import RefreshIndicatorExampleLoading from "../Dashboard/RefreshIndicatorExampleLoading";
 
 const LoaderHOC = loadingProp => WrappedComponent => class  extends Component {
     isEmpty = prop =>
@@ -8,14 +9,10 @@ const LoaderHOC = loadingProp => WrappedComponent => class  extends Component {
       (prop.constructor === Object && Object.keys(prop).length === 0);
 
     render() {
-        debugger;
       return this.isEmpty(this.props[loadingProp]) ? (
-          <div>
-        <h1>Loading...</h1>
-        <WrappedComponent {...this.props} {...this.state}/>
-        </div>
+        <RefreshIndicatorExampleLoading />
       ) : (
-        <WrappedComponent {...this.props} {...this.state}/>
+        <WrappedComponent {...this.props} />
       );
     }
   };

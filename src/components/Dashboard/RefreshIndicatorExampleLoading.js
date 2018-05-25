@@ -7,13 +7,13 @@ const style = {
     display: "inline-block",
     position: "relative",
     boxShadow: "none",
-    backgroundColor: "none"
+    backgroundColor: "none",
   },
 };
 
 class RefreshIndicatorExampleLoading extends Component {
   state = {
-    laoderStatus: this.props.status
+    laoderStatus: "loading"
   };
 
   render() {
@@ -25,7 +25,7 @@ class RefreshIndicatorExampleLoading extends Component {
           top={100}
           status={this.state.laoderStatus}
           style={style.refresh}
-          loadingColor={"red"}
+          loadingColor={"black"}
         />
       </div>
     );
