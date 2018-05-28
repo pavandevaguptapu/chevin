@@ -117,8 +117,7 @@ class AccountDetails extends React.Component {
             TeamDetailsArrayForEditing: [],
             toolsArray:[],
             processArray:[],
-
-
+            selectedTab:0,
 
             newProjectDetails: {},
             projectList: [],
@@ -182,7 +181,7 @@ class AccountDetails extends React.Component {
                 listOfTeams[lastTeamIndex].projects = []
                 listOfTeams[lastTeamIndex].people = []
             }
-            this.setState({ listOfTeams: listOfTeams, selectedTeamIndex: lastTeamIndex })
+            this.setState({ listOfTeams: listOfTeams, selectedTeamIndex:lastTeamIndex,TeamDetailsArrayForEditing:listOfTeams })
         }
     }
     componentDidMount() {
@@ -208,12 +207,13 @@ class AccountDetails extends React.Component {
             tempListOfTeamsArray.splice(selectedTeamIndex, 1)
             tempListOfTeamsArray.splice(selectedTeamIndex, 0, response.data.content)
             if (tempListOfTeamsArray[selectedTeamIndex].projects.length === 0 && tempListOfTeamsArray[selectedTeamIndex].people.length === 0) {
-                this.setState({ listOfTeams: tempListOfTeamsArray, noProject: true, noPeople: true, noTool: true, selectedTeamIndex: selectedTeamIndex })
+                this.selectedTab(0)
+                this.setState({ listOfTeams: tempListOfTeamsArray, noProject: true, noPeople: true, noTool: true, selectedTeamIndex: selectedTeamIndex,TeamDetailsArrayForEditing:tempListOfTeamsArray,initialSelectedIndex:0})
             }
             else {
                 var ProjectsArray = tempListOfTeamsArray[selectedTeamIndex].projects
                 var selectedProjectName = tempListOfTeamsArray[selectedTeamIndex].projects[0].projectName
-                this.setState({ listOfTeams: tempListOfTeamsArray, projectsArray: ProjectsArray, noProject: false, noPeople: false, noTool: false, selectedTeamIndex: selectedTeamIndex })
+                this.setState({ listOfTeams: tempListOfTeamsArray, projectsArray: ProjectsArray, noProject: false, noPeople: false, noTool: false, selectedTeamIndex: selectedTeamIndex,TeamDetailsArrayForEditing:tempListOfTeamsArray })
                 this.getProjects(selectedTeamId, this.state.selectedTeamName)
             }
 
@@ -276,15 +276,20 @@ class AccountDetails extends React.Component {
                 if (this.state.listOfTeams !== undefined) {
                     addedObj = this.state.listOfTeams
                     addedObj.push(response.data.content)
-                    this.setState({ listOfTeams: addedObj, addTeamModal: false, addTeamString: false, noTool: true });
+                    this.setState({ listOfTeams: addedObj, addTeamModal: false, addTeamString: false, noTool: true,initialSelectedIndex:0});
+         
                     this.selectedTeam("event", this.state.listOfTeams.length - 1)
                 }
                 else if (this.state.listOfTeams === undefined) {
                     var addedObj = []
                     addedObj.push(response.data.content)
-                    this.setState({ listOfTeams: addedObj, addTeamModal: false, addTeamString: false, noTool: true });
+                    this.setState({ listOfTeams: addedObj, addTeamModal: false, addTeamString: false, noTool: true,initialSelectedIndex:0});
+
                     this.selectedTeam("event", this.state.listOfTeams.length - 1)
+
                 }
+
+              
             })
     }
     closeAddTeamModal = () => {
@@ -470,7 +475,6 @@ class AccountDetails extends React.Component {
             })
     }
     getProjects = (TeamId, selectedTeamName) => {
-
         this.setState({
             selectedTeamName: selectedTeamName
         });
@@ -539,7 +543,7 @@ class AccountDetails extends React.Component {
         this.setState({ editProjectDetails: tempArray })
     }
     updateProjectDetails = (updatedProjectObj) => {
-console.log(updatedProjectObj)
+            console.log(updatedProjectObj)
         var projectId=this.state.listOfTeams[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].projectId
         var updatedProjectName=updatedProjectObj.projectName       
 
@@ -707,7 +711,14 @@ console.log(updatedProjectObj)
         tempArray[selectedToolConfigKey][e.target.name] = e.target.value
         this.setState({ toolsConfig: tempArray })
     }
+    selectedTab = (value) => {
+       
+        this.setState({
+            selectedTab: value
+          });
+       
 
+    }
     render() {
         return (
             <div className="col-lg-12 col-md-12 mt-1">
@@ -715,7 +726,7 @@ console.log(updatedProjectObj)
                     <Card>
                         <div className="displayInline col-lg-12 col-md-12 p-1">
                             <div className={["col-md-2 col-lg-2 p-0", this.state.addTeamString === true ? "visibility" : "show"].join(' ')}>
-                                <div className="d-flex col-md-12 col-lg-12 pl-0 pb-2 pt-1">
+                                <div className="d-flex col-md-12 col-lg-10 pl-0 pb-2 pt-1">
                                     <div className={"project_details pt-0 pl-2 pr-0 d-inline-flex"}>
                                         <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
                                     </div>
@@ -737,7 +748,8 @@ console.log(updatedProjectObj)
                                                 <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Projects</Subheader>
                                             </div>
                                             <div className="font" style={{ lineHeight: "38px", fontWeight: "lighter" }}>
-                                                {this.state.listOfTeams[this.state.selectedTeamIndex] !== undefined ? this.state.listOfTeams[this.state.selectedTeamIndex].projects.length : ""}
+                                                {this.state.listOfTeams[this.state.selectedTeamIndex].projects.length || 0
+                                                }
                                             </div>
                                         </div>
                                         <div className="col-md-2 col-lg-2 m-2 displayInline p-0">
@@ -746,7 +758,7 @@ console.log(updatedProjectObj)
                                                 <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Members</Subheader>
                                             </div>
 
-                                            <div className="font" style={{ lineHeight: "38px", fontWeight: "lighter" }}></div>
+                                            <div className="font" style={{ lineHeight: "38px", fontWeight: "lighter" }}>0</div>
 
 
                                         </div>
@@ -758,7 +770,7 @@ console.log(updatedProjectObj)
                                             </div>
 
                                             <div className="" style={{ fontSize: '25px', lineHeight: "32px", fontWeight: "lighter" }}>
-                                                {this.state.listOfTeams[this.state.selectedTeamIndex] !== undefined ? this.state.listOfTeams[this.state.selectedTeamIndex].startDate : ""}
+                                                {this.state.listOfTeams[this.state.selectedTeamIndex].startDate ||" "}
 
                                             </div>
 
@@ -770,7 +782,7 @@ console.log(updatedProjectObj)
                                             </div>
                                             <div className="" style={{ fontSize: '25px', lineHeight: "32px", fontWeight: "lighter" }}>
 
-                                                {this.state.listOfTeams[this.state.selectedTeamIndex] !== undefined ? this.state.listOfTeams[this.state.selectedTeamIndex].endDate : ""}
+                                                {this.state.listOfTeams[this.state.selectedTeamIndex].endDate || " "}
                                             </div>
 
                                         </div>
@@ -806,9 +818,9 @@ console.log(updatedProjectObj)
                     </Card>
                 </div>
                 <div className={["col-md-12 col-lg-12 padding0", this.state.addTeamString === true ? "visibility" : "show"].join(' ')} >
-                    <div className="my-4">
-                        <Tabs inkBarStyle={{ background: '#FF3D00' }}>}
-                            <Tab label="Projects" style={tabsBackgroundColor}>
+                    <div className="my-4">                  
+                        <Tabs inkBarStyle={{ background: '#FF3D00'}} value={this.state.selectedTab} >
+                            <Tab label="Projects" style={tabsBackgroundColor} value={0} onActive={() => this.selectedTab(0)}>
                                 <div style={{ border: "1px solid rgb(238, 238, 238)" }} >
                                     <Table onCellClick={this.selectedProject}>
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
@@ -844,7 +856,7 @@ console.log(updatedProjectObj)
                                 </div>
                                 <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={[this.state.noProject === true ? 'show' : 'visibility'].join(' ')}>
                                     <Subheader className="p-0 textAlignCenter" style={{ fontSize: '20px' }}>
-                                        No projects are assigned to this team
+                                        Add projects to team 
                                       </Subheader>
                                 </div>
                             </Tab>
@@ -897,7 +909,7 @@ console.log(updatedProjectObj)
                                     </Subheader>
                                 </div>
                             </Tab> */}
-                            <Tab label="Jump Start" style={tabsBackgroundColor} disabled={this.state.noProject === true}>
+                            <Tab label="Jump Start" style={tabsBackgroundColor} disabled={this.state.noProject === true} value={2} onActive={() => this.selectedTab(2)}>
                                 <div className={["col-md-12 col-lg-12 displayInline", this.state.noProject === true ? 'visibility' : 'show'].join(" ")}>
                                     <div className="col-md-10 col-lg-9 textAlignRight">
                                         <Subheader className="p-0" style={{ fontSize: '14px' }}>Select Project</Subheader>
@@ -910,15 +922,15 @@ console.log(updatedProjectObj)
                                     </div>
 
                                 </div>
-                                <div style={{ border: "1px solid rgb(238, 238, 238)" }} >
+                                <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={[this.state.noProject === true ? 'visibility' : 'show'].join(' ')} >
                                     <Table>
                                         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
                                             <TableRow>
                                                 <TableHeaderColumn style={{ "paddingLeft": "10px" }}>Tool Name</TableHeaderColumn>
-                                                {this.state.processArray !== undefined ?
+                                                {
                                                     this.state.processArray.map(row => (
                                                         <TableHeaderColumn style={{ "paddingLeft": "0px" }}>{row.processName}</TableHeaderColumn>
-                                                    )) : ''}
+                                                    ))}
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody displayRowCheckbox={false} className={[this.state.toolsArray.length !== 0 ? "show" : "visibility"]}>
@@ -992,9 +1004,8 @@ console.log(updatedProjectObj)
                                       </Subheader>
                                     </div> */}
                                 </div>
-
+                              
                             </Tab>
-
                         </Tabs>
                     </div>
                 </div>
@@ -1039,6 +1050,7 @@ console.log(updatedProjectObj)
                                     value={this.state.newTeamObj.startDate || ''}
                                     onChange={(e, x) => this.handleAddTeamDetails(e, x, 'startDate')}
                                     minDate={new Date()}
+                                    maxDate={this.state.newTeamObj.endDate}
                                     floatingLabelText="Start Date"
                                     autoOk={true}
                                 />
@@ -1089,9 +1101,8 @@ console.log(updatedProjectObj)
                     <div className="textAlignLeft">
                         <div className="row margin0">
                             <div className="col-md-12">
-
                                 <TextField
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex] !== undefined ? this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].teamName : ''}
+                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].teamName}
                                     name='teamName'
                                     onChange={this.handleTeamEditDetails}
                                     hintText="Team Name"
@@ -1105,7 +1116,7 @@ console.log(updatedProjectObj)
                         <div className="row margin0">
                             <div className="col-md-12">
                                 <TextField
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex] !== undefined ? this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].status : ''}
+                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].status}
                                     fullWidth={true}
                                     floatingLabelText="Status"
                                     hintText="Status"
@@ -1118,13 +1129,14 @@ console.log(updatedProjectObj)
                         <div className="row margin0">
                             <div className="col-md-12">
                                 <DatePicker
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex] !== undefined ? this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate : ''}
+                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate}
                                     textFieldStyle={{ width: '100%' }}
                                     hintText="Start Date"
                                     name='startDate'
                                     floatingLabelText="Start Date"
                                     onChange={(e, x) => this.handleTeamEditDetails(e, x, 'startDate')}
                                     autoOk={true}
+                                    maxDate={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate}
                                 />
                             </div>
 
@@ -1132,13 +1144,13 @@ console.log(updatedProjectObj)
                         <div className="row margin0">
                             <div className="col-md-12">
                                 <DatePicker
-                                    value={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex] !== undefined ? this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate : ''}
+                                    value={ this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate}
                                     textFieldStyle={{ width: '100%' }}
                                     hintText="End Date"
                                     name='endDate'
                                     floatingLabelText="End Date"
                                     onChange={(e, x) => this.handleTeamEditDetails(e, x, 'endDate')}
-                                    minDate={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex] !== undefined ? this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate : ''}
+                                    minDate={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].startDate}
                                     autoOk={true}
                                 />
                             </div>
@@ -1174,7 +1186,7 @@ console.log(updatedProjectObj)
                         <div className="row margin0">
                             <div className="col-md-12">
                                 <TextField
-                                    value={(this.state.newProjectDetails !== undefined ? this.state.newProjectDetails.projectName : '') || ''}
+                                    value={ this.state.newProjectDetails.projectName||''}
                                     name='projectName'
                                     onChange={this.newProjectDetails}
                                     hintText="Project Name"

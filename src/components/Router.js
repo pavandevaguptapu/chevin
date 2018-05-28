@@ -4,12 +4,13 @@ import Login from '../login';
 import ManageCustomerTeams from './Admin/ConfigureTeams/manageCustomerTeams';
 import People from './Admin/PersonDetails/People';
 import jumpstart from './Admin/ConfigureJumpstart/jumpstart';
+import Automation from './Admin/Automation/automation';
 import App from './App'
 import TeamsBaseLayout from './Dashboard/TeamsBaseLayout';
 import LoginNew from '../shared/LoginNew';
 
 const Routes = () => (
-   <Router basename={process.env.PUBLIC_URL}>
+   <Router>
     <div>
       <Switch>
         <Route exact path="/" component={Login} />
@@ -22,6 +23,7 @@ const Routes = () => (
           />
           <Route path="/app/people" component={People} />
           <Route path="/app/jumpstart" component={jumpstart} />
+          <Route path="/app/automation" component={Automation} />
         </App>
         <Route
           render={function() {
