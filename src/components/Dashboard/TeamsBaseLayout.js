@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import { connect } from 'react-redux';
-import { setSelectedTeam } from '../../actions/index';
+import { setSelectedTeam } from '../../redux/actions/index';
 
 import GridLayout from "react-grid-layout";
 import { WidthProvider, Responsive } from "react-grid-layout";
@@ -121,6 +121,7 @@ class TeamsBaseLayout extends Component {
                 value={account.teamName}
                 className="pointer text-truncate"
                 key={account.teamId}
+                title={account.teamName}
                 onClick={(e, index) => {
                     this.selectedAccount(account.teamId);
                     this.displayDropDownValue(e);
@@ -451,7 +452,7 @@ class TeamsBaseLayout extends Component {
                                             caret
                                             className="text-truncate d-flex justify-content-between"
                                         >
-                                            {this.state.dropDownValue}
+                                           <span className="text-truncate" title={this.state.dropDownValue}> {this.state.dropDownValue} </span>
                                         </DropdownToggle>
                                         <DropdownMenu className="custom-dropdown-menu">
                                             {this.accountsListArray(this.state.accounts)}

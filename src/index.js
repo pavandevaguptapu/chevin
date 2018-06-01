@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Routes from './components/Router';
 
-import store from './store/store';
+import store from './redux/store/store';
 
 ReactDOM.render((
 	<StrictMode>

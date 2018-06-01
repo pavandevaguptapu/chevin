@@ -530,7 +530,6 @@ input[type="text"] {
 
 .epicTablediv {
   overflow: scroll;
-
   height: 91%;
 }
 
@@ -736,9 +735,9 @@ input[type="text"] {
   /* transform: translate3d(0, 34px, 0px) !important; */
 }
 .custom-dropdown-menu-items {
-    height: 250px;
-    overflow-y: auto;
-    overflow-x: hidden;
+  height: 250px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .custom-dropdown-menu::before {
@@ -783,11 +782,11 @@ input[type="text"] {
   background-color: #ffd91d !important;
 }
 
-#myDiv.fullscreen{
-    z-index: 9999 !important;
-    width: 100% !important;
-    height: 66% !important;
-    top: 0 !important;
-    left: 0em !important;
-    margin: 0 auto !important;
- }
+#myDiv.fullscreen {
+  z-index: 9999 !important;
+  width: 100% !important;
+  height: 66% !important;
+  top: 0 !important;
+  left: 0em !important;
+  margin: 0 auto !important;
+}

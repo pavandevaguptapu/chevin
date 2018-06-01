@@ -193,6 +193,7 @@ class SelectedProjectBoardDetails extends Component {
         <DropdownItem
           key={board.id}
           value={board.name}
+          title={board.name}
           className="pointer text-truncate"
           onClick={(e, i) => {
             this.selectedProjectBoard(e.target.value);
@@ -228,7 +229,7 @@ class SelectedProjectBoardDetails extends Component {
             caret
             className="text-truncate d-flex justify-content-between"
           >
-            {this.state.dropDownValue}
+           <span className="text-truncate" title={this.state.dropDownValue}> {this.state.dropDownValue} </span>
           </DropdownToggle>
           <DropdownMenu className="custom-dropdown-menu">
             {this.projectBoardDetailsListarray(

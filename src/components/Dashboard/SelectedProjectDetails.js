@@ -103,6 +103,7 @@ class SelectedProjectDetails extends Component {
                 <DropdownItem
                     key={project.projectId}
                     value={project.projectName}
+                    title={project.projectName}
                     className="pointer text-truncate"
                     onClick={(e, i) => {
                         this.selectProject(project.projectId);
@@ -266,7 +267,7 @@ class SelectedProjectDetails extends Component {
                         caret
                         className="text-truncate d-flex justify-content-between"
                     >
-                        {this.state.dropDownValue}
+                        <span className="text-truncate" title={this.state.dropDownValue}> {this.state.dropDownValue} </span>
                     </DropdownToggle>
                     <DropdownMenu className="custom-dropdown-menu ">
                         <TextField

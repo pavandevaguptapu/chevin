@@ -23,7 +23,7 @@ class SprintDetails extends Component {
       eachTimeSpentArray: [],
       totalTimeSpentArray: [],
       currentDate: "",
-      currentSpentTime: 0,   
+      currentSpentTime: 0,
       date1: "",
       date2: "",
       timeSpent: "",
@@ -32,7 +32,7 @@ class SprintDetails extends Component {
       eachRemainingTimeChangeArray: [],
       totalRemainingTimeChangeArray: [],
       boardId: "",
-      userName:'',
+      userName: '',
       pwd: "",
       url: "",
       activeSprint: ""
@@ -71,33 +71,33 @@ class SprintDetails extends Component {
     });
   }
   handleChange = (e, index) => {
-    if(index!==undefined){
-        let val = index
-        this.displayDropDownValue(this.props.activeSprintName)
-        this.setState({
-            values: index
-          });
+    if (index !== undefined) {
+      let val = index
+      this.displayDropDownValue(this.props.activeSprintName)
+      this.setState({
+        values: index
+      });
     }
-    else{
-        let indexOfSelectedAccount = this.state.sprintListSorted
-      .map(function(k) {
-        return k.name;
-      })
-      .indexOf(e);
-    let val = this.state.sprintListSorted[indexOfSelectedAccount].id;
-    this.setState({
-      values: val
-    });
+    else {
+      let indexOfSelectedAccount = this.state.sprintListSorted
+        .map(function (k) {
+          return k.name;
+        })
+        .indexOf(e);
+      let val = this.state.sprintListSorted[indexOfSelectedAccount].id;
+      this.setState({
+        values: val
+      });
     }
 
     axios
       .post(`sbtpgateway/tp/rest/esccors/generic/`, {
         resourceURL:
-        this.state.url +
-        "/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId=" +
-        this.state.boardId +
-        "&sprintId=" +
-        this.state.values,
+          this.state.url +
+          "/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId=" +
+          this.state.boardId +
+          "&sprintId=" +
+          this.state.values,
         userName: this.state.userName,
         password: this.state.pwd,
         actionMethod: "get"
@@ -108,20 +108,13 @@ class SprintDetails extends Component {
           sprintStartTime: "",
           sprintEndTime: "",
           sprintCompleteTime: "",
-
-
           currentDate: "",
-
-
-
           date1: "",
           date2: "",
-
           timeSpent: "",
           eachTimeSpentArray: [],
           totalTimeSpentArray: [],
           currentSpentTime: 0,
-
           remainingTimeEstimate: "",
           currentRemainingTime: 0,
           eachRemainingTimeChangeArray: [],
@@ -361,12 +354,12 @@ class SprintDetails extends Component {
     axios
       .post(`sbtpgateway/tp/rest/esccors/generic/`, {
         resourceURL:
-        this.state.url +
-        "/rest/agile/1.0/board/" +
-        this.state.boardId +
-        "/sprint/" +
-        this.state.values +
-        "/issue?maxResults=100",
+          this.state.url +
+          "/rest/agile/1.0/board/" +
+          this.state.boardId +
+          "/sprint/" +
+          this.state.values +
+          "/issue?maxResults=100",
         userName: this.state.userName,
         password: this.state.pwd,
         actionMethod: "get"
@@ -382,7 +375,8 @@ class SprintDetails extends Component {
         value={sprintList.name}
         className="pointer text-truncate"
         key={sprintList.id}
-        onClick={(e, i) => {this.handleChange(e.target.value);  this.displayDropDownValue(e)}}
+        title={sprintList.name}
+        onClick={(e, i) => { this.handleChange(e.target.value); this.displayDropDownValue(e) }}
       >
         {sprintList.name}
       </DropdownItem>
@@ -406,20 +400,20 @@ class SprintDetails extends Component {
   render() {
     return (
       <div className="">
-          <Dropdown
-            isOpen={this.state.dropdownOpen}
-            toggle={this.toggle}
-            className="custom-secondary_dropdown clearfix"
-          >
-            <DropdownToggle caret className="text-truncate d-flex justify-content-between">
-            {this.state.dropDownValue}
-            </DropdownToggle>
-            <DropdownMenu className="custom-dropdown-menu">
+        <Dropdown
+          isOpen={this.state.dropdownOpen}
+          toggle={this.toggle}
+          className="custom-secondary_dropdown clearfix"
+        >
+          <DropdownToggle caret className="text-truncate d-flex justify-content-between">
+            <span className="text-truncate" title={this.state.dropDownValue}> {this.state.dropDownValue}</span>
+          </DropdownToggle>
+          <DropdownMenu className="custom-dropdown-menu">
             <div className="custom-dropdown-menu-items clearfix">
               {this.sprintItems(this.state.sprintListSorted)}
-            </div>              
-            </DropdownMenu>
-          </Dropdown>    
+            </div>
+          </DropdownMenu>
+        </Dropdown>
       </div>
     );
   }
