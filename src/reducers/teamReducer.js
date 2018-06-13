@@ -1,11 +1,12 @@
-import { SET_SELECTED_TEAM } from "../constants/action-types";
+import { GET_All_TEAMS } from "../constants/action-types";
 
-const defaultState = { selectedTeamId: '' };
+const defaultState = { teamsArray: [] };
 
 const teamReducer = (state = defaultState, action) => {
+    console.log(action)
     switch (action.type) {
-        case SET_SELECTED_TEAM:
-            return { ...state, selectedTeamId: action.payload };
+        case GET_All_TEAMS.type:
+            return { ...state, teamsArray: action.payload };
         default:
             return state;
     }

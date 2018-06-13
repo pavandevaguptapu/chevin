@@ -3,8 +3,20 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 
 import axios from 'axios';
-
-
+const automation={
+    textStyle:{
+      color:"#fff"
+    },
+    floatingLabelStyle: {
+      color: "#fff"
+    },
+    hintStyle:{
+      color:"#ffd91d"
+    },
+    underlineStyle: {
+      borderColor: "#fff"
+    }
+  }
 class Automation extends Component {
     constructor(props) {
         super(props);
@@ -23,7 +35,7 @@ class Automation extends Component {
     };
     github(reponame, sorceCodeUrl) {
         console.log(reponame, sorceCodeUrl)
-        axios.post(`http://192.168.29.25:8087/sbtpgateway/tp/rest/esccors/generic/`, {
+        axios.post(`http://192.168.29.84:8087/sbtpgateway/tp/rest/esccors/generic/`, {
             "resourceURL": "https://api.github.com/repos/pavandevaguptapu/" + reponame + "/import",
             "userName": "pavankumar.d@comakeit.com", "password": "Abc@1234", "actionMethod": "put",
             "postParams": {
@@ -40,21 +52,21 @@ class Automation extends Component {
         }
         ).then(response => {
             console.log(response)
-            // axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-            //     "resourceURL": "https://api.github.com/repos/coMakeIT-Git/" + reponame + "/hooks",
-            //     "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "post",
-            //     postParams: {
-            //         "name": "web",
-            //         "config": { "url": "http://192.168.29.25:8080/job/" + reponame + "/build" ,"content_type": "text/xml"}
+            axios.post(`http://192.168.29.84:8087/sbtpgateway/tp/rest/esccors/generic/`, {
+                "resourceURL": "https://api.github.com/repos/pavandevaguptapu/" + reponame + "/hooks",
+                "userName": "pavankumar.d@comakeit.com", "password": "Abc@1234", "actionMethod": "post",
+                postParams: {
+                    "name": "web",
+                    "config": { "url": "https://3f3efaa1.ngrok.io/job/" + reponame + "/build" ,"content_type": "text/xml"}
 
-            //     },
-            //     headersToForward: [
-            //         {
-            //             "headerName": "Accept",
-            //             "headerValue": "application/json"
-            //         }
-            //     ]
-            // })
+                },
+                headersToForward: [
+                    {
+                        "headerName": "Accept",
+                        "headerValue": "application/json"
+                    }
+                ]
+            })
         })
         // axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
         //     "resourceURL": "https://api.github.com/repos/coMakeIT-Git/"+reponame+"/hooks",
@@ -83,11 +95,11 @@ class Automation extends Component {
         xw.writeElement('description', '2');
         xw.writeElement('keepDependencies', 'false');
         xw.startElement('scm');
-        xw.writeAttribute('class', 'hudson.plugins.scm_sync_configuration');
+        xw.writeAttribute('class', 'hudson.plugins..git.GitSCM"');
         xw.writeElement('configVersion', '2');
         xw.startElement('userRemoteConfigs')
         xw.startElement('hudson.plugins.git.UserRemoteConfig')
-        xw.writeElement('url', 'http://172.16.25.50:8080/scm/git/Spring')
+        xw.writeElement('url', 'https://api.github.com/pavandevaguptapu/chevin')
         xw.endElement()
         xw.endElement()
         xw.startElement('branches')
@@ -127,7 +139,7 @@ class Automation extends Component {
 
         axios.post(`http://192.168.29.84:8087/sbtpgateway/tp/rest/esccors/generic/`, {
             "resourceURL":"https://api.github.com/user/repos",
-            "userName":"pavankumar.d@comakeit.com", "password": "Abc@1234", "actionMethod": "post",
+            "userName":"pavankumar.d@comakeit.com", "password":"Abc@1234", "actionMethod":"post",
             "postParams":{
                 "name": githubObj.repoName,
                 "description": "This is your first repository"
@@ -141,51 +153,46 @@ class Automation extends Component {
             ]
         }).then(response => {
                 console.log(response)
-            // var data = JSON.stringify({
-            //     "resourceURL": "http://172.16.25.50:8080/createItem?name=" + githubObj.repoName,
-            //     "userName": "admin",
-            //     "password": "97992727007343c2b0f644438fd67e36",
-            //     "actionMethod": "post",
-            //     "postParams": xml,
-            //     "headersToForward": [
-            //         {
-            //             "headerName": "Accept",
-            //             "headerValue": "text/xml"
-            //         },
-            //         {
-            //             "headerName": "Content-Type",
-            //             "headerValue": "text/xml"
-            //         }
-            //     ]
-            // });
+            var data = JSON.stringify({
+                "resourceURL": "https://3f3efaa1.ngrok.io/createItem?name=" + githubObj.repoName,
+                "userName": "admin",
+                "password": "1ce543883f6441ee931fe0adffcacd4e",
+                "actionMethod": "post",
+                "postParams": xml,
+                "headersToForward": [
+                    {
+                        "headerName": "Accept",
+                        "headerValue": "text/xml"
+                    },
+                    {
+                        "headerName": "Content-Type",
+                        "headerValue": "text/xml"
+                    }
+                    
+                ]
+            });
 
-            // var xhr = new XMLHttpRequest();
-            // xhr.withCredentials = true;
-
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
             // xhr.addEventListener("readystatechange", function () {
             //     console.log(this.readyState)
             //     if (this.readyState === 4) {
             //         console.log("xhr")
-
             //     }
-
             //            this.github(this.state.githubInstanceDetails.repoName,this.state.githubInstanceDetails.projectUrl)
-
-
-
             // }.bind(this))
-            // xhr.onreadystatechange = function () {
-            //     if (xhr.readyState === 4) {
-            //         console.log(xhr.response);
-            //         this.github(githubObj.repoName, githubObj.sourceCodeUrl)
-            //     }
-            // }.bind(this)
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    console.log(xhr.response);
+                    this.github(githubObj.repoName, githubObj.sourceCodeURL)
+                }
+            }.bind(this)
 
-            // xhr.open("POST", "http://192.168.29.25:8087/sbtpgateway/tp/rest/esccors/generic/");
-            // xhr.setRequestHeader("Content-Type", "application/json");
-            // xhr.setRequestHeader("Cache-Control", "no-cache");
-            // xhr.setRequestHeader("Postman-Token", "56a8ca1a-c164-49a5-8f97-4ce631088e8e");
-            // xhr.send(data)
+            xhr.open("POST", "http://192.168.29.84:8087/sbtpgateway/tp/rest/esccors/generic/");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.setRequestHeader("Cache-Control", "no-cache");
+            xhr.setRequestHeader("Postman-Token", "56a8ca1a-c164-49a5-8f97-4ce631088e8e");
+            xhr.send(data)
 
         })
     }
@@ -198,32 +205,40 @@ class Automation extends Component {
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <nav className="col-md-12 col-lg-12 navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
+                    {/* <nav className="col-md-12 col-lg-12 navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
                         <div className="col-md-12 col-lg-12 textAlignCenter marginT07">
                             <h5 className="">Automation</h5>
                         </div>
                         <div>
                         </div>
-                    </nav>
+                    </nav> */}
                 </div>  
                 <div>
                     <TextField
                         id="text-field-controlled"
                         value={this.state.inputObj.repoName}
-                        onChange={this.handleChange}
-                        hintText="Repository Name"
+                        onChange={this.handleChange}                        
                         floatingLabelText="Repository Name"
                         name="repoName"
+                        inputStyle={automation.textStyle}
+                        floatingLabelStyle={automation.floatingLabelStyle}
+                        underlineStyle={automation.underlineStyle}
+                        underlineFocusStyle={automation.underlineStyle}
+                        floatingLabelStyle={automation.hintStyle}
                     />
                 </div>
                 <div>
                     <TextField
                         id="text-field-controlled"
                         value={this.state.inputObj.sourceCodeUrl}
-                        onChange={this.handleChange}
-                        hintText="SourceCode Url"
+                        onChange={this.handleChange}                        
                         floatingLabelText="SourceCode Url"
                         name="sourceCodeURL"
+                        inputStyle={automation.textStyle}
+                        floatingLabelStyle={automation.floatingLabelStyle}
+                        underlineStyle={automation.underlineStyle}
+                        underlineFocusStyle={automation.underlineStyle}
+                        floatingLabelStyle={automation.hintStyle}
                     />
                 </div>
                 <div>

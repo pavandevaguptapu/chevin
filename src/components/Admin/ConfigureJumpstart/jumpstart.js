@@ -19,6 +19,7 @@ import IconButton from 'material-ui/IconButton';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import Checkbox from 'material-ui/Checkbox';
+import { BrowserRouter as Router, Route,Redirect,Switch } from 'react-router-dom';
 var dcopy = require('deep-copy')
 const tabsBackgroundColor = {
     backgroundColor: "rgb(156, 156, 156)",
@@ -31,7 +32,6 @@ const modelbuttonsStyle = {
 }
 
 class Jumpstart extends Component {
-
 
     state = {
         newProcessObj: {},
@@ -69,7 +69,19 @@ class Jumpstart extends Component {
     componeDidMount() {
         console.log("1")
     }
+    componentWillMount(){
 
+        var token=localStorage.getItem('token')
+        if(token===null){         
+            this.props.history.push({
+                pathname: "/"      
+              });
+
+
+                 
+
+        }
+    }
 
 
     addProcessModal = () => {
@@ -183,17 +195,17 @@ class Jumpstart extends Component {
 
     }
     render() {
-
+              
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <nav className="col-md-12 col-lg-12 navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
+                    {/* <nav className="col-md-12 col-lg-12 navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
                         <div className="col-md-12 col-lg-12 textAlignCenter marginT07">
                             <h5 className="">Jump Start</h5>
                         </div>
                         <div>
                         </div>
-                    </nav>
+                    </nav> */}
                 </div>
                 <div className="mt-5">
                     <div className="col-md-12 col-lg-12">

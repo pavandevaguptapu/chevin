@@ -21,6 +21,11 @@ class PeoplesGridView extends Component {
     this.props.changeCardLayout(index);
   };
 
+  handleClick=(people,clickedEvent,index)=>{
+    this.props.open(clickedEvent)
+    this.props.selectedMember(people,index)
+  }
+
   render() {
     const { filterPeople, changeView } = this.props;
     return (
@@ -38,7 +43,7 @@ class PeoplesGridView extends Component {
                 anchorOrigin={{ horizontal: "left", vertical: "top" }}
                 targetOrigin={{ horizontal: "left", vertical: "top" }}
               >
-                <MenuItem primaryText="Edit" onClick={this.props.open}/>
+                <MenuItem primaryText="Edit" onClick={()=>this.handleClick(people,"edit",index)}/>
                 {/* <MenuItem primaryText="Delete" /> */}
               </IconMenu>
             </div>
@@ -71,4 +76,5 @@ class PeoplesGridView extends Component {
   }
 }
 
-export default LoaderHOC('filterPeople')(PeoplesGridView);
+//export default LoaderHOC('filterPeople')(PeoplesGridView);
+export default PeoplesGridView

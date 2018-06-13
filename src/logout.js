@@ -21,6 +21,9 @@ class Logout extends Component {
 logout=()=>{
     console.log(localStorage.getItem('token'))
     console.log(localStorage.getItem('userName'))
+
+    localStorage.removeItem('token')
+    window.location.href = '/'
 //     axios.post("http://192.168.29.83:8090/springhibernate/newspringboardapi/login",
 //     {
 //       userName:userDetails.userName,
@@ -48,14 +51,16 @@ logout=()=>{
 
   render() {
     return (
-        
-        <div>
-            <FloatingActionButton mini={true} secondary={true} onClick={this.logout}>
-                <ActionSettingsPower/>
-            </FloatingActionButton>
-            <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "26px" }}>logout</Subheader>
+        <div className="displayInline textAlignRight">
+            <div className="mr-2">
+            <FloatingActionButton mini={true} backgroundColor={'grey'} style={{boxShadow: "none"}} >
+                 <ActionSettingsPower onClick={this.logout} style={{height:"25px",width:"25px"}}/> 
+                </FloatingActionButton>
+            </div>
+            <div>
+                {/* <Subheader className="p-0" style={{fontSize:'18px',lineHeight:"42px",fontWeight:"bold",color:"#00000"}}>Logout</Subheader> */}
+            </div>
         </div>
-
     );
   }
 }
