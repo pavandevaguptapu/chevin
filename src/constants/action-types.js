@@ -1,4 +1,5 @@
-export const GET_All_TEAMS = {
+export const GET_All_TEAMS = getAllTeams=>({
     type:"GET_All_TEAMS",
-    text:'list of all teams'
-}
+    payload:getAllTeams
+})
+

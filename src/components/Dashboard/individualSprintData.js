@@ -21,7 +21,12 @@ import Piechart from "./PieChart";
 import SprintDetails from "./SprintDetails";
 import IssuesList from "./IssueList";
 import EpicBurdownChart from "./EpicBurnDownChart";
-import IndividualSprintData from "./individualSprintData";
+
+import ListOfJiraUsers from "./listofjirausers";
+import IndividualIssueDetails from "./individualIssueDetails";
+import PullRequest from "./pullrequest";
+import IndividualIssueProgressBar from "./individualIssueProgressBar";
+
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import { myConstClass } from "../../constants";
@@ -34,6 +39,7 @@ import Fullscreen from "material-ui/svg-icons/navigation/fullscreen";
 import FloatingActionButton from "material-ui/FloatingActionButton";
 import ContentAdd from "material-ui/svg-icons/content/add";
 import { Card, CardHeader} from "material-ui";
+
 
 import {
     Table,
@@ -403,19 +409,17 @@ class TeamsBaseLayout extends Component {
     };
 
     componentWillMount() {
-        axios.get(myConstClass.new + "/getTeams").then(response => {
-            // console.log(response.data.content)
-            if (
-                JSON.stringify(response.data.content) !== undefined &&
-                JSON.stringify(response.data.content) != JSON.stringify([])
-            ) {
-                this.setState({
-                    accounts: this.state.accounts.concat(response.data.content)
-                });
-            } else if (JSON.stringify(response.data.content) == JSON.stringify([])) {
-                this.setState({ emptyAccountsObj: true });
-            }
-        });
+        this.setState({
+            //  individualSprintModal:this.props.IndividualSprintModal,
+              listOfUsers:<ListOfJiraUsers selectedUser={this.selectedJiraUser}/>
+          })
+    }
+    selectedJiraUser=(selectedUser)=>{
+        console.log(selectedUser)
+         this.setState({individualIssueDetails:<IndividualIssueDetails selectedUser={selectedUser}/>,
+         IndividualPullRequest:<PullRequest/>,
+         IndividualIssueProgressBar:<IndividualIssueProgressBar selectedUser={selectedUser}/>
+        })
     }
 
     fullscreen = () => {
@@ -447,36 +451,15 @@ class TeamsBaseLayout extends Component {
                                 alt="SpringBoard"
                             />
                         </a>
-                        <div className="navbar-collapse">
-                            <div className="navbar-nav">
-                                <div className="">
-                                    <Dropdown
-                                        isOpen={this.state.dropdownOpen}
-                                        toggle={this.toggle}
-                                        className="custom-dropdown clearfix"
-                                    >
-                                        <DropdownToggle
-                                            caret
-                                            className="text-truncate d-flex justify-content-between"
-                                        >
-                                            {this.state.dropDownValue}
-                                        </DropdownToggle>
-                                        <DropdownMenu className="custom-dropdown-menu">
-                                            {this.accountsListArray(this.state.accounts)}
-                                        </DropdownMenu>
-                                    </Dropdown>
-                                </div>
-                                <div className="">{this.state.projects}</div>
-                            </div>
-                        </div>
-                        <div className="col-lg-2 text-right">
+                     
+                        {/* <div className="col-lg-2 text-right">
                             <div>
                                 <Avatar
                                     src="https://www.gstatic.com/webp/gallery/4.sm.jpg"
                                     size={40}
                                 />
                             </div>
-                        </div>
+                        </div> */}
                     </nav>
 
                     <div
@@ -484,9 +467,9 @@ class TeamsBaseLayout extends Component {
                         style={{ backgroundColor: "#494b4f", height: "3rem" }}
                     >
                         <div className="col-lg-2">
-                            {this.state.selectedProjectBoardDetails}
+                            {this.state.listOfUsers}
                         </div>
-                        <div className="col-lg-2"> {this.state.sprintDetails} </div>
+                        {/* <div className="col-lg-2"> {this.state.sprintDetails} </div> */}
                     </div>
 
 
@@ -506,36 +489,46 @@ class TeamsBaseLayout extends Component {
                                 rowHeight={30}
                                 width={1200}
                             >
+                            
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
-                                    key="5"
-                                    data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
-                                    id="myDiv"
-                                    className={this.state.newClass ? "minScreen" : "fullscreen"}
+                                    key="7"
+                                    data-grid={{ x: 0, y: 0, w:12, h: 4, minW: 4, minH: 4}}
                                 >
                                     <div className="d-flex custom_dashboard-header justify-content-between">
-                                        <CardHeader title="Sprint Burn Chart" className="p-0" />
-                                        <div>
-                                            <Fullscreen onClick={this.fullscreen} />
-                                        </div>
+                                        <CardHeader title="Issues Overview" className="p-0" />
                                     </div>
                                     <div className="col-lg-12 text-center">
-                                        {this.state.loaderforsprintburndownchart}
-                                        {this.state.emptySprintArray}
-                                        {this.state.workHours}
+                                        {this.state.loaderforsonar}
+                                        {this.state.IndividualIssueProgressBar}
                                     </div>
                                 </Card>
+                            <Card
+                                    style={navBarContainer.widgetContainer.widgetCard}
+                                    key="4"
+                                    data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                                >
+                                    <div className="d-flex custom_dashboard-header justify-content-between">
+                                        <CardHeader title="Critical Path" className="p-0" />
+                                    </div>
+                                    <div className="col-lg-12 text-center">
+                                        {this.state.loaderforEpicOverviewburndownchart}
+                                        {this.state.emptyEpicsArray}
+                                        {this.state.individualIssueDetails}
+                                    </div>
+                                </Card>
+                             
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
                                     key="6"
-                                    data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                                    data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
 
                                 >
-                                <Link to="/userDetails">
+                               
                                 <div className="d-flex custom_dashboard-header justify-content-between" >
-                                        <CardHeader title="Sprint Overview" className="p-0 pointer" />
+                                        <CardHeader title="Notes" className="p-0 pointer" />
                                     </div>
-                                </Link>
+                                
                                    
 
                                     <div className="col-lg-12 text-center">
@@ -544,81 +537,43 @@ class TeamsBaseLayout extends Component {
                                         {this.state.sprintPieChart}
                                     </div>
                                 </Card>
-
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
-                                    key="7"
-                                    data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
-                                >
-                                    <div className="d-flex custom_dashboard-header justify-content-between">
-                                        <CardHeader title="Quality Overview" className="p-0" />
-                                    </div>
-                                    <div className="col-lg-12 text-center">
-                                        {this.state.loaderforsonar}
-                                        {this.state.sonarQubedata}
-                                    </div>
-                                </Card>
-
-                                <Card
-                                    style={navBarContainer.widgetContainer.widgetCard}
-                                    key="4"
+                                    key="5"
                                     data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                                    id="myDiv"
+                                    className={this.state.newClass ? "minScreen" : "fullscreen"}
                                 >
                                     <div className="d-flex custom_dashboard-header justify-content-between">
-                                        <CardHeader title="Epic Burndown Chart" className="p-0" />
+                                        <CardHeader title="Pull Request" className="p-0" />
+                                        <div>
+                                            <Fullscreen onClick={this.fullscreen} />
+                                        </div>
                                     </div>
                                     <div className="col-lg-12 text-center">
-                                        {this.state.loaderforEpicOverviewburndownchart}
-                                        {this.state.emptyEpicsArray}
-                                        {this.state.epicBurndownChart}
+                                        {this.state.loaderforsprintburndownchart}
+                                        {this.state.emptySprintArray}
+                                        {this.state.IndividualPullRequest}
                                     </div>
                                 </Card>
+
+
+                              
 
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
                                     key="8"
-                                    data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                                    data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                                 >
                                     <div className="d-flex custom_dashboard-header justify-content-between">
-                                        <CardHeader title="Jenkins Build Status" className="p-0" />
+                                        <CardHeader title="Recent Commits" className="p-0" />
                                     </div>
                                     <div className="col-lg-12 text-center">
                                         {this.state.loaderforJenkins}
                                         {this.state.jenkinsData}
                                     </div>
                                 </Card>
-
-                                {/* <Card
-                                    style={navBarContainer.widgetContainer.widgetCard}
-                                    key="1"
-                                    data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
-                                >
-                                    <div className="d-flex custom_dashboard-header justify-content-between ">
-                                        <CardHeader title="Team Details" className="p-0" />
-                                    </div>
-                                    <div className="col-lg-12 text-center">
-                                        {this.state.loaderforpeople}
-                                        {this.state.emptyPeoplesArray}
-                                        {this.state.peoplesArray}
-                                    </div>
-                                </Card> */}
-                                <Card
-                                    style={navBarContainer.widgetContainer.widgetCard}
-                                    key="2"
-                                    data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
-                                >
-                                    <div className="d-flex custom_dashboard-header justify-content-between">
-                                        <CardHeader title="Epic Overview" className="p-0" />
-                                    </div>
-                                    <div className="col-lg-12 text-center">
-                                        {this.state.loaderforEpicDetails}
-                                        {this.state.emptyEpicsArray}
-                                        {this.state.issuesListArray}
-                                    </div>
-                                </Card>
-
-
-                            </ResponsiveReactGridLayout>
+                             </ResponsiveReactGridLayout>
                         </div>
                     </div>
                 </div>

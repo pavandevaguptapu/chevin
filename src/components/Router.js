@@ -7,6 +7,9 @@ import jumpstart from './Admin/ConfigureJumpstart/jumpstart';
 import Automation from './Admin/Automation/automation';
 import App from './App'
 import TeamsBaseLayout from './Dashboard/TeamsBaseLayout';
+import IndividualSprintData from './Dashboard/individualSprintData';
+import IndividualIssueDetails from './Dashboard/individualIssueDetails';
+import ListOfJiraUsers from './Dashboard/listofjirausers';
 import LoginNew from '../shared/LoginNew';
 import axios from 'axios';
 
@@ -17,12 +20,14 @@ const Routes = () => (
       <Switch>
         <Route exact path="/" component={Login} />
         <Route path="/dashboard" component={TeamsBaseLayout} />
-        <Route path="/login" component={LoginNew} />       
+        <Route path="/login" component={LoginNew}/>  
+        <Route path="/userDetails" component={IndividualSprintData} />     
         <App>
-          <Route  path="/app/manageCustomerTeams" component={()=>localStorage.getItem('token')!==null? <ManageCustomerTeams/>:<Redirect to='/'/>} />
+          <Route  path="/app/manageCustomerTeams" component={ManageCustomerTeams} />
           <Route path="/app/people" component={People} />
           <Route path="/app/jumpstart" component={jumpstart} />
           <Route path="/app/automation" component={Automation} />
+          
         </App>
         <Route
           render={function() {

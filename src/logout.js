@@ -53,7 +53,7 @@ logout=()=>{
     return (
         <div className="displayInline textAlignRight">
             <div className="mr-2">
-            <FloatingActionButton mini={true} backgroundColor={'grey'} style={{boxShadow: "none"}} >
+            <FloatingActionButton mini={true} backgroundColor={'grey'} style={{boxShadow: "none"}} onClick={this.logout}>
                  <ActionSettingsPower onClick={this.logout} style={{height:"25px",width:"25px"}}/> 
                 </FloatingActionButton>
             </div>

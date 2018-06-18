@@ -114,7 +114,7 @@ class SonarQubeData extends Component {
                         <div className="d-flex justify-content-between">
                             <span>Quality Gate</span>
                             <span>
-                                Java Profile{" "}
+                             
                                 <span
                                     className="text-danger"
                                     style={{

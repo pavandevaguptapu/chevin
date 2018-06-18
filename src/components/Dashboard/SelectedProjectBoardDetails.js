@@ -57,8 +57,7 @@ class SelectedProjectBoardDetails extends Component {
     this.props.showLoaderforEpicData();
     this.setState({ selectedProjectBoard: indexOfSelectedAccount });
 
-    axios
-      .post(`sbtpgateway/tp/rest/esccors/generic/`, {
+    axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
         resourceURL:
         this.state.url +
         "/rest/agile/1.0/board/" +
@@ -86,9 +85,7 @@ class SelectedProjectBoardDetails extends Component {
 
     var hostedURL = this.state.url;
 
-    axios
-      .post(
-      `sbtpgateway/tp/rest/esccors/generic/`,
+    axios.post(`sbtpgateway/tp/rest/esccors/generic/`,
       {
         resourceURL:
         this.state.url +

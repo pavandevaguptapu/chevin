@@ -19,11 +19,11 @@ import {
   ResponsiveContainer
 } from "recharts";
 
-const mapStateToProps = state => {
-    return {
-        selectedTeamId:state.teamDetails.selectedTeamId
-    };
-}
+// const mapStateToProps = state => {
+//     return {
+//         selectedTeamId:state.teamDetails.selectedTeamId
+//     };
+// }
 
 class Hourschart extends Component {
   render() {
@@ -48,5 +48,5 @@ class Hourschart extends Component {
   }
 }
 
-const test2 = connect(mapStateToProps)(Hourschart)
-export default test2;
+//const test2 = connect(mapStateToProps)(Hourschart)
+export default Hourschart;

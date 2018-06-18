@@ -37,6 +37,7 @@ import RedirectHOC from '../../../components/HOC/LoaderHOC.js';
 import teamReducer from'../../../../src/reducers/teamReducer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import {GET_All_TEAMS}  from'../../../../src/constants/action-types';
 
 var dcopy = require('deep-copy')
 //var PropTypes = require('prop-types');
@@ -79,7 +80,8 @@ class ManageCustomerTeams extends React.Component {
         super(props);
         this.state = {
             allTeamsDataArray: '',
-            listOfTeams:[]
+            listOfTeams:[],
+            selectedTeamIndex:''
         }
       
     }
@@ -87,20 +89,20 @@ class ManageCustomerTeams extends React.Component {
         axios.post("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/getTeams")
             .then(response => {
                 console.log(response.data.content)
-                if (response.data.content.length === 0) {
-                    this.setState({
-                        accountDetails: <AccountDetails addTeamString={true} />
-                    })
-                } else {
-                    const action={
-                        'type':'GET_All_TEAMS',
-                        'payload':response.data.content
-                    }
-                    console.log(action)
-                   teamReducer(this.state,action)
-                   
+                var listOfTeams = response.data.content   
+                if (listOfTeams.length === 0) {
+                    var selectedTeamIndex=0
+                    if( listOfTeams[selectedTeamIndex]=== undefined){                       
+                        listOfTeams[selectedTeamIndex]={"projects":[]}
                   
-                    var listOfTeams = response.data.content
+                            this.setState({
+                                accountDetails: <AccountDetails addTeamString={true} listOfTeams={listOfTeams}selectedTeamIndex={selectedTeamIndex}/>,
+                                listOfTeams: listOfTeams,selectedTeamIndex:0
+                            })
+                    }                  
+                } else {                
+                 this.props.GET_All_TEAMS(response.data.content);                
+                 //var listOfTeams = response.data.content                   
                     var lastTeamIndex = listOfTeams.length - 1
                     if (listOfTeams[lastTeamIndex].projects === undefined && listOfTeams[lastTeamIndex].people === undefined) {
                         listOfTeams[lastTeamIndex].projects = []
@@ -199,7 +201,8 @@ class AccountDetails extends React.Component {
             })
 
         if (this.props.addTeamString === true) {
-            this.setState({ addTeamString: true })
+            console.log(this.props.listOfTeams)
+            this.setState({ addTeamString: true, listOfTeams:this.props.listOfTeams,selectedTeamIndex:this.props.selectedTeamIndex,TeamDetailsArrayForEditing:this.props.listOfTeams})
         }
         else {
             var listOfTeams = this.props.allTeamsDataArray
@@ -207,8 +210,8 @@ class AccountDetails extends React.Component {
             if (listOfTeams[lastTeamIndex].projects === undefined && listOfTeams[lastTeamIndex].people === undefined) {
                 listOfTeams[lastTeamIndex].projects = []
                 listOfTeams[lastTeamIndex].people = []
-                        }
-            this.setState({ listOfTeams: listOfTeams, selectedTeamIndex:lastTeamIndex,TeamDetailsArrayForEditing:listOfTeams })
+            }
+            this.setState({ listOfTeams: listOfTeams, selectedTeamIndex: lastTeamIndex, TeamDetailsArrayForEditing: listOfTeams })
         }
     }
     componentDidMount() {
@@ -1552,23 +1555,22 @@ class AccountDetails extends React.Component {
 function mapStateToProps(state) {
     console.log(state)
     return {
-      appState: state
+        teamsArray:state.teamsArray
     };
   }
 
 function mapDispatchToProps(dispatch){    
     return {
-        actions: bindActionCreators({
-          teamReducer
-        }, dispatch)
+       
+        GET_All_TEAMS:allTeamsArray => dispatch(GET_All_TEAMS(allTeamsArray))
       };
     
 }
-ManageCustomerTeams.propTypes  = {
+ManageCustomerTeams.propTypes = {
 
     dispatch: PropTypes.func.isRequired
 
-  };
+};
 
 //const ContactListWithLoadIndicator = RedirectHOC(localStorage.getItem('token'))(ManageCustomerTeams);
 export default connect(mapStateToProps,mapDispatchToProps)(ManageCustomerTeams);

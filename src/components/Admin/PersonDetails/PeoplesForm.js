@@ -270,7 +270,10 @@ constructor(props){
         primary={true}
         onClick={() => this.handleSubmit(this.state.newMember,this.state.clickedEvent)}
         type="submit"
-        disabled={!this.state.newMember.name}
+        disabled={!this.state.newMember.name || !this.state.newMember.userName||!this.state.newMember.emailId||
+         !this.state.newMember.startDate||!this.state.newMember.endDate||!this.state.value
+        
+         }
       />
       </div >
     );

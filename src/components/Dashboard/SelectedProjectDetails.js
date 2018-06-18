@@ -48,6 +48,7 @@ class SelectedProjectDetails extends Component {
     };
 
     componentWillMount() {
+        console.log(this.props.projectDetails)
         this.setState({
             projectDetails: this.props.projectDetails
         });
@@ -68,8 +69,7 @@ class SelectedProjectDetails extends Component {
     }
 
     getBoard = (url, username, password, people) => {
-        axios
-            .post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
                 resourceURL: url + "rest/agile/1.0/board",
                 userName: username,
                 password: password,
@@ -147,26 +147,18 @@ class SelectedProjectDetails extends Component {
                 //     tools[0].people
                 // );
 
+               
+                
                for(var i=0;i<response.data.content.tools.length;i++){
                    if(response.data.content.tools[i].processName==="Process Management"){
                     tools.push(response.data.content.tools[i])
-                    this.getBoard(
-                    tools[0].hostedURL,
-                    tools[0].userName,
-                    tools[0].password,
-                    tools[0].people
-                )
+                    this.getBoard(tools[0].hostedURL,tools[0].userName,tools[0].password,tools[0].people)
                    }                   
                    else if(response.data.content.tools[i].processName==="Quality Management"){
                     var tool=[]
                     console.log(response.data.content.tools[i])
                         tool.push(response.data.content.tools[i])
-                        this.props.getSonarDetails(                         
-                          tool[0].userName,
-                          tool[0].password,
-                          tool[0].hostedURL,                      
-                     
-                      );
+                        this.props.getSonarDetails(tool[0].userName,tool[0].password,tool[0].hostedURL);
                    }
                } 
 

@@ -14,6 +14,8 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import TextField from "material-ui/TextField";
 import RaisedButton from "material-ui/RaisedButton";
 import Dialog from "material-ui/Dialog";
+import { connect } from 'react-redux';
+import store from '../../../store/store';
 const filter={
   textStyle:{
     color:"#fff"
@@ -29,16 +31,20 @@ const filter={
   }
 }
 class People extends Component {
-  state = {
-    individualModal: false,
-    changeView: "flex-row flex-wrap",
-    addBorder: "",
-    moreDetails: false,
-    peoples: [],
-    selectePeopleDetailsObj: {},
-    filterPeople: []
-  };
-
+  constructor(props){
+    super(props)
+   this. state = {
+      individualModal: false,
+      changeView: "flex-row flex-wrap",
+      addBorder: "",
+      moreDetails: false,
+      peoples: [],
+      selectePeopleDetailsObj: {},
+      filterPeople: []
+    };
+  
+  }
+ 
   openIndividualModal = (clickedEvent) => {  
      
     this.setState({ individualModal: true,clickedEvent:clickedEvent});
@@ -65,7 +71,6 @@ class People extends Component {
   getAllPeople = () => {
     axios.get("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/getPeople").
     then(response => {
-      console.log(response.data.content)
        this.setState({
          peoples: response.data.content,
          filterPeople: response.data.content
@@ -98,6 +103,9 @@ class People extends Component {
 
   componentDidMount() {
     this.getAllPeople();
+    console.log("store",store.getState())
+    console.log("props",this.props.teamsArray)
+   
   }
 
   render() {
@@ -173,5 +181,9 @@ class People extends Component {
     );
   }
 }
-
-export default People;
+function mapStateToProps(state) {
+  return {
+      teamsArray:state.teamsArray
+  };
+}
+export default connect(mapStateToProps)(People);
