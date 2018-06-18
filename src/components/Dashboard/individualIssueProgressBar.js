@@ -80,16 +80,24 @@ export default class IndividualIssueProgressBar extends Component {
 
             <div className="col-md-12 col-lg-12 padding0">         
 
-                <div class="progress" style={{height: "55px",width: "100%",border:"1px solid #d4d1d1",borderRadius:"10px;"}}>
+                <div class="progress" style={{height: "55px",width: "100%",border:"1px solid #d4d1d1",borderRadius:"10px"}}>
                     {this.state.individualIssuesProgressArray.map((eachStatus, i) => (
-                        <div key={i} className={[eachStatus.color].join('')} style={{
+                        <div key={i} style={{
                             width: this.state.individualIssuesProgressArray[i] !== undefined ?
                             eachStatus.weightage : 0,backgroundColor:eachStatus.color,borderRight:"1px solid grey"
-                        }}>
-                        <div>
-                        {eachStatus.name}
-                        </div>
-                        </div>
+                        }}>                              
+                        </div>                
+                    ))}
+                </div>
+                <div className="displayInline m-2" >
+                    {this.state.individualIssuesProgressArray.map((eachStatus, i) => (
+                        <div className="displayInline m-2">
+                        <div className="mr-1" style={{marginTop:"2px",backgroundColor:eachStatus.color,width: "20px",height: "20px", border:"1px solid #d4d1d1",borderRadius: "10px"}}> </div> 
+                        <div key={i} className={[eachStatus.color].join('')}>        
+                        {eachStatus.name}-{eachStatus.weightage}                 
+                       
+                        </div>       
+                        </div>        
                     ))}
                 </div>
 

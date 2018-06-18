@@ -506,7 +506,7 @@ class TeamsBaseLayout extends Component {
                             <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
                                     key="4"
-                                    data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                                    data-grid={{ x: 4, y: 0, w: 8, h: 8.5, minW: 4, minH: 8.5 }}
                                 >
                                     <div className="d-flex custom_dashboard-header justify-content-between">
                                         <CardHeader title="Critical Path" className="p-0" />
@@ -518,7 +518,7 @@ class TeamsBaseLayout extends Component {
                                     </div>
                                 </Card>
                              
-                                <Card
+                                {/* <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
                                     key="6"
                                     data-grid={{ x: 8, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
@@ -536,7 +536,7 @@ class TeamsBaseLayout extends Component {
                                         {this.state.emptySprintArray}
                                         {this.state.sprintPieChart}
                                     </div>
-                                </Card>
+                                </Card> */}
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
                                     key="5"

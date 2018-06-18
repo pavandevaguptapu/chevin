@@ -13,7 +13,7 @@ export default class IndividualIssueDetails extends Component{
      getIndivudualUSerIsues=(user)=>{
          
         axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-            resourceURL: "https://fullyincontrol.atlassian.net/rest/api/2/search?jql=assignee="+user+"&fields=id,issuetype,status",        
+            resourceURL: "https://fullyincontrol.atlassian.net/rest/api/2/search?jql=assignee="+user+"&fields=id,summary,description,issuetype,status,priority",        
             userName: "koteswararao.b@comakeit.com",
             password: "Abc@1234",
             actionMethod: "get"
@@ -71,10 +71,11 @@ export default class IndividualIssueDetails extends Component{
     //     </table>
     //   </div>
     <div className="col-md-12 col-lg-12 padding0">
-    <table className="table table-fixed">
+    <table className="table table-fixed table-striped">
       <thead className="">
         <tr className="epicdetailstableheadrowStyle">
         <th className="epictableheadverticalalign"> id</th>
+        <th className="epictableheadverticalalign"> priority</th> 
         <th className="epictableheadverticalalign"> status</th>
         <th className="epictableheadverticalalign"> description</th>
         </tr>
@@ -82,9 +83,11 @@ export default class IndividualIssueDetails extends Component{
       <tbody>
         {this.state.individualIssuesArray.map((item,i) => (
           <tr key={i}>           
-              <td className="epicTableDataStyle">{item.id}</td>  
+              <td className="epicTableDataStyle">{item.key}</td>  
+              <td className="epicTableDataStyle">{item.fields.priority.name}</td> 
                   <td className="epicTableDataStyle">{item.fields.status.name}</td>
-                   <td className="epicTableDataStyle">{item.fields.issuetype.description}</td>       
+                   <td className="epicTableDataStyle">{item.fields.description}</td>
+                         
           </tr>
         ))}
       </tbody>

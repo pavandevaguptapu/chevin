@@ -34,7 +34,7 @@ export default class PullRequest extends Component{
     render(){
         return(              
             <div className="col-md-12 col-lg-12 padding0">
-                <table className="table table-fixed">
+                <table className="table table-fixed table-striped">
                     <thead className="">
                         <tr className="epicdetailstableheadrowStyle">
                             <th className="epictableheadverticalalign"> Number</th>
