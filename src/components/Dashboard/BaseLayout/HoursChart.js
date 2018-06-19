@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import {connect  } from 'react-redux';
-import { setSelectedTeam } from '../../actions/index';
+import { setSelectedTeam } from '../../../actions/index';
 
 import {
   PieChart,

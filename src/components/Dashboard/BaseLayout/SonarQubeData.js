@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Card, CardHeader } from "material-ui";
-import { kFormatter } from '../../shared/Helpers';
+import { kFormatter } from '../../../shared/Helpers';
 import axios from "axios";
 
 const qualityContainerCards = {
@@ -37,12 +37,11 @@ class SonarQubeData extends Component {
     }
 
     componentWillMount() {
-        console.log(this.props)
         axios
             .post(`sbtpgateway/tp/rest/esccors/generic/`, {
-                resourceURL:this.props.selectedUrl,                   
-                userName: this.props.selectedUserName,
-                password: this.props.selectedUserPwd,
+                resourceURL:this.props.hostedurl,                   
+                userName: this.props.username,
+                password: this.props.pwd,
                 actionMethod: "get"
             })
             .then(response => {

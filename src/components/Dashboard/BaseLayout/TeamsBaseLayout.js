@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 
 import { connect } from 'react-redux';
-import { setSelectedTeam } from '../../actions/index';
+import { setSelectedTeam } from '../../../actions/index';
 
 import GridLayout from "react-grid-layout";
 import { WidthProvider, Responsive } from "react-grid-layout";
 
 
-import css from "../../../node_modules/react-grid-layout/css/styles.css";
-import css1 from "../../../node_modules/react-resizable/css/styles.css";
+import css from "../../../../node_modules/react-grid-layout/css/styles.css";
+import css1 from "../../../../node_modules/react-resizable/css/styles.css";
 
 import SelectedProjectDetails from "./SelectedProjectDetails";
 import SelectedProjectBoardDetails from "./SelectedProjectBoardDetails";
@@ -21,11 +21,11 @@ import Piechart from "./PieChart";
 import SprintDetails from "./SprintDetails";
 import IssuesList from "./IssueList";
 import EpicBurdownChart from "./EpicBurnDownChart";
-import IndividualSprintData from "./individualSprintData";
+
 import { Link } from 'react-router-dom';
 import axios from "axios";
-import { myConstClass } from "../../constants";
-import image from "../../shared/spring_board_logo.png";
+import { myConstClass } from "../../../constants";
+import image from "../../../shared/spring_board_logo.png";
 
 import Avatar from "material-ui/Avatar";
 import Grid from "material-ui/svg-icons/image/grid-on";
@@ -79,7 +79,7 @@ class TeamsBaseLayout extends Component {
         newClass: "some",
         dropdownOpen: false,
         dropDownValue: "Select Team",
-        accounts: [],
+        Teams: [],
         accountName: "",
         projectName: "",
         teamName: "",
@@ -102,41 +102,44 @@ class TeamsBaseLayout extends Component {
         loaderforEpicOverviewburndownchart: "",
         sprintPieChart: "",
         overlay: false,
-        emptyAccountsObj: false,
+        noTeam: false,
         emptyToolsandPeopleObj: false,
         jenkinsDataArray: [],
         jenkinsData: ''
     };
 
-    toggle = () => {
-        this.setState(prevState => ({
-            dropdownOpen: !prevState.dropdownOpen
-        }));
-    };
-    displayDropDownValue = e => {
-        this.setState({ dropDownValue: e.currentTarget.textContent });
-    };
-
-    accountsListArray = (accounts, index) => {
-        return accounts.map((account, index) => (
+    componentWillMount() {
+        axios.post(myConstClass.new + "/getTeams").then(response => {           
+            if (
+                JSON.stringify(response.data.content) !== undefined &&
+                JSON.stringify(response.data.content) != JSON.stringify([])
+            ) {
+                this.setState({
+                    Teams: this.state.Teams.concat(response.data.content)                
+                });
+            } else if (JSON.stringify(response.data.content) == JSON.stringify([])) {
+                this.setState({ noTeam: true });
+            }
+        });
+    }
+    listofTeams = (teams, index) => {
+        return teams.map((team, index) => (
             <DropdownItem
-                value={account.teamName}
+                value={team.teamName}
                 className="pointer text-truncate"
-                key={account.teamId}
-                onClick={(e, index) => {
-                    this.selectedAccount(account.teamId);
+                key={team.teamId}
+                onClick={(e, ind) => {
+                    this.selectedTeam(team.teamId,index);
                     this.displayDropDownValue(e);
-                    this.props.setSelectedTeam(account.teamId);
+                    this.props.setSelectedTeam(team.teamId);
                 }}
             >
-                {account.teamName}
+                {team.teamName}
             </DropdownItem>
         ));
     };
-
-    selectedAccount = (e, i) => {
+    selectedTeam = (e, i) => {      
         var teamId = e
-
         this.setState({
             peoplesArray: "",
             sonarQubedata: "",
@@ -150,14 +153,9 @@ class TeamsBaseLayout extends Component {
         axios.post(myConstClass.new + "/getTeamDetails", {
             teamId: teamId
         })
-            .then(response => {
-                console.log(response.data)
-                // var projects = [];
-                // response.data.content.projects.forEach(function (eachProject) {
-                //     projects.push(eachProject.projectName);
+            .then(response => {                   
                     this.setState({
-                        accountName: e.teamName,
-                        // projectDetails: indexOfSelectedAccount,
+                        accountName: e.teamName,              
                         value: e.teamName,
                         projects: (
                             <SelectedProjectDetails
@@ -166,7 +164,7 @@ class TeamsBaseLayout extends Component {
                                 showLoader={this.ShowLoaderforTeamandQuality}
                                 errorMessage={this.displayErrorMessage}
                                 displayDropDownValue={this.displayDropDownValue}
-                                teamId = {this.teamId}
+                                teamId = {teamId}
                                 getSonarDetails={this.getSonarDetails}
                             />
                       
@@ -178,112 +176,37 @@ class TeamsBaseLayout extends Component {
 
 
     };
-
-    displayErrorMessage = () => {
-
-        this.setState({ emptyToolsandPeopleObj: true });
-    };
-
-    ShowLoaderforTeamandQuality = () => {
-        this.setState({
-            loaderforpeople: <RefreshIndicatorExampleLoading status={"loading"} />,
-            loaderforsonar: <RefreshIndicatorExampleLoading status={"loading"} />,
-            loaderforJenkins: <RefreshIndicatorExampleLoading status={"loading"} />
-        });
-    };
-
-    ShowLoaderforSprintData = () => {
-        this.setState({
-            loaderforsprintburndownchart: (
-                <RefreshIndicatorExampleLoading status={"loading"} />
-            ),
-            loaderforsprintoverviewpiechart: (
-                <RefreshIndicatorExampleLoading status={"loading"} />
-            ),
-            sprintburndownoverlay: true,
-            sprintoverviewoverlay: true,
-            overlay: true
-        });
-    };
-
-    ShowLoaderforEpicData = () => {
-        this.setState({
-            loaderforEpicDetails: (
-                <RefreshIndicatorExampleLoading status={"loading"} />
-            ),
-            loaderforEpicOverviewburndownchart: (
-                <RefreshIndicatorExampleLoading status={"loading"} />
-            )
-        });
-    };
-      getSonarDetails=(userName, password, hostedUrl)=>{
-        console.log(userName, password, hostedUrl)
-          this.setState({
-            sonarQubedata: <SonarQubeData 
-            
-                          selectedUserName={userName}
-                          selectedUserPwd={password}
-                          selectedUrl={hostedUrl}
-                        
-                        />,
-                        loaderforsonar: ""
-          })
-      }
-
-    selectProject = (boardDetails, userName, password, hostedUrl, peopleList) => {
-      console.log(boardDetails, userName, password, hostedUrl, peopleList)
-        this.setState({
-            selectedProjectBoardDetails:
-                <SelectedProjectBoardDetails
-                    selectedProjectBoardDetails={boardDetails}
-                    selectedUserName={userName}
-                    selectedUserPwd={password}
-                    selectedUrl={hostedUrl}
-                    onSelectBoard={this.selectedBoardforSprintData}
-                    currentBoard={this.selectedBoardforIssues}
-                    listOfEpics={this.epicBurdownChart}
-                    showLoaderforEpicData={this.ShowLoaderforEpicData}
-                    showLoaderforSprintData={this.ShowLoaderforSprintData}
-
-                />
-            ,
-            loaderforpeople: "",
-         
-            jenkinsData: <Jenkins />,
-            loaderforJenkins: ""
-        });
-        if (peopleList != undefined) {
-           this.setState({
-            peoplesArray: <PeoplesList peoplesList={peopleList} />,
-           })
-        }
-        
-    };
-
-    sonarQubeData = () => {
-        this.setState({ sonarQubeData: <SonarQubeData /> });
-    };
-
-    sprintburndownchart = timespentArray => {
-        this.setState({
-            workHours: <Hourschart data={timespentArray} />,
-            loaderforsprintburndownchart: "",
-            sprintburndownoverlay: false
-        });
-    };
-
-    sprintoverviewpiechart = workProgress => {
-        this.setState({
-            sprintPieChart: <Piechart sprinttList={workProgress} />,
-            loaderforsprintoverviewpiechart: "",
-            sprintoverviewoverlay: false,
-            overlay: false
-        });
-    };
-
-    selectedBoardforSprintData = (sprintList, boardId, url, username, pwd) => {
-        if (sprintList !== undefined) {
-            var sprintListArray = sprintList;
+    selectProject = (boardDetails,username,password,hostedurl, peopleArray,projectIndex) => {
+       
+          this.setState({username:username,password:password,hostedurl:hostedurl,
+              selectedProjectBoardDetails:
+                  <SelectedProjectBoardDetails
+                      selectedProjectBoardDetails={boardDetails}
+                      username={username}
+                      pwd={password}
+                      hostedurl={hostedurl}
+                      onSelectBoard={this.selectedBoardforSprintData}
+                      currentBoard={this.selectedBoardforIssues}
+                      listOfEpics={this.epicBurdownChart}
+                      showLoaderforEpicData={this.ShowLoaderforEpicData}
+                      showLoaderforSprintData={this.ShowLoaderforSprintData}
+  
+                  />
+              ,
+              loaderforpeople: "",           
+              jenkinsData: <Jenkins />,
+              loaderforJenkins: ""
+          });
+          if (peopleArray != undefined) {
+             this.setState({
+              peoplesArray: <PeoplesList peoplesList={peopleArray} />,
+             })
+          }
+          
+      };
+    selectedBoardforSprintData = (listOfSprints,boardId,username,password,hostedurl) => {
+        if (listOfSprints !== undefined) {
+            var sprintListArray = listOfSprints;
             for (var i = 0; i < sprintListArray.length; i++) {
                 if (sprintListArray[i].state === "active") {
                     var activeSprint = sprintListArray[i].id;
@@ -300,9 +223,9 @@ class TeamsBaseLayout extends Component {
                     <SprintDetails
                         sprinttList={sprintListArray}
                         boardId={boardId}
-                        selectedUrl={url}
-                        selectedUserName={username}
-                        selectedUserPwd={pwd}
+                        username={username}
+                        pwd={password}
+                        hostedurl={hostedurl}
                         activeSprintName={activeSprintName}
                         activeSprint={activeSprint}
                         sprintBurnDownChart={this.sprintburndownchart}
@@ -324,16 +247,40 @@ class TeamsBaseLayout extends Component {
             });
         }
     };
-
-    selectedBoardforIssues = (epicsArray, resourceURL, userName, password) => {
+    epicBurdownChart = (listOfEpics,boardId,username,password,hostedurl) => {
+        if (JSON.stringify(listOfEpics) == JSON.stringify([])) {
+            this.setState({
+                epicBurndownChart: "",
+                loaderforEpicOverviewburndownchart: "",
+                emptyEpicsArray: "No epics to show data",
+                issuesListArray: "",
+                loaderforEpicDetails: ""
+            });
+        } else {
+            this.setState({
+                epicBurndownChart: (
+                    <EpicBurdownChart
+                        epicsArray={listOfEpics}
+                        selectedUserName={username}
+                        selectedUserPwd={password}
+                        selectedUrl={hostedurl}
+                        boardID={boardId}
+                    />
+                ),
+                loaderforEpicOverviewburndownchart: "",
+                emptyEpicsArray: ""
+            });
+        }
+    };
+    selectedBoardforIssues = (epicsArray,username,password,hostedurl) => {    
         axios
             .post(`sbtpgateway/tp/rest/esccors/generic/`, {
-                resourceURL: resourceURL + "/rest/api/2/status",
-                userName: userName,
+                resourceURL: hostedurl + "/rest/api/2/status",
+                userName: username,
                 password: password,
                 actionMethod: "get"
             })
-            .then(response => {
+            .then(response => {             
                 var statusArray = [];
                 response.data.forEach(function (eachStatus) {
                     statusArray.push(eachStatus.name);
@@ -344,7 +291,7 @@ class TeamsBaseLayout extends Component {
                     issuesObj.epicName = eachEpicDetails.name;
                     for (var i = 0; i < statusArray.length; i++) {
                         var currentStatusIssuesArray = [];
-                        if (eachEpicDetails.issues.length == 0) {
+                        if (eachEpicDetails.issues.length == 0 ||eachEpicDetails.issues===undefined) {
                             issuesObj[statusArray[i]] = 0;
                         } else {
                             eachEpicDetails.issues.forEach(function (issue) {
@@ -364,33 +311,80 @@ class TeamsBaseLayout extends Component {
                 });
             });
     };
+  
+    getSonarDetails=(username,password,hostedurl)=>{        
+          this.setState({
+            sonarQubedata: <SonarQubeData 
+            
+            username={username}
+            pwd={password}
+            hostedurl={hostedurl}
+                        
+                        />,
+                        loaderforsonar: ""
+          })
+      }   
 
-    epicBurdownChart = (listOfEpics, boardId, hostedUrl, userName, password) => {
-        if (JSON.stringify(listOfEpics) == JSON.stringify([])) {
-            this.setState({
-                epicBurndownChart: "",
-                loaderforEpicOverviewburndownchart: "",
-                emptyEpicsArray: "No epics to show data",
-                issuesListArray: "",
-                loaderforEpicDetails: ""
-            });
-        } else {
-            this.setState({
-                epicBurndownChart: (
-                    <EpicBurdownChart
-                        epicsArray={listOfEpics}
-                        selectedUserName={userName}
-                        selectedUserPwd={password}
-                        selectedUrl={hostedUrl}
-                        boardID={boardId}
-                    />
-                ),
-                loaderforEpicOverviewburndownchart: "",
-                emptyEpicsArray: ""
-            });
-        }
+    sonarQubeData = () => {
+        this.setState({ sonarQubeData: <SonarQubeData /> });
     };
+    toggle = () => {
+        this.setState(prevState => ({
+            dropdownOpen: !prevState.dropdownOpen
+        }));
+    };
+    displayDropDownValue = e => {
+        this.setState({ dropDownValue: e.currentTarget.textContent });
+    };    
+    displayErrorMessage = () => {
 
+        this.setState({ emptyToolsandPeopleObj: true });
+    };
+    ShowLoaderforTeamandQuality = () => {
+        this.setState({
+            loaderforpeople: <RefreshIndicatorExampleLoading status={"loading"} />,
+            loaderforsonar: <RefreshIndicatorExampleLoading status={"loading"} />,
+            loaderforJenkins: <RefreshIndicatorExampleLoading status={"loading"} />
+        });
+    };
+    ShowLoaderforSprintData = () => {
+        this.setState({
+            loaderforsprintburndownchart: (
+                <RefreshIndicatorExampleLoading status={"loading"} />
+            ),
+            loaderforsprintoverviewpiechart: (
+                <RefreshIndicatorExampleLoading status={"loading"} />
+            ),
+            sprintburndownoverlay: true,
+            sprintoverviewoverlay: true,
+            overlay: true
+        });
+    };
+    ShowLoaderforEpicData = () => {
+        this.setState({
+            loaderforEpicDetails: (
+                <RefreshIndicatorExampleLoading status={"loading"} />
+            ),
+            loaderforEpicOverviewburndownchart: (
+                <RefreshIndicatorExampleLoading status={"loading"} />
+            )
+        });
+    };
+    sprintburndownchart = timespentArray => {
+        this.setState({
+            workHours: <Hourschart data={timespentArray} />,
+            loaderforsprintburndownchart: "",
+            sprintburndownoverlay: false
+        });
+    };
+    sprintoverviewpiechart = workProgress => {
+        this.setState({
+            sprintPieChart: <Piechart sprinttList={workProgress} />,
+            loaderforsprintoverviewpiechart: "",
+            sprintoverviewoverlay: false,
+            overlay: false
+        });
+    }; 
     projectsListArray = projects => {
         return projects.map(project => (
             <MenuItem
@@ -400,53 +394,28 @@ class TeamsBaseLayout extends Component {
                 primaryText={project.projectName}
             />
         ));
-    };
-
-    componentWillMount() {
-        axios.get(myConstClass.new + "/getTeams").then(response => {
-            // console.log(response.data.content)
-            if (
-                JSON.stringify(response.data.content) !== undefined &&
-                JSON.stringify(response.data.content) != JSON.stringify([])
-            ) {
-                this.setState({
-                    accounts: this.state.accounts.concat(response.data.content)
-                });
-            } else if (JSON.stringify(response.data.content) == JSON.stringify([])) {
-                this.setState({ emptyAccountsObj: true });
-            }
-        });
-    }
-
+    };  
     fullscreen = () => {
         const currentState = this.state.newClass;
         this.setState({ newClass: !currentState });
-    };
-
-    // individualSprintData=()=>{
-       
-    //     this.setState({IndividualSprintData:<IndividualSprintData  IndividualSprintModal={true}/>})
-    // }
-  
-
+    }; 
     render() {
-
         return (
             <div style={navBarContainer.widgetContainer}>
-                <div className="container-fluid">
+                <div className={["container-fluid", this.state.noTeam === false].join('')}>
                     <nav
                         className="navbar navbar-light navbar-expand-lg align-items-end p-3"
                         style={navBarContainer.navBarbg}
-                    >
-                        <a className="navbar-brand">
-                            <img
-                                src={image}
-                                width="170"
-                                height="30"
-                                className="d-inline-block align-top ml-3"
-                                alt="SpringBoard"
-                            />
-                        </a>
+                            >
+                            <a className="navbar-brand">
+                                <img
+                                    src={image}
+                                    width="170"
+                                    height="30"
+                                    className="d-inline-block align-top ml-3"
+                                    alt="SpringBoard"
+                                />
+                            </a>
                         <div className="navbar-collapse">
                             <div className="navbar-nav">
                                 <div className="">
@@ -462,7 +431,7 @@ class TeamsBaseLayout extends Component {
                                             {this.state.dropDownValue}
                                         </DropdownToggle>
                                         <DropdownMenu className="custom-dropdown-menu">
-                                            {this.accountsListArray(this.state.accounts)}
+                                            {this.listofTeams(this.state.Teams)}
                                         </DropdownMenu>
                                     </Dropdown>
                                 </div>
@@ -497,8 +466,8 @@ class TeamsBaseLayout extends Component {
                             </FloatingActionButton>
                         </div>
                         <div>
-                        {/* {this.state.IndividualSprintData} */}
-                            </div>
+
+                        </div>
                         <div className="widgetCard clearfix">
                             <ResponsiveReactGridLayout
                                 className="layout clearfix"
@@ -531,12 +500,19 @@ class TeamsBaseLayout extends Component {
                                     data-grid={{ x: 4, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
 
                                 >
-                                <Link to="/userDetails">
-                                <div className="d-flex custom_dashboard-header justify-content-between" >
-                                        <CardHeader title="Sprint Overview" className="p-0 pointer" />
-                                    </div>
-                                </Link>
-                                   
+                                    <Link to=
+                                    {{pathname: '/userDetails',                                     
+                                    
+                                          state: { username:this.state.username,password:this.state.password,hostedurl:this.state.hostedurl }
+                                          
+                                          }}
+                                       
+                                           >
+                                        <div className="d-flex custom_dashboard-header justify-content-between" >
+                                            <CardHeader title="Sprint Overview" className="p-0 pointer" />
+                                        </div>
+                                    </Link>
+
 
                                     <div className="col-lg-12 text-center">
                                         {this.state.loaderforsprintoverviewpiechart}
@@ -621,6 +597,9 @@ class TeamsBaseLayout extends Component {
                             </ResponsiveReactGridLayout>
                         </div>
                     </div>
+                </div>
+                <div className={["container-fluid", this.state.noTeam === true].join('')}>
+                    <p><h3>Please contact your admin to Configure Teams</h3></p>
                 </div>
             </div>
         );

@@ -32,30 +32,30 @@ class SprintDetails extends Component {
       eachRemainingTimeChangeArray: [],
       totalRemainingTimeChangeArray: [],
       boardId: "",
-      userName:'',
+      username:'',
       pwd: "",
-      url: "",
+      hostedurl: "",
       activeSprint: ""
     };
 
   }
 
   componentWillMount() {
+    console.log(this.props)
     this.state.sprintListSorted = this.props.sprinttList.sort(function (a, b) {
       return parseFloat(b.id) - parseFloat(a.id);
     });
     this.setState({
       boardId: this.props.boardId,
-
-      url: this.props.selectedUrl,
-      userName: this.props.selectedUserName,
-      pwd: this.props.selectedUserPwd,
+      hostedurl: this.props.hostedurl,
+      username: this.props.username,
+      pwd: this.props.pwd,
       values: this.props.activeSprint
     });
   }
 
   componentDidMount() {
-    this.handleChange("1", this.state.values);
+    this.handleChange(this.props.activeSprintName);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -64,64 +64,38 @@ class SprintDetails extends Component {
     });
     this.setState({
       boardId: nextProps.boardId,
-      url: nextProps.selectedUrl,
-      userName: nextProps.selectedUserName,
-      pwd: nextProps.selectedUserPwd,
+      hostedurl: nextProps.hostedurl,
+      username: nextProps.username,
+      pwd: nextProps.pwd,
       values: nextProps.activeSprint
     });
   }
-  handleChange = (e, index) => {
-    if(index!==undefined){
-        let val = index
-        this.displayDropDownValue(this.props.activeSprintName)
-        this.setState({
-            values: index
-          });
-    }
-    else{
+  handleChange = (e) => {
         let indexOfSelectedAccount = this.state.sprintListSorted
-      .map(function(k) {
-        return k.name;
-      })
-      .indexOf(e);
-    let val = this.state.sprintListSorted[indexOfSelectedAccount].id;
-    this.setState({
-      values: val
-    });
-    }
+      .map(function(k) {return k.name;}) .indexOf(e);
+    var val = this.state.sprintListSorted[indexOfSelectedAccount].id;
+    this.displayDropDownValue(e)
+    this.setState({values: val});
+    
 
-    axios
-      .post(`sbtpgateway/tp/rest/esccors/generic/`, {
-        resourceURL:
-        this.state.url +
-        "/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId=" +
-        this.state.boardId +
-        "&sprintId=" +
-        this.state.values,
-        userName: this.state.userName,
+    axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        resourceURL:this.state.hostedurl+"/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId="+this.state.boardId+"&sprintId="+val,
+        userName: this.state.username,
         password: this.state.pwd,
         actionMethod: "get"
       })
       .then(response => {
-        // console.log(response)
         this.setState({
           sprintStartTime: "",
           sprintEndTime: "",
           sprintCompleteTime: "",
-
-
           currentDate: "",
-
-
-
           date1: "",
           date2: "",
-
           timeSpent: "",
           eachTimeSpentArray: [],
           totalTimeSpentArray: [],
           currentSpentTime: 0,
-
           remainingTimeEstimate: "",
           currentRemainingTime: 0,
           eachRemainingTimeChangeArray: [],
@@ -358,16 +332,9 @@ class SprintDetails extends Component {
         this.props.sprintBurnDownChart(this.state.totalTimeSpentArray);
       });
 
-    axios
-      .post(`sbtpgateway/tp/rest/esccors/generic/`, {
-        resourceURL:
-        this.state.url +
-        "/rest/agile/1.0/board/" +
-        this.state.boardId +
-        "/sprint/" +
-        this.state.values +
-        "/issue?maxResults=100",
-        userName: this.state.userName,
+    axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        resourceURL:this.state.hostedurl+"/rest/agile/1.0/board/"+this.state.boardId+"/sprint/"+ val+"/issue?maxResults=100",
+        userName: this.state.username,
         password: this.state.pwd,
         actionMethod: "get"
       })
@@ -410,8 +377,9 @@ class SprintDetails extends Component {
             isOpen={this.state.dropdownOpen}
             toggle={this.toggle}
             className="custom-secondary_dropdown clearfix"
+            size="sm"
           >
-            <DropdownToggle caret className="text-truncate d-flex justify-content-between">
+            <DropdownToggle caret className="text-truncate d-flex justify-content-between">            
             {this.state.dropDownValue}
             </DropdownToggle>
             <DropdownMenu className="custom-dropdown-menu">

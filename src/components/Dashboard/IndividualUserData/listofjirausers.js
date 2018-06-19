@@ -40,12 +40,12 @@ export default class ListOfJiraUsers extends Component{
     }
     selectedUser=(e,ind,value)=>{
         this.setState({selectedUser:value})
-        this.props.selectedUser(this.state.selectedUser)
+        this.props.selectedUser(value)
     }
     render(){
         return(              
                 <div className="">
-                <SelectField hintText="Select user" value={this.state.selectedUser}
+                <SelectField hintText="Select user" value={this.state.selectedUser} hintStyle={{ color: "white" }}
                     labelStyle={{ height: "37px" }} labelStyle={{color:"white"}} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedUser(e, i, v)}>
                     {this.usersList(this.state.jiraUsersArray)} 
                 </SelectField>                 

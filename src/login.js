@@ -78,12 +78,12 @@ class Login extends Component {
               'Content-Type': 'application/x-www-form-urlencoded',      
             }
           }
-        ).then(response => {          
-          console.log(response)
+        ).then(response => {         
+     
               if(response!==undefined){
                 localStorage.setItem('token',response.data.access_token)
                 
-                         this.props.history.push({pathname: "/app", state: { userName: userDetails.username}});   
+                         this.props.history.push({pathname: "/dashboard", state: { userName: userDetails.username}});   
                         this.setState({invalidCredetials:false})
               }
               else{
