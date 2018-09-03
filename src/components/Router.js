@@ -12,6 +12,7 @@ import LoginNew from '../shared/LoginNew';
 import axios from 'axios';
 import DashboardOption from '../components/Dashboard/BaseLayout/DashboardOption';
 
+
 const Routes = () => (
    <Router>         
     <div>
@@ -19,6 +20,7 @@ const Routes = () => (
         <Route exact path="/" component={Login} />
         <Route path="/dashboard" component={DashboardOption} />
         {/* <Route path="/dashboard" component={TeamsBaseLayout} /> */}
+        <Route path="/dashboard" component={TeamsBaseLayout} />
         <Route path="/login" component={LoginNew}/>  
         <Route path="/userDetails" component={IndividualSprintData} />     
         <App>

@@ -210,7 +210,7 @@ class Piechart extends Component {
               />
 
               <div className="col-md-12 padding0">
-                <label>{todoArrayPercentage} To Do </label>
+                <label>{todoArrayPercentage}% To Do </label>
               </div>
             </div>
             <div className="displayInline sprintStatusMenuWidth">
@@ -225,7 +225,7 @@ class Piechart extends Component {
               />
 
               <div className="col-md-12 padding0">
-                <label>{inprogressArrayPercentage} Progress</label>
+                <label>{inprogressArrayPercentage}% Progress</label>
               </div>
             </div>
             <div className="displayInline sprintStatusMenuWidth">
@@ -240,7 +240,7 @@ class Piechart extends Component {
               />
 
               <div className="col-md-12 padding0">
-                <label>{inqaArrayPercentage} In QA</label>
+                <label>{inqaArrayPercentage}% In QA</label>
               </div>
             </div>
             <div className="displayInline sprintStatusMenuWidth">
@@ -255,7 +255,7 @@ class Piechart extends Component {
               />
 
               <div className="col-md-12 padding0">
-                <label>{doneArrayPercentage} Done</label>
+                <label>{doneArrayPercentage}% Done</label>
               </div>
             </div>
           </div>

@@ -3,7 +3,11 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+<<<<<<< HEAD
 // import { ProgressBar } from 'react-bootstrap';
+=======
+import { ProgressBar } from 'react-bootstrap';
+>>>>>>> 2332cfe01a22bd6b41dbcf2dc6cc57094573f2de
 
 export default class IndividualIssueProgressBar extends Component {
     state = {
@@ -46,7 +50,11 @@ export default class IndividualIssueProgressBar extends Component {
 
                             for (var i = 0; i < statusArray.length; i++) {
                                 console.log(statusArray[i].issueCount, allIssues.length, (statusArray[i].issueCount / allIssues.length) * 100)
+<<<<<<< HEAD
                                 statusArray[i].weightage = Math.round((statusArray[i].issueCount / allIssues.length) * 100)+ "%"
+=======
+                                statusArray[i].weightage = (statusArray[i].issueCount / allIssues.length) * 100 + "%"
+>>>>>>> 2332cfe01a22bd6b41dbcf2dc6cc57094573f2de
                                 
                             }
 
@@ -92,8 +100,13 @@ export default class IndividualIssueProgressBar extends Component {
                 <div className="displayInline m-2" >
                     {this.state.individualIssuesProgressArray.map((eachStatus, i) => (
                         <div className="displayInline m-2">
+<<<<<<< HEAD
                         <div className="mr-1" style={{marginTop:"2px",backgroundColor:eachStatus.color,width: "15px",height: "15px", border:"1px solid #d4d1d1",borderRadius: "10px"}}> </div> 
                         <div key={i} className={[eachStatus.color].join('')} style={{fontSize:"14px"}}>        
+=======
+                        <div className="mr-1" style={{marginTop:"2px",backgroundColor:eachStatus.color,width: "20px",height: "20px", border:"1px solid #d4d1d1",borderRadius: "10px"}}> </div> 
+                        <div key={i} className={[eachStatus.color].join('')}>        
+>>>>>>> 2332cfe01a22bd6b41dbcf2dc6cc57094573f2de
                         {eachStatus.name}-{eachStatus.weightage}                 
                        
                         </div>       

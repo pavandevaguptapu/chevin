@@ -150,7 +150,12 @@ class IndividualSprintData extends Component {
                                 cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                                 rowHeight={30}
                                 width={1200}
+<<<<<<< HEAD
                             >                            
+=======
+                            >
+                            
+>>>>>>> 2332cfe01a22bd6b41dbcf2dc6cc57094573f2de
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
                                     key="7"
@@ -170,7 +175,11 @@ class IndividualSprintData extends Component {
                                     data-grid={{ x: 4, y: 0, w: 8, h: 8.5, minW: 4, minH: 8.5 }}
                                 >
                                     <div className="d-flex custom_dashboard-header justify-content-between">
+<<<<<<< HEAD
                                         <CardHeader title="Issue Details" className="p-0" />
+=======
+                                        <CardHeader title="Critical Path" className="p-0" />
+>>>>>>> 2332cfe01a22bd6b41dbcf2dc6cc57094573f2de
                                     </div>
                                     <div className="col-lg-12 text-center">
                                       
@@ -199,6 +208,7 @@ class IndividualSprintData extends Component {
                                 </Card> */}
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
+<<<<<<< HEAD
                                     key="8"
                                     data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                                 >
@@ -212,6 +222,8 @@ class IndividualSprintData extends Component {
                                 </Card>
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
+=======
+>>>>>>> 2332cfe01a22bd6b41dbcf2dc6cc57094573f2de
                                     key="5"
                                     data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                                     id="myDiv"
@@ -227,9 +239,30 @@ class IndividualSprintData extends Component {
                                    
                                         {this.state.IndividualPullRequest}
                                     </div>
+<<<<<<< HEAD
                                 </Card>                             
 
                             
+=======
+                                </Card>
+
+
+                              
+
+                                <Card
+                                    style={navBarContainer.widgetContainer.widgetCard}
+                                    key="8"
+                                    data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                                >
+                                    <div className="d-flex custom_dashboard-header justify-content-between">
+                                        <CardHeader title="Recent Commits" className="p-0" />
+                                    </div>
+                                    <div className="col-lg-12 text-center">
+                                    
+                                        {this.state.branches}
+                                    </div>
+                                </Card>
+>>>>>>> 2332cfe01a22bd6b41dbcf2dc6cc57094573f2de
                              </ResponsiveReactGridLayout>
                         </div>
                     </div>

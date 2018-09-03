@@ -90,6 +90,8 @@ class SideBar extends Component {
                                     </FloatingActionButton>
                             </Link>
                         </div>
+                        </div>
+                    <div className="col-md-1 col-lg-1 d-flex mt-1 mb-1 justifyContentCenter">
                         <div className="mt-2" >
                             <Link to="/app/logout" >
                                 <Logout />

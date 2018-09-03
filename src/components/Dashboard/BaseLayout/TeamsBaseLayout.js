@@ -21,8 +21,7 @@ import Piechart from "./PieChart";
 import SprintDetails from "./SprintDetails";
 import IssuesList from "./IssueList";
 import EpicBurdownChart from "./EpicBurnDownChart";
-import Logout from '../../../logout.js';
-import ActionSettings from 'material-ui/svg-icons/action/settings';
+
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import { myConstClass } from "../../../constants";
@@ -63,10 +62,9 @@ const navBarContainer = {
         widgetCard: {
             height: "20rem",
             margin: "5px",
-            overflow: "none"
-        }     
+            overflow: "auto"
+        }
     }
-  
 };
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -440,32 +438,14 @@ class TeamsBaseLayout extends Component {
                                 <div className="">{this.state.projects}</div>
                             </div>
                         </div>
-                        <div className="col-md-1 col-lg-1 d-flex  justifyContentCenter">
-                            <div className="mr-2">
-                                {/* <Avatar
+                        <div className="col-lg-2 text-right">
+                            <div>
+                                <Avatar
                                     src="https://www.gstatic.com/webp/gallery/4.sm.jpg"
-                                    size={40}                                    
-                                /> */}
-                                <Link to="/app" >
-                                    <FloatingActionButton mini={true} backgroundColor={'grey'} style={{ boxShadow: "none" }}>
-                                        <ActionSettings style={{ height: "25px", width: "25px",marginTop:"5px" }} />
-                                    </FloatingActionButton>
-                            </Link>
+                                    size={40}
+                                />
                             </div>
-                            <div className="" >
-                            <Link to="/app/logout" >
-                                <Logout />
-                            </Link>
                         </div>
-
-                        </div>
-                        {/* <div className="col-md-1 col-lg-1 d-flex mt-1 mb-1 justifyContentCenter">
-                        <div className="mt-2" >
-                            <Link to="/app/logout" >
-                                <Logout />
-                            </Link>
-                        </div>
-                    </div> */}
                     </nav>
 
                     <div
@@ -521,16 +501,20 @@ class TeamsBaseLayout extends Component {
 
                                 >
                                     <Link to=
-                                        {{
-                                            pathname: '/userDetails',
-                                            state: { username: this.state.username, password: this.state.password, hostedurl: this.state.hostedurl }
-                                        }}                                      
+                                    {{pathname: '/userDetails',                                     
+                                    
+                                          state: { username:this.state.username,password:this.state.password,hostedurl:this.state.hostedurl }
+                                          
+                                          }}
+                                       
                                            >
                                         <div className="d-flex custom_dashboard-header justify-content-between" >
                                             <CardHeader title="Sprint Overview" className="p-0 pointer" />
                                         </div>
                                     </Link>
-                                    <div className="col-lg-12 text-center p-0">
+
+
+                                    <div className="col-lg-12 text-center">
                                         {this.state.loaderforsprintoverviewpiechart}
                                         {this.state.emptySprintArray}
                                         {this.state.sprintPieChart}

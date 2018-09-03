@@ -18,12 +18,6 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
-import {
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem
-} from "reactstrap";
 
 //import RefreshIndicator from '../re-dashboard/RefreshIndicator';
 
@@ -37,8 +31,7 @@ class EpicBurdownChart extends Component {
       pwd: "",
       epicsArray: "",
       selectedEpicId: "",
-      epicBurnDownDataArray: [],
-      dropdownOpen: false,
+      epicBurnDownDataArray: []
     };
     this.handleSelectedEpic = this.handleSelectedEpic.bind(this);
     this.listoFEpics = this.listoFEpics.bind(this);
@@ -76,13 +69,6 @@ class EpicBurdownChart extends Component {
     this.handleSelectedEpic("1", "2", epicId);
   }
   handleSelectedEpic = (event, index, val) => {
-    console.log(event, index, val)
-    // let indexOfSelectedAccount = this.state.projectBoardDetailsListarray
-    // .map(function (k) {
-    //   return k.name;
-    // })
-    // .indexOf(e);
-
     this.setState({ selectedEpicId: val });
     axios
       .post(`sbtpgateway/tp/rest/esccors/generic/`, {
@@ -136,34 +122,11 @@ class EpicBurdownChart extends Component {
   };
 
   listoFEpics = epicsArray => {
-    // return epicsArray.map(epic => (
-    //   <MenuItem key={epic.id} value={epic.key} primaryText={epic.key} />
-    // ));
+    return epicsArray.map(epic => (
+      <MenuItem key={epic.id} value={epic.key} primaryText={epic.key} />
+    ));
+  };
 
-      return epicsArray.map(epic => (
-        <DropdownItem
-          key={epic.id}
-          value={epic.key}
-          className="pointer text-truncate"
-          onClick={(e, i) => {
-            this.handleSelectedEpic(e.target.value);
-            this.displayDropDownValue(e);
-          }}
-        >
-          {epic.key}
-        </DropdownItem>
-      ));
-
-  };
-  toggle = () => {
-    this.setState(prevState => ({
-      dropdownOpen: !prevState.dropdownOpen
-    }));
-  };
-  displayDropDownValue = e => {
-    console.log(e.currentTarget.textContent )
-    this.setState({ dropDownValue: e.currentTarget.textContent });
-  };
   render() {
     const data = [
       { name: "Page A", uv: 4000, pv: 2400 },
@@ -180,40 +143,20 @@ class EpicBurdownChart extends Component {
                       <h5>Epic Overview</h5>
                   </div> */}
 
-        <div className="col-md-12 padding0" >
-          {/* <SelectField
+        <div className="col-md-12 padding0">
+          <SelectField
             hintText="Select Epic"
             value={this.state.selectedEpicId}
             listStyle={{ backgroundColor: "#b7b7b7" }}
             menuItemStyle={{ color: "#000000" }}
             hintStyle={this.state.hintStyle2}
             underlineStyle={{ display: "none" }}
-            onChange={(e, i, v) => this.handleSelectedEpic(e, i, v)}          >
-            {this.listoFEpics(this.state.epicsArray)}
-          </SelectField> */}
-
-          <Dropdown
-          isOpen={this.state.dropdownOpen}
-          toggle={this.toggle}
-          className="custom-secondary_dropdown clearfix"
-          style={{color:"grey"}}
-        > 
-          <DropdownToggle
-            caret
-            className="text-truncate d-flex justify-content-between"
-            style={{color:"grey"}}
+            onChange={(e, i, v) => this.handleSelectedEpic(e, i, v)}
           >
-            {this.state.dropDownValue}
-          </DropdownToggle>
-          <DropdownMenu className="custom-dropdown-menu">
-          {this.listoFEpics(this.state.epicsArray)}
-          </DropdownMenu>
-        </Dropdown>
+            {this.listoFEpics(this.state.epicsArray)}
+          </SelectField>
         </div>
-
-
-
-        <ResponsiveContainer width="87%" aspect={5.0 / 2.8}>
+        <ResponsiveContainer width="100%" aspect={5.0 / 2.8}>
           <BarChart
             width={600}
             height={300}
