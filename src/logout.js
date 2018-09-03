@@ -18,44 +18,24 @@ class Logout extends Component {
     }
 }
 
-logout=()=>{
-    console.log(localStorage.getItem('token'))
-    console.log(localStorage.getItem('userName'))
-//     axios.post("http://192.168.29.83:8090/springhibernate/newspringboardapi/login",
-//     {
-//       userName:userDetails.userName,
-//       password:userDetails.password
+logout=()=>{ 
 
-
-//     }
-//   ).then(response=>{
-//     if(response.data.status==="success"){
-
-//       this.props.history.push({
-//       pathname: "/app/logout",
-      
-//     });
-//     }
-//     else{
-
-//     }
-//     console.log(response.data.status)
-//   },(error)=>{
-//         console.log("error")
-//   })
-
+    localStorage.removeItem('token')
+    window.location.href = '/'
 }
 
   render() {
     return (
-        
-        <div>
-            <FloatingActionButton mini={true} secondary={true} onClick={this.logout}>
-                <ActionSettingsPower/>
-            </FloatingActionButton>
-            <Subheader className="p-0" style={{ fontSize: '12px', lineHeight: "26px" }}>logout</Subheader>
+        <div className="displayInline textAlignRight">
+            <div className="mr-2">
+            <FloatingActionButton mini={true} backgroundColor={'grey'} style={{boxShadow: "none"}} onClick={this.logout}>
+                 <ActionSettingsPower onClick={this.logout} style={{height:"25px",width:"25px",marginTop:"5px" }}/> 
+                </FloatingActionButton>
+            </div>
+            <div>
+                {/* <Subheader className="p-0" style={{fontSize:'18px',lineHeight:"42px",fontWeight:"bold",color:"#00000"}}>Logout</Subheader> */}
+            </div>
         </div>
-
     );
   }
 }

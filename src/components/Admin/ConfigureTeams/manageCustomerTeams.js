@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { Component }from 'react';
+import PropTypes from 'prop-types';
 import '../../../App.css';
 import Dialog from 'material-ui/Dialog';
 import axios from 'axios';
@@ -32,9 +33,14 @@ import IconButton from 'material-ui/IconButton';
 import Checkbox from 'material-ui/Checkbox';
 import IconMenu from 'material-ui/IconMenu';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import RedirectHOC from '../../../components/HOC/LoaderHOC.js';
+import teamReducer from'../../../../src/reducers/teamReducer';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import {GET_All_TEAMS}  from'../../../../src/constants/action-types';
 
 var dcopy = require('deep-copy')
-
+//var PropTypes = require('prop-types');
 
 let SelectableList = makeSelectable(List);
 
@@ -66,43 +72,68 @@ const styles = {
 
 };
 
+
+
 class ManageCustomerTeams extends React.Component {
+    
     constructor(props) {
         super(props);
         this.state = {
-            allTeamsDataArray: ''
+            allTeamsDataArray: '',
+            listOfTeams:[],
+            selectedTeamIndex:''
         }
+      
     }
-    componentWillMount() {
-        axios.get("http://172.16.25.50:8585/springhibernate/newspringboardapi/getTeams")
+    componentWillMount() {        
+        axios.post("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/getTeams")
             .then(response => {
-
-                if (response.data.content.length === 0) {
-                    this.setState({
-                        accountDetails: <AccountDetails addTeamString={true} />
-                    })
-                } else {
-                    this.setState({
+                console.log(response.data.content)
+                var listOfTeams = response.data.content   
+                if (listOfTeams.length === 0) {
+                    var selectedTeamIndex=0
+                    if( listOfTeams[selectedTeamIndex]=== undefined){                       
+                        listOfTeams[selectedTeamIndex]={"projects":[]}
+                  
+                            this.setState({
+                                accountDetails: <AccountDetails addTeamString={true} listOfTeams={listOfTeams}selectedTeamIndex={selectedTeamIndex}/>,
+                                listOfTeams: listOfTeams,selectedTeamIndex:0
+                            })
+                    }                  
+                } else {                
+                 this.props.GET_All_TEAMS(response.data.content);                
+                 //var listOfTeams = response.data.content                   
+                    var lastTeamIndex = listOfTeams.length - 1
+                    if (listOfTeams[lastTeamIndex].projects === undefined && listOfTeams[lastTeamIndex].people === undefined) {
+                        listOfTeams[lastTeamIndex].projects = []
+                        listOfTeams[lastTeamIndex].people = []
+                    }            
+                    this.setState({listOfTeams: listOfTeams, selectedTeamIndex:lastTeamIndex,TeamDetailsArrayForEditing:listOfTeams,
                         accountDetails: <AccountDetails allTeamsDataArray={response.data.content} addTeamString={false} />
                     })
                 }
             }, (error) => {
-                console.log(error)
-            })
+                console.log(error,"fgf")
+             })
     }
     render() {
+
         return (
-            <div className="container-fluid padding0">
-                <nav className="navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
-                    <div className="col-md-12 flex">
-                        <div className="col-md-12 col-lg-12 textAlignCenter marginT07">
-                            <h5 className="">Manage Customer Teams</h5>
+            <div>
+                <div className="padding0">
+                    {/* <nav className="navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
+                        <div className="col-md-12 flex">
+                            <div className="col-md-12 col-lg-12 textAlignCenter marginT07">
+                                <h5 className="">Manage Customer Teams</h5>
+                            </div>
+                            <div>
+                            </div>
                         </div>
-                        <div>
-                        </div>
-                    </div>
-                </nav>
-                {this.state.accountDetails}
+                    </nav> */}
+                </div>
+                <div className="container-fluid padding0">
+                    {this.state.accountDetails}
+                </div>
             </div>
         )
     }
@@ -142,7 +173,6 @@ class AccountDetails extends React.Component {
             processName: {}    
         }
     }
-
     getDateString = (date) => {
 
 
@@ -158,10 +188,9 @@ class AccountDetails extends React.Component {
 
 
     }
-    componentWillMount() {
-        axios.get("http://172.16.25.50:8585/springhibernate/newspringboardapi/getMasterToolsAndProcesses")
+    componentWillMount() {   
+        axios.get("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/getMasterToolsAndProcesses")
             .then(response => {
-
                 var toolsArray = []
                 var processArray = []
                 toolsArray = response.data.content.tools
@@ -172,7 +201,8 @@ class AccountDetails extends React.Component {
             })
 
         if (this.props.addTeamString === true) {
-            this.setState({ addTeamString: true })
+            console.log(this.props.listOfTeams)
+            this.setState({ addTeamString: true, listOfTeams:this.props.listOfTeams,selectedTeamIndex:this.props.selectedTeamIndex,TeamDetailsArrayForEditing:this.props.listOfTeams})
         }
         else {
             var listOfTeams = this.props.allTeamsDataArray
@@ -181,7 +211,7 @@ class AccountDetails extends React.Component {
                 listOfTeams[lastTeamIndex].projects = []
                 listOfTeams[lastTeamIndex].people = []
             }
-            this.setState({ listOfTeams: listOfTeams, selectedTeamIndex:lastTeamIndex,TeamDetailsArrayForEditing:listOfTeams })
+            this.setState({ listOfTeams: listOfTeams, selectedTeamIndex: lastTeamIndex, TeamDetailsArrayForEditing: listOfTeams })
         }
     }
     componentDidMount() {
@@ -194,7 +224,7 @@ class AccountDetails extends React.Component {
         var selectedTeam = tempListOfTeams[selectedTeamIndex].teamName
         var selectedTeamId = tempListOfTeams[selectedTeamIndex].teamId
         this.setState({ selectedTeamName: selectedTeam })
-        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/getTeamDetails",
+        axios.post("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/getTeamDetails",
             {
                 teamId: selectedTeamId
             }
@@ -255,7 +285,7 @@ class AccountDetails extends React.Component {
         )
 
     }
-    addTeam = (newTeamObj) => {
+    addTeam = (newTeamObj) => { 
         if (newTeamObj.startDate === undefined) {
             var startDate = this.getDateString(new Date())
             var endDate = this.getDateString(new Date())
@@ -264,13 +294,14 @@ class AccountDetails extends React.Component {
             var startDate = this.getDateString(newTeamObj.startDate)
             var endDate = this.getDateString(newTeamObj.endDate)
         }
-        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/addTeam",
+        axios.post("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/addTeam",
             {
                 teamName: newTeamObj.teamName,
                 startDate: startDate,
                 endDate: endDate,
                 status: "1"
-            })
+            },
+        )
             .then(response => {
                 var addedObj
                 if (this.state.listOfTeams !== undefined) {
@@ -333,7 +364,7 @@ class AccountDetails extends React.Component {
         teamInfo["status"] = modifiedTeamObj.status
         teamInfo["startDate"] = modifiedTeamObj.startDate
         teamInfo["endDate"] = modifiedTeamObj.endDate
-        axios.put("http://172.16.25.50:8585/springhibernate/newspringboardapi/editTeam",
+        axios.put("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/editTeam",
             {
                 teamId: selectedTeamId,
                 teamInfo: teamInfo
@@ -369,7 +400,7 @@ class AccountDetails extends React.Component {
         var selectedTeamId = this.state.listOfTeams[this.state.selectedTeamIndex].teamId
         var selectedProjectId = this.state.listOfTeams[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectId
         var selectedProjectName = this.state.listOfTeams[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
-        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/getProjectDetails",
+        axios.post("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/getProjectDetails",
             {
                 teamId: selectedTeamId,
                 projectId: selectedProjectId
@@ -410,7 +441,7 @@ class AccountDetails extends React.Component {
         var selectedTeamId = this.state.listOfTeams[this.state.selectedTeamIndex].teamId
         var selectedProjectId = this.state.listOfTeams[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectId
         var selectedProjectName = this.state.listOfTeams[this.state.selectedTeamIndex].projects[selectedProjectIndex].projectName
-        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/getProjectDetails",
+        axios.post("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/getProjectDetails",
             {
                 teamId: selectedTeamId,
                 projectId: selectedProjectId
@@ -448,18 +479,19 @@ class AccountDetails extends React.Component {
     }
     closeAddProjectModal = () => {
         this.setState({ addProjectModal: false })
-    }
-    addNewProject = (newProjectObject) => {
-
+    }    
+    addNewProject = (newProjectObject) => {    
+            
         var projectName = newProjectObject.projectName
         var TeamId = this.state.listOfTeams[this.state.selectedTeamIndex].teamId
 
-        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/addProject",
+        axios.post("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/addProject",
             {
                 projectName: projectName,
                 teamId: TeamId
             })
             .then(response => {
+                console.log(response.data.content)
                 var newProjectObj = this.state.listOfTeams
                 newProjectObj[this.state.selectedTeamIndex].projects.push(response.data.content)
                 this.setState({
@@ -478,7 +510,7 @@ class AccountDetails extends React.Component {
         this.setState({
             selectedTeamName: selectedTeamName
         });
-        axios.post("http://172.16.25.50:8585/springhibernate/newspringboardapi/getTeamDetails",
+        axios.post("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/getTeamDetails",
             {
                 teamId: TeamId
             })
@@ -547,7 +579,7 @@ class AccountDetails extends React.Component {
         var projectId=this.state.listOfTeams[this.state.selectedTeamIndex].projects[this.state.selectedProjectIndex].projectId
         var updatedProjectName=updatedProjectObj.projectName       
 
-        axios.put("http://172.16.25.50:8585/springhibernate/newspringboardapi/editProject",
+        axios.put("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/editProject",
             {
             "projectId":projectId,
             "projectName":updatedProjectName
@@ -645,8 +677,7 @@ class AccountDetails extends React.Component {
 
             this.setState({ existingMemberArray: false })
         }
-    }
- 
+    } 
     displayingProjects = (projects) => {
         return projects.map((project) => (
             <MenuItem
@@ -689,7 +720,7 @@ class AccountDetails extends React.Component {
         console.log(toolsList)
 
 
-        axios.put("http://172.16.25.50:8585/springhibernate/newspringboardapi/editToolsConfig",
+        axios.put("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/editToolsConfig",
             {
                 teamId: selectedTeamId,
                 projectId: selectedProjectId,
@@ -722,14 +753,14 @@ class AccountDetails extends React.Component {
     render() {
         return (
             <div className="col-lg-12 col-md-12 mt-1">
-                <div className="col-lg-12 col-md-12 d-inline p-0">
-                    <Card>
-                        <div className="displayInline col-lg-12 col-md-12 p-1">
+                <div className="col-lg-12 col-md-12 d-inline p-0" style={{"backgroundColor":"rgb(156, 156, 156)"}}>
+                    <Card >
+                        <div className="displayInline col-lg-12 col-md-12">
                             <div className={["col-md-2 col-lg-2 p-0", this.state.addTeamString === true ? "visibility" : "show"].join(' ')}>
-                                <div className="d-flex col-md-12 col-lg-10 pl-0 pb-2 pt-1">
-                                    <div className={"project_details pt-0 pl-2 pr-0 d-inline-flex"}>
+                                <div className="d-flex col-md-12 col-lg-10 pl-0 pb-2">
+                                    {/* <div className={"project_details pt-0 pl-2 pr-0 d-inline-flex"}>
                                         <img src="https://www.gstatic.com/webp/gallery/4.sm.jpg" />
-                                    </div>
+                                    </div> */}
                                     <div>
                                         <SelectField hintText="Select Project" value={this.state.selectedTeamName}
                                             labelStyle={{ height: "37px" }} underlineStyle={{ display: 'none' }} onChange={(e, i, v) => this.selectedTeam(e, i, v)}>
@@ -739,8 +770,8 @@ class AccountDetails extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                            <div className={["col-md-9 col-lg-9 p-0", this.state.addTeamString === true ? "visibility" : "show"].join(' ')}>
-                                <div className="col-md-12 padding0 m-3">
+                            <div className={["col-md-8 col-lg-8 p-0", this.state.addTeamString === true ? "visibility" : "show"].join(' ')}>
+                                <div className="col-md-12 padding0 m-1">
                                     <div className="col-md-12 col-lg-12 displayInline p-0">
                                         <div className="col-md-2 col-lg-2 p-0 m-2 displayInline">
                                             <div className="textAlignCenter pr-2">
@@ -748,8 +779,8 @@ class AccountDetails extends React.Component {
                                                 <Subheader className="p-1" style={{ fontSize: '14px', lineHeight: "4px" }}>Projects</Subheader>
                                             </div>
                                             <div className="font" style={{ lineHeight: "38px", fontWeight: "lighter" }}>
-                                                {this.state.listOfTeams[this.state.selectedTeamIndex].projects.length || 0
-                                                }
+                                                {
+                                                this.state.listOfTeams[this.state.selectedTeamIndex].projects.length}
                                             </div>
                                         </div>
                                         <div className="col-md-2 col-lg-2 m-2 displayInline p-0">
@@ -770,7 +801,7 @@ class AccountDetails extends React.Component {
                                             </div>
 
                                             <div className="" style={{ fontSize: '25px', lineHeight: "32px", fontWeight: "lighter" }}>
-                                                {this.state.listOfTeams[this.state.selectedTeamIndex].startDate ||" "}
+                                               {this.state.listOfTeams[this.state.selectedTeamIndex].startDate ||""} 
 
                                             </div>
 
@@ -782,7 +813,7 @@ class AccountDetails extends React.Component {
                                             </div>
                                             <div className="" style={{ fontSize: '25px', lineHeight: "32px", fontWeight: "lighter" }}>
 
-                                                {this.state.listOfTeams[this.state.selectedTeamIndex].endDate || " "}
+                                                 {this.state.listOfTeams[this.state.selectedTeamIndex].endDate || ""} 
                                             </div>
 
                                         </div>
@@ -792,24 +823,29 @@ class AccountDetails extends React.Component {
                             <div className={["col-md-10 col-lg-10 p-0", this.state.addTeamString === true ? "show" : "visibility"].join(' ')}>
                                 <Subheader className="p-0" style={{ fontSize: '30px' }}>Add Team</Subheader>
                             </div>
-                            <div className="col-md-1 col-lg-1" style={{ display: "grid" }}>
-                                <div className={[this.state.addTeamString === true ? "visibility" : "show"].join(' ')}>
+                            <div className="col-md-2 col-lg-2 displayInline m-3 justifyContentEnd">        
+                                 {/* iconStyle={{fill: 'blue'}} */}                      
+                                <div className="mr-3">
                                     <FloatingActionButton
-                                        mini={true}
-                                        onClick={() => this.editTeam()}
-                                        className="float-right"
-                                    >
-                                        <ContentEdit />
-                                    </FloatingActionButton>
-                                </div>
-                                <div>
-                                    <FloatingActionButton
-                                        secondary={true}
+                                    backgroundColor={'grey'}
                                         mini={true}
                                         onClick={() => this.addTeamModal()}
                                         className="float-right"
+                                        style={{boxShadow: "none"}} 
+                                       
                                     >
-                                        <ContentAdd />
+                                        <ContentAdd/>
+                                    </FloatingActionButton>
+                                </div>
+                                <div className={[this.state.addTeamString === true ? "visibility" : "show"].join(' ')}>
+                                    <FloatingActionButton
+                                    backgroundColor={'grey'}
+                                        mini={true}
+                                        onClick={() => this.editTeam()}
+                                        className="float-right"
+                                        style={{boxShadow: "none"}} 
+                                    >
+                                        <ContentEdit />
                                     </FloatingActionButton>
                                 </div>
                             </div>
@@ -827,14 +863,15 @@ class AccountDetails extends React.Component {
                                             <TableRow>
                                                 <TableHeaderColumn>Project Name</TableHeaderColumn>
                                                 <TableHeaderColumn>Settings</TableHeaderColumn>
-                                                <TableHeaderColumn>
+                                                <TableHeaderColumn style={{paddingRight:"9px"}}>
                                                     <FloatingActionButton
-                                                        secondary={true}
+                                                        backgroundColor={'grey'}
                                                         mini={true}
                                                         onClick={this.addProjectModal}
                                                         className="float-right"
-                                                    >
-                                                        <ContentAdd />
+                                                        style={{ boxShadow: "none" }}
+                                                    >                                                        
+                                                    <ContentAdd />
                                                     </FloatingActionButton>
                                                 </TableHeaderColumn>
                                             </TableRow>
@@ -854,7 +891,7 @@ class AccountDetails extends React.Component {
                                         </TableBody>
                                     </Table>
                                 </div>
-                                <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={[this.state.noProject === true ? 'show' : 'visibility'].join(' ')}>
+                                <div style={{ border: "1px solid rgb(238, 238, 238)" }} className={[this.state.noProject === true ? 'show' : 'visibility'].join(' ')} style={{backgroundColor:"#FFFFFF"}}>
                                     <Subheader className="p-0 textAlignCenter" style={{ fontSize: '20px' }}>
                                         Add projects to team 
                                       </Subheader>
@@ -910,7 +947,7 @@ class AccountDetails extends React.Component {
                                 </div>
                             </Tab> */}
                             <Tab label="Jump Start" style={tabsBackgroundColor} disabled={this.state.noProject === true} value={2} onActive={() => this.selectedTab(2)}>
-                                <div className={["col-md-12 col-lg-12 displayInline", this.state.noProject === true ? 'visibility' : 'show'].join(" ")}>
+                                <div className={["col-md-12 col-lg-12 displayInline p-0",this.state.noProject === true ? 'visibility' : 'show'].join(" ")} style={{backgroundColor:"#FFFFFF"}}>
                                     <div className="col-md-10 col-lg-9 textAlignRight">
                                         <Subheader className="p-0" style={{ fontSize: '14px' }}>Select Project</Subheader>
                                     </div>
@@ -1003,8 +1040,7 @@ class AccountDetails extends React.Component {
                                             No tool is assigned
                                       </Subheader>
                                     </div> */}
-                                </div>
-                              
+                                </div>                              
                             </Tab>
                         </Tabs>
                     </div>
@@ -1111,7 +1147,6 @@ class AccountDetails extends React.Component {
                                     fullWidth={true}
                                 />
                             </div>
-
                         </div>
                         <div className="row margin0">
                             <div className="col-md-12">
@@ -1124,7 +1159,6 @@ class AccountDetails extends React.Component {
                                     onChange={this.handleTeamEditDetails}
                                 />
                             </div>
-
                         </div>
                         <div className="row margin0">
                             <div className="col-md-12">
@@ -1139,7 +1173,6 @@ class AccountDetails extends React.Component {
                                     maxDate={this.state.TeamDetailsArrayForEditing[this.state.selectedTeamIndex].endDate}
                                 />
                             </div>
-
                         </div>
                         <div className="row margin0">
                             <div className="col-md-12">
@@ -1154,7 +1187,6 @@ class AccountDetails extends React.Component {
                                     autoOk={true}
                                 />
                             </div>
-
                         </div>
                         <div className="loginBtns" style={{}}>
                             <div>
@@ -1520,7 +1552,28 @@ class AccountDetails extends React.Component {
 
 }
 
+function mapStateToProps(state) {
+    console.log(state)
+    return {
+        teamsArray:state.teamsArray
+    };
+  }
 
+function mapDispatchToProps(dispatch){    
+    return {
+       
+        GET_All_TEAMS:allTeamsArray => dispatch(GET_All_TEAMS(allTeamsArray))
+      };
+    
+}
+ManageCustomerTeams.propTypes = {
 
-export default ManageCustomerTeams;
+    dispatch: PropTypes.func.isRequired
+
+};
+
+//const ContactListWithLoadIndicator = RedirectHOC(localStorage.getItem('token'))(ManageCustomerTeams);
+export default connect(mapStateToProps,mapDispatchToProps)(ManageCustomerTeams);
+    
+
 

@@ -3,6 +3,7 @@ body {
   padding: 0px !important;
   overflow-x: hidden;
   /* height: 100%;  */
+  background-color: rgb(0,0,0,0.8) !important
 }
 
 html,
@@ -384,7 +385,7 @@ a {
   height: calc(100%-86.4px);
 }
 .navbarBgColor {
-  background-color: #786f71;
+  background-color: rgb(255, 217, 29);
   /* background: #4373d5;  For browsers that do not support gradients 
 	 background: -webkit-linear-gradient(#4373d5, #5586d1); 
 	background: -o-linear-gradient(#4373d5, #5586d1);  For Opera 11.1 to 12.0 
@@ -392,7 +393,7 @@ a {
 	background: linear-gradient(#4373d5, #5586d1); Standard syntax (must be last)  */
 }
 .navbarFontColor {
-  color: white;
+  color: black;
 }
 .margin0 {
   margin: 0px !important;
@@ -490,8 +491,11 @@ input[type="text"] {
 }
 
 .borderRight {
-  border-right: 5px solid #d4d4d4;
+  border-right: 1px solid black;
 }
+/* .borderRight {
+  border-right: 5px solid #d4d4d4;
+} */
 
 .titleBackgroundColor {
   background-color: #edecec;
@@ -528,6 +532,12 @@ input[type="text"] {
   flex-direction: column;
 }
 
+.justifyContentEnd{
+justify-content: end !important;
+}
+.justifyContentCenter{
+  justify-content: center !important;
+  }
 .epicTablediv {
   overflow: scroll;
 

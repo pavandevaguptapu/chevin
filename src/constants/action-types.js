@@ -1,1 +1,5 @@
-export const SET_SELECTED_TEAM = "SET_SELECTED_TEAM";
+export const GET_All_TEAMS = getAllTeams=>({
+    type:"GET_All_TEAMS",
+    payload:getAllTeams
+})
+
