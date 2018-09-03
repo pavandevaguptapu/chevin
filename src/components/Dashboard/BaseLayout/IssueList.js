@@ -19,8 +19,8 @@ class IssuesList extends Component {
   }
   render() {
     return (
-      <div className="col-md-12 col-lg-12 padding0">
-        <table className="table table-fixed">
+      <div className="col-md-12 col-lg-12 padding0" style={{height:"284px",overflow:"auto"}}>
+        <table className="table">
           <thead className="">
             <tr className="epicdetailstableheadrowStyle">
               {this.state.issuesHeaderItems.map((row, i) => (

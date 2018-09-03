@@ -57,6 +57,7 @@ class SelectedProjectBoardDetails extends Component {
         actionMethod: "get"
       })
       .then(response => {   
+
         var listOfSprints = response.data.values;
         var boardId = this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id;
         var hostedurl = this.state.hostedurl;
@@ -72,6 +73,7 @@ class SelectedProjectBoardDetails extends Component {
         actionMethod: "get"
       })
       .then(response => {
+       
         if (JSON.stringify(response.data.values) == JSON.stringify([])) {
           var listOfEpics = response.data.values;
           var boardId = this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id;
@@ -102,7 +104,8 @@ class SelectedProjectBoardDetails extends Component {
                 index: i,
                 length: 6,               
               })
-              .then(response => {       
+              .then(response => {     
+           
                 var hostedurl = this.state.hostedurl;
                 var username = this.state.username;
                 var password = this.state.pwd;
@@ -117,8 +120,9 @@ class SelectedProjectBoardDetails extends Component {
       });
   };
 
-  projectBoardDetailsListarray = board => {    
-    if(board.length!==0|| board!==undefined){
+  projectBoardDetailsListarray = board => {  
+    console.log(board)  
+    if(board.length!==0 || board!==undefined){
       return board.map(board => (
         <DropdownItem
           key={board.id}

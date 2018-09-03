@@ -41,7 +41,7 @@ class SprintDetails extends Component {
   }
 
   componentWillMount() {
-    console.log(this.props)
+
     this.state.sprintListSorted = this.props.sprinttList.sort(function (a, b) {
       return parseFloat(b.id) - parseFloat(a.id);
     });
@@ -85,6 +85,7 @@ class SprintDetails extends Component {
         actionMethod: "get"
       })
       .then(response => {
+      
         this.setState({
           sprintStartTime: "",
           sprintEndTime: "",

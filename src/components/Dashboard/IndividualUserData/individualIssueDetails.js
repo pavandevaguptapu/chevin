@@ -44,32 +44,7 @@ export default class IndividualIssueDetails extends Component{
     } 
 
     render(){
-        return(              
-    //         <div className="col-md-12 col-lg-12 padding0">
-    //     <table className="table table-responsive" style={{height:"200px",overflowY:"scroll"}}>
-    //       <thead className="">
-    //          <tr className="epicdetailstableheadrowStyle">
-    //          <th>issue id</th>
-    //         <th>issue status</th>
-    //         <th>issue description</th>
-    //         </tr>      
-            
-            
-    //       </thead>
-    //       <tbody>
-    //         {this.state.individualIssuesArray.map((issue, i) => (             
-    //           <tr>
-    //               <td>{issue.id}</td>
-
-    //               <td>{issue.fields.status.name}</td>
-    //               <td>{issue.fields.issuetype.description}</td>
-               
-               
-    //           </tr>
-    //         ))}
-    //       </tbody>
-    //     </table>
-    //   </div>
+        return(            
     <div className="col-md-12 col-lg-12 padding0">
     <table className="table table-fixed table-striped">
       <thead className="">

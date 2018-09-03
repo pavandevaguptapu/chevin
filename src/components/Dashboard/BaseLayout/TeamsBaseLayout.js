@@ -21,7 +21,8 @@ import Piechart from "./PieChart";
 import SprintDetails from "./SprintDetails";
 import IssuesList from "./IssueList";
 import EpicBurdownChart from "./EpicBurnDownChart";
-
+import Logout from '../../../logout.js';
+import ActionSettings from 'material-ui/svg-icons/action/settings';
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import { myConstClass } from "../../../constants";
@@ -62,9 +63,10 @@ const navBarContainer = {
         widgetCard: {
             height: "20rem",
             margin: "5px",
-            overflow: "auto"
-        }
+            overflow: "none"
+        }     
     }
+  
 };
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -273,8 +275,9 @@ class TeamsBaseLayout extends Component {
         }
     };
     selectedBoardforIssues = (epicsArray,username,password,hostedurl) => {    
-        axios
-            .post(`sbtpgateway/tp/rest/esccors/generic/`, {
+
+        
+        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
                 resourceURL: hostedurl + "/rest/api/2/status",
                 userName: username,
                 password: password,
@@ -291,7 +294,7 @@ class TeamsBaseLayout extends Component {
                     issuesObj.epicName = eachEpicDetails.name;
                     for (var i = 0; i < statusArray.length; i++) {
                         var currentStatusIssuesArray = [];
-                        if (eachEpicDetails.issues.length == 0 ||eachEpicDetails.issues===undefined) {
+                        if (eachEpicDetails.issues.length == 0 || eachEpicDetails.issues===undefined) {
                             issuesObj[statusArray[i]] = 0;
                         } else {
                             eachEpicDetails.issues.forEach(function (issue) {
@@ -438,14 +441,32 @@ class TeamsBaseLayout extends Component {
                                 <div className="">{this.state.projects}</div>
                             </div>
                         </div>
-                        <div className="col-lg-2 text-right">
-                            <div>
-                                <Avatar
+                        <div className="col-md-1 col-lg-1 d-flex  justifyContentCenter">
+                            <div className="mr-2">
+                                {/* <Avatar
                                     src="https://www.gstatic.com/webp/gallery/4.sm.jpg"
-                                    size={40}
-                                />
+                                    size={40}                                    
+                                /> */}
+                                <Link to="/app" >
+                                    <FloatingActionButton mini={true} backgroundColor={'grey'} style={{ boxShadow: "none" }}>
+                                        <ActionSettings style={{ height: "25px", width: "25px",marginTop:"5px" }} />
+                                    </FloatingActionButton>
+                            </Link>
                             </div>
+                            <div className="" >
+                            <Link to="/app/logout" >
+                                <Logout />
+                            </Link>
                         </div>
+
+                        </div>
+                        {/* <div className="col-md-1 col-lg-1 d-flex mt-1 mb-1 justifyContentCenter">
+                        <div className="mt-2" >
+                            <Link to="/app/logout" >
+                                <Logout />
+                            </Link>
+                        </div>
+                    </div> */}
                     </nav>
 
                     <div
@@ -501,20 +522,16 @@ class TeamsBaseLayout extends Component {
 
                                 >
                                     <Link to=
-                                    {{pathname: '/userDetails',                                     
-                                    
-                                          state: { username:this.state.username,password:this.state.password,hostedurl:this.state.hostedurl }
-                                          
-                                          }}
-                                       
+                                        {{
+                                            pathname: '/userDetails',
+                                            state: { username: this.state.username, password: this.state.password, hostedurl: this.state.hostedurl }
+                                        }}                                      
                                            >
                                         <div className="d-flex custom_dashboard-header justify-content-between" >
                                             <CardHeader title="Sprint Overview" className="p-0 pointer" />
                                         </div>
                                     </Link>
-
-
-                                    <div className="col-lg-12 text-center">
+                                    <div className="col-lg-12 text-center p-0">
                                         {this.state.loaderforsprintoverviewpiechart}
                                         {this.state.emptySprintArray}
                                         {this.state.sprintPieChart}
@@ -541,7 +558,7 @@ class TeamsBaseLayout extends Component {
                                     data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                                 >
                                     <div className="d-flex custom_dashboard-header justify-content-between">
-                                        <CardHeader title="Epic Burndown Chart" className="p-0" />
+                                        <CardHeader title="Epic Status" className="p-0" />
                                     </div>
                                     <div className="col-lg-12 text-center">
                                         {this.state.loaderforEpicOverviewburndownchart}
@@ -598,9 +615,9 @@ class TeamsBaseLayout extends Component {
                         </div>
                     </div>
                 </div>
-                <div className={["container-fluid", this.state.noTeam === true].join('')}>
+                {/* <div className={["container-fluid", this.state.noTeam === true].join('')}>
                     <p><h3>Please contact your admin to Configure Teams</h3></p>
-                </div>
+                </div> */}
             </div>
         );
     }

@@ -45,7 +45,7 @@ class SonarQubeData extends Component {
                 actionMethod: "get"
             })
             .then(response => {
-                console.log(response)
+         
                 var i;
                 // 	this.state.closedIssues=[]
                 // 	this.state.openIssues=[]

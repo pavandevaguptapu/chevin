@@ -46,7 +46,7 @@ export default class IndividualIssueProgressBar extends Component {
 
                             for (var i = 0; i < statusArray.length; i++) {
                                 console.log(statusArray[i].issueCount, allIssues.length, (statusArray[i].issueCount / allIssues.length) * 100)
-                                statusArray[i].weightage = (statusArray[i].issueCount / allIssues.length) * 100 + "%"
+                                statusArray[i].weightage = Math.round((statusArray[i].issueCount / allIssues.length) * 100)+ "%"
                                 
                             }
 
@@ -92,8 +92,8 @@ export default class IndividualIssueProgressBar extends Component {
                 <div className="displayInline m-2" >
                     {this.state.individualIssuesProgressArray.map((eachStatus, i) => (
                         <div className="displayInline m-2">
-                        <div className="mr-1" style={{marginTop:"2px",backgroundColor:eachStatus.color,width: "20px",height: "20px", border:"1px solid #d4d1d1",borderRadius: "10px"}}> </div> 
-                        <div key={i} className={[eachStatus.color].join('')}>        
+                        <div className="mr-1" style={{marginTop:"2px",backgroundColor:eachStatus.color,width: "15px",height: "15px", border:"1px solid #d4d1d1",borderRadius: "10px"}}> </div> 
+                        <div key={i} className={[eachStatus.color].join('')} style={{fontSize:"14px"}}>        
                         {eachStatus.name}-{eachStatus.weightage}                 
                        
                         </div>       

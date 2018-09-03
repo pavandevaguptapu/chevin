@@ -18,6 +18,13 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
+import {
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from "reactstrap";
+
 
 //import RefreshIndicator from '../re-dashboard/RefreshIndicator';
 
@@ -31,13 +38,18 @@ class EpicBurdownChart extends Component {
       pwd: "",
       epicsArray: "",
       selectedEpicId: "",
-      epicBurnDownDataArray: []
+      epicBurnDownDataArray: [],
+      dropdownOpen: false,
+      allIssuesEstimation:'',
+      completedIssuesEstimation:'',
+      inCompletedIssuesEstimation:''
     };
     this.handleSelectedEpic = this.handleSelectedEpic.bind(this);
     this.listoFEpics = this.listoFEpics.bind(this);
   }
 
   componentWillMount() {
+    console.log(this.props.epicsArray)
     this.state.epicListSorted = this.props.epicsArray.sort(function(a, b) {
       return parseFloat(b.id) - parseFloat(a.id);
     });
@@ -49,7 +61,6 @@ class EpicBurdownChart extends Component {
       epicsArray: this.state.epicListSorted
     });
   }
-
   componentWillReceiveProps(nextProps) {
     this.state.sprintListSorted = nextProps.epicsArray.sort(function(a, b) {
       return parseFloat(b.id) - parseFloat(a.id);
@@ -65,98 +76,262 @@ class EpicBurdownChart extends Component {
   }
   componentDidMount() {
     var epicId = this.state.epicsArray[0].key;
-
-    this.handleSelectedEpic("1", "2", epicId);
+    this.handleSelectedEpic(epicId);
   }
-  handleSelectedEpic = (event, index, val) => {
-    this.setState({ selectedEpicId: val });
-    axios
-      .post(`sbtpgateway/tp/rest/esccors/generic/`, {
-        resourceURL:
-          this.state.url +
-          "/rest/greenhopper/1.0/rapid/charts/epicburndownchart?rapidViewId=" +
-          this.state.boardId +
-          "&epicKey=" +
-          val,
+  handleSelectedEpic = (epicId,) => {
+    console.log(epicId)  
+    this.setState({ dropDownValue: epicId });
+    axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        //resourceURL:this.state.url + "rest/greenhopper/1.0/rapid/charts/epicburndownchart?rapidViewId="+this.state.boardId +"&epicKey=" + epicId,
+        resourceURL:this.state.url + "rest/greenhopper/1.0/rapid/charts/epicreport?rapidViewId="+this.state.boardId +"&epicKey=" + epicId,
         userName: this.state.userName,
         password: this.state.pwd,
         actionMethod: "get"
       })
       .then(response => {
-        var sprintsArray = [];
-        Object.keys(response.data.changes).forEach(function(key, index) {
-          var eachChangesObj = response.data.changes[key][0];
+        console.log(response)
+        var completedIssuesEstimateSum= response.data.contents.completedIssuesEstimateSum.value/3600
+        var inCompletedIssuesEstimation= response.data.contents.incompletedIssuesEstimateSum.value/3600
 
-          var eachDate = Number(key);
+        const completedcompletedIssuesEstimationPercentage=Math.round(completedIssuesEstimateSum / (completedIssuesEstimateSum+ inCompletedIssuesEstimation)*100);
+    
+        const inCompletedIssuesEstimationPercentage=Math.round(inCompletedIssuesEstimation / (completedIssuesEstimateSum+ inCompletedIssuesEstimation)*100);
 
-          response.data.sprints.forEach(function(eachSprint) {
-            if (
-              eachDate >= eachSprint.startTime &&
-              eachDate <= eachSprint.endTime
-            ) {
-              if (eachSprint.changes == undefined) {
-                eachSprint.changes = [];
-              }
-              if (
-                eachChangesObj.statC !== undefined &&
-                eachChangesObj.statC !== {}
-              ) {
-                // console.log(eachSprint.name ,"Change in ",eachChangesObj.key , eachChangesObj.statC.newValue?eachChangesObj.statC.newValue:"NA" , eachChangesObj.statC.oldValue?eachChangesObj.statC.oldValue:"NA")
-              }
-              eachSprint.changes.push(response.data.changes[key][0]);
-            }
-          });
-        });
-        //console.log(response.data.sprints)
-        response.data.sprints.forEach(function(eachSprint) {
-          if (eachSprint.changes != undefined) {
-            eachSprint.uv = 4000;
-            eachSprint.pv = 3000;
-            sprintsArray.push(eachSprint);
-          }
-        });
+        
+
         this.setState({
-          epicBurnDownDataArray: sprintsArray
-        });
+          allIssuesEstimation:response.data.contents.allIssuesEstimateSum.value/3600,
+          completedIssuesEstimation:completedcompletedIssuesEstimationPercentage,
+          inCompletedIssuesEstimation:inCompletedIssuesEstimationPercentage
+        
+        })
+        // Object.keys(response.data.changes).forEach(function(key, index) {
+        //   var eachChangesObj = response.data.changes[key][0];
+
+        //   var eachDate = Number(key);
+
+        //   response.data.sprints.forEach(function(eachSprint) {
+        //     if (
+        //       eachDate >= eachSprint.startTime &&
+        //       eachDate <= eachSprint.endTime
+        //     ) {
+             
+        //       if (
+        //         eachChangesObj.statC !== undefined &&
+        //         eachChangesObj.statC !== {}
+        //       ) {
+        //         // console.log(eachSprint.name ,"Change in ",eachChangesObj.key , eachChangesObj.statC.newValue?eachChangesObj.statC.newValue:"NA" , eachChangesObj.statC.oldValue?eachChangesObj.statC.oldValue:"NA")
+        //       }
+        //       //eachSprint.changes.push(response.data.changes[key][0]);
+        //     }
+        //   });
+        // });
+        //console.log(response.data.sprints)
+        // response.data.sprints.forEach(function(eachSprint) {
+        //   if (eachSprint.changes != undefined) {
+        //     eachSprint.uv = 4000;
+        //     eachSprint.pv = 3000;
+        //     sprintsArray.push(eachSprint);
+        //   }
+        // });
+        // this.setState({
+        //   epicBurnDownDataArray: sprintsArray
+          
+        // });
       });
   };
 
   listoFEpics = epicsArray => {
-    return epicsArray.map(epic => (
-      <MenuItem key={epic.id} value={epic.key} primaryText={epic.key} />
-    ));
-  };
+      return epicsArray.map(epic => (
+        <DropdownItem
+          key={epic.id}
+          value={epic.key}
+          className="pointer text-truncate"
+          onClick={(e, i) => {
+            this.handleSelectedEpic(e.target.value);
+            this.displayDropDownValue(e);
+          }}
+        >
+          {epic.key}
+        </DropdownItem>
+      ));
 
+  };
+  toggle = () => {
+    this.setState(prevState => ({
+      dropdownOpen: !prevState.dropdownOpen
+    }));
+  };
+  displayDropDownValue = e => {
+    this.setState({ dropDownValue: e.currentTarget.textContent });
+  };
   render() {
-    const data = [
-      { name: "Page A", uv: 4000, pv: 2400 },
-      { name: "Page B", uv: 3000, pv: 1398 },
-      { name: "Page C", uv: 2000, pv: 9800 },
-      { name: "Page D", uv: 2780, pv: 3908 },
-      { name: "Page E", uv: 1890, pv: 4800 },
-      { name: "Page F", uv: 2390, pv: 3800 },
-      { name: "Page G", uv: 3490, pv: 4300 }
-    ];
+
+ 
+    // const data = [
+    //   { name: "Group A", value: this.state.completedIssuesEstimation},
+    //   { name: "Group B", value: this.state.inCompletedIssuesEstimation},
+ 
+    // ];
+
+    // const COLORS = ["#FF8042", "#00C49F"];
+    
+    //     const RADIAN = Math.PI / 180;
+    //     const renderCustomizedLabel = ({
+    //       data,
+    //       cx,
+    //       cy,
+    //       midAngle,
+    //       innerRadius,
+    //       outerRadius,
+    //       percent,
+    //       index
+    //     }) => {
+    //       const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    //       const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    //       const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    
+    //       return `${(percent * 100).toFixed(0)}`;
+    //     };
+    const allIssuesArray=[
+      {"issueType":this.state.completedIssuesEstimation,"color":"#FF8042"},
+      {"issueType":this.state.inCompletedIssuesEstimation,"color":"#00C49F"}
+    
+    ]
+    
     return (
       <div className="padding0">
-        {/* <div className="col-md-12 col-lg-12 textAlignCenter ">
-                      <h5>Epic Overview</h5>
-                  </div> */}
-
-        <div className="col-md-12 padding0">
-          <SelectField
-            hintText="Select Epic"
-            value={this.state.selectedEpicId}
-            listStyle={{ backgroundColor: "#b7b7b7" }}
-            menuItemStyle={{ color: "#000000" }}
-            hintStyle={this.state.hintStyle2}
-            underlineStyle={{ display: "none" }}
-            onChange={(e, i, v) => this.handleSelectedEpic(e, i, v)}
+        <div className="col-md-12 padding0" >
+          <Dropdown
+            isOpen={this.state.dropdownOpen}
+            toggle={this.toggle}
+            className="custom-secondary_dropdown clearfix"
+            style={{ color: "grey" }}
           >
-            {this.listoFEpics(this.state.epicsArray)}
-          </SelectField>
+            <DropdownToggle
+              caret
+              className="text-truncate d-flex justify-content-between"
+              style={{ color: "grey" }}
+            >
+              {this.state.dropDownValue}
+            </DropdownToggle>
+            <DropdownMenu className="custom-dropdown-menu">
+              {this.listoFEpics(this.state.epicsArray)}
+            </DropdownMenu>
+          </Dropdown>
         </div>
-        <ResponsiveContainer width="100%" aspect={5.0 / 2.8}>
+
+        <div
+          className="col-lg-12 displayInline"
+          style={{ height: '10rem' }}
+        >
+          {/* <div className="col-md-8 col-lg-9 justify padding0">
+            <ResponsiveContainer width="103%" aspect={5.0 / 2.8}>
+              <PieChart>
+                <Pie         
+                  dataKey="value"
+                  data={data}            
+                  label={renderCustomizedLabel}
+                  outerRadius={100}
+                  animationEasing="ease-in-out"               
+                >
+                  {data.map((entry, index) => (
+                    <Cell fill={COLORS[index % COLORS.length]} key={index} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="col-md-3  col-lg-3 justify padding0">
+        
+            <div className="displayInline sprintStatusMenuWidth">
+              <div
+                className="borderRadius"
+                style={{
+                  backgroundColor: "#FF8042",
+                  width: "20px",
+                  height: "20px",
+                  border: "10px solid #FF8042"
+                }}
+              />
+
+              <div className="col-md-12 padding0">
+                <label>{this.state.completedIssuesEstimation}% Done</label>
+              </div>
+            </div>
+            <div className="displayInline sprintStatusMenuWidth">
+              <div
+                className="borderRadius"
+                style={{
+                  backgroundColor: "#00C49F",
+                  width: "20px",
+                  height: "20px",
+                  border: "10px solid #00C49F"
+                }}
+              />
+
+              <div className="col-md-12 padding0">
+                <label>{this.state.inCompletedIssuesEstimation}% Not Done</label>
+              </div>
+            </div>
+
+          </div> */}
+          <div className="col-md-12 col-lg-12 padding0 m-3">         
+
+                <div class="progress" style={{height: "10px",width: "100%",border:"1px solid #d4d1d1",borderRadius:"10px"}}>
+                      {allIssuesArray.map((eachIssue, i) => ( 
+                         <div key={i} style={{
+                            width: allIssuesArray[i] !== undefined ?
+                            eachIssue.issueType*100 : 0,backgroundColor:eachIssue.color,borderRight:"1px solid grey"
+                        }}>                               
+                        </div>                
+                     ))}  
+                </div>
+                <div className="row m-2">
+                  <div className="col-md-6  col-lg-6 displayInline sprintStatusMenuWidth">
+                    <div
+                      className="borderRadius"
+                      style={{
+                        backgroundColor: "#FF8042",
+                        width: "20px",
+                        height: "20px",
+                        border: "10px solid #FF8042"
+                      }}
+                    />               
+                      <label>{this.state.completedIssuesEstimation}% Done</label>
+                
+                  </div>
+                  <div className="col-md-6  col-lg-6 displayInline sprintStatusMenuWidth">
+                    <div
+                      className="borderRadius"
+                      style={{
+                        backgroundColor: "#00C49F",
+                        width: "20px",
+                        height: "20px",
+                        border: "10px solid #00C49F"
+                      }}
+                    />
+
+         
+                      <label>{this.state.inCompletedIssuesEstimation}% Not Done</label>
+                
+                  </div>
+                </div>
+                {/* <div className="displayInline m-2" >
+                    {this.state.individualIssuesProgressArray.map((eachStatus, i) => (
+                        <div className="displayInline m-2">
+                        <div className="mr-1" style={{marginTop:"2px",backgroundColor:eachStatus.color,width: "15px",height: "15px", border:"1px solid #d4d1d1",borderRadius: "10px"}}> </div> 
+                        <div key={i} className={[eachStatus.color].join('')} style={{fontSize:"14px"}}>        
+                        {eachStatus.name}-{eachStatus.weightage}                 
+                       
+                        </div>       
+                        </div>        
+                    ))}
+                </div> */}
+
+            </div>
+        </div>
+        {/* <ResponsiveContainer width="87%" aspect={5.0 / 2.8}>
           <BarChart
             width={600}
             height={300}
@@ -170,7 +345,7 @@ class EpicBurdownChart extends Component {
             <Bar dataKey="uv" stackId="a" fill="#8884d8" />
             <Bar dataKey="pv" stackId="a" fill="#82ca9d" />
           </BarChart>
-        </ResponsiveContainer>
+        </ResponsiveContainer> */}
       </div>
     );
   }

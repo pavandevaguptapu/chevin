@@ -31,7 +31,7 @@ class Hourschart extends Component {
       <div>
           {/* {this.props.selectedTeamId} */}
         <div className="col-md-12 col-lg-12 justify padding0">
-          <ResponsiveContainer width="100%" aspect={5.0 / 2.8}>
+          <ResponsiveContainer width="87%" aspect={5.0 / 2.8}>
             <LineChart data={this.props.data}>
               <XAxis dataKey="name" />
               <YAxis />
