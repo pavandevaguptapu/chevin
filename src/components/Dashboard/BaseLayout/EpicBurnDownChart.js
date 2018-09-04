@@ -81,7 +81,7 @@ class EpicBurdownChart extends Component {
   handleSelectedEpic = (epicId,) => {
     console.log(epicId)  
     this.setState({ dropDownValue: epicId });
-    axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+    axios.post(`sbsecureapi/sbtpgateway/generic/`, {
         //resourceURL:this.state.url + "rest/greenhopper/1.0/rapid/charts/epicburndownchart?rapidViewId="+this.state.boardId +"&epicKey=" + epicId,
         resourceURL:this.state.url + "rest/greenhopper/1.0/rapid/charts/epicreport?rapidViewId="+this.state.boardId +"&epicKey=" + epicId,
         userName: this.state.userName,

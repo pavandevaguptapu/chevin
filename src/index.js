@@ -9,12 +9,12 @@ import Routes from './components/Router';
 import store from './store/store';
 
 ReactDOM.render((
-	<StrictMode>
+	// <StrictMode>
 		<MuiThemeProvider>
             <Provider store={store}>
 			    <Routes/>
             </Provider>    
 		</MuiThemeProvider>
-	 </StrictMode>
+	//  </StrictMode>
 ),document.getElementById('root'));
   

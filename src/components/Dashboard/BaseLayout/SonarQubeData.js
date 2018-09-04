@@ -38,7 +38,7 @@ class SonarQubeData extends Component {
 
     componentWillMount() {
         axios
-            .post(`sbtpgateway/tp/rest/esccors/generic/`, {
+            .post(`sbsecureapi/sbtpgateway/generic/`, {
                 resourceURL:this.props.hostedurl,                   
                 userName: this.props.username,
                 password: this.props.pwd,

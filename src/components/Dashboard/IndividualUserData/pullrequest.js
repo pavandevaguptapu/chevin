@@ -12,7 +12,7 @@ export default class PullRequest extends Component{
      }
 
     componentDidMount(){
-        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        axios.post(`sbsecureapi/sbtpgateway/generic/`, {
             resourceURL: "https://api.github.com/repos/pavandevaguptapu/SampleRepo/pulls",
             userName: "pavankumar.d@comakeit.com",
             password: "Abc@1234",

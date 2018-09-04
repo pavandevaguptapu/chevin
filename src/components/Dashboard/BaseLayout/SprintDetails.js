@@ -78,7 +78,7 @@ class SprintDetails extends Component {
     this.setState({values: val});
     
 
-    axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+    axios.post(`sbsecureapi/sbtpgateway/generic/`, {
         resourceURL:this.state.hostedurl+"/rest/greenhopper/1.0/rapid/charts/scopechangeburndownchart.json?rapidViewId="+this.state.boardId+"&sprintId="+val,
         userName: this.state.username,
         password: this.state.pwd,
@@ -333,7 +333,7 @@ class SprintDetails extends Component {
         this.props.sprintBurnDownChart(this.state.totalTimeSpentArray);
       });
 
-    axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+    axios.post(`sbsecureapi/sbtpgateway/generic/`, {
         resourceURL:this.state.hostedurl+"/rest/agile/1.0/board/"+this.state.boardId+"/sprint/"+ val+"/issue?maxResults=100",
         userName: this.state.username,
         password: this.state.pwd,

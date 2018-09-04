@@ -309,36 +309,36 @@ let header = {
     "location": "Hyd",
     "imagePreviewUrl":"http://res.cloudinary.com/demo/image/upload/v1525209117/folder1/folder2/ sample.jpg"
    })
-   axios.put("https://scopemanagement.techforce.ai/v1/scopemanagement/org/create",payload,header).then(response=>{console.log(response)})
+  // axios.put("https://scopemanagement.techforce.ai/v1/scopemanagement/org/create",payload,header).then(response=>{console.log(response)})
 
-// axios.post("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/addTeam",
-//     {
-//         teamName: newTeamObj.teamName,
-//         startDate: startDate,
-//         endDate: endDate,
-//         status: "1"
-//     },
-// )
-//     .then(response => {
-//         var addedObj
-//         if (this.state.listOfTeams !== undefined) {
-//             addedObj = this.state.listOfTeams
-//             addedObj.push(response.data.content)
-//             this.setState({ listOfTeams: addedObj, addTeamModal: false, addTeamString: false, noTool: true,initialSelectedIndex:0});
+axios.post("http://172.16.25.50:8585/sbsecureapi/sbsecureapi/addTeam",
+    {
+        teamName: newTeamObj.teamName,
+        startDate: startDate,
+        endDate: endDate,
+        status: "1"
+    },
+)
+    .then(response => {
+        var addedObj
+        if (this.state.listOfTeams !== undefined) {
+            addedObj = this.state.listOfTeams
+            addedObj.push(response.data.content)
+            this.setState({ listOfTeams: addedObj, addTeamModal: false, addTeamString: false, noTool: true,initialSelectedIndex:0});
     
-//             this.selectedTeam("event", this.state.listOfTeams.length - 1)
-//         }
-//         else if (this.state.listOfTeams === undefined) {
-//             var addedObj = []
-//             addedObj.push(response.data.content)
-//             this.setState({ listOfTeams: addedObj, addTeamModal: false, addTeamString: false, noTool: true,initialSelectedIndex:0});
+            this.selectedTeam("event", this.state.listOfTeams.length - 1)
+        }
+        else if (this.state.listOfTeams === undefined) {
+            var addedObj = []
+            addedObj.push(response.data.content)
+            this.setState({ listOfTeams: addedObj, addTeamModal: false, addTeamString: false, noTool: true,initialSelectedIndex:0});
 
-//             this.selectedTeam("event", this.state.listOfTeams.length - 1)
+            this.selectedTeam("event", this.state.listOfTeams.length - 1)
 
-//         }
+        }
 
         
-//     })
+    })
 }
 closeAddTeamModal = () => {
 this.setState({ addTeamModal: false })

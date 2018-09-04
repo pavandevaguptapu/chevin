@@ -13,7 +13,7 @@ export default class Commits extends Component {
     }
 
     componentDidMount() {
-        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        axios.post(`sbsecureapi/sbtpgateway/generic/`, {
             resourceURL: "https://api.github.com/repos/pavandevaguptapu/SampleRepo/branches",
             userName: "pavankumar.d@comakeit.com",
             password: "Abc@1234",
@@ -57,7 +57,7 @@ export default class Commits extends Component {
     slectedBranch = (e, ind, value) => {
         this.setState({ slectedBranch: value })
 
-        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        axios.post(`sbsecureapi/sbtpgateway/generic/`, {
             resourceURL: "https://api.github.com/repos/pavandevaguptapu/SampleRepo/commits?sha=" + value,
             userName: "pavankumar.d@comakeit.com",
             password: "Abc@1234",

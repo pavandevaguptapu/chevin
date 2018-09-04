@@ -12,7 +12,7 @@ export default class IndividualIssueDetails extends Component{
 
      getIndivudualUSerIsues=(user)=>{
          
-        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        axios.post(`sbsecureapi/sbtpgateway/generic/`, {
             resourceURL: "https://fullyincontrol.atlassian.net/rest/api/2/search?jql=assignee="+user+"&fields=id,summary,description,issuetype,status,priority",        
             userName: "koteswararao.b@comakeit.com",
             password: "Abc@1234",

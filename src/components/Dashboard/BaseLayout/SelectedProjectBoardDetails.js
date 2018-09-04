@@ -50,7 +50,7 @@ class SelectedProjectBoardDetails extends Component {
     this.props.showLoaderforSprintData();
     this.props.showLoaderforEpicData();
     this.setState({ selectedProjectBoard:indexOfSelectedAccount});
-    axios.post(`sbtpgateway/tp/rest/esccors/generic/`,{
+    axios.post(`sbsecureapi/sbtpgateway/generic/`,{
         resourceURL:this.state.hostedurl+"/rest/agile/1.0/board/"+this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id+"/sprint",
         userName: this.state.username,
         password: this.state.pwd,
@@ -66,7 +66,7 @@ class SelectedProjectBoardDetails extends Component {
         this.props.onSelectBoard(listOfSprints,boardId,username,password,hostedurl)
       });
      //var hostedurl = this.state.hostedurl;
-    axios.post(`sbtpgateway/tp/rest/esccors/generic/`,{
+    axios.post(`sbsecureapi/sbtpgateway/generic/`,{
         resourceURL:this.state.hostedurl+"/rest/agile/1.0/board/"+this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id+"/epic",
         userName: this.state.username,
         password: this.state.pwd,
@@ -93,7 +93,7 @@ class SelectedProjectBoardDetails extends Component {
           for (var i = 0; i < 6; i++) {
             var epicName = response.data.values[i].name;    
             axios
-              .post(`sbtpgateway/tp/rest/esccors/generic/`, {  
+              .post(`sbsecureapi/sbtpgateway/generic/`, {  
                 resourceURL:this.state.hostedurl+"rest/agile/1.0/board/"+this.state.projectBoardDetailsListarray[indexOfSelectedAccount].id+"/epic/"+response.data.values[i].id+"/issue",
                 userName: this.state.username,
                 password: this.state.pwd,

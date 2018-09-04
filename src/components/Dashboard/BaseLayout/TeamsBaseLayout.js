@@ -277,7 +277,7 @@ class TeamsBaseLayout extends Component {
     selectedBoardforIssues = (epicsArray,username,password,hostedurl) => {    
 
         
-        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        axios.post(`sbsecureapi/sbtpgateway/generic/`, {
                 resourceURL: hostedurl + "/rest/api/2/status",
                 userName: username,
                 password: password,

@@ -1,7 +1,19 @@
 import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
-
+import {
+    Step,
+    Stepper,
+    StepLabel,
+  } from 'material-ui/Stepper';
+import FlatButton from 'material-ui/FlatButton';
+import ExpandTransition from 'material-ui/internal/ExpandTransition';
+import {
+    Dropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem
+} from "reactstrap";
 import axios from 'axios';
 const automation={
     textStyle:{
@@ -22,7 +34,12 @@ class Automation extends Component {
         super(props);
     
     this.state = {     
-        inputObj:{}
+        inputObj:{},
+        loading: false,
+        finished: false,
+        stepIndex: 0,
+        RepoName : "",
+        inputTech: "",
     }
 }
     handleChange = (e) => {
@@ -33,16 +50,92 @@ class Automation extends Component {
             inputObj: tempObj,
         });
     };
+
+    handleTechChange = (e) => {
+        var tempTech = this.state.inputTech
+        tempTech = e.target.value
+        this.setState({
+            inputTech: tempTech,
+        })
+        this.handleNext();
+    }
+    CreateGitRepo(githubObj){
+        axios.post(`http://172.16.25.50:8585/sbsecureapi/sbtpgateway/generic`, {
+            "resourceURL":"https://api.github.com/user/repos",
+            "userName":"pavankumar.d@comakeit.com", "password":"Abc@1234", "actionMethod":"post",
+            "postParams":"{\"name\": \""+ githubObj.repoName +"\",\"description\":\"This is your first repository\"}",
+            "headersToForward": [
+                {
+                    "headerName": "Content-Type",
+                    "headerValue": "application/json"
+
+                }
+            ]
+        }).then(response => {
+            if (
+                (response.data.name) !== undefined &&
+                (response.data.name) != ""
+            ) {
+                this.handleNext();
+                this.setState({
+                    repoName: githubObj.repoName,
+                    sourceCodeURL: githubObj.sourceCodeURL,
+                });
+                var data = JSON.stringify({
+                    "resourceURL": "https://3f3efaa1.ngrok.io/createItem?name=" + githubObj.repoName,
+                    "userName": "admin",
+                    "password": "1ce543883f6441ee931fe0adffcacd4e",
+                    "actionMethod": "post",
+                   // "postParams": xml,
+                    "headersToForward": [
+                        {
+                            "headerName": "Accept",
+                            "headerValue": "text/xml"
+                        },
+                        {
+                            "headerName": "Content-Type",
+                            "headerValue": "text/xml"
+                        }
+                        
+                    ]
+                    
+                });
+                localStorage.setItem('RepoName',response.data.name);
+            }
+            if(githubObj.sourceCodeURL){
+                var RepoName = localStorage.getItem('RepoName');
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        console.log(xhr.response);
+                        this.github(RepoName, githubObj.sourceCodeURL)
+                    }
+                }.bind(this)
+                xhr.open("POST", "http://172.16.25.50:8585/sbsecureapi/sbtpgateway/generic");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.setRequestHeader("Cache-Control", "no-cache");
+                xhr.setRequestHeader("Postman-Token", "56a8ca1a-c164-49a5-8f97-4ce631088e8e");
+                xhr.send(data)
+            }
+                
+        })
+    }
+
     github(reponame, sorceCodeUrl) {
-        console.log(reponame, sorceCodeUrl)
-        axios.post(`http://192.168.29.84:8087/sbtpgateway/tp/rest/esccors/generic/`, {
+
+        let inputTech = this.state.inputTech;
+        let sourceCodeURL;
+        if(inputTech == ''){
+            sourceCodeURL = 'https://pavankumard@bitbucket.org/coesb/sb-code.git';
+        }else if(inputTech == 'reactjs'){
+            sourceCodeURL = 'https://github.com/mkrishna2025/react_005';
+        }
+       
+        axios.post(`http://172.16.25.50:8585/sbsecureapi/sbtpgateway/generic`, {
             "resourceURL": "https://api.github.com/repos/pavandevaguptapu/" + reponame + "/import",
             "userName": "pavankumar.d@comakeit.com", "password": "Abc@1234", "actionMethod": "put",
-            "postParams": {
-                "vcs_url": "https://pavankumard@bitbucket.org/coesb/sb-code.git",
-                "vcs_username": "pavankumar.d@comakeit.com",
-                "vcs_password": "Abc@1234"
-            },
+            "postParams": "{\"vcs_url\": \"https://pavankumard@bitbucket.org/coesb/sb-code.git\",\"vcs_username\": \"pavankumar.d@comakeit.com\",\"vcs_password\": \"Abc@1234\"}",
             "headersToForward": [
                 {
                     "headerName": "Accept",
@@ -51,43 +144,54 @@ class Automation extends Component {
             ]
         }
         ).then(response => {
-            console.log(response)
-            axios.post(`http://192.168.29.84:8087/sbtpgateway/tp/rest/esccors/generic/`, {
-                "resourceURL": "https://api.github.com/repos/pavandevaguptapu/" + reponame + "/hooks",
-                "userName": "pavankumar.d@comakeit.com", "password": "Abc@1234", "actionMethod": "post",
-                postParams: {
-                    "name": "web",
-                    "config": { "url": "https://3f3efaa1.ngrok.io/job/" + reponame + "/build" ,"content_type": "text/xml"}
-
-                },
-                headersToForward: [
-                    {
-                        "headerName": "Accept",
-                        "headerValue": "application/json"
-                    }
-                ]
-            })
+            this.checkStatus(reponame, sorceCodeUrl)
         })
-        // axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
-        //     "resourceURL": "https://api.github.com/repos/coMakeIT-Git/"+reponame+"/hooks",
-        //     "userName": "comakeit-github", "password": "Abc@123456", "actionMethod": "post",
-        //     postParams: {
-        //         "name": "web",
-        //         "config": {"url":"http://192.168.29.25:8080/job/" + reponame + "/build"}
-
-        //     },                              
-        //     headersToForward: [
-        //         {
-        //             "headerName": "Accept",
-        //             "headerValue": "application/json"                    
-        //         }
-        //     ]
-        // })       
-
 
     }
+
+    checkStatus(reponame,sorceCodeUrl){
+        axios.post(`http://172.16.25.50:8585/sbsecureapi/sbtpgateway/generic`, {
+            "resourceURL": "https://api.github.com/repos/pavandevaguptapu/" + reponame + "/import",
+            "userName": "pavankumar.d@comakeit.com", "password": "Abc@1234", "actionMethod": "get",
+            "postParams": "{\"vcs_url\": \"https://pavankumard@bitbucket.org/coesb/sb-code.git\",\"vcs_username\": \"pavankumar.d@comakeit.com\",\"vcs_password\": \"Abc@1234\"}",
+            "headersToForward": [
+                {
+                    "headerName": "Accept",
+                    "headerValue": "application/vnd.github.barred-rock-preview"
+                }
+            ]
+        }
+        ).then(response => {
+            var status = response.data.status;
+            if(response.data.status == "complete"){
+               this.CreateHook(reponame,sorceCodeUrl);
+            }else{
+                console.log(status);
+                this.props.setTimeout(this.checkStatus(reponame, sorceCodeUrl), 80000)
+               
+            }
+            
+        })
+    }
+
+    CreateHook(reponame,sorceCodeUrl){
+        axios.post(`http://172.16.25.50:8585/sbsecureapi/sbtpgateway/generic`, {
+            "resourceURL": "https://api.github.com/repos/pavandevaguptapu/" + reponame + "/hooks",
+            "userName": "pavankumar.d@comakeit.com", "password": "Abc@1234", "actionMethod": "post",
+            postParams: "{\"name\": \"web\",\"config\": { \"url\": \"https://3f3efaa1.ngrok.io/job/" + reponame + "/build\" ,\"content_type\": \"text/xml\"}}",
+            headersToForward: [
+                {
+                    "headerName": "Accept",
+                    "headerValue": "application/json"
+                }
+            ]
+            })
+            this.handleNext();
+            localStorage.removeItem('RepoName');
+    }
+
     submitData(githubObj) {
-        console.log(githubObj)
+        //console.log(githubObj)
         var XMLWriter = require('xml-writer');
         var xw = new XMLWriter;
         xw.startDocument();
@@ -136,87 +240,73 @@ class Automation extends Component {
         xw.endDocument();
         var xml = xw.toString();
        // this.setState({ githubInstanceDetails: githubObj })
-
-        axios.post(`http://192.168.29.84:8087/sbtpgateway/tp/rest/esccors/generic/`, {
-            "resourceURL":"https://api.github.com/user/repos",
-            "userName":"pavankumar.d@comakeit.com", "password":"Abc@1234", "actionMethod":"post",
-            "postParams":{
-                "name": githubObj.repoName,
-                "description": "This is your first repository"
-            },
-            "headersToForward": [
-                {
-                    "headerName": "Accept",
-                    "headerValue": "application/vnd.github.mercy-preview+json"
-
-                }
-            ]
-        }).then(response => {
-                console.log(response)
-            var data = JSON.stringify({
-                "resourceURL": "https://3f3efaa1.ngrok.io/createItem?name=" + githubObj.repoName,
-                "userName": "admin",
-                "password": "1ce543883f6441ee931fe0adffcacd4e",
-                "actionMethod": "post",
-                "postParams": xml,
-                "headersToForward": [
-                    {
-                        "headerName": "Accept",
-                        "headerValue": "text/xml"
-                    },
-                    {
-                        "headerName": "Content-Type",
-                        "headerValue": "text/xml"
-                    }
-                    
-                ]
-            });
-
-            var xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
-            // xhr.addEventListener("readystatechange", function () {
-            //     console.log(this.readyState)
-            //     if (this.readyState === 4) {
-            //         console.log("xhr")
-            //     }
-            //            this.github(this.state.githubInstanceDetails.repoName,this.state.githubInstanceDetails.projectUrl)
-            // }.bind(this))
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    console.log(xhr.response);
-                    this.github(githubObj.repoName, githubObj.sourceCodeURL)
-                }
-            }.bind(this)
-
-            xhr.open("POST", "http://192.168.29.84:8087/sbtpgateway/tp/rest/esccors/generic/");
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.setRequestHeader("Cache-Control", "no-cache");
-            xhr.setRequestHeader("Postman-Token", "56a8ca1a-c164-49a5-8f97-4ce631088e8e");
-            xhr.send(data)
-
-        })
+        this.CreateGitRepo(githubObj)
     }
     componentDidMount=()=>{
        console.log(localStorage.getItem('token'))
    }
 
-    render() {
+   /* */
+   dummyAsync = (cb) => {
+    this.setState({loading: true}, () => {
+      this.asyncTimer = setTimeout(cb, 500);
+    });
+  };
 
-        return (
-            <div className="container-fluid">
-                <div className="row">
-                    {/* <nav className="col-md-12 col-lg-12 navbar navbar-fixed-top navbarBgColor navbarFontColor padding0">
-                        <div className="col-md-12 col-lg-12 textAlignCenter marginT07">
-                            <h5 className="">Automation</h5>
-                        </div>
-                        <div>
-                        </div>
-                    </nav> */}
-                </div>  
-                <div>
-                    <TextField
+  handleNext = () => {
+    const {stepIndex} = this.state;
+    if (!this.state.loading) {
+      this.dummyAsync(() => this.setState({
+        loading: false,
+        stepIndex: stepIndex + 1,
+        finished: stepIndex >= 2,
+      }));
+    }
+  };
+   /* */
+
+    render() {
+        const {loading, stepIndex} = this.state;
+        const repoName = this.state.repoName;
+        const sourceCodeURL = this.state.sourceCodeURL;
+        const techName = this.state.inputTech;
+        let technoText;
+        let repoText;
+        let SourceText;
+        if(repoName){
+            if(techName == ''){
+                technoText = <select value={this.state.inputTech} onChange={this.handleTechChange} name="selectedTech">
+                        <option value="">Select Technology</option>
+                        <option value="reactjs">React js</option>
+                        <option value="java">Java</option>
+                        <option value="net">.Net</option>
+                        <option value="angular">Angular</option>
+                    </select>
+            }else{
+                SourceText = <div><TextField
+                            id="text-field-controlled"
+                            //value={this.state.inputObj.sourceCodeUrl}
+                            onChange={this.handleChange}                        
+                            floatingLabelText="SourceCode Url"
+                            name="sourceCodeURL"
+                            inputStyle={automation.textStyle}
+                            floatingLabelStyle={automation.floatingLabelStyle}
+                            underlineStyle={automation.underlineStyle}
+                            underlineFocusStyle={automation.underlineStyle}
+                            floatingLabelStyle={automation.hintStyle}
+                            />
+                            <div>
+                            <RaisedButton
+                                primary={true}
+                                onClick={() => this.submitData(this.state.inputObj)}
+                            >SAVE
+                            </RaisedButton>
+                            </div></div>
+            }
+        }else{
+            repoText = <div><TextField
                         id="text-field-controlled"
-                        value={this.state.inputObj.repoName}
+                    // value={this.state.inputObj.repoName}
                         onChange={this.handleChange}                        
                         floatingLabelText="Repository Name"
                         name="repoName"
@@ -225,29 +315,45 @@ class Automation extends Component {
                         underlineStyle={automation.underlineStyle}
                         underlineFocusStyle={automation.underlineStyle}
                         floatingLabelStyle={automation.hintStyle}
-                    />
+                        />
+                        <div>
+                        <RaisedButton
+                            primary={true}
+                            onClick={() => this.submitData(this.state.inputObj)}
+                        >SAVE
+                        </RaisedButton>
+                        </div></div>
+        }
+        return (
+            <div className="container-fluid">
+                <div className="row">
+                    <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
+                        <Stepper activeStep={stepIndex}>
+                        <Step>
+                            <StepLabel>Creating Git repository  </StepLabel>
+                        </Step>
+                        <Step>
+                            <StepLabel>select technology</StepLabel>
+                        </Step>
+                        <Step>
+                            <StepLabel>Importing SourceCode Url</StepLabel>
+                        </Step>
+                        </Stepper>
+                    </div>
+                </div>   
+                <div className="row" style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
+                    <div>
+                        {repoText}
+                     </div> 
+                    <div style={{width: '100%', maxWidth: 150, margin: 'auto'}}>
+                        {technoText}
+                    </div>
+                    <div>
+                        {SourceText}
+                    </div>
+                   
                 </div>
-                <div>
-                    <TextField
-                        id="text-field-controlled"
-                        value={this.state.inputObj.sourceCodeUrl}
-                        onChange={this.handleChange}                        
-                        floatingLabelText="SourceCode Url"
-                        name="sourceCodeURL"
-                        inputStyle={automation.textStyle}
-                        floatingLabelStyle={automation.floatingLabelStyle}
-                        underlineStyle={automation.underlineStyle}
-                        underlineFocusStyle={automation.underlineStyle}
-                        floatingLabelStyle={automation.hintStyle}
-                    />
-                </div>
-                <div>
-                    <RaisedButton
-                        primary={true}
-                        onClick={() => this.submitData(this.state.inputObj)}
-                    >SAVE
-                    </RaisedButton>
-                </div>           
+                
             </div>
         );
     }

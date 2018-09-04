@@ -66,7 +66,7 @@ class SelectedProjectDetails extends Component {
         });
     }
     getBoard = (username,password,hostedurl,peopleArray,projectIndex) => {    
-        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        axios.post(`sbsecureapi/sbtpgateway/generic/`, {
                 resourceURL: hostedurl + "rest/agile/1.0/board",
                 userName: username,
                 password: password,

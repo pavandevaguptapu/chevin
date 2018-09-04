@@ -10,6 +10,7 @@ import TeamsBaseLayout from './Dashboard/BaseLayout/TeamsBaseLayout';
 import IndividualSprintData from './Dashboard/IndividualUserData/individualSprintData';
 import LoginNew from '../shared/LoginNew';
 import axios from 'axios';
+import DashboardOption from '../components/Projects/DashboardOption';
 
 
 const Routes = () => (
@@ -17,7 +18,9 @@ const Routes = () => (
     <div>
       <Switch>
         <Route exact path="/" component={Login} />
-        <Route path="/dashboard" component={TeamsBaseLayout} />
+         <Route path="/dashboard" component={DashboardOption} /> 
+        {/* <Route path="/dashboard" component={TeamsBaseLayout} /> */}
+        <Route path="/teamsDashboard" component={TeamsBaseLayout} />
         <Route path="/login" component={LoginNew}/>  
         <Route path="/userDetails" component={IndividualSprintData} />     
         <App>

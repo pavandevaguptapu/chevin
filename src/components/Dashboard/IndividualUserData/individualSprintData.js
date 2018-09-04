@@ -18,6 +18,7 @@ import ListOfJiraUsers from "./listofjirausers";
 import IndividualIssueDetails from "./individualIssueDetails";
 import PullRequest from "./pullrequest";
 import IndividualIssueProgressBar from "./individualIssueProgressBar";
+
 import Commits from "./commits";
 
 import { Link } from 'react-router-dom';
@@ -150,7 +151,8 @@ class IndividualSprintData extends Component {
                                 cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                                 rowHeight={30}
                                 width={1200}
-                            >                            
+                            >
+                            
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
                                     key="7"
@@ -170,7 +172,7 @@ class IndividualSprintData extends Component {
                                     data-grid={{ x: 4, y: 0, w: 8, h: 8.5, minW: 4, minH: 8.5 }}
                                 >
                                     <div className="d-flex custom_dashboard-header justify-content-between">
-                                        <CardHeader title="Issue Details" className="p-0" />
+                                        <CardHeader title="Critical Path" className="p-0" />
                                     </div>
                                     <div className="col-lg-12 text-center">
                                       
@@ -199,19 +201,6 @@ class IndividualSprintData extends Component {
                                 </Card> */}
                                 <Card
                                     style={navBarContainer.widgetContainer.widgetCard}
-                                    key="8"
-                                    data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
-                                >
-                                    <div className="d-flex custom_dashboard-header justify-content-between">
-                                        <CardHeader title="Recent Commits" className="p-0" />
-                                    </div>
-                                    <div className="col-lg-12 text-center">
-                                    
-                                        {this.state.branches}
-                                    </div>
-                                </Card>
-                                <Card
-                                    style={navBarContainer.widgetContainer.widgetCard}
                                     key="5"
                                     data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
                                     id="myDiv"
@@ -227,9 +216,24 @@ class IndividualSprintData extends Component {
                                    
                                         {this.state.IndividualPullRequest}
                                     </div>
-                                </Card>                             
+                                </Card>
 
-                            
+
+                              
+
+                                <Card
+                                    style={navBarContainer.widgetContainer.widgetCard}
+                                    key="8"
+                                    data-grid={{ x: 0, y: 0, w: 4, h: 8.5, minW: 4, minH: 8.5 }}
+                                >
+                                    <div className="d-flex custom_dashboard-header justify-content-between">
+                                        <CardHeader title="Recent Commits" className="p-0" />
+                                    </div>
+                                    <div className="col-lg-12 text-center">
+                                    
+                                        {this.state.branches}
+                                    </div>
+                                </Card>
                              </ResponsiveReactGridLayout>
                         </div>
                     </div>

@@ -12,7 +12,7 @@ export default class ListOfJiraUsers extends Component{
      }
 
     componentDidMount(){
-        axios.post(`sbtpgateway/tp/rest/esccors/generic/`, {
+        axios.post(`sbsecureapi/sbtpgateway/generic/`, {
             resourceURL: "https://fullyincontrol.atlassian.net/rest/api/2/user/assignable/search?project=FIC",
             userName: "koteswararao.b@comakeit.com",
             password: "Abc@1234",
@@ -39,8 +39,10 @@ export default class ListOfJiraUsers extends Component{
             ));  
     }
     selectedUser=(e,ind,value)=>{
+       // console.log()
         this.setState({selectedUser:value})
-        this.props.selectedUser(value)
+        console.log(value)
+       this.props.selectedUser(value)
     }
     render(){
         return(              
